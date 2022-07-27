@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "~/components/*": ["components/*"],
+      "~/layouts/*": ["layouts/*"],
+      "~/pages/*": ["pages/*"],
+      "~/helpers/*": ["helpers/*"],
+      "~/icons/*": ["icons/*"],
+      "~/utils/*": ["utils/*"],
+      "~/contexts/*": ["contexts/*"],
+      "~/services/*": ["services/*"],
+      "~/public/*": ["public/*"],
+      "~/styles/*": ["styles/*"]
+    }
+  },
+  "include": ["**/*.jsx", "**/*.js"],
+  "exclude": ["node_modules", ".next", "out"]
+}

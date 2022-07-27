@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+  @apply w-full h-full;
+}
+
+body {
+  @apply antialiased font-roboto text-black;
+}
+
+button,
+a {
+  @apply transition-all duration-300 ease-in-out;
+}
+
+strong,
+b {
+  @apply font-bold;
+}
