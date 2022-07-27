@@ -1,16 +1,16 @@
 import React from 'react'
 
-import Footer from '~/components/footer'
-import Header from '~/components/header'
-import Modal from '~/components/modal'
+// import Footer from '~/components/footer'
+// import Header from '~/components/header'
+// import Modal from '~/components/modal'
 
 const Default = ({ children }) => {
   return (
     <>
-      <Header />
+      {/* <Header /> */}
       <main>{children}</main>
-      <Footer />
-      <Modal />
+      {/* <Footer />
+      <Modal /> */}
     </>
   )
 }
