@@ -14,6 +14,15 @@ module.exports = {
       current: 'currentColor',
       black: '#000',
       white: '#fff',
+      blue: {
+        DEFAULT: '#5046e5',
+        light: '#6867ef',
+      },
+      gray: {
+        DEFAULT: '#9da5b1',
+        light: '#d3d3d3',
+        dark: '#768192',
+      },
       danger: '#ff4e4e',
       success: '#409d66',
     },
