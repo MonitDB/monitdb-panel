@@ -1,16 +1,18 @@
 import React from 'react'
 
-// import Footer from '~/components/footer'
-// import Header from '~/components/header'
-// import Modal from '~/components/modal'
+import Header from '~/components/header'
+import Sidebar from '~/components/sidebar'
 
 const Default = ({ children }) => {
   return (
     <>
-      {/* <Header /> */}
-      <main>{children}</main>
-      {/* <Footer />
-      <Modal /> */}
+      <Header />
+      <main>
+        <div className="relative md:pl-60">
+          <Sidebar className="md:fixed md:bottom-0 md:left-0" />
+          <div className="">{children}</div>
+        </div>
+      </main>
     </>
   )
 }

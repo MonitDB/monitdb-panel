@@ -28,7 +28,8 @@ module.exports = {
     },
     extend: {
       fontFamily: {
-        roboto: '"Roboto", sans-serif',
+        ibm: '"IBM Plex Sans", sans-serif',
+        oxygen: '"Oxygen", sans-serif',
       },
       fontSize: {
         0: '0px',

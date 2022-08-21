@@ -1,4 +1,5 @@
 import { useFormik } from 'formik'
+import { useRouter } from 'next/router'
 import React from 'react'
 import * as Yup from 'yup'
 
@@ -13,6 +14,7 @@ const SignUpFormSchema = Yup.object().shape({
 })
 
 const SignUp = () => {
+  const router = useRouter()
   const formik = useFormik({
     initialValues: {
       licenseKey: 'Client_DataBase',
@@ -20,8 +22,8 @@ const SignUp = () => {
       password: '',
     },
     validationSchema: SignUpFormSchema,
-    onSubmit: (values) => {
-      console.log(values)
+    onSubmit: () => {
+      router.push('/dashboard')
     },
   })
 
