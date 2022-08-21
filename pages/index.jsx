@@ -1,5 +1,6 @@
-import SignUp from '~/components/sign-up'
-import Layout from '~/layouts/default'
+import SignUp from '~/components/forms/sign-up'
+import Cta from '~/components/ui/cta'
+import Layout from '~/layouts/clean'
 // import NotFound from '~/pages/404'
 // import { getPageData } from '~/services/page'
 
@@ -10,21 +11,34 @@ const HomePage = () => {
 
   return (
     <Layout>
-      <div className="fixed inset-0 bg-gray">
-        <div className="relative w-full h-32 bg-black bg-opacity-10 md:static md:h-full" />
+      <div
+        className="w-full md:min-h-screen md:flex md:items-center
+          md:justify-center"
+      >
         <div
-          className="bg-white w-full h-full pt-8 px-5 md:absolute md:inset-y-0
-						md:pt-0 md:w-96 md:shadow-lg md:bg-gray-dark md:flex md:flex-col
-						md:justify-center md:h-auto md:px-0"
+          className="w-full md:relative md:flex md:rounded-lg
+            md:overflow-hidden lg:max-w-[900px]"
         >
-          <div
-            className="relative text-sm text-gray-medium md:absolute
-							md:top-1/2 md:left-32 md:p-6 md:py-8 md:transform
-							md:-translate-y-1/2 md:rounded-lg md:w-96 md:shadow-lg
-							md:bg-white lg:mt-10"
-          >
-            <h1>Logo</h1>
+          <div className="p-4 bg-white md:w-1/2 md:p-10">
             <SignUp />
+          </div>
+          <div
+            className="py-10 px-4 bg-blue md:w-1/2 md:px-10 md:flex
+              md:flex-col md:justify-center"
+          >
+            <div className="prose prose-headings:text-white mb-4 text-white md:mb-10">
+              <h3>Lorem ipsum!</h3>
+              <p>
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Lorem
+                ipsum dolor sit amet consectetur adipisicing elit. Velit,
+                cumque!
+              </p>
+            </div>
+            <div>
+              <Cta href="/contacto" inverse>
+                Entre em contacto
+              </Cta>
+            </div>
           </div>
         </div>
       </div>

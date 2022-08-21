@@ -1,25 +1,15 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 
 const Input = ({ type = 'text', className = '', hasError, ...properties }) => {
-  const [customClasses, setCustomClasses] = useState('')
-
-  useEffect(() => {
-    let classes = `block w-full h-10 px-2 rounded border
-			text-sm focus:shadow-md outline-none `
-
-    classes += hasError
-      ? 'border-danger border-opacity-50'
-      : 'border-gray-medium'
-
-    setCustomClasses(classes)
-  }, [setCustomClasses, hasError])
+  const classes = [
+    `block w-full h-10 px-2 rounded border border-gray
+    text-sm transition-all duration-150 ease-in-out
+    focus:shadow-md outline-none md:px-10`,
+    hasError ? 'border-danger border-opacity-50' : 'border-gray-medium',
+  ].join(' ')
 
   return (
-    <input
-      type={type}
-      className={`${customClasses} ${className}`}
-      {...properties}
-    />
+    <input type={type} className={`${classes} ${className}`} {...properties} />
   )
 }
 

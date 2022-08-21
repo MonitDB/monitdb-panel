@@ -3,8 +3,9 @@ import React from 'react'
 import * as Yup from 'yup'
 
 import { Field, Input, Submit } from '~/components/form'
-import FacebookIcon from '~/icons/facebook.svg'
-import GoogleIcon from '~/icons/google.svg'
+import Link from '~/components/link'
+// import FacebookIcon from '~/icons/facebook.svg'
+// import GoogleIcon from '~/icons/google.svg'
 
 const SignUpFormSchema = Yup.object().shape({
   login: Yup.string().required(),
@@ -26,15 +27,17 @@ const SignUp = () => {
 
   return (
     <div>
-      <p className="mb-4">
-        <strong>Preencha os seus dados no campo abaixo:</strong>
-      </p>
+      <div className="prose mb-10">
+        <h2>Login</h2>
+        <p>
+          <strong>Preencha os seus dados no campo abaixo:</strong>
+        </p>
+      </div>
       <form
         className="grid grid-cols-2 gap-5 md:grid-cols-12"
         onSubmit={formik.handleSubmit}
       >
         <Field
-          text="Usuário"
           htmlFor="login"
           className="col-span-2 md:col-span-12"
           hasError={!!(formik.errors.login && formik.touched.login)}
@@ -44,13 +47,13 @@ const SignUp = () => {
             id="login"
             name="login"
             type="text"
+            placeholder="Usuário"
             onChange={formik.handleChange}
             value={formik.values.login}
             hasError={!!(formik.errors.login && formik.touched.login)}
           />
         </Field>
         <Field
-          text="Senha"
           htmlFor="password"
           className="col-span-2 md:col-span-12"
           hasError={!!(formik.errors.password && formik.touched.password)}
@@ -60,21 +63,29 @@ const SignUp = () => {
             id="password"
             name="password"
             type="password"
+            placeholder="Senha"
             onChange={formik.handleChange}
             value={formik.values.password}
             hasError={!!(formik.errors.password && formik.touched.password)}
           />
         </Field>
-        <Submit
-          className="mt-2 col-span-2 md:col-span-12"
-          disabled={formik.isSubmitting}
-          loading={formik.isSubmitting}
-          loadingText="Entrando..."
-        >
-          Entrar
-        </Submit>
+        <div className="mt-2 col-span-2 md:col-span-12 md:flex md:justify-between md:items-center">
+          <Submit
+            disabled={formik.isSubmitting}
+            loading={formik.isSubmitting}
+            loadingText="Entrando..."
+          >
+            Entrar
+          </Submit>
+          <Link
+            href="/forgot-password"
+            className="text-sm text-gray-dark underline mt-4 md:mt-0 md:ml-auto"
+          >
+            Recuperar password
+          </Link>
+        </div>
       </form>
-      <hr className="my-6 text-gray-medium" />
+      {/* <hr className="my-6 text-gray-medium" />
       <p className="mb-4">
         <strong>Ou faça login com:</strong>
       </p>
@@ -95,7 +106,7 @@ const SignUp = () => {
         >
           <FacebookIcon className="w-5 h-5 mr-2" /> Facebook
         </button>
-      </div>
+      </div> */}
     </div>
   )
 }

@@ -1,5 +1,7 @@
 import React from 'react'
 
+import Cta from '~/components/ui/cta'
+
 const Submit = ({
   children,
   disabled,
@@ -9,15 +11,14 @@ const Submit = ({
   ...properties
 }) => {
   return (
-    <button
+    <Cta
       type="submit"
       disabled={disabled}
-      className={`flex items-center justify-center w-full h-10 rounded font-bold
-				bg-primary text-white ${disabled ? 'opacity-50' : ''} ${className}`}
+      className={`${disabled ? 'opacity-50' : ''} ${className}`}
       {...properties}
     >
       {loading ? loadingText : children}
-    </button>
+    </Cta>
   )
 }
 
