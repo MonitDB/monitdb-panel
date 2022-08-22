@@ -1,5 +1,6 @@
 import {
   faBell,
+  faChevronDown,
   faFileLines,
   faGauge,
   faGear,
@@ -12,9 +13,8 @@ import React, { useState } from 'react'
 
 import Link from '~/components/link'
 import Reveal from '~/helpers/reveal'
-import ChevronSvg from '~/icons/chevron.svg'
 
-const buttonClasses = `py-2 px-4 rounded-md flex items-center w-full
+const buttonClasses = `py-2 px-4 rounded-md flex items-center w-full text-sm
   justify-start appearance-none font-normal lg:hover:bg-blue-light lg:hover:text-white`
 const subButtonClasses = `block py-2 pl-[52px] pr-4 w-full rounded-md text-sm
   lg:hover:bg-blue-light lg:hover:text-white`
@@ -86,7 +86,8 @@ const Sidebar = ({ className = '' }) => {
                 <FontAwesomeIcon icon={faPager} />
               </i>
               <span>Propriedade</span>
-              <ChevronSvg
+              <FontAwesomeIcon
+                icon={faChevronDown}
                 className={[
                   `block ml-auto transform transition-all duration-300 ease-in-out`,
                   isExpandedIndex === 5 && 'rotate-180',
