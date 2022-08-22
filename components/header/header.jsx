@@ -15,7 +15,7 @@ import UserSvg from '~/icons/user.svg'
 
 const Header = () => {
   return (
-    <header className="relative bg-blue z-40">
+    <header className="fixed w-full bg-blue z-40">
       <Grid className="container py-4 text-white">
         <div className="col-span-2 lg:col-span-6">
           <h1>

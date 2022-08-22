@@ -37,6 +37,33 @@ module.exports = {
       transitionDelay: {
         0: '0ms',
       },
+      typography: (theme) => ({
+        DEFAULT: {
+          css: {
+            table: {
+              width: '100%',
+              tableLayout: 'auto',
+            },
+            'thead th': {
+              textAlign: 'left',
+              textTransform: 'uppercase',
+              fontFamily: theme('fontFamily.oxygen'),
+              fontSize: theme('fontSize.xs'),
+              color: theme('colors.gray'),
+              paddingLeft: theme('spacing.2'),
+              paddingRight: theme('spacing.2'),
+              paddingTop: theme('spacing.2'),
+              paddingBottom: theme('spacing.2'),
+              borderBottom: '1px solid',
+              borderBottomColor: theme('colors.gray.DEFAULT'),
+              backgroundColor: theme('colors.transparent'),
+            },
+            'thead th:first-child, tbody td:first-child': {
+              paddingLeft: theme('spacing.2'),
+            },
+          },
+        },
+      }),
       minWidth: (theme) => ({
         ...theme('spacing'),
       }),
