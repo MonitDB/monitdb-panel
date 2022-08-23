@@ -51,7 +51,7 @@ export const options = {
 
 const labels = ['06:00', '08:00', '10:00', '12:00', '14:00', '16:00', '18:00']
 
-const tableDataItems = labels.map((_) => ({
+const tableDataItems = labels.map(() => ({
   title: `desktop-0i${faker.datatype.number({
     min: 1,
     max: 999,
