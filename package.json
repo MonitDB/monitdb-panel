@@ -5,8 +5,9 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
-    "lint": "next lint --fix"
+    "start": "next build && next start",
+    "lint": "next lint --fix",
+    "pm2": "pm2 start processes.json --no-daemon"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.1.2",

@@ -1,0 +1,9 @@
+version: '3.9'
+
+services:
+  webapp:
+    container_name: monitdb-panel
+    build:
+      context: .
+    ports:
+      - '3000:3000'

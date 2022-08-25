@@ -1,5 +1,13 @@
 # MonitDB Panel
 
+## Docker
+
+In your terminal, run the below command to start the project using Docker:
+
+`docker-compose up --build`
+
+After that, just keep using `docker-compose up` to run the project or press the play button in your Docker Container.
+
 ## Project stack:
 
 - React + [NextJS](https://nextjs.org)
