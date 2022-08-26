@@ -21,7 +21,7 @@ module.exports = {
       gray: {
         DEFAULT: '#9da5b1',
         light: '#d3d3d3',
-        dark: '#768192',
+        dark: '#161b22',
       },
       danger: '#ff4e4e',
       success: '#409d66',
