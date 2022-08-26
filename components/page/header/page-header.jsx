@@ -12,7 +12,7 @@ const PageHeader = ({ title }) => {
         </li>
         <li className="text-gray">/</li>
         <li>
-          <span className="text-gray">Dashboard</span>
+          <span className="text-gray">{title}</span>
         </li>
       </ul>
     </header>

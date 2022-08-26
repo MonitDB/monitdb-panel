@@ -1,4 +1,5 @@
 import cn from 'classnames'
+import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 
 import Link from '~/components/link'
@@ -11,36 +12,32 @@ const buttonClassesActive = 'border-blue text-opacity-100'
 const navMenuList = [
   {
     title: 'Dashboard',
-    href: '',
-  },
-  {
-    title: 'Súmulas',
-    href: '',
+    href: '/dashboard/',
   },
   {
     title: 'Alertas',
-    href: '',
+    href: '/alerts/',
   },
   {
     title: 'Análise',
-    href: '',
+    href: '/analysis/',
   },
   {
     title: 'Relatórios',
-    href: '',
+    href: '/reports/',
   },
   {
     title: 'Propriedade',
-    href: '',
+    href: '/estate/',
   },
   {
     title: 'Configurações',
-    href: '',
+    href: '/configurations/',
   },
 ]
 
 const Header = () => {
-  const [activeIndex, setActiveIndex] = useState(0)
+  const router = useRouter()
 
   return (
     <header className="w-full h-16 z-40">
@@ -64,10 +61,11 @@ const Header = () => {
                   <Link
                     href={item.href}
                     className={cn(buttonClasses, {
-                      [buttonClassesActive]: activeIndex === index,
-                      'border-gray-dark text-opacity-50': activeIndex !== index,
+                      [buttonClassesActive]:
+                        item.href.search(router.asPath) >= 0,
+                      'border-gray-dark text-opacity-50':
+                        item.href.search(router.asPath) < 0,
                     })}
-                    onClick={() => setActiveIndex(index)}
                   >
                     {item.title}
                   </Link>

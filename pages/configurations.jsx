@@ -3,15 +3,15 @@ import React from 'react'
 import { PageHeader, PageWrapper } from '~/components/page'
 import Layout from '~/layouts/default'
 
-const DashboardPage = () => {
+const ConfigurationsPage = () => {
   return (
     <Layout>
       <PageWrapper className="p-8">
-        <PageHeader title="Dashboard" />
+        <PageHeader title="Configurações" />
         <div className="w-full prose max-w-full"></div>
       </PageWrapper>
     </Layout>
   )
 }
 
-export default DashboardPage
+export default ConfigurationsPage
