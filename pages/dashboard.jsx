@@ -8,12 +8,13 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import classNames from 'classnames'
 import { useFormik } from 'formik'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 import Select from '~/components/form/select'
 import Selector from '~/components/form/selector'
 import Link from '~/components/link'
 import Layout from '~/layouts/default'
+import { getAlertClusterActiveNode } from '~/services/alerts'
 
 const alerts = [
   {
@@ -30,25 +31,27 @@ const alerts = [
   },
 ]
 
-const servers = [
-  {
-    id: 'a8s7df80a7sd98fy923298',
-    status: 'healthy',
-    name: 'sqm-sqlmonitorsqlmonitor',
-  },
-  {
-    id: 'nb234a7sd98fy2342923298',
-    status: 'healthy',
-    name: 'ssc-db-n1',
-  },
-  {
-    id: 'lkjweoa73242sd98fy923298',
-    status: 'healthy',
-    name: 'ssc-db-n2',
-  },
-]
+// const servers = [
+//   {
+//     id: 'a8s7df80a7sd98fy923298',
+//     status: 'healthy',
+//     name: 'sqm-sqlmonitorsqlmonitor',
+//   },
+//   {
+//     id: 'nb234a7sd98fy2342923298',
+//     status: 'healthy',
+//     name: 'ssc-db-n1',
+//   },
+//   {
+//     id: 'lkjweoa73242sd98fy923298',
+//     status: 'healthy',
+//     name: 'ssc-db-n2',
+//   },
+// ]
 
 const DashboardPage = () => {
+  const [data, setData] = useState([])
+
   const formik = useFormik({
     initialValues: {
       name: '',
@@ -60,6 +63,20 @@ const DashboardPage = () => {
       console.log('submit', values) // eslint-disable-line no-console
     },
   })
+
+  const getAlerts = async () => {
+    try {
+      const response = await getAlertClusterActiveNode()
+
+      setData(response?.data || [])
+    } catch (error) {
+      console.error(error) // eslint-disable-line no-console
+    }
+  }
+
+  useEffect(() => {
+    getAlerts()
+  }, [])
 
   return (
     <Layout>
@@ -238,72 +255,48 @@ const DashboardPage = () => {
           </form>
         </div>
 
-        <div className="p-8 w-full xl:pr-96">
-          <div className="w-full md:w-2/3">
-            <button
-              type="button"
-              className="w-full py-2 px-4 border border-gray-light rounded-sm font-bold text-left text-sm"
-            >
-              1 - Production (3)
-            </button>
-            <div className="flex flex-col py-2 space-y-4 md:flex-row md:space-x-4 md:space-y-0 md:py-4">
-              {servers.map((server, index) => (
-                <div
-                  key={`server-production-${index}`}
-                  className="border border-gray-light p-2 w-full border-l-4 border-l-orange md:w-1/2 lg:w-1/3"
-                >
-                  <h4 className="flex items-center text-sm space-x-2 mb-2">
-                    <FontAwesomeIcon icon={faDatabase} className="text-base" />
-                    <span>{server.name}</span>
-                  </h4>
-                  <ul className="flex items-center text-xs w-full">
-                    <li className="w-1/3">
-                      8s/s <span className="block text-gray">Waits</span>
-                    </li>
-                    <li className="w-1/3">
-                      4% <span className="block text-gray">CPU</span>
-                    </li>
-                    <li className="w-1/3">
-                      5.9MB/s <span className="block text-gray">Disk I/O</span>
-                    </li>
-                  </ul>
-                </div>
-              ))}
+        {data.length > 0 ? (
+          <div className="p-8 w-full xl:pr-96">
+            <div className="w-full md:w-2/3">
+              <button
+                type="button"
+                className="w-full py-2 px-4 border border-gray-light rounded-sm font-bold text-left text-sm"
+              >
+                1 - Production (3)
+              </button>
+              <div className="flex flex-col py-2 space-y-4 md:flex-row md:space-x-4 md:space-y-0 md:py-4">
+                {data.map((server, index) => (
+                  <div
+                    key={`server-production-${index}`}
+                    className="border border-gray-light p-2 w-full border-l-4 border-l-orange md:w-1/2 lg:w-1/3"
+                  >
+                    <h4 className="flex items-center text-sm space-x-2 mb-2">
+                      <FontAwesomeIcon
+                        icon={faDatabase}
+                        className="text-base"
+                      />
+                      <span className="truncate">{server.nmActiveServer}</span>
+                    </h4>
+                    <ul className="flex items-center text-xs w-full">
+                      <li className="w-1/3">
+                        8s/s <span className="block text-gray">Waits</span>
+                      </li>
+                      <li className="w-1/3">
+                        4% <span className="block text-gray">CPU</span>
+                      </li>
+                      <li className="w-1/3">
+                        5.9MB/s{' '}
+                        <span className="block text-gray">Disk I/O</span>
+                      </li>
+                    </ul>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
-          <div className="w-full md:w-2/3">
-            <button
-              type="button"
-              className="w-full py-2 px-4 border border-gray-light rounded-sm font-bold text-left text-sm"
-            >
-              2 - Staging (2)
-            </button>
-            <div className="flex flex-col py-2 space-y-4 md:flex-row md:space-x-4 md:space-y-0 md:py-4">
-              {servers.map((server, index) => (
-                <div
-                  key={`server-staging-${index}`}
-                  className="border border-gray-light p-2 w-full border-l-4 border-l-blue md:w-1/2 lg:w-1/3"
-                >
-                  <h4 className="flex items-center text-sm space-x-2 mb-2">
-                    <FontAwesomeIcon icon={faDatabase} className="text-base" />
-                    <span>{server.name}</span>
-                  </h4>
-                  <ul className="flex items-center text-xs w-full">
-                    <li className="w-1/3">
-                      8s/s <span className="block text-gray">Waits</span>
-                    </li>
-                    <li className="w-1/3">
-                      4% <span className="block text-gray">CPU</span>
-                    </li>
-                    <li className="w-1/3">
-                      5.9MB/s <span className="block text-gray">Disk I/O</span>
-                    </li>
-                  </ul>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
+        ) : (
+          ''
+        )}
       </div>
     </Layout>
   )
