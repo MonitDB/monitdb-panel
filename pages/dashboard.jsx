@@ -83,7 +83,7 @@ const DashboardPage = () => {
       <div className="flex flex-col w-full max-w-full">
         <div
           className="w-full bg-gray-dark text-white p-8
-            xl:fixed xl:top-16 xl:right-0 xl:w-80 xl:h-[calc(100vh-64px)]"
+            xl:fixed xl:top-16 xl:left-0 xl:w-80 xl:h-[calc(100vh-64px)]"
         >
           <header className="mb-4">
             <h3 className="mb-4 flex items-center space-x-2 text-xl font-bold">
@@ -174,7 +174,7 @@ const DashboardPage = () => {
           </div>
         </div>
 
-        <div className="flex items-start justify-between p-8 w-full border-b border-gray-light xl:pr-96">
+        <div className="flex items-start justify-between p-8 w-full border-b border-gray-light xl:pl-96">
           <p className="mr-10 text-center">
             <strong className="block text-2xl">12</strong>{' '}
             <span className="text-sm">instâncias</span>
@@ -256,7 +256,7 @@ const DashboardPage = () => {
         </div>
 
         {data.length > 0 ? (
-          <div className="p-8 w-full xl:pr-96">
+          <div className="p-8 w-full xl:pl-96">
             <div className="w-full md:w-2/3">
               <button
                 type="button"

@@ -46,7 +46,7 @@ const Header = () => {
           <h1>
             <Link
               href="/dashboard/"
-              className="flex items-center justify-center h-16 px-8 space-x-2 uppercase font-oxygen bg-blue"
+              className="flex items-center justify-center h-16 px-8 space-x-2 uppercase font-oxygen bg-blue xl:w-80"
             >
               <DatabasesSvg className="block w-5 h-5" /> <span>MonitDB</span>
             </Link>
