@@ -1,6 +1,6 @@
 import cn from 'classnames'
 import { useRouter } from 'next/router'
-import React, { useState } from 'react'
+import React from 'react'
 
 import Link from '~/components/link'
 import DatabasesSvg from '~/icons/databases.svg'
