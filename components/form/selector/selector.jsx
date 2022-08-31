@@ -5,7 +5,7 @@ import React, { useRef, useState } from 'react'
 
 import useOutsideClick from '~/helpers/use-click-outside'
 
-const Selector = ({ name, options, onChange }) => {
+const Selector = ({ className = '', name, options, onChange }) => {
   const listReference = useRef(null)
   const [isOpen, setIsOpen] = useState(false)
   const [selectedOptions, setSelectedOptions] = useState([])
@@ -40,7 +40,7 @@ const Selector = ({ name, options, onChange }) => {
   }
 
   return (
-    <div ref={reference} className="relative w-full md:max-w-48">
+    <div ref={reference} className={classNames('relative w-full', className)}>
       <button
         type="button"
         className="w-full flex items-center justify-between px-4 h-10 bg-white
