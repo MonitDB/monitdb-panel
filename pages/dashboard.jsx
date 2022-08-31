@@ -68,7 +68,7 @@ const DashboardPage = () => {
     try {
       const response = await getAlertClusterActiveNode()
 
-      setData(response?.data || [])
+      setData(response?.data?.result || [])
     } catch (error) {
       console.error(error) // eslint-disable-line no-console
     }
