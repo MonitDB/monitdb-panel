@@ -238,7 +238,7 @@ const DashboardPage = () => {
           </form>
         </div>
 
-        <div className="flex items-start justify-between p-8 w-full xl:pr-96">
+        <div className="p-8 w-full xl:pr-96">
           <div className="w-full md:w-2/3">
             <button
               type="button"
@@ -249,8 +249,41 @@ const DashboardPage = () => {
             <div className="flex flex-col py-2 space-y-4 md:flex-row md:space-x-4 md:space-y-0 md:py-4">
               {servers.map((server, index) => (
                 <div
-                  key={`server-${index}`}
+                  key={`server-production-${index}`}
                   className="border border-gray-light p-2 w-full border-l-4 border-l-orange md:w-1/2 lg:w-1/3"
+                >
+                  <h4 className="flex items-center text-sm space-x-2 mb-2">
+                    <FontAwesomeIcon icon={faDatabase} className="text-base" />
+                    <span>{server.name}</span>
+                  </h4>
+                  <ul className="flex items-center text-xs w-full">
+                    <li className="w-1/3">
+                      8s/s <span className="block text-gray-light">Waits</span>
+                    </li>
+                    <li className="w-1/3">
+                      4% <span className="block text-gray-light">CPU</span>
+                    </li>
+                    <li className="w-1/3">
+                      5.9MB/s{' '}
+                      <span className="block text-gray-light">Disk I/O</span>
+                    </li>
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="w-full md:w-2/3">
+            <button
+              type="button"
+              className="w-full py-2 px-4 border border-gray-light rounded-sm font-bold text-left text-sm"
+            >
+              2 - Staging (2)
+            </button>
+            <div className="flex flex-col py-2 space-y-4 md:flex-row md:space-x-4 md:space-y-0 md:py-4">
+              {servers.map((server, index) => (
+                <div
+                  key={`server-staging-${index}`}
+                  className="border border-gray-light p-2 w-full border-l-4 border-l-blue md:w-1/2 lg:w-1/3"
                 >
                   <h4 className="flex items-center text-sm space-x-2 mb-2">
                     <FontAwesomeIcon icon={faDatabase} className="text-base" />
