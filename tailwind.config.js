@@ -18,6 +18,9 @@ module.exports = {
         DEFAULT: '#5046e5',
         light: '#6867ef',
       },
+      orange: {
+        DEFAULT: '#fc9003',
+      },
       gray: {
         DEFAULT: '#9da5b1',
         light: '#d3d3d3',
