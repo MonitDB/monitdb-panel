@@ -258,14 +258,13 @@ const DashboardPage = () => {
                   </h4>
                   <ul className="flex items-center text-xs w-full">
                     <li className="w-1/3">
-                      8s/s <span className="block text-gray-light">Waits</span>
+                      8s/s <span className="block text-gray">Waits</span>
                     </li>
                     <li className="w-1/3">
-                      4% <span className="block text-gray-light">CPU</span>
+                      4% <span className="block text-gray">CPU</span>
                     </li>
                     <li className="w-1/3">
-                      5.9MB/s{' '}
-                      <span className="block text-gray-light">Disk I/O</span>
+                      5.9MB/s <span className="block text-gray">Disk I/O</span>
                     </li>
                   </ul>
                 </div>
@@ -291,14 +290,13 @@ const DashboardPage = () => {
                   </h4>
                   <ul className="flex items-center text-xs w-full">
                     <li className="w-1/3">
-                      8s/s <span className="block text-gray-light">Waits</span>
+                      8s/s <span className="block text-gray">Waits</span>
                     </li>
                     <li className="w-1/3">
-                      4% <span className="block text-gray-light">CPU</span>
+                      4% <span className="block text-gray">CPU</span>
                     </li>
                     <li className="w-1/3">
-                      5.9MB/s{' '}
-                      <span className="block text-gray-light">Disk I/O</span>
+                      5.9MB/s <span className="block text-gray">Disk I/O</span>
                     </li>
                   </ul>
                 </div>
