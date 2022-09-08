@@ -1,4 +1,4 @@
-import SignUp from '~/components/forms/sign-up'
+import Login from '~/components/forms/login'
 import Cta from '~/components/ui/cta'
 import Layout from '~/layouts/clean'
 // import NotFound from '~/pages/404'
@@ -20,7 +20,7 @@ const HomePage = () => {
             md:overflow-hidden lg:max-w-[900px]"
         >
           <div className="p-4 bg-white md:w-1/2 md:p-10">
-            <SignUp />
+            <Login />
           </div>
           <div
             className="py-10 px-4 bg-blue md:w-1/2 md:px-10 md:flex
