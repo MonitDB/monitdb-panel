@@ -7,22 +7,29 @@ import { postTokenValidate } from '~/services/user'
 const loginPath = '/?redirected=true'
 
 const ProtectedPage = ({ children }) => {
-  const { userState } = useContext(UserContext)
+  const { userState, setUserState } = useContext(UserContext)
 
   useEffect(() => {
     const validateToken = async () => {
-      const response = await postTokenValidate(userState?.token)
-      const dataResult = response?.data?.result
+      try {
+        const response = await postTokenValidate(userState?.token)
+        const dataResult = response?.data?.result
 
-      if (!dataResult?.token) {
-        Router.replace(loginPath)
+        if (dataResult?.token) {
+          setUserState({
+            logged: true,
+            token: dataResult?.token,
+          })
+        }
+      } catch {
+        Router.push(loginPath)
       }
     }
 
     if (!userState?.token) {
       validateToken()
     }
-  }, [userState?.token])
+  }, [userState?.token, setUserState])
 
   if (!userState.token) {
     return ''
