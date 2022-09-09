@@ -1,6 +1,6 @@
 import { useFormik } from 'formik'
 import { useRouter } from 'next/router'
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import * as Yup from 'yup'
 
 import { Field, Input, Submit } from '~/components/form'
@@ -17,6 +17,7 @@ const SignUpFormSchema = Yup.object().shape({
 
 const SignUp = () => {
   const { setUserState } = useContext(UserContext)
+  const [error, setError] = useState('')
   const router = useRouter()
   const formik = useFormik({
     initialValues: {
@@ -25,19 +26,27 @@ const SignUp = () => {
     },
     validationSchema: SignUpFormSchema,
     onSubmit: async () => {
-      const response = await postLogin(formik.values)
-      const dataResult = response?.data?.result
+      try {
+        const response = await postLogin(formik.values)
+        const dataResult = response?.data?.result
 
-      if (dataResult?.token) {
-        setUserState({
-          logged: true,
-          name: dataResult?.loginname,
-          email: dataResult?.loginemail,
-          roleId: dataResult?.idrole,
-          token: dataResult?.token,
-        })
+        if (dataResult?.token) {
+          setUserState({
+            logged: true,
+            name: dataResult?.loginname,
+            email: dataResult?.loginemail,
+            roleId: dataResult?.idrole,
+            token: dataResult?.token,
+          })
 
-        router.push('/dashboard')
+          router.push('/dashboard')
+        }
+      } catch {
+        setError('Usuário ou senha inválidos')
+
+        setTimeout(() => {
+          setError('')
+        }, 4000)
       }
     },
   })
@@ -85,6 +94,11 @@ const SignUp = () => {
             value={formik.values.password}
             hasError={!!(formik.errors.password && formik.touched.password)}
           />
+          {error && (
+            <p className="absolute bottom-0 w-full transform translate-y-6 text-right text-xs text-danger">
+              {error}
+            </p>
+          )}
         </Field>
         <div className="mt-2 col-span-2 md:col-span-12 md:flex md:justify-between md:items-center">
           <Submit
