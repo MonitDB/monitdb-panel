@@ -1,3 +1,10 @@
+import {
+  faArrowRightFromBracket,
+  faGear,
+  faUser,
+  faUserPen,
+} from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import cn from 'classnames'
 import { useRouter } from 'next/router'
 import React from 'react'
@@ -40,7 +47,7 @@ const Header = () => {
   const router = useRouter()
 
   return (
-    <header className="w-full h-16 z-40">
+    <header className="relative w-full h-16 z-40">
       <div className="fixed bg-gray-dark w-full flex items-center justify-start text-white">
         <div className="w-full md:w-auto">
           <h1>
@@ -53,7 +60,7 @@ const Header = () => {
           </h1>
         </div>
 
-        <div>
+        <div className="w-full md:flex md:items-center">
           <nav>
             <ul className="flex items-center">
               {navMenuList.map((item, index) => (
@@ -73,6 +80,64 @@ const Header = () => {
               ))}
             </ul>
           </nav>
+
+          <div className="group relative ml-auto pr-4 lg:pr-6">
+            <button
+              type="button"
+              className="w-8 h-8 flex items-center justify-center rounded-full border
+                border-white transition-all duration-300 ease-in-out lg:opacity-50
+                  lg:group-hover:opacity-100"
+            >
+              <FontAwesomeIcon icon={faUser} />
+            </button>
+            <ul
+              className="absolute top-full right-4 w-full min-w-48 bg-white border
+                border-gray-light shadow-md rounded-md space-y-1 transform
+                translate-y-6 text-gray-dark text-sm py-2 opacity-0 invisible transition-all
+                duration-150 ease-in-out delay-150 lg:group-hover:translate-y-2
+                lg:group-hover:opacity-100 lg:group-hover:visible lg:group-hover:delay-0"
+            >
+              <li>
+                <Link
+                  href="/my-account/"
+                  className="flex items-center space-x-2 py-1 px-4
+                      lg:hover:text-blue"
+                >
+                  <i className="block w-5 h-5">
+                    <FontAwesomeIcon icon={faUserPen} />
+                  </i>
+                  <span>Dados pessoais</span>
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/my-account/"
+                  className="flex items-center space-x-2 py-1 px-4
+                      lg:hover:text-blue"
+                >
+                  <i className="block w-5 h-5">
+                    <FontAwesomeIcon icon={faGear} />
+                  </i>
+                  <span>Preferências</span>
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/logout/"
+                  className="flex items-center space-x-2 py-1 px-4
+                      lg:hover:text-blue"
+                >
+                  <i className="block w-5 h-5">
+                    <FontAwesomeIcon
+                      icon={faArrowRightFromBracket}
+                      className="transform rotate-180"
+                    />
+                  </i>
+                  <span>Logout</span>
+                </Link>
+              </li>
+            </ul>
+          </div>
 
           <button type="button" className="ml-auto inline-block md:hidden">
             abrir menu
