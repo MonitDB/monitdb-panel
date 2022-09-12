@@ -1,6 +1,7 @@
 import React, { createContext, useEffect, useState } from 'react'
 
-import { setLocalStorage } from '~/utils/local-storage'
+import { getMe } from '~/services/user'
+import { removeLocalStorage, setLocalStorage } from '~/utils/local-storage'
 
 const initialState = {
   logged: false,
@@ -17,13 +18,32 @@ const UserContextProvider = ({ children }) => {
 
   const unsetUserState = () => {
     setUserState(initialState)
+    removeLocalStorage('user_token')
+  }
+
+  const getUserData = async () => {
+    try {
+      const response = await getMe()
+      const dataResult = response?.data?.result
+
+      if (dataResult?.loginname || dataResult?.loginemail) {
+        setUserState({
+          ...userState,
+          name: dataResult?.loginname,
+          email: dataResult?.loginemail,
+        })
+      }
+    } catch {
+      unsetUserState()
+    }
   }
 
   useEffect(() => {
     if (userState?.token) {
       setLocalStorage('user_token', userState?.token)
+      getUserData()
     }
-  }, [userState?.token])
+  }, [userState?.token]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <UserContext.Provider
