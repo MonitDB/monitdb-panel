@@ -7,3 +7,7 @@ export const postLogin = async (data) => {
 export const postTokenValidate = async () => {
   return clientApi().post('/user/refresh-token')
 }
+
+export const getMe = async () => {
+  return clientApi().get('/user/me')
+}
