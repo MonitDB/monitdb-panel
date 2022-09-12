@@ -43,8 +43,8 @@ const Selector = ({ className = '', name, options, onChange }) => {
     <div ref={reference} className={classNames('relative w-full', className)}>
       <button
         type="button"
-        className="w-full flex items-center justify-between px-4 h-10 bg-white
-          leading-10 rounded outline-none"
+        className="relative w-full flex items-center justify-between px-4 h-10
+        bg-white leading-10 rounded outline-none"
         onClick={() => setIsOpen(!isOpen)}
       >
         <span className="text-xs truncate pr-2">

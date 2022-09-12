@@ -11,7 +11,7 @@ import { postLogin } from '~/services/user'
 // import GoogleIcon from '~/icons/google.svg'
 
 const SignUpFormSchema = Yup.object().shape({
-  login: Yup.string().required(),
+  login: Yup.string().email().required(),
   password: Yup.string().required(),
 })
 
