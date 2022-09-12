@@ -1,0 +1,6 @@
+.linksList {
+}
+
+.linksList a {
+  @apply block border-l-2 border-white pl-4 py-2 lg:hover:border-l-8 lg:hover:border-blue;
+}

@@ -1,0 +1,24 @@
+.breadcrumbs {
+  @apply mb-10;
+}
+
+.breadcrumbs ol {
+  @apply flex items-center space-x-2 text-sm;
+}
+
+.breadcrumbs li:not(:last-child) {
+  @apply relative pr-4;
+}
+
+.breadcrumbs li:not(:last-child) a {
+  @apply font-bold;
+}
+
+.breadcrumbs li:not(:last-child):after {
+  content: '>';
+  @apply absolute top-1/2 right-0 transform -translate-y-1/2 text-xs text-gray;
+}
+
+.breadcrumbs a {
+  @apply lg:hover:opacity-50;
+}

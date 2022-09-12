@@ -1,2 +1,5 @@
 export { default as PageWrapper } from './wrapper'
 export { default as PageHeader } from './header'
+export { default as PageSidebar } from './sidebar'
+export { PageSidebarTitle, PageSidebarLinksList } from './sidebar'
+export { default as PageContent } from './content'
