@@ -13,8 +13,6 @@ export default function MyApp({ Component, pageProps }) {
     <>
       <Main>
         <DefaultSeo
-          title="MonitDB"
-          titleTemplate="MonitDB"
           defaultTitle="MonitDB"
           openGraph={{
             type: 'website',

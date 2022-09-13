@@ -10,7 +10,12 @@ const labels = {
 
 const PageContent = ({ className = '', hideBreadcrumbs = false, children }) => {
   return (
-    <div className={classNames('p-8 w-full xl:pl-96', className)}>
+    <div
+      className={classNames(
+        'p-8 w-full xl:ml-auto xl:w-[calc(100vw-320px)]',
+        className
+      )}
+    >
       {!hideBreadcrumbs && (
         <Breadcrumbs
           containerClassName={styles.breadcrumbs}

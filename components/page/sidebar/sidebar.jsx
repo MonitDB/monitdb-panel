@@ -8,7 +8,7 @@ const PageSidebar = ({ className = '', children }) => {
     <aside
       className={classNames(
         `w-full bg-gray-dark text-white p-8 xl:fixed xl:top-16
-          xl:left-0 xl:w-80 xl:h-[calc(100vh-64px)]`,
+          xl:left-0 xl:w-80 xl:h-[calc(100vh-64px)] xl:overflow-y-auto`,
         className
       )}
     >

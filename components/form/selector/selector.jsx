@@ -58,9 +58,9 @@ const Selector = ({ className = '', name, options, onChange }) => {
         ref={listReference}
         className={classNames(
           `absolute top-full left-0 rounded bg-white w-full transform
-            overflow-hidden transition-all duration-150 ease-in-out`,
+            overflow-hidden transition-all duration-150 ease-in-out shadow-md`,
           {
-            'translate-y-1': isOpen,
+            'translate-y-1 z-10': isOpen,
             'translate-y-2 opacity-0 invisible': !isOpen,
           }
         )}

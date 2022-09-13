@@ -14,6 +14,7 @@ import React, { useEffect, useState } from 'react'
 
 import Select from '~/components/form/select'
 import Selector from '~/components/form/selector'
+import Grid from '~/components/grid'
 import Link from '~/components/link'
 import {
   PageContent,
@@ -21,44 +22,24 @@ import {
   PageSidebarTitle,
   PageWrapper,
 } from '~/components/page'
+import Reveal from '~/helpers/reveal'
 import Layout from '~/layouts/default'
-import { getAlertClusterActiveNode } from '~/services/alerts'
+import { getDashboardData } from '~/services/dashboard'
 
-const alerts = [
-  {
-    name: 'Error log entry',
-    generalAlerts: 2,
-    activeAlerts: 0,
-    type: 'warning',
-  },
-  {
-    name: 'Error log entry',
-    generalAlerts: 11,
-    activeAlerts: 0,
-    type: 'info',
-  },
-]
+const filterAlerts = (servers) => {
+  const alerts = []
 
-// const servers = [
-//   {
-//     id: 'a8s7df80a7sd98fy923298',
-//     status: 'healthy',
-//     name: 'sqm-sqlmonitorsqlmonitor',
-//   },
-//   {
-//     id: 'nb234a7sd98fy2342923298',
-//     status: 'healthy',
-//     name: 'ssc-db-n1',
-//   },
-//   {
-//     id: 'lkjweoa73242sd98fy923298',
-//     status: 'healthy',
-//     name: 'ssc-db-n2',
-//   },
-// ]
+  for (const server of servers) {
+    alerts.push(...server.alerts)
+  }
+
+  return alerts
+}
 
 const DashboardPage = () => {
   const [data, setData] = useState([])
+  const [alerts, setAlerts] = useState([])
+  const [indexActive, setIndexActive] = useState(0)
 
   const formik = useFormik({
     initialValues: {
@@ -72,18 +53,24 @@ const DashboardPage = () => {
     },
   })
 
-  const getAlerts = async () => {
-    try {
-      const response = await getAlertClusterActiveNode()
+  const toggleIndexActive = (index) => {
+    setIndexActive(indexActive === index ? -1 : index)
+  }
 
-      setData(response?.data?.result || [])
+  const getData = async () => {
+    try {
+      const response = await getDashboardData()
+      const dataResult = response?.data?.result || []
+
+      setData(dataResult)
+      setAlerts(filterAlerts(dataResult))
     } catch (error) {
       console.error(error) // eslint-disable-line no-console
     }
   }
 
   useEffect(() => {
-    getAlerts()
+    getData()
   }, [])
 
   return (
@@ -151,7 +138,7 @@ const DashboardPage = () => {
                       )}
                     </span>
                     <div className="w-full">
-                      <p>{alertItem.name}</p>
+                      <p>{alertItem.dsMessage}</p>
                       <p className="text-xs text-opacity-50 text-white">
                         {alertItem.activeAlerts} alertas ativos
                       </p>
@@ -165,7 +152,7 @@ const DashboardPage = () => {
                         }
                       )}
                     >
-                      {alertItem.generalAlerts}
+                      1
                     </span>
                   </Link>
                 </li>
@@ -181,139 +168,199 @@ const DashboardPage = () => {
             </div>
           </PageSidebar>
 
-          <PageContent
-            hideBreadcrumbs={true}
-            className="flex items-start justify-between border-b border-gray-light"
-          >
-            <p className="mr-10 text-center">
-              <strong className="block text-2xl">12</strong>{' '}
-              <span className="text-sm">instâncias</span>
-            </p>
-            <form
-              className="w-full flex flex-col space-y-4 xl:space-x-4 xl:space-y-0 xl:flex-row"
-              onSubmit={formik.handleSubmit}
-            >
-              <div className="relative min-w-56">
-                <input
-                  type="text"
-                  name="name"
-                  className="w-full px-4 h-10 bg-white leading-10 rounded outline-none text-sm"
-                  placeholder="Filtrar por nomes"
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  value={formik.values.name}
-                />
-                <button
-                  type="submit"
-                  className="group absolute top-1/2 transform -translate-y-1/2 right-4"
+          {data.length > 0 ? (
+            <>
+              <PageContent
+                hideBreadcrumbs={true}
+                className="flex items-start justify-between border-b border-gray-light"
+              >
+                <p className="mr-10 text-center">
+                  <strong className="block text-2xl">{data.length}</strong>{' '}
+                  <span className="text-sm">instâncias</span>
+                </p>
+                <form
+                  className="w-full flex flex-col space-y-4 xl:space-x-4 xl:space-y-0 xl:flex-row"
+                  onSubmit={formik.handleSubmit}
                 >
-                  <FontAwesomeIcon
-                    icon={faMagnifyingGlass}
-                    className="text-sm text-gray lg:group-hover:text-gray-dark"
+                  <div className="relative min-w-56">
+                    <input
+                      type="text"
+                      name="name"
+                      className="w-full px-4 h-10 bg-white leading-10 rounded outline-none text-sm"
+                      placeholder="Filtrar por nomes"
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      value={formik.values.name}
+                    />
+                    <button
+                      type="submit"
+                      className="group absolute top-1/2 transform -translate-y-1/2 right-4"
+                    >
+                      <FontAwesomeIcon
+                        icon={faMagnifyingGlass}
+                        className="text-sm text-gray lg:group-hover:text-gray-dark"
+                      />
+                    </button>
+                  </div>
+                  <Selector
+                    name="status"
+                    options={[
+                      { value: '', label: 'Todos os status' },
+                      { value: 'critical', label: 'Critical' },
+                      { value: 'warning', label: 'Warning' },
+                      { value: 'info', label: 'Info' },
+                      { value: 'healthy', label: 'Healthy' },
+                    ]}
+                    onChange={(value) => {
+                      formik.setFieldValue('status', value)
+                    }}
                   />
-                </button>
-              </div>
-              <Selector
-                name="status"
-                options={[
-                  { value: '', label: 'Todos os status' },
-                  { value: 'critical', label: 'Critical' },
-                  { value: 'warning', label: 'Warning' },
-                  { value: 'info', label: 'Info' },
-                  { value: 'healthy', label: 'Healthy' },
-                ]}
-                onChange={(value) => {
-                  formik.setFieldValue('status', value)
-                }}
-              />
-              <Selector
-                name="group"
-                options={[
-                  { value: '', label: 'Todos os grupos' },
-                  { value: 'production', label: 'Production' },
-                  { value: 'azure-database', label: 'Azure Database' },
-                  { value: 'staging', label: 'Staging' },
-                  { value: 'test', label: 'Test' },
-                  { value: 'simulation', label: 'Simulation' },
-                ]}
-                onChange={(value) => {
-                  formik.setFieldValue('group', value)
-                }}
-              />
-              <Selector
-                name="monitor"
-                options={[
-                  { value: '', label: 'All base monitors' },
-                  { value: 'primary', label: 'Primary' },
-                  { value: 'secondary', label: 'Secondary' },
-                  { value: 'azure', label: 'Azure' },
-                  { value: 'simulation', label: 'Simulation' },
-                ]}
-                onChange={(value) => {
-                  formik.setFieldValue('monitor', value)
-                }}
-              />
-              <button
-                type="reset"
-                className="block px-4 h-10 leading-10 rounded bg-blue text-white
+                  <Selector
+                    name="group"
+                    options={[
+                      { value: '', label: 'Todos os grupos' },
+                      { value: 'production', label: 'Production' },
+                      { value: 'azure-database', label: 'Azure Database' },
+                      { value: 'staging', label: 'Staging' },
+                      { value: 'test', label: 'Test' },
+                      { value: 'simulation', label: 'Simulation' },
+                    ]}
+                    onChange={(value) => {
+                      formik.setFieldValue('group', value)
+                    }}
+                  />
+                  <Selector
+                    name="monitor"
+                    options={[
+                      { value: '', label: 'All base monitors' },
+                      { value: 'primary', label: 'Primary' },
+                      { value: 'secondary', label: 'Secondary' },
+                      { value: 'azure', label: 'Azure' },
+                      { value: 'simulation', label: 'Simulation' },
+                    ]}
+                    onChange={(value) => {
+                      formik.setFieldValue('monitor', value)
+                    }}
+                  />
+                  <button
+                    type="reset"
+                    className="block px-4 h-10 leading-10 rounded bg-blue text-white
                   text-xs uppercase lg:hover:bg-blue-light disabled:opacity-30
                   disabled:lg:hover:bg-blue"
-                onClick={() => formik.resetForm()}
-              >
-                Limpar
-              </button>
-            </form>
-          </PageContent>
+                    onClick={() => formik.resetForm()}
+                  >
+                    Limpar
+                  </button>
+                </form>
+              </PageContent>
 
-          {data.length > 0 ? (
-            <PageContent hideBreadcrumbs={true}>
-              <div className="w-full md:w-2/3">
-                <button
-                  type="button"
-                  className="w-full py-2 px-4 bg-white border border-gray-light space-x-4
-                  rounded-sm font-bold text-left text-sm"
-                >
-                  <FontAwesomeIcon icon={faChevronDown} />
-                  <span>1 - Production ({data.length})</span>
-                </button>
-                <div className="flex flex-col py-2 space-y-4 md:flex-row md:space-x-4 md:space-y-0 md:py-4">
-                  {data.map((server, index) => (
-                    <div
-                      key={`server-production-${index}`}
-                      className="w-full border border-gray-light md:w-1/2 lg:w-1/3"
-                    >
-                      <Link
-                        href="/dashboard/"
-                        className="block bg-white p-2 relative border-l-4 border-l-orange
-                        lg:p-4 lg:hover:border-l-8"
-                      >
-                        <h4 className="flex items-center text-sm space-x-2 mb-2 lg:mb-4 lg:text-base">
-                          <FontAwesomeIcon
-                            icon={faDatabase}
-                            className="text-base"
-                          />
-                          <span className="truncate">
-                            {server.nmActiveServer}
-                          </span>
-                        </h4>
-                        <ul className="flex items-center text-xs w-full lg:text-sm">
-                          <li className="w-1/3">
-                            8s/s <span className="block text-gray">Waits</span>
-                          </li>
-                          <li className="w-1/3">
-                            4% <span className="block text-gray">CPU</span>
-                          </li>
-                          <li className="w-1/3">
-                            5.9MB/s{' '}
-                            <span className="block text-gray">Disk I/O</span>
-                          </li>
-                        </ul>
-                      </Link>
-                    </div>
-                  ))}
+              <PageContent hideBreadcrumbs={true}>
+                <div className="w-full">
+                  <button
+                    type="button"
+                    className="w-full py-2 px-4 bg-white border border-gray-light space-x-4
+                      rounded-sm font-bold text-left text-sm md:w-2/3"
+                    onClick={() => toggleIndexActive(0)}
+                  >
+                    <FontAwesomeIcon
+                      icon={faChevronDown}
+                      className={classNames(
+                        'transition-all duration-300 ease-in-out transform',
+                        {
+                          'rotate-180': indexActive !== 0,
+                        }
+                      )}
+                    />
+                    <span>1 - Production ({data.length})</span>
+                  </button>
+                  <Reveal active={indexActive === 0}>
+                    <Grid className="py-2 gap-y-4 md:py-4">
+                      {data.map((server, index) => (
+                        <div
+                          key={`server-production-${index}`}
+                          className="col-span-1 border border-gray-light md:col-span-4 lg:col-span-3"
+                        >
+                          <Link
+                            href="/dashboard/"
+                            className={classNames(
+                              `block bg-white p-2 relative border-l-4 lg:p-4 lg:hover:border-l-8`,
+                              {
+                                'border-l-orange': server.alerts.length > 0,
+                                'border-l-blue': server.alerts.length === 0,
+                                'opacity-25': !server.serverenable,
+                              }
+                            )}
+                          >
+                            <h4 className="flex items-center text-sm space-x-2 mb-2 lg:mb-4">
+                              <FontAwesomeIcon
+                                icon={faDatabase}
+                                className="text-base"
+                              />
+                              <span>{server.servername}</span>
+                            </h4>
+                            <dl className="text-xs w-full text-gray">
+                              <dt className="block text-gray-dark mt-2">
+                                Memory
+                              </dt>
+                              <dd>
+                                <span className="text-success">
+                                  {
+                                    server.dashboardDetails?.[0]
+                                      ?.memoryAvailableSize
+                                  }{' '}
+                                  GB - Free
+                                </span>{' '}
+                                /{' '}
+                                <span>
+                                  {
+                                    server.dashboardDetails?.[0]
+                                      ?.memoryTotalSize
+                                  }{' '}
+                                  GB Total
+                                </span>
+                              </dd>
+                              <dd className="mt-1 w-full h-1 block relative bg-gray-light">
+                                <span
+                                  className="absolute top-0 left-0 h-full bg-success"
+                                  style={{
+                                    width: `${server.dashboardDetails?.[0]?.memoryAvailableSizePercent}%`,
+                                  }}
+                                />
+                              </dd>
+                              <dt className="block text-gray-dark mt-2">
+                                Disk
+                              </dt>
+                              <dd>
+                                <span className="text-success">
+                                  {
+                                    server.dashboardDetails?.[0]
+                                      ?.diskAvailableSize
+                                  }{' '}
+                                  GB - Free
+                                </span>{' '}
+                                /{' '}
+                                <span>
+                                  {server.dashboardDetails?.[0]?.diskTotalSize}{' '}
+                                  GB Total
+                                </span>
+                              </dd>
+                              <dd className="mt-1 w-full h-1 block relative bg-gray-light">
+                                <span
+                                  className="absolute top-0 left-0 h-full bg-success"
+                                  style={{
+                                    width: `${server.dashboardDetails?.[0]?.diskAvailableSizePercent}%`,
+                                  }}
+                                />
+                              </dd>
+                            </dl>
+                          </Link>
+                        </div>
+                      ))}
+                    </Grid>
+                  </Reveal>
                 </div>
-              </div>
-            </PageContent>
+              </PageContent>
+            </>
           ) : (
             ''
           )}
