@@ -24,7 +24,7 @@ import {
 } from '~/components/page'
 import Reveal from '~/helpers/reveal'
 import Layout from '~/layouts/default'
-import { getDashboardData } from '~/services/dashboard'
+import { getDashboard } from '~/services/dashboard'
 
 const filterAlerts = (servers) => {
   const alerts = []
@@ -59,7 +59,7 @@ const DashboardPage = () => {
 
   const getData = async () => {
     try {
-      const response = await getDashboardData()
+      const response = await getDashboard()
       const dataResult = response?.data?.result || []
 
       setData(dataResult)

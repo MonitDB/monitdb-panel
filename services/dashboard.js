@@ -1,5 +1,5 @@
 import clientApi from '~/utils/client-api'
 
-export const getDashboardData = async () => {
+export const getDashboard = async () => {
   return clientApi().get(`/dashboard`)
 }

@@ -82,14 +82,14 @@ const Header = () => {
           </nav>
 
           <div className="group relative ml-auto pr-4 lg:pr-6">
-            <button
-              type="button"
+            <Link
+              href="/my-account/"
               className="w-8 h-8 flex items-center justify-center rounded-full border
                 border-white transition-all duration-300 ease-in-out lg:opacity-50
                   lg:group-hover:opacity-100"
             >
               <FontAwesomeIcon icon={faUser} />
-            </button>
+            </Link>
             <ul
               className="absolute top-full right-4 w-full min-w-48 bg-white border
                 border-gray-light shadow-md rounded-md space-y-1 transform

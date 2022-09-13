@@ -1,5 +1,5 @@
 import clientApi from '~/utils/client-api'
 
-export const getAlertClusterActiveNode = async () => {
-  return clientApi().get(`/alertclusteractivenodecontroller`)
+export const getAlerts = async () => {
+  return clientApi().get(`/alert`)
 }

@@ -1,14 +1,7 @@
 import classNames from 'classnames'
-import Breadcrumbs from 'nextjs-breadcrumbs'
 import React from 'react'
 
-import styles from './content.module.css'
-
-const labels = {
-  'my-account': 'Minha Conta',
-}
-
-const PageContent = ({ className = '', hideBreadcrumbs = false, children }) => {
+const PageContent = ({ className = '', children }) => {
   return (
     <div
       className={classNames(
@@ -16,15 +9,6 @@ const PageContent = ({ className = '', hideBreadcrumbs = false, children }) => {
         className
       )}
     >
-      {!hideBreadcrumbs && (
-        <Breadcrumbs
-          containerClassName={styles.breadcrumbs}
-          useDefaultStyle={false}
-          rootLabel="Home"
-          transformLabel={(label) => labels[label] || label}
-        />
-      )}
-
       {children}
     </div>
   )

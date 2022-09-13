@@ -21,7 +21,6 @@
     "next": "12.1.6",
     "next-plugin-svgr": "^1.1.1",
     "next-seo": "^5.5.0",
-    "nextjs-breadcrumbs": "^1.1.9",
     "react": "17.0.2",
     "react-chartjs-2": "^4.3.1",
     "react-dom": "17.0.2",

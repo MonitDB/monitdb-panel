@@ -35,7 +35,7 @@ const MyAccount = () => {
   useEffect(() => {
     formik.setFieldValue('name', userState?.name)
     formik.setFieldValue('email', userState?.email)
-  }, [formik, userState])
+  }, [userState]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <form
