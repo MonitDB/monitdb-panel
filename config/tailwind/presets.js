@@ -2,20 +2,27 @@ const plugin = require('tailwindcss/plugin')
 
 module.exports = plugin(function ({ addComponents, theme }) {
   addComponents({
-    '.heading-md': {
-      fontSize: '3.5rem',
-      lineHeight: '5rem',
-      fontFamily: theme('fontFamily.roboto'),
-    },
-    '.heading-sm': {
+    '.heading-lg': {
       fontSize: '2rem',
       lineHeight: '3rem',
-      fontFamily: theme('fontFamily.roboto'),
+      fontWeight: '700',
+      fontFamily: theme('fontFamily.oxygen'),
     },
-    '.heading-xs': {
+    '.heading-md': {
       fontSize: '1.5rem',
       lineHeight: '2rem',
-      fontFamily: theme('fontFamily.roboto'),
+      fontWeight: '700',
+      fontFamily: theme('fontFamily.oxygen'),
+    },
+    '.heading-sm': {
+      fontSize: '1.25rem',
+      lineHeight: '1.5rem',
+      fontFamily: theme('fontFamily.oxygen'),
+    },
+    '.heading-xs': {
+      fontSize: '1rem',
+      lineHeight: '1.5rem',
+      fontFamily: theme('fontFamily.oxygen'),
     },
   })
 })

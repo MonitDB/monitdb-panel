@@ -5,10 +5,10 @@ import Link from '~/components/link'
 const PageHeader = ({ title }) => {
   return (
     <header className="mb-10 text-black">
-      {title && <h1 className="text-3xl font-bold">{title}</h1>}
+      {title && <h1 className="heading-lg mb-2">{title}</h1>}
       <ul className="flex items-center space-x-2 text-sm">
         <li>
-          <Link href="/dashboard/">Home</Link>
+          <Link href="/dashboard/">Início</Link>
         </li>
         <li className="text-gray">/</li>
         <li>

@@ -92,13 +92,13 @@ const DashboardPage = () => {
               <Select
                 name="hour"
                 options={[
-                  { value: '3', label: '3 days' },
-                  { value: '1440', label: '24 hours' },
-                  { value: '720', label: '12 hours' },
-                  { value: '360', label: '6 hours' },
-                  { value: '180', label: '3 hours' },
-                  { value: '60', label: '1 hour' },
-                  { value: '15', label: '15 minutes' },
+                  { value: '3', label: '3 dias' },
+                  { value: '1440', label: '24 horas' },
+                  { value: '720', label: '12 horas' },
+                  { value: '360', label: '6 horas' },
+                  { value: '180', label: '3 horas' },
+                  { value: '60', label: '1 hora' },
+                  { value: '15', label: '15 minutos' },
                 ]}
               />
               <Select
@@ -300,7 +300,7 @@ const DashboardPage = () => {
                             </h4>
                             <dl className="text-xs w-full text-gray">
                               <dt className="block text-gray-dark mt-2">
-                                Memory
+                                Memória
                               </dt>
                               <dd>
                                 <span className="text-success">
@@ -308,7 +308,7 @@ const DashboardPage = () => {
                                     server.dashboardDetails?.[0]
                                       ?.memoryAvailableSize
                                   }{' '}
-                                  GB - Free
+                                  GB - Livre
                                 </span>{' '}
                                 /{' '}
                                 <span>
@@ -328,7 +328,7 @@ const DashboardPage = () => {
                                 />
                               </dd>
                               <dt className="block text-gray-dark mt-2">
-                                Disk
+                                Disco
                               </dt>
                               <dd>
                                 <span className="text-success">
@@ -336,7 +336,7 @@ const DashboardPage = () => {
                                     server.dashboardDetails?.[0]
                                       ?.diskAvailableSize
                                   }{' '}
-                                  GB - Free
+                                  GB - Livre
                                 </span>{' '}
                                 /{' '}
                                 <span>

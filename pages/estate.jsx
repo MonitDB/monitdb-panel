@@ -18,7 +18,7 @@ import faker from 'faker'
 import React, { useState } from 'react'
 import { Line } from 'react-chartjs-2'
 
-import { PageHeader, PageWrapper } from '~/components/page'
+import { PageContent, PageHeader, PageWrapper } from '~/components/page'
 import Reveal from '~/helpers/reveal'
 import Layout from '~/layouts/default'
 
@@ -95,9 +95,9 @@ const EstatePage = () => {
   return (
     <Layout>
       <PageWrapper className="p-8">
-        <PageHeader title="Propriedade" />
-        <div className="w-full prose max-w-full">
-          <div className="">
+        <PageContent removeSidebarMargin={true}>
+          <PageHeader title="Propriedade" />
+          <div className="w-full prose max-w-full">
             <table className="m-0">
               <thead>
                 <tr>
@@ -189,7 +189,7 @@ const EstatePage = () => {
               ))}
             </table>
           </div>
-        </div>
+        </PageContent>
       </PageWrapper>
     </Layout>
   )
