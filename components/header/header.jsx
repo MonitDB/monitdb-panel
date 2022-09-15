@@ -5,10 +5,11 @@ import {
   faUserPen,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import cn from 'classnames'
+import classNames from 'classnames'
 import { useRouter } from 'next/router'
 import React from 'react'
 
+import Image from '~/components/image'
 import Link from '~/components/link'
 import DatabasesSvg from '~/icons/databases.svg'
 
@@ -67,7 +68,7 @@ const Header = () => {
                 <li key={`nav-item-${index}`}>
                   <Link
                     href={item.href}
-                    className={cn(buttonClasses, {
+                    className={classNames(buttonClasses, {
                       [buttonClassesActive]:
                         item.href.search(router.asPath) >= 0,
                       'border-gray-dark text-opacity-50':
@@ -81,62 +82,74 @@ const Header = () => {
             </ul>
           </nav>
 
-          <div className="group relative ml-auto pr-4 lg:pr-6">
-            <Link
-              href="/my-account/"
-              className="w-8 h-8 flex items-center justify-center rounded-full border
-                border-white transition-all duration-300 ease-in-out lg:opacity-50
-                  lg:group-hover:opacity-100"
-            >
-              <FontAwesomeIcon icon={faUser} />
-            </Link>
-            <ul
-              className="absolute top-full right-4 w-full min-w-48 bg-white border
-                border-gray-light shadow-md rounded-md space-y-1 transform
+          <div className="ml-auto pr-4 flex items-center justify-between space-x-2 lg:pr-6">
+            <div className="group relative">
+              <Link
+                href="/my-account/"
+                className="w-8 h-8 flex items-center justify-center rounded-full border
+                border-white transition-all duration-300 ease-in-out
+                  lg:group-hover:opacity-75"
+              >
+                <FontAwesomeIcon icon={faUser} />
+              </Link>
+              <ul
+                className="absolute top-[40px] left-1/2 w-full min-w-48 bg-white border
+                border-gray-light shadow-md space-y-1 transform -translate-x-1/2
                 translate-y-6 text-gray-dark text-sm py-2 opacity-0 invisible transition-all
-                duration-150 ease-in-out delay-150 lg:group-hover:translate-y-2
+                duration-150 ease-in-out delay-300 lg:group-hover:translate-y-2
                 lg:group-hover:opacity-100 lg:group-hover:visible lg:group-hover:delay-0"
-            >
-              <li>
-                <Link
-                  href="/my-account/"
-                  className="flex items-center space-x-2 py-1 px-4
+              >
+                <li>
+                  <Link
+                    href="/my-account/"
+                    className="flex items-center space-x-2 py-1 px-4
                       lg:hover:text-blue"
-                >
-                  <i className="block w-5 h-5">
-                    <FontAwesomeIcon icon={faUserPen} />
-                  </i>
-                  <span>Dados pessoais</span>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/my-account/"
-                  className="flex items-center space-x-2 py-1 px-4
+                  >
+                    <i className="block w-5 h-5">
+                      <FontAwesomeIcon icon={faUserPen} />
+                    </i>
+                    <span>Dados pessoais</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/my-account/"
+                    className="flex items-center space-x-2 py-1 px-4
                       lg:hover:text-blue"
-                >
-                  <i className="block w-5 h-5">
-                    <FontAwesomeIcon icon={faGear} />
-                  </i>
-                  <span>Preferências</span>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/logout/"
-                  className="flex items-center space-x-2 py-1 px-4
+                  >
+                    <i className="block w-5 h-5">
+                      <FontAwesomeIcon icon={faGear} />
+                    </i>
+                    <span>Preferências</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/logout/"
+                    className="flex items-center space-x-2 py-1 px-4
                       lg:hover:text-blue"
-                >
-                  <i className="block w-5 h-5">
-                    <FontAwesomeIcon
-                      icon={faArrowRightFromBracket}
-                      className="transform rotate-180"
-                    />
-                  </i>
-                  <span>Logout</span>
-                </Link>
-              </li>
-            </ul>
+                  >
+                    <i className="block w-5 h-5">
+                      <FontAwesomeIcon
+                        icon={faArrowRightFromBracket}
+                        className="transform rotate-180"
+                      />
+                    </i>
+                    <span>Logout</span>
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            <div className="px-1 bg-white rounded-lg">
+              <Image
+                src="/images/logos/advance-care.png"
+                width="758"
+                height="259"
+                alt=""
+                className="w-full max-w-[100px] h-auto mx-auto"
+              />
+            </div>
           </div>
 
           <button type="button" className="ml-auto inline-block md:hidden">

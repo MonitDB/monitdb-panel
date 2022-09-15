@@ -1,5 +1,5 @@
 import Login from '~/components/forms/login'
-import Cta from '~/components/ui/cta'
+import Image from '~/components/image'
 import Layout from '~/layouts/clean'
 // import NotFound from '~/pages/404'
 // import { getPageData } from '~/services/page'
@@ -12,33 +12,27 @@ const HomePage = () => {
   return (
     <Layout>
       <div
-        className="w-full md:min-h-screen md:flex md:items-center
-          md:justify-center"
+        className="w-full border-b-8 border-b-blue bg-white min-h-screen md:bg-transparent
+          md:flex md:items-center md:justify-center"
       >
         <div
-          className="w-full md:relative md:flex md:rounded-lg
-            md:overflow-hidden lg:max-w-[900px]"
+          className="w-full p-4 bg-white md:relative md:flex md:rounded-lg md:p-10
+            md:shadow-md md:overflow-hidden lg:max-w-[480px]"
         >
-          <div className="p-4 bg-white md:w-1/2 md:p-10">
-            <Login />
-          </div>
-          <div
-            className="py-10 px-4 bg-blue md:w-1/2 md:px-10 md:flex
-              md:flex-col md:justify-center"
-          >
-            <div className="prose prose-headings:text-white mb-4 text-white md:mb-10">
-              <h3>Lorem ipsum!</h3>
+          <div className="w-full">
+            <div className="prose mb-10 text-center">
+              <Image
+                src="/images/logos/advance-care.png"
+                width="758"
+                height="259"
+                alt=""
+                className="w-full max-w-[260px] h-auto mx-auto"
+              />
               <p>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Lorem
-                ipsum dolor sit amet consectetur adipisicing elit. Velit,
-                cumque!
+                <strong>Preencha os seus dados nos campos abaixo:</strong>
               </p>
             </div>
-            <div>
-              <Cta href="/contacto" inverse>
-                Entre em contacto
-              </Cta>
-            </div>
+            <Login />
           </div>
         </div>
       </div>
