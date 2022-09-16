@@ -148,7 +148,7 @@ const ConfigurationsPage = () => {
                         Tokens de autenticação
                       </strong>
                       <span className="group-hover:opacity-75">
-                        Gerencie tokens de autenticação para o SQL Monitor.
+                        Gerencie tokens de autenticação para o MonitDB.
                       </span>
                     </Link>
                   </li>
@@ -159,7 +159,7 @@ const ConfigurationsPage = () => {
                         Baixe o módulo PowerShell
                       </strong>
                       <span className="group-hover:opacity-75">
-                        Configure o SQL Monitor por meio do PowerShell.
+                        Configure o MonitDB por meio do PowerShell.
                       </span>
                     </Link>
                   </li>
@@ -242,8 +242,8 @@ const ConfigurationsPage = () => {
                         Configurações de dados
                       </strong>
                       <span className="group-hover:opacity-75">
-                        Especifique por quanto tempo o SQL Monitor mantém os
-                        dados históricos em seu Repositório de Dados.
+                        Especifique por quanto tempo o MonitDB mantém os dados
+                        históricos em seu Repositório de Dados.
                       </span>
                     </Link>
                   </li>
@@ -275,7 +275,7 @@ const ConfigurationsPage = () => {
                         Sobre
                       </strong>
                       <span className="group-hover:opacity-75">
-                        Exiba informações sobre os componentes do SQL Monitor.
+                        Exiba informações sobre os componentes do MonitDB.
                       </span>
                     </Link>
                   </li>
