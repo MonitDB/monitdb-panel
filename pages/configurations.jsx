@@ -97,8 +97,7 @@ const ConfigurationsPage = () => {
                         Configurações de autenticação
                       </strong>
                       <span className="group-hover:opacity-75">
-                        Defina as preferências de autenticação para o SQL
-                        Monitor.
+                        Defina as preferências de autenticação para o MonitDB.
                       </span>
                     </Link>
                   </li>
@@ -130,8 +129,8 @@ const ConfigurationsPage = () => {
                         Configurações do visor
                       </strong>
                       <span className="group-hover:opacity-75">
-                        Defina as preferências de exibição do usuário para o SQL
-                        Monitor.
+                        Defina as preferências de exibição do usuário para o
+                        MonitDB.
                       </span>
                     </Link>
                   </li>
