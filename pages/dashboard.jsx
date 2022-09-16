@@ -26,19 +26,34 @@ import Reveal from '~/helpers/reveal'
 import Layout from '~/layouts/default'
 import { getDashboard } from '~/services/dashboard'
 
-const filterAlerts = (servers) => {
+const filterDataByServers = (servers) => {
   const alerts = []
+  const environments = []
+  const result = {}
 
   for (const server of servers) {
     alerts.push(...server.alerts)
+
+    if (!result?.[server.typeServerEnvironmentName]) {
+      result[server.typeServerEnvironmentName] = []
+    }
+
+    result[server.typeServerEnvironmentName].push(server)
   }
 
-  return alerts
+  return {
+    alerts,
+    environments,
+    servers: result,
+  }
 }
 
 const DashboardPage = () => {
-  const [data, setData] = useState([])
+  const [isDataLoaded, setIsDataLoaded] = useState(false)
+  const [data, setData] = useState()
+  const [servers, setServers] = useState()
   const [alerts, setAlerts] = useState([])
+  const [environments, setEnvironments] = useState([])
   const [indexActive, setIndexActive] = useState(0)
 
   const formik = useFormik({
@@ -62,8 +77,22 @@ const DashboardPage = () => {
       const response = await getDashboard()
       const dataResult = response?.data?.result || []
 
-      setData(dataResult)
-      setAlerts(filterAlerts(dataResult))
+      const { alerts, environments, servers } = filterDataByServers(
+        dataResult.servers
+      )
+
+      setData({
+        numberOfAlerts: dataResult?.numberOfAlerts,
+        numberOfInstances: dataResult?.numberOfInstances,
+      })
+
+      setServers(servers)
+      setAlerts(alerts)
+      setEnvironments(environments)
+      setIsDataLoaded(true)
+
+      // setData(dataResult)
+      // setAlerts(filterAlerts(dataResult))
     } catch (error) {
       console.error(error) // eslint-disable-line no-console
     }
@@ -113,54 +142,59 @@ const DashboardPage = () => {
                 ]}
               />
             </form>
-            <ul>
-              {alerts.map((alertItem, alertIndex) => (
-                <li
-                  key={`dashboard-${alertIndex}`}
-                  className="py-2 border-b border-gray-light border-opacity-25"
-                >
-                  <Link
-                    href="/dashboard/"
-                    className={classNames(
-                      'flex items-center space-x-2 border-l-2 pl-2 text-sm transition-all duration-150 ease-in-out lg:hover:border-l-8',
-                      {
-                        'border-orange': alertItem.type === 'warning',
-                        'border-blue': alertItem.type === 'info',
-                      }
-                    )}
+            {alerts.length > 0 ? (
+              <ul>
+                {alerts.map((alertItem, alertIndex) => (
+                  <li
+                    key={`dashboard-${alertIndex}`}
+                    className="py-2 border-b border-gray-light border-opacity-25"
                   >
-                    <span className="w-6 min-w-6 text-lg">
-                      {alertItem.type === 'info' && (
-                        <FontAwesomeIcon icon={faCircleInfo} />
-                      )}
-                      {alertItem.type === 'warning' && (
-                        <FontAwesomeIcon icon={faWarning} />
-                      )}
-                    </span>
-                    <div className="w-full">
-                      <p>{alertItem.dsMessage}</p>
-                      <p className="text-xs text-opacity-50 text-white">
-                        {alertItem.activeAlerts} alertas ativos
-                      </p>
-                    </div>
-                    <span
+                    <Link
+                      href="/dashboard/"
                       className={classNames(
-                        'flex items-center justify-center rounded-full w-6 min-w-6 h-6 ml-auto text-xs',
+                        'flex items-center space-x-2 border-l-2 pl-2 text-sm transition-all duration-150 ease-in-out border-orange lg:hover:border-l-8',
                         {
-                          'bg-blue': alertItem.type === 'info',
-                          'bg-orange': alertItem.type === 'warning',
+                          // 'border-orange': alertItem.type === 'warning',
+                          // 'border-blue': alertItem.type === 'info',
                         }
                       )}
                     >
-                      1
-                    </span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
+                      <span className="w-6 min-w-6 text-lg">
+                        {alertItem?.type === 'info' && (
+                          <FontAwesomeIcon icon={faCircleInfo} />
+                        )}
+                        {/* {alertItem.type === 'warning' && (
+                        <FontAwesomeIcon icon={faWarning} />
+                      )} */}
+                        <FontAwesomeIcon icon={faWarning} />
+                      </span>
+                      <div className="w-full">
+                        <p>{alertItem.message}</p>
+                        <p className="text-xs text-opacity-50 text-white">
+                          1 alertas ativo
+                        </p>
+                      </div>
+                      <span
+                        className={classNames(
+                          'flex items-center justify-center rounded-full w-6 min-w-6 h-6 ml-auto text-xs bg-orange',
+                          {
+                            // 'bg-blue': alertItem?.type === 'info',
+                            // 'bg-orange': alertItem?.type === 'warning',
+                          }
+                        )}
+                      >
+                        1
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              ''
+            )}
             <div className="py-4">
               <Link
-                href="/dashboard/alerts"
+                href="/alerts/"
                 className="py-2 px-4 bg-blue text-white rounded text-xs lg:hover:bg-blue-light"
               >
                 Ver todos
@@ -168,14 +202,16 @@ const DashboardPage = () => {
             </div>
           </PageSidebar>
 
-          {data.length > 0 ? (
+          {isDataLoaded && data ? (
             <>
               <PageContent
                 hideBreadcrumbs={true}
                 className="flex items-start justify-between border-b border-gray-light"
               >
                 <p className="mr-10 text-center">
-                  <strong className="block text-2xl">{data.length}</strong>{' '}
+                  <strong className="block text-2xl">
+                    {data.numberOfInstances}
+                  </strong>{' '}
                   <span className="text-sm">instâncias</span>
                 </p>
                 <form
@@ -255,109 +291,122 @@ const DashboardPage = () => {
               </PageContent>
 
               <PageContent hideBreadcrumbs={true}>
-                <div className="w-full">
-                  <button
-                    type="button"
-                    className="w-full py-2 px-4 bg-white border border-gray-light space-x-4
+                <div className="w-full space-y-5">
+                  {Object.keys(servers).map(
+                    (serverEnvironment, serverEnvironmentIndex) => (
+                      <div
+                        key={`server-${serverEnvironment}-${serverEnvironmentIndex}`}
+                        className="w-full"
+                      >
+                        <button
+                          type="button"
+                          className="w-full py-2 px-4 bg-white border border-gray-light space-x-4
                       rounded-sm font-bold text-left text-sm md:w-2/3"
-                    onClick={() => toggleIndexActive(0)}
-                  >
-                    <FontAwesomeIcon
-                      icon={faChevronDown}
-                      className={classNames(
-                        'transition-all duration-300 ease-in-out transform',
-                        {
-                          'rotate-180': indexActive !== 0,
-                        }
-                      )}
-                    />
-                    <span>1 - Production ({data.length})</span>
-                  </button>
-                  <Reveal active={indexActive === 0}>
-                    <Grid className="py-2 gap-y-4 md:py-4">
-                      {data.map((server, index) => (
-                        <div
-                          key={`server-production-${index}`}
-                          className="col-span-1 border border-gray-light md:col-span-4 lg:col-span-3"
+                          onClick={() =>
+                            toggleIndexActive(serverEnvironmentIndex)
+                          }
                         >
-                          <Link
-                            href="/dashboard/"
+                          <FontAwesomeIcon
+                            icon={faChevronDown}
                             className={classNames(
-                              `block bg-white p-2 relative border-l-4 lg:p-4 lg:hover:border-l-8`,
+                              'transition-all duration-300 ease-in-out transform',
                               {
-                                'border-l-orange': server.alerts.length > 0,
-                                'border-l-blue': server.alerts.length === 0,
-                                'opacity-25': !server.serverenable,
+                                'rotate-180':
+                                  indexActive !== serverEnvironmentIndex,
                               }
                             )}
-                          >
-                            <h4 className="flex items-center text-sm space-x-2 mb-2 lg:mb-4">
-                              <FontAwesomeIcon
-                                icon={faDatabase}
-                                className="text-base"
-                              />
-                              <span>{server.servername}</span>
-                            </h4>
-                            <dl className="text-xs w-full text-gray">
-                              <dt className="block text-gray-dark mt-2">
-                                Memória
-                              </dt>
-                              <dd>
-                                <span className="text-success">
-                                  {
-                                    server.dashboardDetails?.[0]
-                                      ?.memoryAvailableSize
-                                  }{' '}
-                                  GB - Livre
-                                </span>{' '}
-                                /{' '}
-                                <span>
-                                  {
-                                    server.dashboardDetails?.[0]
-                                      ?.memoryTotalSize
-                                  }{' '}
-                                  GB Total
-                                </span>
-                              </dd>
-                              <dd className="mt-1 w-full h-1 block relative bg-gray-light">
-                                <span
-                                  className="absolute top-0 left-0 h-full bg-success"
-                                  style={{
-                                    width: `${server.dashboardDetails?.[0]?.memoryAvailableSizePercent}%`,
-                                  }}
-                                />
-                              </dd>
-                              <dt className="block text-gray-dark mt-2">
-                                Disco
-                              </dt>
-                              <dd>
-                                <span className="text-success">
-                                  {
-                                    server.dashboardDetails?.[0]
-                                      ?.diskAvailableSize
-                                  }{' '}
-                                  GB - Livre
-                                </span>{' '}
-                                /{' '}
-                                <span>
-                                  {server.dashboardDetails?.[0]?.diskTotalSize}{' '}
-                                  GB Total
-                                </span>
-                              </dd>
-                              <dd className="mt-1 w-full h-1 block relative bg-gray-light">
-                                <span
-                                  className="absolute top-0 left-0 h-full bg-success"
-                                  style={{
-                                    width: `${server.dashboardDetails?.[0]?.diskAvailableSizePercent}%`,
-                                  }}
-                                />
-                              </dd>
-                            </dl>
-                          </Link>
-                        </div>
-                      ))}
-                    </Grid>
-                  </Reveal>
+                          />
+                          <span>
+                            {serverEnvironmentIndex + 1} - {serverEnvironment} (
+                            {servers[serverEnvironment].length})
+                          </span>
+                        </button>
+                        <Reveal active={indexActive === serverEnvironmentIndex}>
+                          <Grid className="py-2 gap-y-4 md:py-4">
+                            {servers[serverEnvironment].map((server, index) => (
+                              <div
+                                key={`server-production-${index}`}
+                                className="col-span-1 border border-gray-light md:col-span-4 lg:col-span-3"
+                              >
+                                <Link
+                                  href="/dashboard/"
+                                  className={classNames(
+                                    `block bg-white p-2 relative border-l-4 lg:p-4 lg:hover:border-l-8`,
+                                    {
+                                      'border-l-danger':
+                                        server.healthStatus === 'Critical',
+                                      'border-l-orange':
+                                        server.healthStatus === 'Warning',
+                                      'border-l-success':
+                                        server.healthStatus === 'Healtly',
+                                      'opacity-25': !server.serverEnable,
+                                    }
+                                  )}
+                                >
+                                  <h4 className="flex items-center text-sm space-x-2 mb-2 lg:mb-4">
+                                    <FontAwesomeIcon
+                                      icon={faDatabase}
+                                      className="text-base"
+                                    />
+                                    <span>{server.serverName}</span>
+                                  </h4>
+                                  <dl className="text-xs w-full text-gray">
+                                    <dt className="block text-gray-dark mt-2">
+                                      Memória
+                                    </dt>
+                                    <dd>
+                                      <span className="text-success">
+                                        {server.memoryInfo?.available}{' '}
+                                        {server.memoryInfo?.unity} - Livre
+                                      </span>{' '}
+                                      /{' '}
+                                      <span>
+                                        {server.memoryInfo?.capacity}{' '}
+                                        {server.memoryInfo?.unity} Total
+                                      </span>
+                                    </dd>
+                                    <dd className="mt-1 w-full h-1 block relative bg-gray-light">
+                                      <span
+                                        className="absolute top-0 left-0 h-full bg-success"
+                                        style={{
+                                          width: `${
+                                            server.memoryInfo
+                                              ?.availablePercent * 0.1
+                                          }%`,
+                                        }}
+                                      />
+                                    </dd>
+                                    <dt className="block text-gray-dark mt-2">
+                                      Disco
+                                    </dt>
+                                    <dd>
+                                      <span className="text-success">
+                                        {server.diskInfo?.totalAvailable} GB -
+                                        Livre
+                                      </span>{' '}
+                                      /{' '}
+                                      <span>
+                                        {server.diskInfo?.totalCapacity} GB
+                                        Total
+                                      </span>
+                                    </dd>
+                                    <dd className="mt-1 w-full h-1 block relative bg-gray-light">
+                                      <span
+                                        className="absolute top-0 left-0 h-full bg-success"
+                                        style={{
+                                          width: `40%`,
+                                        }}
+                                      />
+                                    </dd>
+                                  </dl>
+                                </Link>
+                              </div>
+                            ))}
+                          </Grid>
+                        </Reveal>
+                      </div>
+                    )
+                  )}
                 </div>
               </PageContent>
             </>
