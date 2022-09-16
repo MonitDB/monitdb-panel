@@ -29,23 +29,28 @@ import { getDashboard } from '~/services/dashboard'
 const filterDataByServers = (servers) => {
   const alerts = []
   const environments = []
-  const result = {}
 
   for (const server of servers) {
     alerts.push(...server.alerts)
 
-    if (!result?.[server.typeServerEnvironmentName]) {
-      result[server.typeServerEnvironmentName] = []
+    if (!environments.includes(server.typeServerEnvironmentName)) {
+      environments.push(server.typeServerEnvironmentName)
     }
-
-    result[server.typeServerEnvironmentName].push(server)
   }
 
   return {
     alerts,
     environments,
-    servers: result,
+    servers,
   }
+}
+
+const getServersByEnvironment = (environment, servers) => {
+  return (
+    servers?.filter(
+      (server) => server.typeServerEnvironmentName === environment
+    ) || []
+  )
 }
 
 const DashboardPage = () => {
@@ -102,6 +107,10 @@ const DashboardPage = () => {
     getData()
   }, [])
 
+  if (!isDataLoaded || !data) {
+    return ''
+  }
+
   return (
     <>
       <NextSeo title="Dashboard" />
@@ -134,11 +143,10 @@ const DashboardPage = () => {
                 name="group"
                 options={[
                   { value: '', label: 'Todos os grupos' },
-                  { value: 'production', label: 'Production' },
-                  { value: 'azure-database', label: 'Azure Database' },
-                  { value: 'staging', label: 'Staging' },
-                  { value: 'test', label: 'Test' },
-                  { value: 'simulation', label: 'Simulation' },
+                  ...environments.map((environment) => ({
+                    value: environment,
+                    label: environment,
+                  })),
                 ]}
               />
             </form>
@@ -202,217 +210,205 @@ const DashboardPage = () => {
             </div>
           </PageSidebar>
 
-          {isDataLoaded && data ? (
-            <>
-              <PageContent
-                hideBreadcrumbs={true}
-                className="flex items-start justify-between border-b border-gray-light"
-              >
-                <p className="mr-10 text-center">
-                  <strong className="block text-2xl">
-                    {data.numberOfInstances}
-                  </strong>{' '}
-                  <span className="text-sm">instâncias</span>
-                </p>
-                <form
-                  className="w-full flex flex-col space-y-4 xl:space-x-4 xl:space-y-0 xl:flex-row"
-                  onSubmit={formik.handleSubmit}
+          <PageContent
+            hideBreadcrumbs={true}
+            className="flex items-start justify-between border-b border-gray-light"
+          >
+            <p className="mr-10 text-center">
+              <strong className="block text-2xl">
+                {data.numberOfInstances}
+              </strong>{' '}
+              <span className="text-sm">instâncias</span>
+            </p>
+            <form
+              className="w-full flex flex-col space-y-4 xl:space-x-4 xl:space-y-0 xl:flex-row"
+              onSubmit={formik.handleSubmit}
+            >
+              <div className="relative min-w-56">
+                <input
+                  type="text"
+                  name="name"
+                  className="w-full px-4 h-10 bg-white leading-10 rounded outline-none text-sm"
+                  placeholder="Filtrar por nomes"
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.name}
+                />
+                <button
+                  type="submit"
+                  className="group absolute top-1/2 transform -translate-y-1/2 right-4"
                 >
-                  <div className="relative min-w-56">
-                    <input
-                      type="text"
-                      name="name"
-                      className="w-full px-4 h-10 bg-white leading-10 rounded outline-none text-sm"
-                      placeholder="Filtrar por nomes"
-                      onChange={formik.handleChange}
-                      onBlur={formik.handleBlur}
-                      value={formik.values.name}
-                    />
-                    <button
-                      type="submit"
-                      className="group absolute top-1/2 transform -translate-y-1/2 right-4"
-                    >
-                      <FontAwesomeIcon
-                        icon={faMagnifyingGlass}
-                        className="text-sm text-gray lg:group-hover:text-gray-dark"
-                      />
-                    </button>
-                  </div>
-                  <Selector
-                    name="status"
-                    options={[
-                      { value: '', label: 'Todos os status' },
-                      { value: 'critical', label: 'Critical' },
-                      { value: 'warning', label: 'Warning' },
-                      { value: 'info', label: 'Info' },
-                      { value: 'healthy', label: 'Healthy' },
-                    ]}
-                    onChange={(value) => {
-                      formik.setFieldValue('status', value)
-                    }}
+                  <FontAwesomeIcon
+                    icon={faMagnifyingGlass}
+                    className="text-sm text-gray lg:group-hover:text-gray-dark"
                   />
-                  <Selector
-                    name="group"
-                    options={[
-                      { value: '', label: 'Todos os grupos' },
-                      { value: 'production', label: 'Production' },
-                      { value: 'azure-database', label: 'Azure Database' },
-                      { value: 'staging', label: 'Staging' },
-                      { value: 'test', label: 'Test' },
-                      { value: 'simulation', label: 'Simulation' },
-                    ]}
-                    onChange={(value) => {
-                      formik.setFieldValue('group', value)
-                    }}
-                  />
-                  <Selector
-                    name="monitor"
-                    options={[
-                      { value: '', label: 'All base monitors' },
-                      { value: 'primary', label: 'Primary' },
-                      { value: 'secondary', label: 'Secondary' },
-                      { value: 'azure', label: 'Azure' },
-                      { value: 'simulation', label: 'Simulation' },
-                    ]}
-                    onChange={(value) => {
-                      formik.setFieldValue('monitor', value)
-                    }}
-                  />
-                  <button
-                    type="reset"
-                    className="block px-4 h-10 leading-10 rounded bg-blue text-white
+                </button>
+              </div>
+              <Selector
+                name="status"
+                options={[
+                  { value: '', label: 'Todos os status' },
+                  { value: 'critical', label: 'Critical' },
+                  { value: 'warning', label: 'Warning' },
+                  { value: 'info', label: 'Info' },
+                  { value: 'healthy', label: 'Healthy' },
+                ]}
+                onChange={(value) => {
+                  formik.setFieldValue('status', value)
+                }}
+              />
+              <Selector
+                name="group"
+                options={[
+                  { value: '', label: 'Todos os grupos' },
+                  ...environments.map((environment) => ({
+                    value: environment,
+                    label: environment,
+                  })),
+                ]}
+                onChange={(value) => {
+                  formik.setFieldValue('group', value)
+                }}
+              />
+              <Selector
+                name="monitor"
+                options={[
+                  { value: '', label: 'All base monitors' },
+                  { value: 'primary', label: 'Primary' },
+                  { value: 'secondary', label: 'Secondary' },
+                  { value: 'azure', label: 'Azure' },
+                  { value: 'simulation', label: 'Simulation' },
+                ]}
+                onChange={(value) => {
+                  formik.setFieldValue('monitor', value)
+                }}
+              />
+              <button
+                type="reset"
+                className="block px-4 h-10 leading-10 rounded bg-blue text-white
                   text-xs uppercase lg:hover:bg-blue-light disabled:opacity-30
                   disabled:lg:hover:bg-blue"
-                    onClick={() => formik.resetForm()}
-                  >
-                    Limpar
-                  </button>
-                </form>
-              </PageContent>
+                onClick={() => formik.resetForm()}
+              >
+                Limpar
+              </button>
+            </form>
+          </PageContent>
 
-              <PageContent hideBreadcrumbs={true}>
-                <div className="w-full space-y-5">
-                  {Object.keys(servers).map(
-                    (serverEnvironment, serverEnvironmentIndex) => (
-                      <div
-                        key={`server-${serverEnvironment}-${serverEnvironmentIndex}`}
-                        className="w-full"
-                      >
-                        <button
-                          type="button"
-                          className="w-full py-2 px-4 bg-white border border-gray-light space-x-4
+          <PageContent hideBreadcrumbs={true}>
+            <div className="w-full space-y-5">
+              {environments.map((environment, environmentIndex) => (
+                <div
+                  key={`server-${environment}-${environmentIndex}`}
+                  className="w-full"
+                >
+                  <button
+                    type="button"
+                    className="w-full py-2 px-4 bg-white border border-gray-light space-x-4
                       rounded-sm font-bold text-left text-sm md:w-2/3"
-                          onClick={() =>
-                            toggleIndexActive(serverEnvironmentIndex)
-                          }
-                        >
-                          <FontAwesomeIcon
-                            icon={faChevronDown}
-                            className={classNames(
-                              'transition-all duration-300 ease-in-out transform',
-                              {
-                                'rotate-180':
-                                  indexActive !== serverEnvironmentIndex,
-                              }
-                            )}
-                          />
-                          <span>
-                            {serverEnvironmentIndex + 1} - {serverEnvironment} (
-                            {servers[serverEnvironment].length})
-                          </span>
-                        </button>
-                        <Reveal active={indexActive === serverEnvironmentIndex}>
-                          <Grid className="py-2 gap-y-4 md:py-4">
-                            {servers[serverEnvironment].map((server, index) => (
-                              <div
-                                key={`server-production-${index}`}
-                                className="col-span-1 border border-gray-light md:col-span-4 lg:col-span-3"
-                              >
-                                <Link
-                                  href="/dashboard/"
-                                  className={classNames(
-                                    `block bg-white p-2 relative border-l-4 lg:p-4 lg:hover:border-l-8`,
-                                    {
-                                      'border-l-danger':
-                                        server.healthStatus === 'Critical',
-                                      'border-l-orange':
-                                        server.healthStatus === 'Warning',
-                                      'border-l-success':
-                                        server.healthStatus === 'Healtly',
-                                      'opacity-25': !server.serverEnable,
-                                    }
-                                  )}
-                                >
-                                  <h4 className="flex items-center text-sm space-x-2 mb-2 lg:mb-4">
-                                    <FontAwesomeIcon
-                                      icon={faDatabase}
-                                      className="text-base"
-                                    />
-                                    <span>{server.serverName}</span>
-                                  </h4>
-                                  <dl className="text-xs w-full text-gray">
-                                    <dt className="block text-gray-dark mt-2">
-                                      Memória
-                                    </dt>
-                                    <dd>
-                                      <span className="text-success">
-                                        {server.memoryInfo?.available}{' '}
-                                        {server.memoryInfo?.unity} - Livre
-                                      </span>{' '}
-                                      /{' '}
-                                      <span>
-                                        {server.memoryInfo?.capacity}{' '}
-                                        {server.memoryInfo?.unity} Total
-                                      </span>
-                                    </dd>
-                                    <dd className="mt-1 w-full h-1 block relative bg-gray-light">
-                                      <span
-                                        className="absolute top-0 left-0 h-full bg-success"
-                                        style={{
-                                          width: `${
-                                            server.memoryInfo
-                                              ?.availablePercent * 0.1
-                                          }%`,
-                                        }}
-                                      />
-                                    </dd>
-                                    <dt className="block text-gray-dark mt-2">
-                                      Disco
-                                    </dt>
-                                    <dd>
-                                      <span className="text-success">
-                                        {server.diskInfo?.totalAvailable} GB -
-                                        Livre
-                                      </span>{' '}
-                                      /{' '}
-                                      <span>
-                                        {server.diskInfo?.totalCapacity} GB
-                                        Total
-                                      </span>
-                                    </dd>
-                                    <dd className="mt-1 w-full h-1 block relative bg-gray-light">
-                                      <span
-                                        className="absolute top-0 left-0 h-full bg-success"
-                                        style={{
-                                          width: `40%`,
-                                        }}
-                                      />
-                                    </dd>
-                                  </dl>
-                                </Link>
-                              </div>
-                            ))}
-                          </Grid>
-                        </Reveal>
-                      </div>
-                    )
-                  )}
+                    onClick={() => toggleIndexActive(environmentIndex)}
+                  >
+                    <FontAwesomeIcon
+                      icon={faChevronDown}
+                      className={classNames(
+                        'transition-all duration-300 ease-in-out transform',
+                        {
+                          'rotate-180': indexActive !== environmentIndex,
+                        }
+                      )}
+                    />
+                    <span>
+                      {environmentIndex + 1} - {environment} (
+                      {getServersByEnvironment(environment, servers).length})
+                    </span>
+                  </button>
+                  <Reveal active={indexActive === environmentIndex}>
+                    <Grid className="py-2 gap-y-4 md:py-4">
+                      {getServersByEnvironment(environment, servers).map(
+                        (server, index) => (
+                          <div
+                            key={`server-production-${index}`}
+                            className="col-span-1 border border-gray-light md:col-span-4 lg:col-span-3"
+                          >
+                            <Link
+                              href="/dashboard/"
+                              className={classNames(
+                                `block bg-white p-2 relative border-l-4 lg:p-4 lg:hover:border-l-8`,
+                                {
+                                  'border-l-danger':
+                                    server.healthStatus === 'Critical',
+                                  'border-l-orange':
+                                    server.healthStatus === 'Warning',
+                                  'border-l-success':
+                                    server.healthStatus === 'Healtly',
+                                  'opacity-25': !server.serverEnable,
+                                }
+                              )}
+                            >
+                              <h4 className="flex items-center text-sm space-x-2 mb-2 lg:mb-4">
+                                <FontAwesomeIcon
+                                  icon={faDatabase}
+                                  className="text-base"
+                                />
+                                <span>{server.serverName}</span>
+                              </h4>
+                              <dl className="text-xs w-full text-gray">
+                                <dt className="block text-gray-dark mt-2">
+                                  Memória
+                                </dt>
+                                <dd>
+                                  <span className="text-success">
+                                    {server.memoryInfo?.available}{' '}
+                                    {server.memoryInfo?.unity} - Livre
+                                  </span>{' '}
+                                  /{' '}
+                                  <span>
+                                    {server.memoryInfo?.capacity}{' '}
+                                    {server.memoryInfo?.unity} Total
+                                  </span>
+                                </dd>
+                                <dd className="mt-1 w-full h-1 block relative bg-gray-light">
+                                  <span
+                                    className="absolute top-0 left-0 h-full bg-success"
+                                    style={{
+                                      width: `${
+                                        server.memoryInfo?.availablePercent *
+                                        0.1
+                                      }%`,
+                                    }}
+                                  />
+                                </dd>
+                                <dt className="block text-gray-dark mt-2">
+                                  Disco
+                                </dt>
+                                <dd>
+                                  <span className="text-success">
+                                    {server.diskInfo?.totalAvailable} GB - Livre
+                                  </span>{' '}
+                                  /{' '}
+                                  <span>
+                                    {server.diskInfo?.totalCapacity} GB Total
+                                  </span>
+                                </dd>
+                                <dd className="mt-1 w-full h-1 block relative bg-gray-light">
+                                  <span
+                                    className="absolute top-0 left-0 h-full bg-success"
+                                    style={{
+                                      width: `40%`,
+                                    }}
+                                  />
+                                </dd>
+                              </dl>
+                            </Link>
+                          </div>
+                        )
+                      )}
+                    </Grid>
+                  </Reveal>
                 </div>
-              </PageContent>
-            </>
-          ) : (
-            ''
-          )}
+              ))}
+            </div>
+          </PageContent>
         </PageWrapper>
       </Layout>
     </>
