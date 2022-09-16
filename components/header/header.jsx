@@ -11,7 +11,7 @@ import React from 'react'
 
 import Image from '~/components/image'
 import Link from '~/components/link'
-import DatabasesSvg from '~/icons/databases.svg'
+// import DatabasesSvg from '~/icons/databases.svg'
 
 const buttonClasses =
   'block h-16 leading-[64px] px-5 border-b-4 text-white lg:hover:text-opacity-100'
@@ -54,9 +54,16 @@ const Header = () => {
           <h1>
             <Link
               href="/dashboard/"
-              className="flex items-center justify-center h-16 px-8 space-x-2 uppercase font-oxygen bg-blue xl:w-80"
+              className="flex items-center justify-center h-16 px-8 space-x-2 uppercase font-oxygen xl:w-80"
             >
-              <DatabasesSvg className="block w-5 h-5" /> <span>MonitDB</span>
+              {/* <DatabasesSvg className="block w-5 h-5" /> <span>MonitDB</span> */}
+              <Image
+                src="/images/logos/monitdb.png"
+                alt="MonitDB"
+                width="475"
+                height="89"
+                className="w-full max-w-[140px]"
+              />
             </Link>
           </h1>
         </div>
