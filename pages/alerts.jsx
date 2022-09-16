@@ -1,24 +1,32 @@
 import {
+  faChevronRight,
   faDatabase,
+  faFolder,
   faMagnifyingGlass,
   faTag,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import classNames from 'classnames'
 import { useFormik } from 'formik'
 import { NextSeo } from 'next-seo'
 import React, { useEffect, useState } from 'react'
 
 import Checkbox from '~/components/form/checkbox'
 import Selector from '~/components/form/selector'
+import Link from '~/components/link'
 import {
   PageContent,
   PageSidebar,
+  PageSidebarLinksList,
   PageSidebarTitle,
   PageWrapper,
 } from '~/components/page'
+import Reveal from '~/helpers/reveal'
 import Layout from '~/layouts/default'
 import { getAlerts } from '~/services/alerts'
 import { getFormattedDate } from '~/utils/formats'
+
+const environments = ['DESENVOLVIMENTO', 'INTEGRAÇÃO', 'STAGING', 'PRODUÇÃO']
 
 const filterData = (data) => {
   const alerts = []
@@ -34,6 +42,9 @@ const filterData = (data) => {
 
 const AlertsPage = () => {
   const [data, setData] = useState([])
+  const [sidebarEnvironmentActiveIndex, setSidebarEnvironmentActiveIndex] =
+    useState(-1)
+  const [sidebarShowAllServers, setSidebarShowAllServers] = useState(true)
   const formik = useFormik({
     initialValues: {
       name: '',
@@ -72,6 +83,88 @@ const AlertsPage = () => {
                 <span>Monitored servers</span>
               </PageSidebarTitle>
             </header>
+            <div className="mb-10 text-sm">
+              <button
+                type="button"
+                className="flex items-center space-x-2 mb-4"
+                onClick={() => setSidebarShowAllServers(!sidebarShowAllServers)}
+              >
+                <FontAwesomeIcon icon={faFolder} />{' '}
+                <strong>Todos os servidores</strong>
+              </button>
+              <div className="w-full space-y-4">
+                {environments.map((environment, environmentIndex) => (
+                  <div
+                    key={`environment-${environmentIndex}`}
+                    className="w-full pl-5"
+                  >
+                    <button
+                      type="button"
+                      className="flex items-center space-x-2"
+                      onClick={() =>
+                        setSidebarEnvironmentActiveIndex(environmentIndex)
+                      }
+                    >
+                      <FontAwesomeIcon
+                        icon={faChevronRight}
+                        className={classNames(
+                          'transition-all duration-300 ease-in-out transform',
+                          {
+                            'rotate-90':
+                              sidebarEnvironmentActiveIndex ===
+                              environmentIndex,
+                          }
+                        )}
+                      />{' '}
+                      <FontAwesomeIcon icon={faFolder} />{' '}
+                      <strong className="lowercase first-letter:uppercase">
+                        {environment}
+                      </strong>
+                    </button>
+                    <Reveal
+                      active={
+                        sidebarEnvironmentActiveIndex === environmentIndex
+                      }
+                    >
+                      <div className="pt-4 pl-5">
+                        <button
+                          type="button"
+                          className="flex items-center space-x-2"
+                        >
+                          <FontAwesomeIcon icon={faDatabase} />{' '}
+                          <span>Servidor 01</span>
+                        </button>
+                      </div>
+                    </Reveal>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div>
+              <h3 className="mb-5 heading-xs">Ações</h3>
+              <PageSidebarLinksList>
+                <li>
+                  <Link href="/alerts/">
+                    Crie métricas e alertas personalizados
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/alerts/">Gerenciar servidores monitorados</Link>
+                </li>
+                <li>
+                  <Link href="/alerts/">Gerenciar grupos de servidores</Link>
+                </li>
+                <li>
+                  <Link href="/alerts/">Configurar alertas</Link>
+                </li>
+                <li>
+                  <Link href="/alerts/">Gerenciar supressões de alerta</Link>
+                </li>
+                <li>
+                  <Link href="/alerts/">Assine o feed de alerta RSS</Link>
+                </li>
+              </PageSidebarLinksList>
+            </div>
           </PageSidebar>
 
           <PageContent className="border-b border-gray-light">

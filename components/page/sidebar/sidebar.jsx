@@ -21,7 +21,7 @@ export const PageSidebarTitle = ({ className = '', children }) => {
   return (
     <h3
       className={classNames(
-        'mb-4 flex items-center space-x-2 text-xl font-bold',
+        'mb-4 flex items-center space-x-2 heading-sm',
         className
       )}
     >

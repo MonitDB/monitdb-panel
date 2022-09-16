@@ -17,11 +17,13 @@ module.exports = plugin(function ({ addComponents, theme }) {
     '.heading-sm': {
       fontSize: '1.25rem',
       lineHeight: '1.5rem',
+      fontWeight: '700',
       fontFamily: theme('fontFamily.oxygen'),
     },
     '.heading-xs': {
       fontSize: '1rem',
       lineHeight: '1.5rem',
+      fontWeight: '700',
       fontFamily: theme('fontFamily.oxygen'),
     },
   })
