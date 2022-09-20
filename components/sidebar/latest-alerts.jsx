@@ -91,7 +91,8 @@ const LatestAlerts = () => {
               <Link
                 href="/alerts/"
                 className={classNames(
-                  'flex items-center space-x-2 border-l-2 pl-2 text-sm transition-all duration-150 ease-in-out border-orange lg:hover:border-l-8',
+                  `flex items-center space-x-2 border-l-2 pl-2 text-sm transition-all
+                    duration-150 ease-in-out border-orange lg:hover:border-l-8`,
                   {
                     // 'border-orange': alertItem.type === 'warning',
                     // 'border-blue': alertItem.type === 'info',

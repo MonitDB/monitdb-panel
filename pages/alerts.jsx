@@ -1,50 +1,29 @@
 import {
-  faChevronRight,
   faDatabase,
-  faFolder,
   faMagnifyingGlass,
   faTag,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import classNames from 'classnames'
 import { useFormik } from 'formik'
 import { NextSeo } from 'next-seo'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 
 import Checkbox from '~/components/form/checkbox'
 import Selector from '~/components/form/selector'
-import Link from '~/components/link'
-import {
-  PageContent,
-  PageSidebar,
-  PageSidebarLinksList,
-  PageSidebarTitle,
-  PageWrapper,
-} from '~/components/page'
-import Reveal from '~/helpers/reveal'
+import { PageContent, PageWrapper } from '~/components/page'
+import MonitoredServersSidebar from '~/components/sidebar/monitored-servers'
+import GlobalContext from '~/contexts/global'
 import Layout from '~/layouts/default'
-import { getAlerts } from '~/services/alerts'
+import { getAlerts, getAlertsParameter } from '~/services/alerts'
+import { formatAlert } from '~/utils/alert'
 import { getFormattedDate } from '~/utils/formats'
 
-const environments = ['DESENVOLVIMENTO', 'INTEGRAÇÃO', 'STAGING', 'PRODUÇÃO']
-
-const filterData = (data) => {
-  const alerts = []
-
-  for (const item of data) {
-    alerts.push(
-      ...item.alerts.map((alert) => ({ ...alert, server: item.server }))
-    )
-  }
-
-  return alerts
-}
-
-const AlertsPage = () => {
-  const [data, setData] = useState([])
-  const [sidebarEnvironmentActiveIndex, setSidebarEnvironmentActiveIndex] =
-    useState(-1)
-  const [sidebarShowAllServers, setSidebarShowAllServers] = useState(true)
+const AlertsPage = ({ data }) => {
+  const {
+    globalState: { servers, serverTypes, serverEnvironments },
+  } = useContext(GlobalContext)
+  const [alertsParameters, setAlertsParameters] = useState([])
+  const [alerts, setAlerts] = useState([])
   const formik = useFormik({
     initialValues: {
       name: '',
@@ -57,115 +36,42 @@ const AlertsPage = () => {
     },
   })
 
-  const getData = async () => {
-    try {
-      const response = await getAlerts()
-      const dataResult = response?.data?.result || []
-
-      setData(filterData(dataResult))
-    } catch (error) {
-      console.error(error) // eslint-disable-line no-console
+  useEffect(() => {
+    const getAlertsParameterData = async () => {
+      try {
+        const responseAlertsParameter = await getAlertsParameter()
+        setAlertsParameters(responseAlertsParameter?.data?.result || [])
+      } catch (error) {
+        console.log('error', error) // eslint-disable-line no-console
+      }
     }
-  }
+
+    getAlertsParameterData()
+  }, [])
 
   useEffect(() => {
-    getData()
-  }, [])
+    if (alertsParameters.length === 0) return
+
+    setAlerts(
+      [...data].map((alert) =>
+        formatAlert(alert, {
+          servers,
+          serverTypes,
+          serverEnvironments,
+          alertsParameters,
+        })
+      )
+    )
+  }, [data, servers, serverTypes, serverEnvironments, alertsParameters])
+
+  console.log(alerts)
 
   return (
     <>
       <NextSeo title="Alerts" />
       <Layout>
         <PageWrapper>
-          <PageSidebar>
-            <header className="mb-4">
-              <PageSidebarTitle>
-                <span>Monitored servers</span>
-              </PageSidebarTitle>
-            </header>
-            <div className="mb-10 text-sm">
-              <button
-                type="button"
-                className="flex items-center space-x-2 mb-4"
-                onClick={() => setSidebarShowAllServers(!sidebarShowAllServers)}
-              >
-                <FontAwesomeIcon icon={faFolder} />{' '}
-                <strong>Todos os servidores</strong>
-              </button>
-              <div className="w-full space-y-4">
-                {environments.map((environment, environmentIndex) => (
-                  <div
-                    key={`environment-${environmentIndex}`}
-                    className="w-full pl-5"
-                  >
-                    <button
-                      type="button"
-                      className="flex items-center space-x-2"
-                      onClick={() =>
-                        setSidebarEnvironmentActiveIndex(environmentIndex)
-                      }
-                    >
-                      <FontAwesomeIcon
-                        icon={faChevronRight}
-                        className={classNames(
-                          'transition-all duration-300 ease-in-out transform',
-                          {
-                            'rotate-90':
-                              sidebarEnvironmentActiveIndex ===
-                              environmentIndex,
-                          }
-                        )}
-                      />{' '}
-                      <FontAwesomeIcon icon={faFolder} />{' '}
-                      <strong className="lowercase first-letter:uppercase">
-                        {environment}
-                      </strong>
-                    </button>
-                    <Reveal
-                      active={
-                        sidebarEnvironmentActiveIndex === environmentIndex
-                      }
-                    >
-                      <div className="pt-4 pl-5">
-                        <button
-                          type="button"
-                          className="flex items-center space-x-2"
-                        >
-                          <FontAwesomeIcon icon={faDatabase} />{' '}
-                          <span>Servidor 01</span>
-                        </button>
-                      </div>
-                    </Reveal>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div>
-              <h3 className="mb-5 heading-xs">Ações</h3>
-              <PageSidebarLinksList>
-                <li>
-                  <Link href="/alerts/">
-                    Crie métricas e alertas personalizados
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/alerts/">Gerenciar servidores monitorados</Link>
-                </li>
-                <li>
-                  <Link href="/alerts/">Gerenciar grupos de servidores</Link>
-                </li>
-                <li>
-                  <Link href="/alerts/">Configurar alertas</Link>
-                </li>
-                <li>
-                  <Link href="/alerts/">Gerenciar supressões de alerta</Link>
-                </li>
-                <li>
-                  <Link href="/alerts/">Assine o feed de alerta RSS</Link>
-                </li>
-              </PageSidebarLinksList>
-            </div>
-          </PageSidebar>
+          <MonitoredServersSidebar />
 
           <PageContent className="border-b border-gray-light">
             <form
@@ -209,11 +115,15 @@ const AlertsPage = () => {
                 name="group"
                 options={[
                   { value: '', label: 'Todos os grupos' },
-                  { value: 'production', label: 'Production' },
-                  { value: 'azure-database', label: 'Azure Database' },
-                  { value: 'staging', label: 'Staging' },
-                  { value: 'test', label: 'Test' },
-                  { value: 'simulation', label: 'Simulation' },
+                  ...serverEnvironments.map(
+                    ({
+                      idTypeServerEnvironment,
+                      typeServerEnvironmentName,
+                    }) => ({
+                      value: idTypeServerEnvironment,
+                      label: typeServerEnvironmentName,
+                    })
+                  ),
                 ]}
                 onChange={(value) => {
                   formik.setFieldValue('group', value)
@@ -244,78 +154,84 @@ const AlertsPage = () => {
             </form>
           </PageContent>
 
-          <PageContent>
-            <table className="prose max-w-full w-full">
-              <thead>
-                <tr className="text-sm font-bold text-gray-dark text-left">
-                  <th className="w-5 border-b-2 border-gray-light">
-                    <Checkbox name="all" value="1" />
-                  </th>
-                  <th className="border-b-2 border-gray-light">Alert type</th>
-                  <th className="border-b-2 border-gray-light w-60">
-                    Source object
-                  </th>
-                  <th className="border-b-2 border-gray-light w-20">Status</th>
-                  <th className="border-b-2 border-gray-light w-40">
-                    Last updated
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.map((alert, index) => (
-                  <tr
-                    key={`alert-${index}`}
-                    className="text-sm border-b border-gray-light transition-colors duration-200 ease-in-out lg:hover:bg-gray-light lg:hover:bg-opacity-50"
-                  >
-                    <td>
-                      <Checkbox
-                        className="transform translate-y-1"
-                        name="alerts"
-                        value={alert.idAlert}
-                      />
-                    </td>
-                    <td>
-                      {alert.flType} - {alert.dsMessage}
-                    </td>
-                    <td>
-                      <div className="flex items-center space-x-1 w-full">
-                        <FontAwesomeIcon icon={faDatabase} />
-                        <strong>{alert.server}</strong>
-                      </div>
-                      <div className="flex items-center flex-wrap mt-2">
-                        <span className="flex items-center space-x-1 mr-2 mb-2">
-                          <FontAwesomeIcon icon={faTag} />{' '}
-                          <span className="rounded py-px px-1 text-xs bg-blue text-white">
-                            Production
-                          </span>
-                        </span>
-                        <span className="flex items-center space-x-1 mr-2 mb-2">
-                          <FontAwesomeIcon icon={faTag} />{' '}
-                          <span className="rounded py-px px-1 text-xs bg-blue text-white">
-                            Release
-                          </span>
-                        </span>
-                        {index % 2 === 0 && (
-                          <span className="flex items-center space-x-1 mr-2 mb-2">
-                            <FontAwesomeIcon icon={faTag} />{' '}
-                            <span className="rounded py-px px-1 text-xs bg-blue text-white">
-                              Staging
-                            </span>
-                          </span>
-                        )}
-                      </div>
-                    </td>
-                    <td>Enabled</td>
-                    <td>{getFormattedDate(alert.dtAlert)}</td>
+          {alerts.length > 0 ? (
+            <PageContent>
+              <table className="prose max-w-full w-full">
+                <thead>
+                  <tr className="text-sm font-bold text-gray-dark text-left">
+                    <th className="w-5 border-b-2 border-gray-light">
+                      <Checkbox name="all" value="1" />
+                    </th>
+                    <th className="border-b-2 border-gray-light">Alert type</th>
+                    <th className="border-b-2 border-gray-light w-60">
+                      Source object
+                    </th>
+                    <th className="border-b-2 border-gray-light w-20">
+                      Status
+                    </th>
+                    <th className="border-b-2 border-gray-light w-40">
+                      Last updated
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </PageContent>
+                </thead>
+                <tbody>
+                  {alerts.map((alert, index) => (
+                    <tr
+                      key={`alert-${index}`}
+                      className="text-sm border-b border-gray-light transition-colors duration-200 ease-in-out lg:hover:bg-gray-light lg:hover:bg-opacity-50"
+                    >
+                      <td>
+                        <Checkbox
+                          className="transform translate-y-1"
+                          name="alerts"
+                          value={alert.idAlert}
+                        />
+                      </td>
+                      <td>{alert.dsMessage}</td>
+                      <td>
+                        <div className="flex items-center space-x-4 w-full">
+                          <div className="flex items-center space-x-1">
+                            <FontAwesomeIcon icon={faDatabase} />
+                            <strong>{alert.server?.serverName}</strong>
+                          </div>
+                          {alert.serverEnvironment && (
+                            <span className="flex items-center space-x-1">
+                              <FontAwesomeIcon icon={faTag} />{' '}
+                              <span className="rounded py-px px-1 text-xs bg-blue text-white">
+                                {
+                                  alert.serverEnvironment
+                                    .typeServerEnvironmentName
+                                }
+                              </span>
+                            </span>
+                          )}
+                        </div>
+                      </td>
+                      <td>Enabled</td>
+                      <td>{getFormattedDate(alert.dtAlert)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </PageContent>
+          ) : (
+            ''
+          )}
         </PageWrapper>
       </Layout>
     </>
   )
+}
+
+// eslint-disable-next-line unicorn/prevent-abbreviations
+export const getServerSideProps = async () => {
+  const response = await getAlerts({ pagesize: 20 })
+
+  return {
+    props: {
+      data: response?.data?.result || [],
+    },
+  }
 }
 
 export default AlertsPage

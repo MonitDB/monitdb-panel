@@ -1,7 +1,7 @@
 import React, { createContext, useEffect, useState } from 'react'
 
 import { getMe } from '~/services/user'
-import { removeLocalStorage, setLocalStorage } from '~/utils/local-storage'
+import * as Cookies from '~/utils/cookies'
 
 const initialState = {
   logged: false,
@@ -18,7 +18,7 @@ const UserContextProvider = ({ children }) => {
 
   const unsetUserState = () => {
     setUserState(initialState)
-    removeLocalStorage('user_token')
+    Cookies.reset()
   }
 
   const getUserData = async () => {
@@ -40,7 +40,7 @@ const UserContextProvider = ({ children }) => {
 
   useEffect(() => {
     if (userState?.token) {
-      setLocalStorage('user_token', userState?.token)
+      Cookies.setUserToken(userState?.token)
       getUserData()
     }
   }, [userState?.token]) // eslint-disable-line react-hooks/exhaustive-deps
