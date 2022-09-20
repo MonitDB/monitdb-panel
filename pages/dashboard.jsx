@@ -1,10 +1,7 @@
 import {
-  faBell,
   faChevronDown,
-  faCircleInfo,
   faDatabase,
   faMagnifyingGlass,
-  faWarning,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import classNames from 'classnames'
@@ -12,16 +9,11 @@ import { useFormik } from 'formik'
 import { NextSeo } from 'next-seo'
 import React, { useEffect, useState } from 'react'
 
-import Select from '~/components/form/select'
 import Selector from '~/components/form/selector'
 import Grid from '~/components/grid'
 import Link from '~/components/link'
-import {
-  PageContent,
-  PageSidebar,
-  PageSidebarTitle,
-  PageWrapper,
-} from '~/components/page'
+import { PageContent, PageWrapper } from '~/components/page'
+import LatestAlertsSidebar from '~/components/sidebar/latest-alerts'
 import Reveal from '~/helpers/reveal'
 import Layout from '~/layouts/default'
 import { getDashboard } from '~/services/dashboard'
@@ -57,7 +49,6 @@ const DashboardPage = () => {
   const [isDataLoaded, setIsDataLoaded] = useState(false)
   const [data, setData] = useState()
   const [servers, setServers] = useState()
-  const [alerts, setAlerts] = useState([])
   const [environments, setEnvironments] = useState([])
   const [indexActive, setIndexActive] = useState(0)
 
@@ -80,11 +71,10 @@ const DashboardPage = () => {
   const getData = async () => {
     try {
       const response = await getDashboard()
+
       const dataResult = response?.data?.result || []
 
-      const { alerts, environments, servers } = filterDataByServers(
-        dataResult.servers
-      )
+      const { environments, servers } = filterDataByServers(dataResult.servers)
 
       setData({
         numberOfAlerts: dataResult?.numberOfAlerts,
@@ -92,7 +82,7 @@ const DashboardPage = () => {
       })
 
       setServers(servers)
-      setAlerts(alerts)
+
       setEnvironments(environments)
       setIsDataLoaded(true)
 
@@ -116,99 +106,7 @@ const DashboardPage = () => {
       <NextSeo title="Dashboard" />
       <Layout>
         <PageWrapper>
-          <PageSidebar>
-            <header className="mb-4">
-              <PageSidebarTitle>
-                <FontAwesomeIcon icon={faBell} />
-                <span>Últimos alertas</span>
-              </PageSidebarTitle>
-              <p className="text-sm">
-                Alertas gerados ou atualizados recentemente:
-              </p>
-            </header>
-            <form className="mb-4 flex items-center space-x-2">
-              <Select
-                name="hour"
-                options={[
-                  { value: '3', label: '3 dias' },
-                  { value: '1440', label: '24 horas' },
-                  { value: '720', label: '12 horas' },
-                  { value: '360', label: '6 horas' },
-                  { value: '180', label: '3 horas' },
-                  { value: '60', label: '1 hora' },
-                  { value: '15', label: '15 minutos' },
-                ]}
-              />
-              <Select
-                name="group"
-                options={[
-                  { value: '', label: 'Todos os grupos' },
-                  ...environments.map((environment) => ({
-                    value: environment,
-                    label: environment,
-                  })),
-                ]}
-              />
-            </form>
-            {alerts.length > 0 ? (
-              <ul>
-                {alerts.map((alertItem, alertIndex) => (
-                  <li
-                    key={`dashboard-${alertIndex}`}
-                    className="py-2 border-b border-gray-light border-opacity-25"
-                  >
-                    <Link
-                      href="/dashboard/"
-                      className={classNames(
-                        'flex items-center space-x-2 border-l-2 pl-2 text-sm transition-all duration-150 ease-in-out border-orange lg:hover:border-l-8',
-                        {
-                          // 'border-orange': alertItem.type === 'warning',
-                          // 'border-blue': alertItem.type === 'info',
-                        }
-                      )}
-                    >
-                      <span className="w-6 min-w-6 text-lg">
-                        {alertItem?.type === 'info' && (
-                          <FontAwesomeIcon icon={faCircleInfo} />
-                        )}
-                        {/* {alertItem.type === 'warning' && (
-                        <FontAwesomeIcon icon={faWarning} />
-                      )} */}
-                        <FontAwesomeIcon icon={faWarning} />
-                      </span>
-                      <div className="w-full">
-                        <p>{alertItem.message}</p>
-                        <p className="text-xs text-opacity-50 text-white">
-                          1 alertas ativo
-                        </p>
-                      </div>
-                      <span
-                        className={classNames(
-                          'flex items-center justify-center rounded-full w-6 min-w-6 h-6 ml-auto text-xs bg-orange',
-                          {
-                            // 'bg-blue': alertItem?.type === 'info',
-                            // 'bg-orange': alertItem?.type === 'warning',
-                          }
-                        )}
-                      >
-                        1
-                      </span>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              ''
-            )}
-            <div className="py-4">
-              <Link
-                href="/alerts/"
-                className="py-2 px-4 bg-blue text-white rounded text-xs lg:hover:bg-blue-light"
-              >
-                Ver todos
-              </Link>
-            </div>
-          </PageSidebar>
+          <LatestAlertsSidebar />
 
           <PageContent
             hideBreadcrumbs={true}
