@@ -18,9 +18,8 @@
   @apply border-blue;
 }
 
-.loadingDark:before,
-.loadingDark:after {
-  @apply border-gray-dark;
+.loadingLight:before {
+  @apply border-blue border-opacity-10;
 }
 
 @keyframes rotate {

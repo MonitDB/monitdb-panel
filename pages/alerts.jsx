@@ -10,6 +10,7 @@ import React, { useContext, useEffect, useState } from 'react'
 
 import Checkbox from '~/components/form/checkbox'
 import Selector from '~/components/form/selector'
+import Loading from '~/components/loading'
 import { PageContent, PageWrapper } from '~/components/page'
 import MonitoredServersSidebar from '~/components/sidebar/monitored-servers'
 import GlobalContext from '~/contexts/global'
@@ -63,8 +64,6 @@ const AlertsPage = ({ data }) => {
       )
     )
   }, [data, servers, serverTypes, serverEnvironments, alertsParameters])
-
-  console.log(alerts)
 
   return (
     <>
@@ -154,69 +153,75 @@ const AlertsPage = ({ data }) => {
             </form>
           </PageContent>
 
-          {alerts.length > 0 ? (
-            <PageContent>
-              <table className="prose max-w-full w-full">
-                <thead>
-                  <tr className="text-sm font-bold text-gray-dark text-left">
-                    <th className="w-5 border-b-2 border-gray-light">
-                      <Checkbox name="all" value="1" />
-                    </th>
-                    <th className="border-b-2 border-gray-light">Alert type</th>
-                    <th className="border-b-2 border-gray-light w-60">
-                      Source object
-                    </th>
-                    <th className="border-b-2 border-gray-light w-20">
-                      Status
-                    </th>
-                    <th className="border-b-2 border-gray-light w-40">
-                      Last updated
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {alerts.map((alert, index) => (
-                    <tr
-                      key={`alert-${index}`}
-                      className="text-sm border-b border-gray-light transition-colors duration-200 ease-in-out lg:hover:bg-gray-light lg:hover:bg-opacity-50"
-                    >
-                      <td>
-                        <Checkbox
-                          className="transform translate-y-1"
-                          name="alerts"
-                          value={alert.idAlert}
-                        />
-                      </td>
-                      <td>{alert.dsMessage}</td>
-                      <td>
-                        <div className="flex items-center space-x-4 w-full">
-                          <div className="flex items-center space-x-1">
-                            <FontAwesomeIcon icon={faDatabase} />
-                            <strong>{alert.server?.serverName}</strong>
-                          </div>
-                          {alert.serverEnvironment && (
-                            <span className="flex items-center space-x-1">
-                              <FontAwesomeIcon icon={faTag} />{' '}
-                              <span className="rounded py-px px-1 text-xs bg-blue text-white">
-                                {
-                                  alert.serverEnvironment
-                                    .typeServerEnvironmentName
-                                }
-                              </span>
-                            </span>
-                          )}
-                        </div>
-                      </td>
-                      <td>Enabled</td>
-                      <td>{getFormattedDate(alert.dtAlert)}</td>
+          <PageContent>
+            {alerts.length > 0 ? (
+              <>
+                <table className="prose max-w-full w-full">
+                  <thead>
+                    <tr className="text-sm font-bold text-gray-dark text-left">
+                      <th className="w-5 border-b-2 border-gray-light">
+                        <Checkbox name="all" value="1" />
+                      </th>
+                      <th className="border-b-2 border-gray-light">
+                        Alert type
+                      </th>
+                      <th className="border-b-2 border-gray-light w-60">
+                        Source object
+                      </th>
+                      <th className="border-b-2 border-gray-light w-20">
+                        Status
+                      </th>
+                      <th className="border-b-2 border-gray-light w-40">
+                        Last updated
+                      </th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </PageContent>
-          ) : (
-            ''
-          )}
+                  </thead>
+                  <tbody>
+                    {alerts.map((alert, index) => (
+                      <tr
+                        key={`alert-${index}`}
+                        className="text-sm border-b border-gray-light transition-colors duration-200 ease-in-out lg:hover:bg-gray-light lg:hover:bg-opacity-50"
+                      >
+                        <td>
+                          <Checkbox
+                            className="transform translate-y-1"
+                            name="alerts"
+                            value={alert.idAlert}
+                          />
+                        </td>
+                        <td>{alert.dsMessage}</td>
+                        <td>
+                          <div className="flex items-center space-x-4 w-full">
+                            <div className="flex items-center space-x-1">
+                              <FontAwesomeIcon icon={faDatabase} />
+                              <strong>{alert.server?.serverName}</strong>
+                            </div>
+                            {alert.serverEnvironment && (
+                              <span className="flex items-center space-x-1">
+                                <FontAwesomeIcon icon={faTag} />{' '}
+                                <span className="rounded py-px px-1 text-xs bg-blue text-white">
+                                  {
+                                    alert.serverEnvironment
+                                      .typeServerEnvironmentName
+                                  }
+                                </span>
+                              </span>
+                            )}
+                          </div>
+                        </td>
+                        <td>Enabled</td>
+                        <td>{getFormattedDate(alert.dtAlert)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </>
+            ) : (
+              <div className="flex justify-center items-center w-full min-h-28">
+                <Loading light />
+              </div>
+            )}
+          </PageContent>
         </PageWrapper>
       </Layout>
     </>

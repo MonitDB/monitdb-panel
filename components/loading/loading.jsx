@@ -3,11 +3,11 @@ import React from 'react'
 
 import styles from './loading.module.css'
 
-const Loading = ({ className = '', dark = false }) => {
+const Loading = ({ className = '', light = false }) => {
   return (
     <div
       className={classNames(styles.loading, className, {
-        [styles.loadingDark]: dark,
+        [styles.loadingLight]: light,
       })}
     ></div>
   )

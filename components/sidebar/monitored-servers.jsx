@@ -8,6 +8,7 @@ import classNames from 'classnames'
 import React, { useContext, useState } from 'react'
 
 import Link from '~/components/link'
+import Loading from '~/components/loading'
 import {
   PageSidebar,
   PageSidebarLinksList,
@@ -118,7 +119,9 @@ const MonitoredServers = () => {
           </div>
         </>
       ) : (
-        ''
+        <div className="flex justify-center items-center w-full min-h-28">
+          <Loading />
+        </div>
       )}
 
       <div>
