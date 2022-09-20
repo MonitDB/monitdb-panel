@@ -27,7 +27,7 @@ const navMenuList = [
     href: '/alerts/',
   },
   {
-    title: 'Análise',
+    title: 'Análises',
     href: '/analysis/',
   },
   {
@@ -35,7 +35,7 @@ const navMenuList = [
     href: '/reports/',
   },
   {
-    title: 'Propriedade',
+    title: 'Propriedades',
     href: '/estate/',
   },
   {
