@@ -4,10 +4,10 @@ import Grid from '~/components/grid'
 import GlobalContext from '~/contexts/global'
 
 const Footer = () => {
-  const { state, setState } = useContext(GlobalContext)
+  const { globalState, setGlobalState } = useContext(GlobalContext)
 
   const openModal = () => {
-    setState({ ...state, isModalActive: true })
+    setGlobalState({ ...globalState, isModalActive: true })
   }
 
   return (

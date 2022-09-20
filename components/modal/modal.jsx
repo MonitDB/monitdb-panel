@@ -3,8 +3,7 @@ import React, { useContext } from 'react'
 import GlobalContext from '~/contexts/global'
 
 const Modal = () => {
-  const { state: globalState, setState: setGlobalState } =
-    useContext(GlobalContext)
+  const { globalState, setGlobalState } = useContext(GlobalContext)
 
   const closeModal = () => {
     setGlobalState({ ...globalState, isModalActive: false })
