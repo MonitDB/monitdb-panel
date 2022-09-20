@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import classNames from 'classnames'
 import { useFormik } from 'formik'
 import { NextSeo } from 'next-seo'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useState } from 'react'
 
 import Selector from '~/components/form/selector'
 import Grid from '~/components/grid'
@@ -23,8 +23,6 @@ const DashboardPage = () => {
   const {
     globalState: { servers, serverTypes, serverEnvironments },
   } = useContext(GlobalContext)
-  const [isDataLoaded, setIsDataLoaded] = useState(false)
-  const [data, setData] = useState()
   const [indexActive, setIndexActive] = useState(0)
 
   const formik = useFormik({
