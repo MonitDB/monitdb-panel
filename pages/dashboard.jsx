@@ -7,49 +7,24 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import classNames from 'classnames'
 import { useFormik } from 'formik'
 import { NextSeo } from 'next-seo'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 
 import Selector from '~/components/form/selector'
 import Grid from '~/components/grid'
 import Link from '~/components/link'
 import { PageContent, PageWrapper } from '~/components/page'
 import LatestAlertsSidebar from '~/components/sidebar/latest-alerts'
+import GlobalContext from '~/contexts/global'
 import Reveal from '~/helpers/reveal'
 import Layout from '~/layouts/default'
-import { getDashboard } from '~/services/dashboard'
-
-const filterDataByServers = (servers) => {
-  const alerts = []
-  const environments = []
-
-  for (const server of servers) {
-    alerts.push(...server.alerts)
-
-    if (!environments.includes(server.typeServerEnvironmentName)) {
-      environments.push(server.typeServerEnvironmentName)
-    }
-  }
-
-  return {
-    alerts,
-    environments,
-    servers,
-  }
-}
-
-const getServersByEnvironment = (environment, servers) => {
-  return (
-    servers?.filter(
-      (server) => server.typeServerEnvironmentName === environment
-    ) || []
-  )
-}
+import { filterServersByEnvironmentId, formatServer } from '~/utils/server'
 
 const DashboardPage = () => {
+  const {
+    globalState: { servers, serverTypes, serverEnvironments },
+  } = useContext(GlobalContext)
   const [isDataLoaded, setIsDataLoaded] = useState(false)
   const [data, setData] = useState()
-  const [servers, setServers] = useState()
-  const [environments, setEnvironments] = useState([])
   const [indexActive, setIndexActive] = useState(0)
 
   const formik = useFormik({
@@ -68,36 +43,7 @@ const DashboardPage = () => {
     setIndexActive(indexActive === index ? -1 : index)
   }
 
-  const getData = async () => {
-    try {
-      const response = await getDashboard()
-
-      const dataResult = response?.data?.result || []
-
-      const { environments, servers } = filterDataByServers(dataResult.servers)
-
-      setData({
-        numberOfAlerts: dataResult?.numberOfAlerts,
-        numberOfInstances: dataResult?.numberOfInstances,
-      })
-
-      setServers(servers)
-
-      setEnvironments(environments)
-      setIsDataLoaded(true)
-
-      // setData(dataResult)
-      // setAlerts(filterAlerts(dataResult))
-    } catch (error) {
-      console.error(error) // eslint-disable-line no-console
-    }
-  }
-
-  useEffect(() => {
-    getData()
-  }, [])
-
-  if (!isDataLoaded || !data) {
+  if (servers?.length === 0) {
     return ''
   }
 
@@ -113,9 +59,7 @@ const DashboardPage = () => {
             className="flex items-start justify-between border-b border-gray-light"
           >
             <p className="mr-10 text-center">
-              <strong className="block text-2xl">
-                {data.numberOfInstances}
-              </strong>{' '}
+              <strong className="block text-2xl">{servers.length}</strong>{' '}
               <span className="text-sm">instâncias</span>
             </p>
             <form
@@ -159,10 +103,15 @@ const DashboardPage = () => {
                 name="group"
                 options={[
                   { value: '', label: 'Todos os grupos' },
-                  ...environments.map((environment) => ({
-                    value: environment,
-                    label: environment,
-                  })),
+                  ...serverEnvironments.map(
+                    ({
+                      idTypeServerEnvironment,
+                      typeServerEnvironmentName,
+                    }) => ({
+                      value: idTypeServerEnvironment,
+                      label: typeServerEnvironmentName,
+                    })
+                  ),
                 ]}
                 onChange={(value) => {
                   formik.setFieldValue('group', value)
@@ -195,116 +144,127 @@ const DashboardPage = () => {
 
           <PageContent hideBreadcrumbs={true}>
             <div className="w-full space-y-5">
-              {environments.map((environment, environmentIndex) => (
-                <div
-                  key={`server-${environment}-${environmentIndex}`}
-                  className="w-full"
-                >
-                  <button
-                    type="button"
-                    className="w-full py-2 px-4 bg-white border border-gray-light space-x-4
+              {serverEnvironments.map(
+                (
+                  { idTypeServerEnvironment, typeServerEnvironmentName },
+                  environmentIndex
+                ) => {
+                  const filteredServers = filterServersByEnvironmentId(
+                    idTypeServerEnvironment,
+                    servers
+                  ).map((server) => formatServer(server, { serverTypes }))
+
+                  return (
+                    <div
+                      key={`server-${idTypeServerEnvironment}-${environmentIndex}`}
+                      className="w-full"
+                    >
+                      <button
+                        type="button"
+                        className="w-full py-2 px-4 bg-white border border-gray-light space-x-4
                       rounded-sm font-bold text-left text-sm md:w-2/3"
-                    onClick={() => toggleIndexActive(environmentIndex)}
-                  >
-                    <FontAwesomeIcon
-                      icon={faChevronDown}
-                      className={classNames(
-                        'transition-all duration-300 ease-in-out transform',
-                        {
-                          'rotate-180': indexActive !== environmentIndex,
-                        }
-                      )}
-                    />
-                    <span>
-                      {environmentIndex + 1} - {environment} (
-                      {getServersByEnvironment(environment, servers).length})
-                    </span>
-                  </button>
-                  <Reveal active={indexActive === environmentIndex}>
-                    <Grid className="py-2 gap-y-4 md:py-4">
-                      {getServersByEnvironment(environment, servers).map(
-                        (server, index) => (
-                          <div
-                            key={`server-production-${index}`}
-                            className="col-span-1 border border-gray-light md:col-span-4 lg:col-span-3"
-                          >
-                            <Link
-                              href="/dashboard/"
-                              className={classNames(
-                                `block bg-white p-2 relative border-l-4 lg:p-4 lg:hover:border-l-8`,
-                                {
-                                  'border-l-danger':
-                                    server.healthStatus === 'Critical',
-                                  'border-l-orange':
-                                    server.healthStatus === 'Warning',
-                                  'border-l-success':
-                                    server.healthStatus === 'Healtly',
-                                  'opacity-25': !server.serverEnable,
-                                }
-                              )}
+                        onClick={() => toggleIndexActive(environmentIndex)}
+                      >
+                        <FontAwesomeIcon
+                          icon={faChevronDown}
+                          className={classNames(
+                            'transition-all duration-300 ease-in-out transform',
+                            {
+                              'rotate-180': indexActive !== environmentIndex,
+                            }
+                          )}
+                        />
+                        <span>
+                          {environmentIndex + 1} - {typeServerEnvironmentName} (
+                          {filteredServers.length})
+                        </span>
+                      </button>
+                      <Reveal active={indexActive === environmentIndex}>
+                        <Grid className="py-2 gap-y-4 md:py-4">
+                          {filteredServers.map((server, index) => (
+                            <div
+                              key={`server-production-${index}`}
+                              className="col-span-1 border border-gray-light md:col-span-4 lg:col-span-3"
                             >
-                              <h4 className="flex items-center text-sm space-x-2 mb-2 lg:mb-4">
-                                <FontAwesomeIcon
-                                  icon={faDatabase}
-                                  className="text-base"
-                                />
-                                <span>{server.serverName}</span>
-                              </h4>
-                              <dl className="text-xs w-full text-gray">
-                                <dt className="block text-gray-dark mt-2">
-                                  Memória
-                                </dt>
-                                <dd>
-                                  <span className="text-success">
-                                    {server.memoryInfo?.available}{' '}
-                                    {server.memoryInfo?.unity} - Livre
-                                  </span>{' '}
-                                  /{' '}
-                                  <span>
-                                    {server.memoryInfo?.capacity}{' '}
-                                    {server.memoryInfo?.unity} Total
-                                  </span>
-                                </dd>
-                                <dd className="mt-1 w-full h-1 block relative bg-gray-light">
-                                  <span
-                                    className="absolute top-0 left-0 h-full bg-success"
-                                    style={{
-                                      width: `${
-                                        server.memoryInfo?.availablePercent *
-                                        0.1
-                                      }%`,
-                                    }}
+                              <Link
+                                href="/dashboard/"
+                                className={classNames(
+                                  `block bg-white p-2 relative border-l-4 lg:p-4 lg:hover:border-l-8`,
+                                  {
+                                    'border-l-danger':
+                                      server.healthStatus === 'Critical',
+                                    'border-l-orange':
+                                      server.healthStatus === 'Warning',
+                                    'border-l-success':
+                                      server.healthStatus === 'Healtly',
+                                    'opacity-25': !server.serverEnable,
+                                  }
+                                )}
+                              >
+                                <h4 className="flex items-center text-sm space-x-2 mb-2 lg:mb-4">
+                                  <FontAwesomeIcon
+                                    icon={faDatabase}
+                                    className="text-base"
                                   />
-                                </dd>
-                                <dt className="block text-gray-dark mt-2">
-                                  Disco
-                                </dt>
-                                <dd>
-                                  <span className="text-success">
-                                    {server.diskInfo?.totalAvailable} GB - Livre
-                                  </span>{' '}
-                                  /{' '}
-                                  <span>
-                                    {server.diskInfo?.totalCapacity} GB Total
-                                  </span>
-                                </dd>
-                                <dd className="mt-1 w-full h-1 block relative bg-gray-light">
-                                  <span
-                                    className="absolute top-0 left-0 h-full bg-success"
-                                    style={{
-                                      width: `40%`,
-                                    }}
-                                  />
-                                </dd>
-                              </dl>
-                            </Link>
-                          </div>
-                        )
-                      )}
-                    </Grid>
-                  </Reveal>
-                </div>
-              ))}
+                                  <span>{server.serverName}</span>
+                                </h4>
+                                <dl className="text-xs w-full text-gray">
+                                  <dt className="block text-gray-dark mt-2">
+                                    Memória
+                                  </dt>
+                                  <dd>
+                                    <span className="text-success">
+                                      {server.memoryInfo?.available}{' '}
+                                      {server.memoryInfo?.unity} - Livre
+                                    </span>{' '}
+                                    /{' '}
+                                    <span>
+                                      {server.memoryInfo?.capacity}{' '}
+                                      {server.memoryInfo?.unity} Total
+                                    </span>
+                                  </dd>
+                                  <dd className="mt-1 w-full h-1 block relative bg-gray-light">
+                                    <span
+                                      className="absolute top-0 left-0 h-full bg-success"
+                                      style={{
+                                        width: `${
+                                          server.memoryInfo?.availablePercent *
+                                          0.1
+                                        }%`,
+                                      }}
+                                    />
+                                  </dd>
+                                  <dt className="block text-gray-dark mt-2">
+                                    Disco
+                                  </dt>
+                                  <dd>
+                                    <span className="text-success">
+                                      {server.diskInfo?.totalAvailable} GB -
+                                      Livre
+                                    </span>{' '}
+                                    /{' '}
+                                    <span>
+                                      {server.diskInfo?.totalCapacity} GB Total
+                                    </span>
+                                  </dd>
+                                  <dd className="mt-1 w-full h-1 block relative bg-gray-light">
+                                    <span
+                                      className="absolute top-0 left-0 h-full bg-success"
+                                      style={{
+                                        width: `40%`,
+                                      }}
+                                    />
+                                  </dd>
+                                </dl>
+                              </Link>
+                            </div>
+                          ))}
+                        </Grid>
+                      </Reveal>
+                    </div>
+                  )
+                }
+              )}
             </div>
           </PageContent>
         </PageWrapper>
