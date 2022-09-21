@@ -86,6 +86,7 @@ module.exports = {
     require('@tailwindcss/line-clamp'),
     require('tailwind-scrollbar'),
     require('./config/tailwind/container.js'),
+    require('./config/tailwind/btn.js'),
     require('./config/tailwind/presets.js'),
     plugin(function ({ addVariant }) {
       addVariant('group-active', () => {

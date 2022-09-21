@@ -36,7 +36,7 @@ const navMenuList = [
   },
   {
     title: 'Propriedades',
-    href: '/estate/',
+    href: '/estates/',
   },
   {
     title: 'Configurações',

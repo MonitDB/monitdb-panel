@@ -132,10 +132,7 @@ const LatestAlerts = () => {
             ))}
           </ul>
           <div className="py-4">
-            <Link
-              href="/alerts/"
-              className="py-2 px-4 bg-blue text-white rounded text-xs lg:hover:bg-blue-light"
-            >
+            <Link href="/alerts/" className="btn btn--small">
               Ver todos
             </Link>
           </div>

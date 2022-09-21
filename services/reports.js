@@ -1,5 +1,5 @@
 import clientApi from '~/utils/client-api'
 
-export const getRepostsBySlug = async ({ slug }) => {
-  return clientApi().get(`/component/${slug}`)
+export const getRepostsByType = async ({ type }) => {
+  return clientApi().get(`/component/${type}`)
 }

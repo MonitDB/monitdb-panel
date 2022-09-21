@@ -67,7 +67,7 @@ const AlertsPage = ({ data }) => {
 
   return (
     <>
-      <NextSeo title="Alerts" />
+      <NextSeo title="Alerts - MonitDB" />
       <Layout>
         <PageWrapper>
           <MonitoredServersSidebar />
@@ -143,9 +143,7 @@ const AlertsPage = ({ data }) => {
               />
               <button
                 type="reset"
-                className="block px-4 h-10 leading-10 rounded bg-blue text-white
-                  text-xs uppercase lg:hover:bg-blue-light disabled:opacity-30
-                  disabled:lg:hover:bg-blue"
+                className="btn"
                 onClick={() => formik.resetForm()}
               >
                 Limpar

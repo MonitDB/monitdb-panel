@@ -8,3 +8,7 @@ export const formatServer = (server, { serverTypes = [] }) => {
     type: serverTypes.find((type) => server.idTypeServer === type.idtypeserver),
   }
 }
+
+export const getServerDataById = (id, servers) => {
+  return servers.find((server) => server.idServer === id)
+}
