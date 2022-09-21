@@ -37,7 +37,7 @@ const reportTypes = [
   { name: 'Database File Growth TOP 10', slug: 'rldbflgrow' },
   { name: 'Backups Executed TOP 10', slug: 'rldbbkexe' },
   { name: 'Jobs Running TOP 10', slug: 'rljobrun' },
-  { name: 'Jobs Changed TOP 10"', slug: 'rljobcha' },
+  { name: 'Jobs Changed TOP 10', slug: 'rljobcha' },
   { name: 'Failed Jobs TOP 10', slug: 'rljobfail' },
   { name: 'Slow Jobs TOP 10', slug: 'rljobslow' },
   { name: 'Slow Queries TOP 10', slug: 'rlqryslow' },
