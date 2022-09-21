@@ -150,8 +150,8 @@ const EstatePage = () => {
   // } = useContext(GlobalContext)
   const router = useRouter()
   const [isExpandedIndex, setIsExpandedIndex] = useState(-1)
-  const [data, setData] = useState()
-  const [isLoading, setIsLoading] = useState(true)
+  // const [data, setData] = useState()
+  // const [isLoading, setIsLoading] = useState(true)
   const [tabActive, setTabActive] = useState()
 
   const toggleIsExpandedIndex = (index) => {
