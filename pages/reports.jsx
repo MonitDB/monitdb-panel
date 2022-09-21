@@ -217,7 +217,7 @@ const ReportsPage = () => {
           <PageContent>
             {typeActive?.name && (
               <header className="flex flex-col mb-5 md:flex-row md:justify-between md:items-center">
-                <h3 className="mb-5 heading-md">{typeActive?.name}</h3>
+                <h3 className="mb-5 heading-md md:mb-0">{typeActive?.name}</h3>
                 {data?.length > 0 ? (
                   <button type="button" className="btn btn--small">
                     <FontAwesomeIcon icon={faFileExport} className="mr-2" />

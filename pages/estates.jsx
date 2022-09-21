@@ -1,10 +1,12 @@
 import {
   faCheck,
   faChevronRight,
+  faFileExport,
   faXmark,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
+  ArcElement,
   CategoryScale,
   Chart as ChartJS,
   // Legend,
@@ -14,16 +16,26 @@ import {
   // Title,
   Tooltip,
 } from 'chart.js'
+import classNames from 'classnames'
 import faker from 'faker'
+import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
-import React, { useState } from 'react'
-import { Line } from 'react-chartjs-2'
+import React, { useEffect, useState } from 'react'
+import { Line, Pie } from 'react-chartjs-2'
 
-import { PageContent, PageHeader, PageWrapper } from '~/components/page'
+import Link from '~/components/link'
+import {
+  PageContent,
+  PageSidebar,
+  PageSidebarLinksList,
+  PageWrapper,
+} from '~/components/page'
+// import GlobalContext from '~/contexts/global'
 import Reveal from '~/helpers/reveal'
 import Layout from '~/layouts/default'
 
 ChartJS.register(
+  ArcElement,
   CategoryScale,
   LinearScale,
   PointElement,
@@ -67,7 +79,7 @@ const tableDataItems = labels.map(() => ({
   },
 }))
 
-export const data = {
+export const chartData = {
   labels,
   datasets: [
     {
@@ -86,21 +98,137 @@ export const data = {
   ],
 }
 
+export const chartPieData = {
+  labels: [
+    'SQL Server 2019',
+    'SQL Server 2017',
+    'SQL Server 2016',
+    'SQL Server 2012',
+    'SQL Server 2008',
+  ],
+  datasets: [
+    {
+      label: '',
+      data: [12, 19, 3, 5, 2, 3],
+      backgroundColor: [
+        'rgba(24, 53, 89, 0.2)',
+        'rgba(42, 94, 157, 0.2)',
+        'rgba(51, 109, 194, 0.2)',
+        'rgba(60, 133, 223, 0.2)',
+        'rgba(103, 169, 241, 0.2)',
+      ],
+    },
+  ],
+}
+
+const tabs = [
+  {
+    name: 'Versões instaladas',
+    slug: 'installed-versions',
+  },
+  {
+    name: 'Uso de disco',
+    slug: 'disk-usage',
+  },
+  {
+    name: 'Backups',
+    slug: 'backups',
+  },
+  {
+    name: 'SQL Agent Jobs',
+    slug: 'sql-agent-jobs',
+  },
+  {
+    name: 'SQL Server Licensing',
+    slug: 'sql-server-licensing',
+  },
+]
+
 const EstatePage = () => {
+  // const {
+  //   globalState: { servers, serverEnvironments },
+  // } = useContext(GlobalContext)
+  const router = useRouter()
   const [isExpandedIndex, setIsExpandedIndex] = useState(-1)
+  const [data, setData] = useState()
+  const [isLoading, setIsLoading] = useState(true)
+  const [tabActive, setTabActive] = useState()
 
   const toggleIsExpandedIndex = (index) => {
     setIsExpandedIndex(isExpandedIndex === index ? -1 : index)
   }
+
+  // useEffect(() => {
+  //   tabActive?.name && servers && getData()
+  // }, [tabActive?.name, servers]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    const filteredTab = tabs.find((tab) => tab.slug === router?.query?.tab)
+
+    filteredTab ? setTabActive(filteredTab) : setTabActive(tabs[0])
+  }, [router.asPath, router.query])
 
   return (
     <>
       <NextSeo title="Propriedades - MonitDB" />
       <Layout>
         <PageWrapper className="p-8">
-          <PageContent removeSidebarMargin={true}>
-            <PageHeader title="Propriedades" />
+          <PageSidebar>
+            <PageSidebarLinksList>
+              {tabs.map((type, typeIndex) => (
+                <li key={`sidebar-tab-${type.slug}-${typeIndex}`}>
+                  <Link
+                    href={`/estates/?tab=${type.slug}`}
+                    className={classNames({
+                      active: tabActive?.slug === type.slug,
+                    })}
+                  >
+                    {type.name}
+                  </Link>
+                </li>
+              ))}
+            </PageSidebarLinksList>
+          </PageSidebar>
+
+          <PageContent>
+            <header className="mb-10 w-full">
+              <h1 className="heading-lg">{tabActive?.name}</h1>
+            </header>
+
+            <div className="flex items-center mb-20">
+              <div className="w-full md:w-1/3">
+                <Pie data={chartPieData} />
+              </div>
+              <div className="w-full md:w-2/3 md:pl-10">
+                <table className="prose w-full max-w-full">
+                  <thead>
+                    <tr>
+                      <th>Versões</th>
+                      <th>Última atualização</th>
+                      <th>Data de lançamento</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {chartPieData.labels.map((label, labelIndex) => (
+                      <tr key={`label-${labelIndex}`}>
+                        <td>{label}</td>
+                        <td>Última atualização</td>
+                        <td>Data de lançamento</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
             <div className="w-full prose max-w-full">
+              <header className="flex flex-col mb-5 md:flex-row md:justify-between md:items-center">
+                <button type="button" className="btn btn--small md:ml-auto">
+                  <FontAwesomeIcon icon={faFileExport} className="mr-2" />
+                  Exportar
+                </button>
+              </header>
+
               <table className="m-0">
                 <thead>
                   <tr>
@@ -183,7 +311,11 @@ const EstatePage = () => {
                             <h2 className="mt-0 mb-2 text-base font-bold text-gray font-oxygen">
                               Histórico de execução
                             </h2>
-                            <Line options={options} data={data} height={50} />
+                            <Line
+                              options={options}
+                              data={chartData}
+                              height={50}
+                            />
                           </div>
                         </Reveal>
                       </td>
