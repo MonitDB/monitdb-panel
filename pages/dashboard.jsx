@@ -152,6 +152,10 @@ const DashboardPage = () => {
                     servers
                   ).map((server) => formatServer(server, { serverTypes }))
 
+                  if (filteredServers.length === 0) {
+                    return ''
+                  }
+
                   return (
                     <div
                       key={`server-${idTypeServerEnvironment}-${environmentIndex}`}
@@ -212,23 +216,15 @@ const DashboardPage = () => {
                                   </dt>
                                   <dd>
                                     <span className="text-success">
-                                      {server.memoryInfo?.available}{' '}
-                                      {server.memoryInfo?.unity} - Livre
+                                      12 GB - Livre
                                     </span>{' '}
-                                    /{' '}
-                                    <span>
-                                      {server.memoryInfo?.capacity}{' '}
-                                      {server.memoryInfo?.unity} Total
-                                    </span>
+                                    / <span>24 GB Total</span>
                                   </dd>
                                   <dd className="mt-1 w-full h-1 block relative bg-gray-light">
                                     <span
                                       className="absolute top-0 left-0 h-full bg-success"
                                       style={{
-                                        width: `${
-                                          server.memoryInfo?.availablePercent *
-                                          0.1
-                                        }%`,
+                                        width: `50%`,
                                       }}
                                     />
                                   </dd>
@@ -237,19 +233,15 @@ const DashboardPage = () => {
                                   </dt>
                                   <dd>
                                     <span className="text-success">
-                                      {server.diskInfo?.totalAvailable} GB -
-                                      Livre
+                                      {384} GB - Livre
                                     </span>{' '}
-                                    /{' '}
-                                    <span>
-                                      {server.diskInfo?.totalCapacity} GB Total
-                                    </span>
+                                    / <span>{1000} GB Total</span>
                                   </dd>
                                   <dd className="mt-1 w-full h-1 block relative bg-gray-light">
                                     <span
                                       className="absolute top-0 left-0 h-full bg-success"
                                       style={{
-                                        width: `40%`,
+                                        width: `61%`,
                                       }}
                                     />
                                   </dd>
