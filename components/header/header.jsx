@@ -77,9 +77,9 @@ const Header = () => {
                     href={item.href}
                     className={classNames(buttonClasses, {
                       [buttonClassesActive]:
-                        item.href.search(router.asPath) >= 0,
+                        item.href.search(router.pathname) >= 0,
                       'border-gray-dark text-opacity-50':
-                        item.href.search(router.asPath) < 0,
+                        item.href.search(router.pathname) < 0,
                     })}
                   >
                     {item.title}

@@ -117,9 +117,7 @@ const ReportsPage = () => {
       (type) => type.slug === router?.query?.type
     )
 
-    if (filteredType) {
-      setTypeActive(filteredType)
-    }
+    filteredType ? setTypeActive(filteredType) : setTypeActive(reportTypes[0])
   }, [router.asPath, router.query])
 
   return (
@@ -138,7 +136,7 @@ const ReportsPage = () => {
                 {reportTypes.map((type, typeIndex) => (
                   <li key={`sidebar-type-${type.slug}-${typeIndex}`}>
                     <Link
-                      href={`/reports?type=${type.slug}`}
+                      href={`/reports/?type=${type.slug}`}
                       className={classNames({
                         active: typeActive?.slug === type.slug,
                       })}
@@ -237,43 +235,49 @@ const ReportsPage = () => {
               </div>
             )}
 
-            {data?.length > 0 ? (
-              <div className="w-full prose max-w-full">
-                <table className="m-0">
-                  <thead>
-                    <tr>
-                      {Object.keys(data[0]).map((colName, colNameIndex) => (
-                        <th key={`cols-${typeActive.slug}-${colNameIndex}`}>
-                          {colName}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {data.map((item, itemIndex) => (
-                      <tr key={`item-tr-${typeActive.slug}-${itemIndex}`}>
-                        {Object.keys(item).map((colName, colNameIndex) => (
-                          <td
-                            key={`item-td-${typeActive.slug}-${colNameIndex}`}
-                          >
-                            {colName === 'server' && (
-                              <div className="flex items-center space-x-1">
-                                <FontAwesomeIcon icon={faDatabase} />
-                                <span>{item[colName]?.serverName}</span>
-                              </div>
-                            )}
-                            {colName !== 'server' && item[colName]}
-                          </td>
+            {!isLoading ? (
+              <>
+                {data?.length > 0 ? (
+                  <div className="w-full prose max-w-full">
+                    <table className="m-0">
+                      <thead>
+                        <tr>
+                          {Object.keys(data[0]).map((colName, colNameIndex) => (
+                            <th key={`cols-${typeActive.slug}-${colNameIndex}`}>
+                              {colName}
+                            </th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {data.map((item, itemIndex) => (
+                          <tr key={`item-tr-${typeActive.slug}-${itemIndex}`}>
+                            {Object.keys(item).map((colName, colNameIndex) => (
+                              <td
+                                key={`item-td-${typeActive.slug}-${colNameIndex}`}
+                              >
+                                {colName === 'server' && (
+                                  <div className="flex items-center space-x-1">
+                                    <FontAwesomeIcon icon={faDatabase} />
+                                    <span>{item[colName]?.serverName}</span>
+                                  </div>
+                                )}
+                                {colName !== 'server' && item[colName]}
+                              </td>
+                            ))}
+                          </tr>
                         ))}
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <div>
+                    <p>Nenhum dado encontrado.</p>
+                  </div>
+                )}
+              </>
             ) : (
-              <div>
-                <p>Nenhum dado encontrado.</p>
-              </div>
+              ''
             )}
           </PageContent>
         </PageWrapper>
