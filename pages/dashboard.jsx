@@ -1,6 +1,5 @@
 import {
   faChevronDown,
-  faDatabase,
   faMagnifyingGlass,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -9,9 +8,9 @@ import { useFormik } from 'formik'
 import { NextSeo } from 'next-seo'
 import React, { useContext, useState } from 'react'
 
+import ServerCard from '~/components/cards/server'
 import Selector from '~/components/form/selector'
 import Grid from '~/components/grid'
-import Link from '~/components/link'
 import { PageContent, PageWrapper } from '~/components/page'
 import LatestAlertsSidebar from '~/components/sidebar/latest-alerts'
 import GlobalContext from '~/contexts/global'
@@ -182,70 +181,10 @@ const DashboardPage = () => {
                       <Reveal active={indexActive === environmentIndex}>
                         <Grid className="py-2 gap-y-4 md:py-4">
                           {filteredServers.map((server, index) => (
-                            <div
+                            <ServerCard
                               key={`server-production-${index}`}
-                              className="col-span-1 border border-gray-light md:col-span-4 lg:col-span-3"
-                            >
-                              <Link
-                                href="/dashboard/"
-                                className={classNames(
-                                  `block bg-white p-2 relative border-l-4 lg:p-4 lg:hover:border-l-8`,
-                                  {
-                                    'border-l-danger':
-                                      server.healthStatus === 'Critical',
-                                    'border-l-orange':
-                                      server.healthStatus === 'Warning',
-                                    'border-l-success':
-                                      server.healthStatus === 'Healtly',
-                                    'opacity-25': !server.serverEnable,
-                                  }
-                                )}
-                              >
-                                <h4 className="flex items-center text-sm space-x-2 mb-2 lg:mb-4">
-                                  <FontAwesomeIcon
-                                    icon={faDatabase}
-                                    className="text-base"
-                                  />
-                                  <span>{server.serverName}</span>
-                                </h4>
-                                <dl className="text-xs w-full text-gray">
-                                  <dt className="block text-gray-dark mt-2">
-                                    Memória
-                                  </dt>
-                                  <dd>
-                                    <span className="text-success">
-                                      12 GB - Livre
-                                    </span>{' '}
-                                    / <span>24 GB Total</span>
-                                  </dd>
-                                  <dd className="mt-1 w-full h-1 block relative bg-gray-light">
-                                    <span
-                                      className="absolute top-0 left-0 h-full bg-success"
-                                      style={{
-                                        width: `50%`,
-                                      }}
-                                    />
-                                  </dd>
-                                  <dt className="block text-gray-dark mt-2">
-                                    Disco
-                                  </dt>
-                                  <dd>
-                                    <span className="text-success">
-                                      {384} GB - Livre
-                                    </span>{' '}
-                                    / <span>{1000} GB Total</span>
-                                  </dd>
-                                  <dd className="mt-1 w-full h-1 block relative bg-gray-light">
-                                    <span
-                                      className="absolute top-0 left-0 h-full bg-success"
-                                      style={{
-                                        width: `61%`,
-                                      }}
-                                    />
-                                  </dd>
-                                </dl>
-                              </Link>
-                            </div>
+                              {...server}
+                            />
                           ))}
                         </Grid>
                       </Reveal>
