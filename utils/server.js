@@ -1,5 +1,7 @@
 export const filterServersByEnvironmentId = (environmentId, servers) => {
-  return servers.filter((server) => server.idServer === environmentId)
+  return servers.filter(
+    (server) => server.idTypeServerEnvironment === environmentId
+  )
 }
 
 export const formatServer = (server, { serverTypes = [] }) => {
