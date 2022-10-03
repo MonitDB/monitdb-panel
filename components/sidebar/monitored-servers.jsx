@@ -53,6 +53,10 @@ const MonitoredServers = () => {
                   servers
                 ).map((server) => formatServer(server, { serverTypes }))
 
+                if (filteredServers.length === 0) {
+                  return ''
+                }
+
                 return (
                   <div
                     key={`environment-${environmentIndex}`}
