@@ -1,9 +1,7 @@
 import {
   faDatabase,
-  faDownload,
   faFileExport,
   faMagnifyingGlass,
-  faUpload,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useFormik } from 'formik'
