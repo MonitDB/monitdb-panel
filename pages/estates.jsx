@@ -1,11 +1,11 @@
 import classNames from 'classnames'
+import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
-import React, { useEffect, useState } from 'react'
+import React, { Suspense, useEffect, useState } from 'react'
 
-import DiskUsage from '~/components/estates/disk-usage'
-import InstalledVersions from '~/components/estates/installed-versions'
 import Link from '~/components/link'
+import Loading from '~/components/loading'
 import { PageWrapper } from '~/components/page'
 // import GlobalContext from '~/contexts/global'
 import Layout from '~/layouts/default'
@@ -14,42 +14,35 @@ const tabs = [
   {
     name: 'Versões instaladas',
     slug: 'installed-versions',
-    component: InstalledVersions,
+    component: dynamic(() => import('~/components/estates/installed-versions')),
   },
   {
     name: 'Uso de disco',
     slug: 'disk-usage',
-    component: DiskUsage,
+    component: dynamic(() => import('~/components/estates/disk-usage')),
   },
   {
     name: 'Backups',
     slug: 'backups',
-    component: InstalledVersions,
+    component: dynamic(() => import('~/components/estates/backups')),
   },
   {
     name: 'SQL Agent Jobs',
     slug: 'sql-agent-jobs',
-    component: InstalledVersions,
+    component: dynamic(() => import('~/components/estates/sql-agent-jobs')),
   },
   {
     name: 'SQL Server Licensing',
     slug: 'sql-server-licensing',
-    component: InstalledVersions,
+    component: dynamic(() =>
+      import('~/components/estates/sql-server-licensing')
+    ),
   },
 ]
 
 const EstatePage = () => {
-  // const {
-  //   globalState: { servers, serverEnvironments },
-  // } = useContext(GlobalContext)
   const router = useRouter()
-  // const [data, setData] = useState()
-  // const [isLoading, setIsLoading] = useState(true)
   const [tabActive, setTabActive] = useState()
-
-  // useEffect(() => {
-  //   tabActive?.name && servers && getData()
-  // }, [tabActive?.name, servers]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const filteredTab = tabs.find((tab) => tab.slug === router?.query?.tab)
@@ -60,19 +53,19 @@ const EstatePage = () => {
   return (
     <>
       <NextSeo title="Propriedades - MonitDB" />
+
       <Layout>
         <PageWrapper className="p-8">
-          <div className="bg-blue xl:pl-80">
+          <div className="fixed w-full top-16 left-0 bg-blue z-10 xl:pl-80">
             <ul className="flex items-center">
               {tabs.map((type, typeIndex) => (
                 <li key={`sidebar-tab-${type.slug}-${typeIndex}`}>
                   <Link
                     href={`/estates/?tab=${type.slug}`}
                     className={classNames(
-                      'py-2 px-5 block text-white text-sm',
+                      'py-2 px-5 block text-white text-sm lg:hover:bg-blue-light',
                       {
-                        'bg-blue-light text-white':
-                          tabActive?.slug === type.slug,
+                        'bg-blue-light': tabActive?.slug === type.slug,
                       }
                     )}
                   >
@@ -84,7 +77,9 @@ const EstatePage = () => {
           </div>
 
           {tabActive?.component && (
-            <tabActive.component tabName={tabActive.name} />
+            <Suspense fallback={<Loading />}>
+              <tabActive.component tabName={tabActive.name} />
+            </Suspense>
           )}
         </PageWrapper>
       </Layout>

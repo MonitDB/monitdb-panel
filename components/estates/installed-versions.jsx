@@ -126,7 +126,7 @@ const InstalledVersions = ({ tabName }) => {
         hideBreadcrumbs={true}
         className="flex flex-wrap items-start justify-between border-b border-gray-light"
       >
-        <header className="mb-10 w-full">
+        <header className="pt-8 mb-10 w-full">
           <h1 className="heading-lg">{tabName}</h1>
         </header>
         <form
@@ -261,93 +261,98 @@ const InstalledVersions = ({ tabName }) => {
             </button>
           </header>
 
-          <table className="m-0">
-            <thead>
-              <tr>
-                <th>Nome</th>
-                <th>Versões</th>
-                <th>Status | Nº da versão</th>
-                <th>Última atualização disponível</th>
-                <th>Fim do suporte principal</th>
-              </tr>
-            </thead>
+          <div className="-mx-6 py-4 px-8 bg-white">
+            <table className="m-0">
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th>Versões</th>
+                  <th>Status | Nº da versão</th>
+                  <th>Última atualização disponível</th>
+                  <th>Fim do suporte principal</th>
+                </tr>
+              </thead>
 
-            {serverEnvironments.map(
-              (
-                { idTypeServerEnvironment, typeServerEnvironmentName },
-                environmentIndex
-              ) => {
-                const filteredServers = filterServersByEnvironmentId(
-                  idTypeServerEnvironment,
-                  servers
-                ).map((server) => formatServer(server, { serverTypes }))
+              {serverEnvironments.map(
+                (
+                  { idTypeServerEnvironment, typeServerEnvironmentName },
+                  environmentIndex
+                ) => {
+                  const filteredServers = filterServersByEnvironmentId(
+                    idTypeServerEnvironment,
+                    servers
+                  ).map((server) => formatServer(server, { serverTypes }))
 
-                if (filteredServers.length === 0) {
-                  return ''
-                }
+                  if (filteredServers.length === 0) {
+                    return ''
+                  }
 
-                return (
-                  <tbody
-                    key={`server-${idTypeServerEnvironment}-${environmentIndex}`}
-                  >
-                    <tr>
-                      <td colSpan="5">
-                        <h3 className="heading-xs pt-5">
-                          {environmentIndex + 1} - {typeServerEnvironmentName}
-                        </h3>
-                      </td>
-                    </tr>
-                    {filteredServers.map((server, index) => (
-                      <tr key={`server-production-${index}`}>
-                        <td className="border-l-4 border-gray">
-                          <FontAwesomeIcon icon={faDatabase} className="mr-2" />
-                          {server.serverName}
+                  return (
+                    <tbody
+                      key={`server-${idTypeServerEnvironment}-${environmentIndex}`}
+                    >
+                      <tr>
+                        <td colSpan="5">
+                          <h3 className="heading-xs pt-5">
+                            {environmentIndex + 1} - {typeServerEnvironmentName}
+                          </h3>
                         </td>
-                        <td>
-                          <p>
-                            SQL Server 2017
-                            <br />
-                            <span className="text-xs">
-                              Express Edition (64-bit)
-                            </span>
-                          </p>
-                        </td>
-                        <td>
-                          <div className="w-full flex items-center space-x-4">
-                            <FontAwesomeIcon
-                              icon={faUpload}
-                              className="text-lg text-gray-dark"
-                            />
-                            <p>
-                              RTM CU29, June 14, 2022
-                              <br />
-                              <span className="text-xs">14.0.3445.2</span>
-                            </p>
-                          </div>
-                        </td>
-                        <td>
-                          <a
-                            href="/estates/"
-                            className="inline-flex items-center space-x-2 text-blue no-underline"
-                            target="_blank"
-                          >
-                            <FontAwesomeIcon icon={faDownload} />
-                            <span>RTM CU18</span>
-                          </a>
-                          <p>
-                            <span className="text-xs">
-                              Released 13 days ago on 20 Sep 2022
-                            </span>
-                          </p>
-                        </td>
-                        <td>11 Oct 2022</td>
                       </tr>
-                    ))}
-                  </tbody>
-                )
-              }
-            )}
-          </table>
+                      {filteredServers.map((server, index) => (
+                        <tr key={`server-production-${index}`}>
+                          <td className="border-l-4 border-gray">
+                            <FontAwesomeIcon
+                              icon={faDatabase}
+                              className="mr-2"
+                            />
+                            {server.serverName}
+                          </td>
+                          <td>
+                            <p>
+                              SQL Server 2017
+                              <br />
+                              <span className="text-xs">
+                                Express Edition (64-bit)
+                              </span>
+                            </p>
+                          </td>
+                          <td>
+                            <div className="w-full flex items-center space-x-4">
+                              <FontAwesomeIcon
+                                icon={faUpload}
+                                className="text-lg text-gray-dark"
+                              />
+                              <p>
+                                RTM CU29, June 14, 2022
+                                <br />
+                                <span className="text-xs">14.0.3445.2</span>
+                              </p>
+                            </div>
+                          </td>
+                          <td>
+                            <a
+                              href="/estates/"
+                              className="inline-flex items-center space-x-2 text-blue no-underline"
+                              target="_blank"
+                            >
+                              <FontAwesomeIcon icon={faDownload} />
+                              <span>RTM CU18</span>
+                            </a>
+                            <p>
+                              <span className="text-xs">
+                                Released 13 days ago on 20 Sep 2022
+                              </span>
+                            </p>
+                          </td>
+                          <td>11 Oct 2022</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  )
+                }
+              )}
+            </table>
+          </div>
         </div>
       </PageContent>
     </>

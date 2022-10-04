@@ -4,18 +4,17 @@ import {
   faMagnifyingGlass,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import faker from 'faker'
 import { useFormik } from 'formik'
 import React, { useContext } from 'react'
 
 import Selector from '~/components/form/selector'
-import Link from '~/components/link'
 import { PageContent } from '~/components/page'
 import GlobalContext from '~/contexts/global'
-import { filterServersByEnvironmentId, formatServer } from '~/utils/server'
 
 const InstalledVersions = ({ tabName }) => {
   const {
-    globalState: { servers, serverTypes, serverEnvironments },
+    globalState: { servers, serverEnvironments },
   } = useContext(GlobalContext)
 
   const formik = useFormik({
@@ -120,8 +119,11 @@ const InstalledVersions = ({ tabName }) => {
       </PageContent>
 
       <PageContent removeSidebarMargin={true}>
-        <div className="w-full prose max-w-full prose-p:m-0 prose-td:align-top prose-th:border-b-4 prose-headings:m-0">
+        <div className="w-full prose max-w-full prose-p:m-0 prose-th:border-b-4 prose-headings:m-0 prose-td:align-middle">
           <header className="flex flex-col mb-5 md:flex-row md:justify-between md:items-center">
+            <div className="w-full md:w-3/4">
+              <h2 className="heading-md">Informações de licenciamento</h2>
+            </div>
             <button type="button" className="btn btn--small md:ml-auto">
               <FontAwesomeIcon icon={faFileExport} className="mr-2" />
               Exportar
@@ -133,72 +135,42 @@ const InstalledVersions = ({ tabName }) => {
               <thead>
                 <tr>
                   <th>Nome do servidor</th>
-                  <th>Disco</th>
-                  <th>Espaço usado</th>
-                  <th>Capacidade</th>
-                  <th>Porcentagem usada</th>
-                  <th>Espaço projetado em 1 ano</th>
-                  <th>Mudança projetada</th>
-                  <th>Tempo até encher</th>
+                  <th>Processadores</th>
+                  <th>Cores</th>
+                  <th>Processadores lógicos</th>
+                  <th>License req</th>
+                  <th>Sempre ligado</th>
+                  <th>Instância SQL</th>
+                  <th>Versão</th>
                 </tr>
               </thead>
 
-              {serverEnvironments.map(
-                (
-                  { idTypeServerEnvironment, typeServerEnvironmentName },
-                  environmentIndex
-                ) => {
-                  const filteredServers = filterServersByEnvironmentId(
-                    idTypeServerEnvironment,
-                    servers
-                  ).map((server) => formatServer(server, { serverTypes }))
-
-                  if (filteredServers.length === 0) {
-                    return ''
-                  }
-
-                  return (
-                    <tbody
-                      key={`server-${idTypeServerEnvironment}-${environmentIndex}`}
-                    >
-                      <tr>
-                        <td colSpan="8">
-                          <h3 className="heading-xs pt-5">
-                            {environmentIndex + 1} - {typeServerEnvironmentName}
-                          </h3>
-                        </td>
-                      </tr>
-                      {filteredServers.map((server, index) => (
-                        <tr key={`server-production-${index}`}>
-                          <td className="border-l-4 border-gray">
-                            <FontAwesomeIcon
-                              icon={faDatabase}
-                              className="mr-2"
-                            />
-                            {server.serverName}
-                          </td>
-                          <td>
-                            <p>
-                              <Link
-                                href="/estates/?tab=disk-usage"
-                                className="text-blue no-underline"
-                              >
-                                D:
-                              </Link>
-                            </p>
-                          </td>
-                          <td>115.70 GB</td>
-                          <td>147.65 GB</td>
-                          <td>78%</td>
-                          <td>146.52 GB</td>
-                          <td>+30.95 GB</td>
-                          <td>em até um ano</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  )
-                }
-              )}
+              <tbody>
+                {servers.map(({ serverName }, serverIndex) => (
+                  <tr key={`server-item-${serverIndex}`}>
+                    <td>
+                      <span className="rounded py-px px-1 text-xs bg-blue text-white">
+                        VM
+                      </span>{' '}
+                      <strong>{serverName}</strong>
+                    </td>
+                    <td>{faker.random.number()}</td>
+                    <td>{faker.random.number()}</td>
+                    <td>{faker.random.number()}</td>
+                    <td>4 cores</td>
+                    <td>{serverIndex % 2 === 0 ? 'Ativo' : 'Passivo'}</td>
+                    <td>
+                      <FontAwesomeIcon icon={faDatabase} className="mr-2" />{' '}
+                      {faker.random.word()}
+                    </td>
+                    <td>
+                      SQL Server 2019 <span className="text-xs">Standard</span>
+                      <br />
+                      <span className="text-xs">Edition (64-bit)</span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
             </table>
           </div>
         </div>
