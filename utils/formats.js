@@ -12,3 +12,7 @@ export const formatObjectToQuery = (object) => {
   }
   return string_.join('&')
 }
+
+export const megaBytesToGigaBytes = (mb) => {
+  return Math.ceil(Number.parseInt(mb) / 1024)
+}

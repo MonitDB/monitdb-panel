@@ -160,8 +160,15 @@ const DashboardPage = () => {
                     >
                       <button
                         type="button"
-                        className="w-full py-2 px-4 bg-white border border-gray-light space-x-4
-                      rounded-sm font-bold text-left text-sm md:w-2/3"
+                        className={classNames(
+                          `w-full py-2 px-4 bg-white border space-x-4
+                        rounded-sm font-bold text-left text-sm md:w-2/3 lg:hover:border-gray`,
+                          {
+                            'border-gray': indexActive === environmentIndex,
+                            'border-gray-light':
+                              indexActive !== environmentIndex,
+                          }
+                        )}
                         onClick={() => toggleIndexActive(environmentIndex)}
                       >
                         <FontAwesomeIcon
