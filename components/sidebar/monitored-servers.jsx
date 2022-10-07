@@ -132,22 +132,24 @@ const MonitoredServers = () => {
         <h3 className="mb-5 heading-xs">Ações</h3>
         <PageSidebarLinksList>
           <li>
-            <Link href="/alerts/">Crie métricas e alertas personalizados</Link>
+            <Link href="/all-alerts/">
+              Crie métricas e alertas personalizados
+            </Link>
           </li>
           <li>
-            <Link href="/alerts/">Gerenciar servidores monitorados</Link>
+            <Link href="/all-alerts/">Gerenciar servidores monitorados</Link>
           </li>
           <li>
-            <Link href="/alerts/">Gerenciar grupos de servidores</Link>
+            <Link href="/all-alerts/">Gerenciar grupos de servidores</Link>
           </li>
           <li>
-            <Link href="/alerts/">Configurar alertas</Link>
+            <Link href="/all-alerts/">Configurar alertas</Link>
           </li>
           <li>
-            <Link href="/alerts/">Gerenciar supressões de alerta</Link>
+            <Link href="/all-alerts/">Gerenciar supressões de alerta</Link>
           </li>
           <li>
-            <Link href="/alerts/">Assine o feed de alerta RSS</Link>
+            <Link href="/all-alerts/">Assine o feed de alerta RSS</Link>
           </li>
         </PageSidebarLinksList>
       </div>
