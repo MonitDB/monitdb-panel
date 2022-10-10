@@ -91,7 +91,7 @@ const LatestAlerts = () => {
                 className="py-2 border-b border-gray-light border-opacity-25"
               >
                 <Link
-                  href="/all-alerts/"
+                  href="/alerts/"
                   className={classNames(
                     `flex items-center space-x-2 border-l-2 pl-2 text-sm transition-all
                     duration-150 ease-in-out border-orange lg:hover:border-l-8`,
@@ -132,7 +132,7 @@ const LatestAlerts = () => {
             ))}
           </ul>
           <div className="py-4">
-            <Link href="/all-alerts/" className="btn btn--small">
+            <Link href="/alerts/" className="btn btn--small">
               Ver todos
             </Link>
           </div>

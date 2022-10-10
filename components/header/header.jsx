@@ -24,7 +24,7 @@ const navMenuList = [
   },
   {
     title: 'Alertas',
-    href: '/all-alerts/',
+    href: '/alerts/',
   },
   {
     title: 'Análises',
