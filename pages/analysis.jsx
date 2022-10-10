@@ -2,19 +2,19 @@ import { faArrowRight, faFileExport } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useFormik } from 'formik'
 import { NextSeo } from 'next-seo'
-import React, { useContext } from 'react'
+import React from 'react'
 
 import Selector from '~/components/form/selector'
 // import Checkbox from '~/components/form/checkbox'
 import Link from '~/components/link'
 import { PageContent, PageWrapper } from '~/components/page'
-import GlobalContext from '~/contexts/global'
+// import GlobalContext from '~/contexts/global'
 import Layout from '~/layouts/default'
 
 const AnalysisPage = () => {
-  const {
-    globalState: { serverEnvironments },
-  } = useContext(GlobalContext)
+  // const {
+  //   globalState: { serverEnvironments },
+  // } = useContext(GlobalContext)
   const formik = useFormik({
     initialValues: {
       range_time: '',
