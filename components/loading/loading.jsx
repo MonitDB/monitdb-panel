@@ -9,7 +9,7 @@ const Loading = ({ className = '', light = false }) => {
       className={classNames(styles.loading, className, {
         [styles.loadingLight]: light,
       })}
-    ></div>
+    />
   )
 }
 
