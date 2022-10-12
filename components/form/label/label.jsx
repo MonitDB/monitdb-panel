@@ -1,8 +1,12 @@
+import classNames from 'classnames'
 import React from 'react'
 
-const Label = ({ text = '', children, ...properties }) => {
+const Label = ({ text = '', className = '', children, ...properties }) => {
   return (
-    <label className="relative block font-bold" {...properties}>
+    <label
+      className={classNames('relative block font-bold', className)}
+      {...properties}
+    >
       {text && (
         <span
           className="block mb-1"

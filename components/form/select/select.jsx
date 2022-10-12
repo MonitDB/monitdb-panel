@@ -5,11 +5,11 @@ import React from 'react'
 
 const Select = ({ className = '', name, options, onChange = () => {} }) => {
   return (
-    <div className="relative h-8 border border-gray-light rounded w-full">
+    <div className="relative h-10 bg-white border border-gray rounded w-full">
       <select
         name={name}
         className={classNames(
-          'relative w-full bg-transparent text-sm px-2 h-8 appearance-none z-10 text-xs',
+          'relative w-full bg-transparent px-2 h-10 appearance-none z-10 text-xs',
           className
         )}
         onChange={(event) => onChange(event.target.value)}

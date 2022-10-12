@@ -261,7 +261,7 @@ const InstalledVersions = ({ tabName }) => {
             </button>
           </header>
 
-          <div className="-mx-6 py-4 px-8 bg-white">
+          <div className="-mx-4 py-4 px-8 bg-white md:-mx-6">
             <table className="m-0">
               <thead>
                 <tr>

@@ -5,7 +5,13 @@ import React, { useRef, useState } from 'react'
 
 import useOutsideClick from '~/helpers/use-click-outside'
 
-const Selector = ({ className = '', name, options, onChange }) => {
+const Selector = ({
+  className = '',
+  name,
+  options,
+  // enableSelectAllFirstItem = false,
+  onChange,
+}) => {
   const listReference = useRef(null)
   const [isOpen, setIsOpen] = useState(false)
   const [selectedOptions, setSelectedOptions] = useState([])
@@ -69,11 +75,8 @@ const Selector = ({ className = '', name, options, onChange }) => {
           <li key={`selector-${name}-${value}-${index}`}>
             <label
               className={classNames(
-                'py-2 px-2 flex items-center space-x-2 cursor-pointer text-xs',
-                'transition-all duration-150 ease-in-out lg:hover:bg-gray-light lg:hover:bg-opacity-50',
-                {
-                  'pl-4': index,
-                }
+                'py-2 px-2 pl-4 flex items-center space-x-2 cursor-pointer text-xs',
+                'transition-all duration-150 ease-in-out lg:hover:bg-gray-light lg:hover:bg-opacity-50'
               )}
             >
               <input

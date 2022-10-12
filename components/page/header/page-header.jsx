@@ -1,20 +1,38 @@
-import React from 'react'
+import classNames from 'classnames'
+import React, { Fragment } from 'react'
 
 import Link from '~/components/link'
 
-const PageHeader = ({ title }) => {
+const PageHeader = ({ title, breadcrumbs = [] }) => {
   return (
     <header className="mb-10 text-black">
       {title && <h1 className="heading-lg mb-2">{title}</h1>}
-      <ul className="flex items-center space-x-2 text-sm">
-        <li>
-          <Link href="/dashboard/">Início</Link>
-        </li>
-        <li className="text-gray">/</li>
-        <li>
-          <span className="text-gray">{title}</span>
-        </li>
-      </ul>
+      {breadcrumbs.length > 0 ? (
+        <ul className="flex items-center space-x-2 text-sm">
+          {breadcrumbs.map((breadcrumb, index) => {
+            return (
+              <Fragment key={`breadcrumb-item-${index}`}>
+                <li>
+                  <Link
+                    href={breadcrumb.href}
+                    className={classNames({
+                      'text-gray lg:hover:text-black':
+                        index !== breadcrumbs.length - 1,
+                    })}
+                  >
+                    {breadcrumb.title}
+                  </Link>
+                </li>
+                {index !== breadcrumbs.length - 1 && (
+                  <li className="text-gray">/</li>
+                )}
+              </Fragment>
+            )
+          })}
+        </ul>
+      ) : (
+        ''
+      )}
     </header>
   )
 }

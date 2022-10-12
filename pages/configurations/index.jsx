@@ -21,7 +21,10 @@ const ConfigurationsPage = () => {
                   <h3 className="mb-5 heading-md">Monitoramento</h3>
                   <ul className="space-y-4 text-sm">
                     <li>
-                      <Link href="/configurations/" className="group block">
+                      <Link
+                        href="/configurations/servers/"
+                        className="group block"
+                      >
                         <strong className="block group-hover:text-blue">
                           Servidores monitorados
                         </strong>

@@ -4,10 +4,17 @@ export const filterServersByEnvironmentId = (environmentId, servers) => {
   )
 }
 
-export const formatServer = (server, { serverTypes = [] }) => {
+export const formatServer = (
+  server,
+  { serverTypes = [], serverEnvironments = [] }
+) => {
   return {
     ...server,
     type: serverTypes.find((type) => server.idTypeServer === type.idtypeserver),
+    environment: serverEnvironments.find(
+      (environment) =>
+        server.idTypeServerEnvironment === environment.idTypeServerEnvironment
+    ),
   }
 }
 

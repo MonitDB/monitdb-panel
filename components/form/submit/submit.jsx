@@ -1,3 +1,4 @@
+import classNames from 'classnames'
 import React from 'react'
 
 import Cta from '~/components/ui/cta'
@@ -14,7 +15,9 @@ const Submit = ({
     <Cta
       type="submit"
       disabled={disabled}
-      className={`${disabled ? 'opacity-50' : ''} ${className}`}
+      className={classNames(className, {
+        'opacity-50': disabled,
+      })}
       {...properties}
     >
       {loading ? loadingText : children}
