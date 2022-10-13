@@ -63,7 +63,7 @@ const ServerCard = ({ idServer, healthStatus, serverEnable, serverName }) => {
   return (
     <article
       className={classNames(
-        `col-span-1 border border-gray-light bg-white md:col-span-6 lg:col-span-3
+        `col-span-1 border border-gray-light bg-white md:col-span-6 lg:col-span-4
         transition-all duration-300 ease-in-out lg:hover:border-gray`,
         {
           ' lg:min-h-72': metrics?.length,
