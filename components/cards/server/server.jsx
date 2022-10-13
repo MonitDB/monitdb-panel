@@ -67,7 +67,7 @@ const ServerCard = ({ idServer, healthStatus, serverEnable, serverName }) => {
         transition-all duration-300 ease-in-out lg:hover:border-gray`,
         {
           ' lg:min-h-72': metrics?.length,
-          ' lg:min-h-24': !metrics?.length,
+          ' lg:min-h-32': !metrics?.length,
         }
       )}
     >
@@ -122,6 +122,26 @@ const ServerCard = ({ idServer, healthStatus, serverEnable, serverName }) => {
                   })}
                   style={{
                     width: `${metrics.memory.inUsePercent}%`,
+                  }}
+                />
+              </dd>
+            </>
+          )}
+
+          {metrics.cpu && (
+            <>
+              <dt className="block text-gray-dark mt-2">CPU</dt>
+              <dd className="mt-1 w-full h-1 block relative bg-gray-light">
+                <span
+                  className={classNames('absolute top-0 left-0 h-full', {
+                    'bg-blue': metrics.cpu.instanceProcessPercent <= 85,
+                    'bg-orange':
+                      metrics.cpu.instanceProcessPercent > 85 &&
+                      metrics.cpu.instanceProcessPercent < 95,
+                    'bg-danger': metrics.cpu.instanceProcessPercent >= 95,
+                  })}
+                  style={{
+                    width: `${metrics.cpu.instanceProcessPercent}%`,
                   }}
                 />
               </dd>
