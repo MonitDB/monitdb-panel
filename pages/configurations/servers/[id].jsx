@@ -90,6 +90,7 @@ const ConfigurationsServersSinglePage = () => {
                 <Label text="Ambiente" className="col-span-1">
                   {serverEnvironments?.length > 0 ? (
                     <Select
+                      containerClass="bg-white"
                       name="environment"
                       options={serverEnvironments?.map((environment) => ({
                         label: environment.typeServerEnvironmentName,
@@ -106,6 +107,7 @@ const ConfigurationsServersSinglePage = () => {
                 <Label text="Tipo de servidor" className="col-span-1">
                   {serverTypes?.length > 0 ? (
                     <Select
+                      containerClass="bg-white"
                       name="serverType"
                       options={serverTypes?.map((serverType) => ({
                         label: serverType.typeservername,

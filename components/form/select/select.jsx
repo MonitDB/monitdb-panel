@@ -3,9 +3,20 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import classNames from 'classnames'
 import React from 'react'
 
-const Select = ({ className = '', name, options, onChange = () => {} }) => {
+const Select = ({
+  containerClass = '',
+  className = '',
+  name,
+  options,
+  onChange = () => {},
+}) => {
   return (
-    <div className="relative h-10 bg-white border border-gray rounded w-full">
+    <div
+      className={classNames(
+        'relative h-10 border border-gray rounded w-full',
+        containerClass
+      )}
+    >
       <select
         name={name}
         className={classNames(
