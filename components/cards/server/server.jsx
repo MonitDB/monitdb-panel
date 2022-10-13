@@ -63,7 +63,7 @@ const ServerCard = ({ idServer, healthStatus, serverEnable, serverName }) => {
   return (
     <article
       className={classNames(
-        `col-span-1 border border-gray-light bg-white md:col-span-6 lg:col-span-4
+        `col-span-1 border border-gray-light bg-white md:col-span-6 lg:col-span-3
         transition-all duration-300 ease-in-out lg:hover:border-gray`,
         {
           ' lg:min-h-72': metrics?.length,
@@ -133,13 +133,14 @@ const ServerCard = ({ idServer, healthStatus, serverEnable, serverName }) => {
               <dt className="block text-gray-dark mt-2">CPU</dt>
               <dd className="mt-1 w-full h-1 block relative bg-gray-light">
                 <span
-                  className={classNames('absolute top-0 left-0 h-full', {
-                    'bg-blue': metrics.cpu.instanceProcessPercent <= 85,
-                    'bg-orange':
-                      metrics.cpu.instanceProcessPercent > 85 &&
-                      metrics.cpu.instanceProcessPercent < 95,
-                    'bg-danger': metrics.cpu.instanceProcessPercent >= 95,
-                  })}
+                  className="absolute top-0 h-full bg-orange"
+                  style={{
+                    width: `${metrics.cpu.otherProcessPercent}%`,
+                    left: `${metrics.cpu.instanceProcessPercent}%`,
+                  }}
+                />
+                <span
+                  className={classNames('absolute top-0 left-0 h-full bg-blue')}
                   style={{
                     width: `${metrics.cpu.instanceProcessPercent}%`,
                   }}
@@ -169,8 +170,8 @@ const ServerCard = ({ idServer, healthStatus, serverEnable, serverName }) => {
                       },
                     }}
                   />
-                  <p className="text-center text-xs">
-                    {disk.inUsePercent}% em uso
+                  <p className="text-center text-[10px] whitespace-nowrap">
+                    {Number.parseInt(disk.inUsePercent)}% em uso
                     <br />
                     {getDiskTotal(disk)} total
                   </p>
