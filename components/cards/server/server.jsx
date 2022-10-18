@@ -2,10 +2,11 @@ import { faDatabase } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ArcElement, Chart as ChartJS, Legend, Tooltip } from 'chart.js'
 import classNames from 'classnames'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Pie } from 'react-chartjs-2'
 
 import Link from '~/components/link'
+import DatabaseIcons from '~/helpers/database-icons'
 import { getServerMetrics } from '~/services/servers'
 import { megaBytesToGigaBytes } from '~/utils/formats'
 
@@ -35,7 +36,14 @@ const getPieChartData = ({ inUsePercent }) => {
 const getDiskTotal = ({ unitType, total }) =>
   unitType === 'MB' ? `${megaBytesToGigaBytes(total)} GB` : `${total} GB`
 
-const ServerCard = ({ idServer, healthStatus, serverEnable, serverName }) => {
+const ServerCard = ({
+  idServer,
+  healthStatus,
+  serverEnable,
+  serverName,
+  type,
+  className = '',
+}) => {
   const [metrics, setMetrics] = useState({
     cpu: undefined,
     memory: undefined,
@@ -63,8 +71,9 @@ const ServerCard = ({ idServer, healthStatus, serverEnable, serverName }) => {
   return (
     <article
       className={classNames(
-        `col-span-1 border border-gray-light bg-white md:col-span-6 lg:col-span-4
-        transition-all duration-300 ease-in-out lg:hover:border-gray`,
+        `group border border-gray-light bg-white transition-all duration-300
+          ease-in-out relative lg:hover:border-gray`,
+        className,
         {
           ' lg:min-h-72': metrics?.length,
           ' lg:min-h-32': !metrics?.length,
@@ -90,6 +99,11 @@ const ServerCard = ({ idServer, healthStatus, serverEnable, serverName }) => {
           <FontAwesomeIcon icon={faDatabase} className="text-base" />
           <span>{serverName}</span>
         </h4>
+        {type?.typeservername && (
+          <div className="absolute top-0 right-0 rounded-full border-gray-light p-4">
+            <DatabaseIcons name={type.typeservername} className="w-10 h-10" />
+          </div>
+        )}
         <dl className="text-xs w-full text-gray">
           {metrics.memory && (
             <>
@@ -149,40 +163,43 @@ const ServerCard = ({ idServer, healthStatus, serverEnable, serverName }) => {
             </>
           )}
         </dl>
-
-        {metrics.disks?.length > 0 ? (
-          <div className="mt-3">
-            <p className="mb-2 text-xs">Discos</p>
-            <div className="w-full grid grid-cols-2 gap-2 lg:grid-cols-4">
-              {metrics.disks.map((disk, index) => (
-                <div
-                  key={`server-${idServer}-disk-${index}`}
-                  className="col-span-1"
-                >
-                  <p className="text-center text-xs">
-                    <strong>{disk.driveName}</strong>
-                  </p>
-                  <Pie
-                    data={getPieChartData(disk)}
-                    options={{
-                      plugins: {
-                        legend: { display: false },
-                      },
-                    }}
-                  />
-                  <p className="text-center text-[10px] whitespace-nowrap">
-                    {Number.parseInt(disk.inUsePercent)}% em uso
-                    <br />
-                    {getDiskTotal(disk)} total
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-        ) : (
-          ''
-        )}
       </Link>
+      {metrics.disks?.length > 0 ? (
+        <div
+          className="absolute bottom-0 left-full w-full p-2
+              transform translate-x-px translate-y-px
+              invisible opacity-0 lg:group-hover:opacity-100 lg:group-hover:visible"
+        >
+          <p className="mb-2 text-xs">Discos</p>
+          <div className="w-full grid grid-cols-2 gap-4 lg:grid-cols-4">
+            {metrics.disks.map((disk, index) => (
+              <div
+                key={`server-${idServer}-disk-${index}`}
+                className="col-span-1"
+              >
+                <p className="text-center text-xs">
+                  <strong>{disk.driveName}</strong>
+                </p>
+                <Pie
+                  data={getPieChartData(disk)}
+                  options={{
+                    plugins: {
+                      legend: { display: false },
+                    },
+                  }}
+                />
+                <p className="text-center text-[10px] whitespace-nowrap">
+                  {Number.parseInt(disk.inUsePercent)}% em uso
+                  <br />
+                  {getDiskTotal(disk)} total
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : (
+        ''
+      )}
     </article>
   )
 }

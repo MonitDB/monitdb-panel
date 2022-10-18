@@ -30,12 +30,10 @@ const ConfigurationsServersSinglePage = () => {
     onSubmit: async (values) => {
       setIsLoading(true)
 
-      console.log(values)
-
       try {
         const response = await addServer(values)
 
-        console.log(response)
+        console.log(response) // eslint-disable-line no-console
       } catch (error) {
         console.log(error) // eslint-disable-line no-console
       } finally {

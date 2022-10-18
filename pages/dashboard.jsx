@@ -149,6 +149,8 @@ const DashboardPage = () => {
                     servers
                   ).map((server) => formatServer(server, { serverTypes }))
 
+                  console.log(filteredServers)
+
                   if (filteredServers.length === 0) {
                     return ''
                   }
@@ -186,14 +188,15 @@ const DashboardPage = () => {
                         </span>
                       </button>
                       <Reveal active={indexActive === environmentIndex}>
-                        <Grid className="py-2 gap-y-4 md:py-4">
+                        <div className="flex flex-wrap py-2 gap-y-4 md:py-4">
                           {filteredServers.map((server, index) => (
                             <ServerCard
                               key={`server-production-${index}`}
+                              className="w-full mb-4 md:w-72 md:mr-4"
                               {...server}
                             />
                           ))}
-                        </Grid>
+                        </div>
                       </Reveal>
                     </div>
                   )
