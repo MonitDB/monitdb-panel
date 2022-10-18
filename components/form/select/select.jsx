@@ -8,7 +8,7 @@ const Select = ({
   className = '',
   name,
   options,
-  onChange = () => {},
+  ...properties
 }) => {
   return (
     <div
@@ -23,7 +23,7 @@ const Select = ({
           'relative w-full bg-transparent px-2 h-10 appearance-none z-10 text-xs',
           className
         )}
-        onChange={(event) => onChange(event.target.value)}
+        {...properties}
       >
         {options.map((option, index) => (
           <option key={`option-${option.value}-${index}`} value={option.value}>

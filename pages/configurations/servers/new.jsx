@@ -1,26 +1,60 @@
 import { useFormik } from 'formik'
 import { NextSeo } from 'next-seo'
-import React, { useContext } from 'react'
+import React, { useContext, useMemo, useState } from 'react'
 
-import { Input, Label, Select, Selector, Textarea } from '~/components/form'
+import { Input, Label, Select, Textarea } from '~/components/form'
 import { PageContent, PageHeader, PageWrapper } from '~/components/page'
 import GlobalContext from '~/contexts/global'
+import DatabaseIcons from '~/helpers/database-icons'
 import Layout from '~/layouts/default'
+import { addServer } from '~/services/servers'
 
 const ConfigurationsServersSinglePage = () => {
   const {
     globalState: { serverTypes, serverEnvironments },
   } = useContext(GlobalContext)
+  const [isLoading, setIsLoading] = useState(false)
 
   const formik = useFormik({
     initialValues: {
       name: '',
+      serverType: '',
+      environment: '',
+      host: '',
+      user: '',
+      password: '',
+      port: '',
       description: '',
+      status: '1',
     },
-    onSubmit: (values) => {
+    onSubmit: async (values) => {
+      setIsLoading(true)
+
+      console.log(values)
+
+      try {
+        const response = await addServer(values)
+
+        console.log(response)
+      } catch (error) {
+        console.log(error) // eslint-disable-line no-console
+      } finally {
+        setIsLoading(false)
+      }
       console.log('submit', values) // eslint-disable-line no-console
     },
   })
+
+  const databaseName = useMemo(() => {
+    if (serverTypes?.length === 0) return ''
+
+    return formik?.values?.serverType
+      ? serverTypes.find(
+          (serverType) =>
+            serverType.idtypeserver.toString() === formik.values.serverType
+        )?.typeservername
+      : serverTypes[0]?.typeservername
+  }, [formik?.values?.serverType, serverTypes])
 
   return (
     <>
@@ -55,7 +89,8 @@ const ConfigurationsServersSinglePage = () => {
                   <Input
                     type="text"
                     name="name"
-                    className="w-full px-4 h-10 bg-white leading-10 rounded outline-none text-sm"
+                    className="w-full px-4 h-10 bg-white leading-10
+                      rounded outline-none text-sm"
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                     value={formik.values.name}
@@ -66,35 +101,52 @@ const ConfigurationsServersSinglePage = () => {
                     <Select
                       containerClass="bg-white"
                       name="environment"
-                      options={serverEnvironments?.map((environment) => ({
-                        label: environment.typeServerEnvironmentName,
-                        value: environment.idTypeServerEnvironment,
-                      }))}
-                      onChange={(value) => {
-                        formik.setFieldValue('status', value)
-                      }}
+                      options={[
+                        {
+                          label: 'Selecione...',
+                          value: '',
+                        },
+                        ...(serverEnvironments?.map((environment) => ({
+                          label: environment.typeServerEnvironmentName,
+                          value: environment.idTypeServerEnvironment,
+                        })) || []),
+                      ]}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      value={formik.values.environment}
                     />
                   ) : (
                     ''
                   )}
                 </Label>
-                <Label text="Tipo de servidor" className="col-span-1">
-                  {serverTypes.length > 0 ? (
-                    <Select
-                      containerClass="bg-white"
-                      name="serverType"
-                      options={serverTypes?.map((serverType) => ({
-                        label: serverType.typeservername,
-                        value: serverType.idtypeserver,
-                      }))}
-                      onChange={(value) => {
-                        formik.setFieldValue('serverType', value)
-                      }}
-                    />
-                  ) : (
-                    ''
-                  )}
-                </Label>
+                <div className="col-span-1 relative flex items-end">
+                  <Label text="Tipo de servidor" className="w-3/5">
+                    {serverTypes.length > 0 ? (
+                      <Select
+                        containerClass="bg-white"
+                        name="serverType"
+                        options={[
+                          {
+                            label: 'Selecione...',
+                            value: '',
+                          },
+                          ...(serverTypes?.map((serverType) => ({
+                            label: serverType.typeservername,
+                            value: serverType.idtypeserver,
+                          })) || []),
+                        ]}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        value={formik.values.serverType}
+                      />
+                    ) : (
+                      ''
+                    )}
+                  </Label>
+                  <div className="w-2/5 relative pl-4">
+                    <DatabaseIcons name={databaseName} className="w-10 h-10" />
+                  </div>
+                </div>
                 <Label text="Host" className="col-span-1">
                   <Input
                     type="text"
@@ -117,7 +169,7 @@ const ConfigurationsServersSinglePage = () => {
                 </Label>
                 <Label text="Password" className="col-span-1">
                   <Input
-                    type="text"
+                    type="password"
                     name="password"
                     className="w-full px-4 h-10 bg-white leading-10 rounded outline-none text-sm"
                     onChange={formik.handleChange}
@@ -135,16 +187,17 @@ const ConfigurationsServersSinglePage = () => {
                     value={formik.values.port}
                   />
                 </Label>
-                <Label text="Status" className="col-span-2">
-                  <Selector
+                <Label text="Status" className="col-span-1">
+                  <Select
+                    containerClass="bg-white"
                     name="status"
                     options={[
                       { value: '1', label: 'Ativo' },
                       { value: '0', label: 'Inativo' },
                     ]}
-                    onChange={(value) => {
-                      formik.setFieldValue('status', value)
-                    }}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    value={formik.values.status}
                   />
                 </Label>
                 <Label text="Descrição" className="col-span-2">
@@ -157,8 +210,8 @@ const ConfigurationsServersSinglePage = () => {
                   />
                 </Label>
                 <div className="col-span-2">
-                  <button type="submit" className="btn">
-                    Criar
+                  <button type="submit" className="btn" disabled={isLoading}>
+                    {isLoading ? 'Criando...' : 'Criar'}
                   </button>
                 </div>
               </form>

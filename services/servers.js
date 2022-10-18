@@ -15,3 +15,18 @@ export const getTypes = async () => {
 export const getEnvironments = async () => {
   return clientApi().get(`/typeserverenvironment`)
 }
+
+export const addServer = async (values) => {
+  return clientApi().post(`/server`, {
+    Idtypeserver: values.serverType,
+    Idtypeserverconection: values.serverType,
+    Idtypeserverenvironment: values.environment,
+    Servername: values.name,
+    ServerDescription: values.description,
+    ServerHost: values.host,
+    ServerUser: values.user,
+    ServerPassword: values.password,
+    ServerPort: values.port,
+    Serverenable: values.status,
+  })
+}
