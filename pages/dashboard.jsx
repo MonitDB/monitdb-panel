@@ -10,7 +10,6 @@ import React, { useContext, useState } from 'react'
 
 import ServerCard from '~/components/cards/server'
 import Selector from '~/components/form/selector'
-import Grid from '~/components/grid'
 import { PageContent, PageWrapper } from '~/components/page'
 import LatestAlertsSidebar from '~/components/sidebar/latest-alerts'
 import GlobalContext from '~/contexts/global'
@@ -148,8 +147,6 @@ const DashboardPage = () => {
                     idTypeServerEnvironment,
                     servers
                   ).map((server) => formatServer(server, { serverTypes }))
-
-                  console.log(filteredServers)
 
                   if (filteredServers.length === 0) {
                     return ''

@@ -2,7 +2,7 @@ import { faDatabase } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ArcElement, Chart as ChartJS, Legend, Tooltip } from 'chart.js'
 import classNames from 'classnames'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Pie } from 'react-chartjs-2'
 
 import Link from '~/components/link'
