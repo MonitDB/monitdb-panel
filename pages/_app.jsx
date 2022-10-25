@@ -11,21 +11,21 @@ setLocale(pt)
 export default function MyApp({ Component, pageProps }) {
   return (
     <>
+      <DefaultSeo
+        defaultTitle="MonitDB"
+        openGraph={{
+          type: 'website',
+          locale: 'pt-BR',
+          url: process.env.siteUrl,
+          site_name: 'MonitDB',
+        }}
+        twitter={{
+          handle: '@handle',
+          site: '@site',
+          cardType: 'summary_large_image',
+        }}
+      />
       <Main>
-        <DefaultSeo
-          defaultTitle="MonitDB"
-          openGraph={{
-            type: 'website',
-            locale: 'pt-BR',
-            url: process.env.siteUrl,
-            site_name: 'MonitDB',
-          }}
-          twitter={{
-            handle: '@handle',
-            site: '@site',
-            cardType: 'summary_large_image',
-          }}
-        />
         <Component {...pageProps} />
       </Main>
     </>

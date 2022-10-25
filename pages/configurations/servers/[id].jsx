@@ -88,7 +88,7 @@ const ConfigurationsServersSinglePage = () => {
             <div>
               <form
                 onSubmit={formik.handleSubmit}
-                className="grid grid-cols-2 gap-4 max-w-[50%]"
+                className="grid grid-cols-2 gap-4 md:max-w-[50%]"
               >
                 <Label text="Nome do servidor" className="col-span-2">
                   <Input

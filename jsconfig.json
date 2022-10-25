@@ -9,6 +9,7 @@
       "~/icons/*": ["icons/*"],
       "~/utils/*": ["utils/*"],
       "~/contexts/*": ["contexts/*"],
+      "~/hooks/*": ["hooks/*"],
       "~/services/*": ["services/*"],
       "~/public/*": ["public/*"],
       "~/styles/*": ["styles/*"]

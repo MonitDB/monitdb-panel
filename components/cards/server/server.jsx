@@ -2,11 +2,12 @@ import { faDatabase } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ArcElement, Chart as ChartJS, Legend, Tooltip } from 'chart.js'
 import classNames from 'classnames'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Pie } from 'react-chartjs-2'
 
 import Link from '~/components/link'
 import DatabaseIcons from '~/helpers/database-icons'
+import useWindowSize from '~/hooks/use-window-size'
 import { getServerMetrics } from '~/services/servers'
 import { megaBytesToGigaBytes } from '~/utils/formats'
 
@@ -44,6 +45,9 @@ const ServerCard = ({
   type,
   className = '',
 }) => {
+  const windowSize = useWindowSize()
+  const elementReference = useRef(null)
+  const [tooltipPosition, setTooltipPosition] = useState('left')
   const [metrics, setMetrics] = useState({
     cpu: undefined,
     memory: undefined,
@@ -65,11 +69,18 @@ const ServerCard = ({
   }
 
   useEffect(() => {
+    setTooltipPosition(
+      elementReference.current.offsetLeft > windowSize / 2 ? 'left' : 'right'
+    )
+  }, [windowSize])
+
+  useEffect(() => {
     getMetrics()
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <article
+      ref={elementReference}
       className={classNames(
         `group border border-gray-light bg-white transition-all duration-300
           ease-in-out relative lg:hover:border-gray`,
@@ -164,12 +175,34 @@ const ServerCard = ({
           )}
         </dl>
       </Link>
+
       {metrics.disks?.length > 0 ? (
         <div
-          className="absolute bottom-0 left-full w-full p-2
-              transform translate-x-px translate-y-px
-              invisible opacity-0 lg:group-hover:opacity-100 lg:group-hover:visible"
+          className={classNames(
+            `absolute bottom-0 w-full p-2 z-20 transform
+              translate-y-px bg-gray-dark text-white transition-all duration-75
+              ease-in-out invisible opacity-0 lg:group-hover:opacity-100
+              lg:group-hover:visible lg:group-hover:duration-150`,
+            {
+              'left-full -translate-x-1 lg:group-hover:translate-x-px':
+                tooltipPosition === 'right',
+              'right-full translate-x-1 lg:group-hover:translate-x-px':
+                tooltipPosition === 'left',
+            }
+          )}
         >
+          <span
+            className={classNames(
+              `absolute top-1/2 transform -translate-y-1/2 border-t-[16px]
+                border-t-transparent border-b-[16px] border-b-transparent`,
+              {
+                'border-r-[16px] border-r-gray-dark -left-4':
+                  tooltipPosition === 'right',
+                'border-l-[16px] border-l-gray-dark -right-4':
+                  tooltipPosition === 'left',
+              }
+            )}
+          />
           <p className="mb-2 text-xs">Discos</p>
           <div className="w-full grid grid-cols-2 gap-4 lg:grid-cols-4">
             {metrics.disks.map((disk, index) => (
