@@ -1,3 +1,4 @@
+import classNames from 'classnames'
 import React, { useEffect, useRef } from 'react'
 
 const Reveal = ({ active, children }) => {
@@ -12,9 +13,10 @@ const Reveal = ({ active, children }) => {
   return (
     <div
       ref={elementReference}
-      className={`overflow-hidden transition-all duration-300 ease-in-out ${
-        active ? 'h-auto' : ''
-      }`}
+      className={classNames('transition-all duration-150 ease-in-out', {
+        'h-auto': active,
+        'overflow-hidden': !active,
+      })}
     >
       {children}
     </div>
