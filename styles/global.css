@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+@import 'react-toastify/dist/ReactToastify.css';
+@import './toastify.css';
+
 html,
 body {
   @apply w-full h-full;

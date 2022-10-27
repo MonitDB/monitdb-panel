@@ -1,6 +1,7 @@
 import '~/styles/global.css'
 
 import { DefaultSeo } from 'next-seo'
+import { ToastContainer } from 'react-toastify'
 import { setLocale } from 'yup'
 import { pt } from 'yup-locales'
 
@@ -28,6 +29,7 @@ export default function MyApp({ Component, pageProps }) {
       <Main>
         <Component {...pageProps} />
       </Main>
+      <ToastContainer position="bottom-right" />
     </>
   )
 }
