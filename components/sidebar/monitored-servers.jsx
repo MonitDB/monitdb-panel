@@ -135,7 +135,9 @@ const MonitoredServers = () => {
             <Link href="/alerts/">Crie métricas e alertas personalizados</Link>
           </li>
           <li>
-            <Link href="/alerts/">Gerenciar servidores monitorados</Link>
+            <Link href="/configurations/servers/">
+              Gerenciar servidores monitorados
+            </Link>
           </li>
           <li>
             <Link href="/alerts/">Gerenciar grupos de servidores</Link>

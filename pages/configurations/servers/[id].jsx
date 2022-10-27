@@ -1,7 +1,8 @@
 import { useFormik } from 'formik'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
-import React, { useContext, useEffect, useMemo } from 'react'
+import React, { useContext, useEffect, useMemo, useState } from 'react'
+import { toast } from 'react-toastify'
 
 import { Input, Label, Select, Textarea } from '~/components/form'
 import { PageContent, PageHeader, PageWrapper } from '~/components/page'
@@ -10,12 +11,16 @@ import GlobalContext from '~/contexts/global'
 // import Loading from '~/components/loading'
 import DatabaseIcons from '~/helpers/database-icons'
 import Layout from '~/layouts/default'
+import { addServer } from '~/services/servers'
+import { handleException } from '~/utils/exceptions'
 // import { formatServer } from '~/utils/server'
 
 const ConfigurationsServersSinglePage = () => {
   const {
     globalState: { servers, serverTypes, serverEnvironments },
   } = useContext(GlobalContext)
+
+  const [isLoading, setIsLoading] = useState(false)
 
   const router = useRouter()
 
@@ -24,6 +29,7 @@ const ConfigurationsServersSinglePage = () => {
       name: '',
       serverType: '',
       environment: '',
+      connection: '1',
       host: '',
       user: '',
       password: '',
@@ -31,8 +37,18 @@ const ConfigurationsServersSinglePage = () => {
       description: '',
       status: '',
     },
-    onSubmit: (values) => {
-      console.log('submit', values) // eslint-disable-line no-console
+    onSubmit: async (values) => {
+      setIsLoading(true)
+
+      try {
+        const response = await addServer(values)
+
+        console.log(response) // eslint-disable-line no-console
+      } catch (error) {
+        toast.error(handleException(error))
+      } finally {
+        setIsLoading(false)
+      }
     },
   })
 
@@ -202,8 +218,8 @@ const ConfigurationsServersSinglePage = () => {
                   />
                 </Label>
                 <div className="col-span-2">
-                  <button type="submit" className="btn">
-                    Salvar
+                  <button type="submit" className="btn" disabled={isLoading}>
+                    {isLoading ? 'Salvando...' : 'Salvar'}
                   </button>
                 </div>
               </form>

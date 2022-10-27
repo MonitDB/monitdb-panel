@@ -15,7 +15,7 @@ import { PageContent, PageWrapper } from '~/components/page'
 import MonitoredServersSidebar from '~/components/sidebar/monitored-servers'
 import GlobalContext from '~/contexts/global'
 import Layout from '~/layouts/default'
-import { getAlerts, getAlertsParameter } from '~/services/alerts'
+import { getAlerts } from '~/services/alerts'
 import { formatAlert } from '~/utils/alert'
 import { getFormattedDate } from '~/utils/formats'
 
@@ -23,8 +23,9 @@ const AlertsPage = ({ data }) => {
   const {
     globalState: { servers, serverTypes, serverEnvironments },
   } = useContext(GlobalContext)
-  const [alertsParameters, setAlertsParameters] = useState([])
+
   const [alerts, setAlerts] = useState([])
+
   const formik = useFormik({
     initialValues: {
       name: '',
@@ -38,32 +39,16 @@ const AlertsPage = ({ data }) => {
   })
 
   useEffect(() => {
-    const getAlertsParameterData = async () => {
-      try {
-        const responseAlertsParameter = await getAlertsParameter()
-        setAlertsParameters(responseAlertsParameter?.data?.result || [])
-      } catch (error) {
-        console.log('error', error) // eslint-disable-line no-console
-      }
-    }
-
-    getAlertsParameterData()
-  }, [])
-
-  useEffect(() => {
-    if (alertsParameters.length === 0) return
-
     setAlerts(
       [...data].map((alert) =>
         formatAlert(alert, {
           servers,
           serverTypes,
           serverEnvironments,
-          alertsParameters,
         })
       )
     )
-  }, [data, servers, serverTypes, serverEnvironments, alertsParameters])
+  }, [data, servers, serverTypes, serverEnvironments])
 
   return (
     <>

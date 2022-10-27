@@ -12,18 +12,21 @@ import Link from '~/components/link'
 import Loading from '~/components/loading'
 import { PageSidebar, PageSidebarTitle } from '~/components/page'
 import GlobalContext from '~/contexts/global'
-import { getAlerts, getAlertsParameter } from '~/services/alerts'
+import {
+  getAlerts,
+  // getAlertsParameter
+} from '~/services/alerts'
 
-const formatAlerts = (alerts, alertsParameter) => {
-  return alertsParameter
-    .map((alertParameter) => ({
-      ...alertParameter,
-      totalAlerts: alerts.filter(
-        (alert) => alert.idAlertParameter === alertParameter.idAlertParameter
-      ).length,
-    }))
-    .filter((alert) => alert.totalAlerts > 0)
-}
+// const formatAlerts = (alerts, alertsParameter) => {
+//   return alertsParameter
+//     .map((alertParameter) => ({
+//       ...alertParameter,
+//       totalAlerts: alerts.filter(
+//         (alert) => alert.idAlertParameter === alertParameter.idAlertParameter
+//       ).length,
+//     }))
+//     .filter((alert) => alert.totalAlerts > 0)
+// }
 
 const LatestAlerts = () => {
   const {
@@ -32,15 +35,15 @@ const LatestAlerts = () => {
   const [alerts, setAlerts] = useState([])
 
   const getAlertsData = async () => {
-    const responseAlerts = await getAlerts({ pagesize: 20 })
-    const responseAlertsParemeter = await getAlertsParameter()
+    const responseAlerts = await getAlerts({ pagesize: 6 })
+    // const responseAlertsParemeter = await getAlertsParameter()
 
-    const alertsFormatted = formatAlerts(
-      responseAlerts?.data?.result || [],
-      responseAlertsParemeter?.data?.result || []
-    )
+    // const alertsFormatted = formatAlerts(
+    //   responseAlerts?.data?.result || [],
+    //   responseAlertsParemeter?.data?.result || []
+    // )
 
-    setAlerts(alertsFormatted)
+    setAlerts(responseAlerts?.data?.result)
   }
 
   useEffect(() => {

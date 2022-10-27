@@ -3,7 +3,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { NextSeo } from 'next-seo'
 import React, { useContext } from 'react'
 
-import Checkbox from '~/components/form/checkbox'
 import Link from '~/components/link'
 import Loading from '~/components/loading'
 import { PageContent, PageHeader, PageWrapper } from '~/components/page'
@@ -51,9 +50,6 @@ const ConfigurationsServersPage = () => {
                   <table className="prose max-w-full w-full">
                     <thead>
                       <tr className="text-sm font-bold text-gray-dark text-left">
-                        <th className="w-5 border-b-2 border-gray-light">
-                          <Checkbox name="all" value="1" />
-                        </th>
                         <th className="border-b-2 border-gray-light w-2/5">
                           Servidor
                         </th>
@@ -76,13 +72,6 @@ const ConfigurationsServersPage = () => {
                             key={`server-${server.idServer}-${index}`}
                             className="text-sm border-b border-gray-light transition-colors duration-200 ease-in-out lg:hover:bg-gray-light lg:hover:bg-opacity-50"
                           >
-                            <td>
-                              <Checkbox
-                                className="transform translate-y-1"
-                                name="servers"
-                                value={server.idServer}
-                              />
-                            </td>
                             <td>{server.serverName}</td>
                             <td>{server.serverEnable ? 'Ativo' : 'Inativo'}</td>
                             <td>admin@gmail.com</td>

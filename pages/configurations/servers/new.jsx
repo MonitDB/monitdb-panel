@@ -1,6 +1,7 @@
 import { useFormik } from 'formik'
 import { NextSeo } from 'next-seo'
 import React, { useContext, useMemo, useState } from 'react'
+import { toast } from 'react-toastify'
 
 import { Input, Label, Select, Textarea } from '~/components/form'
 import { PageContent, PageHeader, PageWrapper } from '~/components/page'
@@ -8,6 +9,7 @@ import GlobalContext from '~/contexts/global'
 import DatabaseIcons from '~/helpers/database-icons'
 import Layout from '~/layouts/default'
 import { addServer } from '~/services/servers'
+import { handleException } from '~/utils/exceptions'
 
 const ConfigurationsServersSinglePage = () => {
   const {
@@ -19,6 +21,7 @@ const ConfigurationsServersSinglePage = () => {
     initialValues: {
       name: '',
       serverType: '',
+      connection: '1',
       environment: '',
       host: '',
       user: '',
@@ -35,11 +38,10 @@ const ConfigurationsServersSinglePage = () => {
 
         console.log(response) // eslint-disable-line no-console
       } catch (error) {
-        console.log(error) // eslint-disable-line no-console
+        toast.error(handleException(error))
       } finally {
         setIsLoading(false)
       }
-      console.log('submit', values) // eslint-disable-line no-console
     },
   })
 

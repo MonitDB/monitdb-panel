@@ -25,7 +25,7 @@ export const handleException = (error, errorMessage) => {
       return 'Acesso não autorizado.'
     }
 
-    return serverResponse?.data || HandleExceptionMessages.GENERAL
+    return serverResponse?.message || HandleExceptionMessages.GENERAL
   }
 
   return error?.message || HandleExceptionMessages.GENERAL
