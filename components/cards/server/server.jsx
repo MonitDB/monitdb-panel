@@ -70,7 +70,9 @@ const ServerCard = ({
 
   useEffect(() => {
     setTooltipPosition(
-      elementReference.current.offsetLeft > windowSize / 2 ? 'left' : 'right'
+      elementReference.current.offsetLeft > windowSize.width / 2
+        ? 'left'
+        : 'right'
     )
   }, [windowSize])
 
@@ -179,7 +181,7 @@ const ServerCard = ({
       {metrics.disks?.length > 0 ? (
         <div
           className={classNames(
-            `absolute bottom-0 w-full p-2 z-20 transform
+            `absolute bottom-px w-[calc(100%+1.25rem)] min-h-full h-auto py-2 px-4 z-20 transform
               translate-y-px bg-gray-dark text-white transition-all duration-75
               ease-in-out invisible opacity-0 lg:group-hover:opacity-100
               lg:group-hover:visible lg:group-hover:duration-150`,
@@ -193,7 +195,7 @@ const ServerCard = ({
         >
           <span
             className={classNames(
-              `absolute top-1/2 transform -translate-y-1/2 border-t-[16px]
+              `absolute bottom-5 transform border-t-[16px]
                 border-t-transparent border-b-[16px] border-b-transparent`,
               {
                 'border-r-[16px] border-r-gray-dark -left-4':
@@ -217,6 +219,7 @@ const ServerCard = ({
                   data={getPieChartData(disk)}
                   options={{
                     plugins: {
+                      tooltip: { enabled: false },
                       legend: { display: false },
                     },
                   }}
