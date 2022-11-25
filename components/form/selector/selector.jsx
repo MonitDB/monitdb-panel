@@ -1,7 +1,7 @@
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import classNames from 'classnames'
-import React, { useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 import useOutsideClick from '~/helpers/use-click-outside'
 
@@ -9,6 +9,7 @@ const Selector = ({
   className = '',
   name,
   options,
+  value,
   // enableSelectAllFirstItem = false,
   onChange,
 }) => {
@@ -22,8 +23,8 @@ const Selector = ({
 
   const reference = useOutsideClick(handleClickOutside)
 
-  const handleChange = () => {
-    const temporarySelectedOptions = []
+  const handleChange = useCallback(() => {
+    const selectedValues = []
 
     const inputsChecked =
       listReference.current?.querySelectorAll('input:checked')
@@ -34,16 +35,27 @@ const Selector = ({
           continue
         }
 
-        temporarySelectedOptions.push({
-          label: input.getAttribute('aria-label'),
-          value: input.value,
-        })
+        selectedValues.push(input.value)
+      }
+    }
+
+    onChange(selectedValues)
+  }, [onChange])
+
+  useEffect(() => {
+    const temporarySelectedOptions = []
+
+    for (const option of options) {
+      if (
+        value.includes(option.value) ||
+        value.includes(option.value.toString())
+      ) {
+        temporarySelectedOptions.push(option)
       }
     }
 
     setSelectedOptions(temporarySelectedOptions)
-    onChange(temporarySelectedOptions.map((item) => item.value))
-  }
+  }, [options, value])
 
   return (
     <div ref={reference} className={classNames('relative w-full', className)}>

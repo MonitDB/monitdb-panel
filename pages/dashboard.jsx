@@ -6,7 +6,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import classNames from 'classnames'
 import { useFormik } from 'formik'
 import { NextSeo } from 'next-seo'
-import React, { useContext, useEffect, useState } from 'react'
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 
 import ServerCard from '~/components/cards/server'
 import Selector from '~/components/form/selector'
@@ -22,40 +28,118 @@ const DashboardPage = () => {
   const {
     globalState: { servers, serverTypes, serverEnvironments },
   } = useContext(GlobalContext)
-  const [customEnvironments, setCustomEnvironments] = useState([])
+
+  const [formattedEnvironments, setFormattedEnvironments] = useState([])
 
   const formik = useFormik({
     initialValues: {
-      name: '',
+      str: '',
       status: [],
-      group: [],
-      monitor: [],
+      environments: [],
     },
-    onSubmit: (values) => {
-      console.log('submit', values) // eslint-disable-line no-console
-    },
+    onSubmit: () => {},
   })
 
-  const toggleIndexActive = (index) => {
-    setCustomEnvironments([
-      ...customEnvironments.map((environment, environmentIndex) => ({
-        ...environment,
-        isActive:
-          environmentIndex === index
-            ? !environment.isActive
-            : environment.isActive,
-      })),
-    ])
-  }
+  const hasAnyFilter = useMemo(
+    () => Object.values(formik.values).some((value) => value.length > 0),
+    [formik.values]
+  )
+
+  const statusOptions = useMemo(
+    () => [
+      { value: '', label: 'Todos os status' },
+      { value: 'critical', label: 'Critical' },
+      { value: 'warning', label: 'Warning' },
+      { value: 'info', label: 'Info' },
+      { value: 'healthy', label: 'Healthy' },
+    ],
+    []
+  )
+
+  const environmentsOptions = useMemo(
+    () => [
+      { value: '', label: 'Todos os grupos' },
+      ...serverEnvironments.map(
+        ({ idTypeServerEnvironment, typeServerEnvironmentName }) => ({
+          value: idTypeServerEnvironment,
+          label: typeServerEnvironmentName,
+        })
+      ),
+    ],
+    [serverEnvironments]
+  )
+
+  const totalServers = useMemo(
+    () =>
+      formattedEnvironments
+        .filter(({ isActive }) => isActive)
+        .reduce(
+          (accumulator, formattedEnvironment) =>
+            accumulator +
+            formattedEnvironment.servers.filter((server) => server.isActive)
+              .length,
+          0
+        ),
+    [formattedEnvironments]
+  )
+
+  const toggleIndexActive = useCallback(
+    (index) => {
+      setFormattedEnvironments([
+        ...formattedEnvironments.map((environment, environmentIndex) => ({
+          ...environment,
+          isDropdownActive:
+            environmentIndex === index
+              ? !environment.isDropdownActive
+              : environment.isDropdownActive,
+        })),
+      ])
+    },
+    [formattedEnvironments]
+  )
 
   useEffect(() => {
-    setCustomEnvironments([
-      ...serverEnvironments.map((environment) => ({
-        ...environment,
-        isActive: false,
+    const { environments, str } = formik.values
+
+    setFormattedEnvironments((formattedEnvironments) => [
+      ...formattedEnvironments.map((formattedEnvironment) => ({
+        ...formattedEnvironment,
+        isActive:
+          !hasAnyFilter ||
+          environments.length === 0 ||
+          (environments.length > 0 &&
+            environments.includes(
+              formattedEnvironment.idTypeServerEnvironment.toString()
+            ))
+            ? true
+            : false,
+        servers: formattedEnvironment.servers.map((server) => ({
+          ...server,
+          isActive:
+            !hasAnyFilter ||
+            !str ||
+            (str && server.serverName.toLowerCase().includes(str.toLowerCase()))
+              ? true
+              : false,
+        })),
       })),
     ])
-  }, [serverEnvironments]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [serverEnvironments, formik.values, hasAnyFilter])
+
+  useEffect(() => {
+    setFormattedEnvironments([
+      ...serverEnvironments.map((environment) => ({
+        ...environment,
+        isActive: true,
+        isDropdownActive: false,
+        servers:
+          filterServersByEnvironmentId(
+            environment.idTypeServerEnvironment,
+            servers
+          ).map((server) => formatServer(server, { serverTypes })) || [],
+      })),
+    ])
+  }, [serverEnvironments, servers, serverTypes])
 
   return (
     <>
@@ -71,7 +155,7 @@ const DashboardPage = () => {
                 className="flex items-start justify-between border-b border-gray-light"
               >
                 <p className="mr-10 text-center">
-                  <strong className="block text-2xl">{servers.length}</strong>{' '}
+                  <strong className="block text-2xl">{totalServers}</strong>{' '}
                   <span className="text-sm">instâncias</span>
                 </p>
                 <form
@@ -81,12 +165,12 @@ const DashboardPage = () => {
                   <div className="relative min-w-56">
                     <input
                       type="text"
-                      name="name"
+                      name="str"
                       className="w-full px-4 h-10 bg-white leading-10 rounded outline-none text-sm"
                       placeholder="Filtrar por nomes"
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
-                      value={formik.values.name}
+                      value={formik.values.str}
                     />
                     <button
                       type="submit"
@@ -100,51 +184,24 @@ const DashboardPage = () => {
                   </div>
                   <Selector
                     name="status"
-                    options={[
-                      { value: '', label: 'Todos os status' },
-                      { value: 'critical', label: 'Critical' },
-                      { value: 'warning', label: 'Warning' },
-                      { value: 'info', label: 'Info' },
-                      { value: 'healthy', label: 'Healthy' },
-                    ]}
+                    value={formik.values.status}
+                    options={statusOptions}
                     onChange={(value) => {
                       formik.setFieldValue('status', value)
                     }}
                   />
                   <Selector
-                    name="group"
-                    options={[
-                      { value: '', label: 'Todos os grupos' },
-                      ...serverEnvironments.map(
-                        ({
-                          idTypeServerEnvironment,
-                          typeServerEnvironmentName,
-                        }) => ({
-                          value: idTypeServerEnvironment,
-                          label: typeServerEnvironmentName,
-                        })
-                      ),
-                    ]}
+                    name="environments"
+                    value={formik.values.environments}
+                    options={environmentsOptions}
                     onChange={(value) => {
-                      formik.setFieldValue('group', value)
-                    }}
-                  />
-                  <Selector
-                    name="monitor"
-                    options={[
-                      { value: '', label: 'All base monitors' },
-                      { value: 'primary', label: 'Primary' },
-                      { value: 'secondary', label: 'Secondary' },
-                      { value: 'azure', label: 'Azure' },
-                      { value: 'simulation', label: 'Simulation' },
-                    ]}
-                    onChange={(value) => {
-                      formik.setFieldValue('monitor', value)
+                      formik.setFieldValue('environments', value)
                     }}
                   />
                   <button
                     type="reset"
                     className="btn"
+                    disabled={!hasAnyFilter}
                     onClick={() => formik.resetForm()}
                   >
                     Limpar
@@ -154,27 +211,21 @@ const DashboardPage = () => {
 
               <PageContent hideBreadcrumbs={true}>
                 <div className="w-full space-y-5">
-                  {customEnvironments?.map(
-                    (
-                      {
-                        idTypeServerEnvironment,
-                        typeServerEnvironmentName,
-                        isActive,
-                      },
-                      environmentIndex
-                    ) => {
-                      const filteredServers = filterServersByEnvironmentId(
-                        idTypeServerEnvironment,
-                        servers
-                      ).map((server) => formatServer(server, { serverTypes }))
+                  {formattedEnvironments
+                    .filter(({ isActive }) => isActive)
+                    .map((formattedEnvironment, environmentIndex) => {
+                      const formattedServers =
+                        formattedEnvironment.servers.filter(
+                          ({ isActive }) => isActive
+                        )
 
-                      if (filteredServers.length === 0) {
+                      if (formattedServers.length === 0) {
                         return ''
                       }
 
                       return (
                         <div
-                          key={`server-${idTypeServerEnvironment}-${environmentIndex}`}
+                          key={`server-${formattedEnvironment.idTypeServerEnvironment}-${environmentIndex}`}
                           className="w-full"
                         >
                           <button
@@ -183,8 +234,10 @@ const DashboardPage = () => {
                               `w-full py-2 px-4 bg-white border space-x-4
                                 rounded-sm font-bold text-left text-sm md:w-2/3 lg:hover:border-gray`,
                               {
-                                'border-gray': isActive,
-                                'border-gray-light': !isActive,
+                                'border-gray':
+                                  formattedEnvironment.isDropdownActive,
+                                'border-gray-light':
+                                  !formattedEnvironment.isDropdownActive,
                               }
                             )}
                             onClick={() => toggleIndexActive(environmentIndex)}
@@ -194,19 +247,22 @@ const DashboardPage = () => {
                               className={classNames(
                                 'transition-all duration-300 ease-in-out transform',
                                 {
-                                  'rotate-180': !isActive,
+                                  'rotate-180':
+                                    !formattedEnvironment.isDropdownActive,
                                 }
                               )}
                             />
                             <span>
                               {environmentIndex + 1} -{' '}
-                              {typeServerEnvironmentName} (
-                              {filteredServers.length})
+                              {formattedEnvironment.typeServerEnvironmentName} (
+                              {formattedEnvironment.servers.length})
                             </span>
                           </button>
-                          <Reveal active={isActive}>
+                          <Reveal
+                            active={formattedEnvironment.isDropdownActive}
+                          >
                             <div className="flex flex-wrap py-2 gap-y-4 md:py-4">
-                              {filteredServers.map((server, index) => (
+                              {formattedServers.map((server, index) => (
                                 <ServerCard
                                   key={`server-production-${index}`}
                                   className="w-full mb-4 md:w-72 md:mr-4"
@@ -217,8 +273,7 @@ const DashboardPage = () => {
                           </Reveal>
                         </div>
                       )
-                    }
-                  )}
+                    })}
                 </div>
               </PageContent>
             </>

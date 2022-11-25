@@ -12,8 +12,12 @@ module.exports = plugin(function ({ addUtilities, theme }) {
       borderRadius: '4px',
       fontSize: '14px',
 
+      '&[disabled]': {
+        backgroundColor: theme('colors.gray.light'),
+      },
+
       '@screen md': {
-        '&:hover': {
+        '&:not([disabled]):hover': {
           backgroundColor: theme('colors.blue.light'),
         },
       },
