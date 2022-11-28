@@ -48,10 +48,11 @@ const DashboardPage = () => {
   const statusOptions = useMemo(
     () => [
       { value: '', label: 'Todos os status' },
-      { value: 'critical', label: 'Critical' },
-      { value: 'warning', label: 'Warning' },
-      { value: 'info', label: 'Info' },
-      { value: 'healthy', label: 'Healthy' },
+      { value: 1, label: 'Healtly' },
+      { value: 2, label: 'Info' },
+      { value: 3, label: 'Warning' },
+      { value: 4, label: 'Critical' },
+      { value: 5, label: 'Down' },
     ],
     []
   )

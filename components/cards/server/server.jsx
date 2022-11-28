@@ -37,9 +37,16 @@ const getPieChartData = ({ inUsePercent }) => {
 const getDiskTotal = ({ unitType, total }) =>
   unitType === 'MB' ? `${megaBytesToGigaBytes(total)} GB` : `${total} GB`
 
+const SERVER_STATUS = {
+  HEALTLY: 1,
+  INFO: 2,
+  WARNING: 3,
+  CRITICAL: 4,
+  DOWN: 5,
+}
+
 const ServerCard = ({
   idServer,
-  healthStatus,
   serverEnable,
   serverName,
   type,
@@ -49,6 +56,7 @@ const ServerCard = ({
   const elementReference = useRef(null)
   const [tooltipPosition, setTooltipPosition] = useState('left')
   const [metrics, setMetrics] = useState({
+    serverStatus: undefined,
     cpu: undefined,
     memory: undefined,
     disks: [],
@@ -59,9 +67,9 @@ const ServerCard = ({
       const response = await getServerMetrics({ id: idServer })
 
       if (response?.data?.result) {
-        const { cpu, memory, disks } = response.data.result
+        const { cpu, memory, disks, serverStatus } = response.data.result
 
-        setMetrics({ cpu, memory, disks })
+        setMetrics({ cpu, memory, disks, serverStatus })
       }
     } catch (error) {
       console.error(error) // eslint-disable-line no-console
@@ -84,12 +92,17 @@ const ServerCard = ({
     <article
       ref={elementReference}
       className={classNames(
-        `group border border-gray-light bg-white transition-all duration-300
-          ease-in-out relative lg:hover:border-gray`,
+        `group border bg-white transition-all duration-300
+          ease-in-out relative border-opacity-75 lg:hover:border-opacity-100`,
         className,
         {
-          ' lg:min-h-72': metrics?.length,
-          ' lg:min-h-32': !metrics?.length,
+          'lg:min-h-72': metrics?.length,
+          'lg:min-h-32': !metrics?.length,
+          'border-danger': metrics?.serverStatus === SERVER_STATUS.CRITICAL,
+          'border-orange': metrics?.serverStatus === SERVER_STATUS.WARNING,
+          'border-success': metrics?.serverStatus === SERVER_STATUS.HEALTLY,
+          'border-blue': metrics?.serverStatus === SERVER_STATUS.INFO,
+          'border-gray': metrics?.serverStatus === SERVER_STATUS.DOWN,
         }
       )}
     >
@@ -100,10 +113,13 @@ const ServerCard = ({
             before:top-0 before:left-0 before:h-full lg:p-4 lg:hover:before:w-2
             before:transition-all before:duration-300 before:ease-in-out`,
           {
-            'before:bg-danger': healthStatus === 'Critical',
-            'before:bg-orange': healthStatus === 'Warning',
-            'before:bg-success': healthStatus === 'Healtly',
-            'before:bg-blue': !healthStatus,
+            'before:bg-danger':
+              metrics?.serverStatus === SERVER_STATUS.CRITICAL,
+            'before:bg-orange': metrics?.serverStatus === SERVER_STATUS.WARNING,
+            'before:bg-success':
+              metrics?.serverStatus === SERVER_STATUS.HEALTLY,
+            'before:bg-blue': metrics?.serverStatus === SERVER_STATUS.INFO,
+            'before:bg-gray': metrics?.serverStatus === SERVER_STATUS.DOWN,
             'opacity-25': !serverEnable,
           }
         )}
@@ -181,7 +197,7 @@ const ServerCard = ({
       {metrics.disks?.length > 0 ? (
         <div
           className={classNames(
-            `absolute bottom-px w-[calc(100%+1.25rem)] min-h-full h-auto py-2 px-4 z-20 transform
+            `absolute bottom-1/2 w-[calc(100%+1.25rem)] min-h-full h-auto py-2 px-4 z-20 transform
               translate-y-px bg-gray-dark text-white transition-all duration-75
               ease-in-out invisible opacity-0 lg:group-hover:opacity-100
               lg:group-hover:visible lg:group-hover:duration-150`,
