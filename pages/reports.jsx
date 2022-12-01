@@ -8,7 +8,7 @@ import classNames from 'classnames'
 import { useFormik } from 'formik'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useMemo, useState } from 'react'
 
 import Selector from '~/components/form/selector'
 import Link from '~/components/link'
@@ -79,6 +79,30 @@ const ReportsPage = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [typeActive, setTypeActive] = useState()
 
+  const serversOptions = useMemo(
+    () => [
+      { value: '', label: 'Todos os servidores' },
+      ...(servers || []).map((server) => ({
+        value: server.idServer,
+        label: server.serverName,
+      })),
+    ],
+    [servers]
+  )
+
+  const groupsOptions = useMemo(
+    () => [
+      { value: '', label: 'Todos os ambientes' },
+      ...serverEnvironments.map(
+        ({ idTypeServerEnvironment, typeServerEnvironmentName }) => ({
+          value: idTypeServerEnvironment,
+          label: typeServerEnvironmentName,
+        })
+      ),
+    ],
+    [serverEnvironments]
+  )
+
   const getData = async () => {
     setIsLoading(true)
 
@@ -99,9 +123,8 @@ const ReportsPage = () => {
   const formik = useFormik({
     initialValues: {
       name: '',
-      status: [],
-      group: [],
-      monitor: [],
+      servers: [],
+      groups: [],
     },
     onSubmit: (values) => {
       console.log('submit', values) // eslint-disable-line no-console
@@ -174,34 +197,19 @@ const ReportsPage = () => {
                 </button>
               </div>
               <Selector
-                name="server"
-                options={[
-                  { value: '', label: 'Todos os servidores' },
-                  ...(servers || []).map((server) => ({
-                    value: server.idServer,
-                    label: server.serverName,
-                  })),
-                ]}
+                name="servers"
+                options={serversOptions}
+                value={formik.values.servers}
                 onChange={(value) => {
-                  formik.setFieldValue('status', value)
+                  formik.setFieldValue('servers', value)
                 }}
               />
               <Selector
-                name="group"
-                options={[
-                  { value: '', label: 'Todos os ambientes' },
-                  ...serverEnvironments.map(
-                    ({
-                      idTypeServerEnvironment,
-                      typeServerEnvironmentName,
-                    }) => ({
-                      value: idTypeServerEnvironment,
-                      label: typeServerEnvironmentName,
-                    })
-                  ),
-                ]}
+                name="groups"
+                options={groupsOptions}
+                value={formik.values.groups}
                 onChange={(value) => {
-                  formik.setFieldValue('group', value)
+                  formik.setFieldValue('groups', value)
                 }}
               />
               <button

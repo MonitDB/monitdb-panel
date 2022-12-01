@@ -2,7 +2,7 @@ import { faArrowRight, faFileExport } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useFormik } from 'formik'
 import { NextSeo } from 'next-seo'
-import React from 'react'
+import React, { useMemo } from 'react'
 
 import Selector from '~/components/form/selector'
 // import Checkbox from '~/components/form/checkbox'
@@ -15,9 +15,24 @@ const AnalysisPage = () => {
   // const {
   //   globalState: { serverEnvironments },
   // } = useContext(GlobalContext)
+  const statusOptions = useMemo(
+    () => [
+      { value: '15min', label: '15 minutos' },
+      { value: '1h', label: '1 hora' },
+      { value: '6h', label: '6 horas' },
+      { value: '24h', label: '24 horas' },
+      { value: '7 dias', label: '7 dias' },
+      { value: '14 dias', label: '14 dias' },
+      { value: '28 dias', label: '28 dias' },
+    ],
+    []
+  )
+
   const formik = useFormik({
     initialValues: {
-      range_time: '',
+      status: [],
+      start_date: '',
+      end_date: '',
     },
     onSubmit: (values) => {
       console.log('submit', values) // eslint-disable-line no-console
@@ -42,16 +57,9 @@ const AnalysisPage = () => {
                   Intervalo de tempo
                 </strong>
                 <Selector
-                  name="range_time"
-                  options={[
-                    { value: '15min', label: '15 minutos' },
-                    { value: '1h', label: '1 hora' },
-                    { value: '6h', label: '6 horas' },
-                    { value: '24h', label: '24 horas' },
-                    { value: '7 dias', label: '7 dias' },
-                    { value: '14 dias', label: '14 dias' },
-                    { value: '28 dias', label: '28 dias' },
-                  ]}
+                  name="status"
+                  value={formik.values.status}
+                  options={statusOptions}
                   onChange={(value) => {
                     formik.setFieldValue('status', value)
                   }}

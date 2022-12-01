@@ -5,7 +5,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useFormik } from 'formik'
-import React, { useContext } from 'react'
+import React, { useContext, useMemo } from 'react'
 
 import Selector from '~/components/form/selector'
 import Link from '~/components/link'
@@ -18,12 +18,47 @@ const InstalledVersions = ({ tabName }) => {
     globalState: { servers, serverTypes, serverEnvironments },
   } = useContext(GlobalContext)
 
+  const statusOptions = useMemo(
+    () => [
+      { value: '', label: 'Todos os status' },
+      { value: 'critical', label: 'Critical' },
+      { value: 'warning', label: 'Warning' },
+      { value: 'info', label: 'Info' },
+      { value: 'healthy', label: 'Healthy' },
+    ],
+    []
+  )
+
+  const groupsOptions = useMemo(
+    () => [
+      { value: '', label: 'Todos os grupos' },
+      ...serverEnvironments.map(
+        ({ idTypeServerEnvironment, typeServerEnvironmentName }) => ({
+          value: idTypeServerEnvironment,
+          label: typeServerEnvironmentName,
+        })
+      ),
+    ],
+    [serverEnvironments]
+  )
+
+  const monitorsOptions = useMemo(
+    () => [
+      { value: '', label: 'All base monitors' },
+      { value: 'primary', label: 'Primary' },
+      { value: 'secondary', label: 'Secondary' },
+      { value: 'azure', label: 'Azure' },
+      { value: 'simulation', label: 'Simulation' },
+    ],
+    []
+  )
+
   const formik = useFormik({
     initialValues: {
       name: '',
       status: [],
-      group: [],
-      monitor: [],
+      groups: [],
+      monitors: [],
     },
     onSubmit: (values) => {
       console.log('submit', values) // eslint-disable-line no-console
@@ -70,43 +105,26 @@ const InstalledVersions = ({ tabName }) => {
           </div>
           <Selector
             name="status"
-            options={[
-              { value: '', label: 'Todos os status' },
-              { value: 'critical', label: 'Critical' },
-              { value: 'warning', label: 'Warning' },
-              { value: 'info', label: 'Info' },
-              { value: 'healthy', label: 'Healthy' },
-            ]}
+            options={statusOptions}
+            value={formik.values.status}
             onChange={(value) => {
               formik.setFieldValue('status', value)
             }}
           />
           <Selector
-            name="group"
-            options={[
-              { value: '', label: 'Todos os grupos' },
-              ...serverEnvironments.map(
-                ({ idTypeServerEnvironment, typeServerEnvironmentName }) => ({
-                  value: idTypeServerEnvironment,
-                  label: typeServerEnvironmentName,
-                })
-              ),
-            ]}
+            name="groups"
+            options={groupsOptions}
+            value={formik.values.groups}
             onChange={(value) => {
-              formik.setFieldValue('group', value)
+              formik.setFieldValue('groups', value)
             }}
           />
           <Selector
-            name="monitor"
-            options={[
-              { value: '', label: 'All base monitors' },
-              { value: 'primary', label: 'Primary' },
-              { value: 'secondary', label: 'Secondary' },
-              { value: 'azure', label: 'Azure' },
-              { value: 'simulation', label: 'Simulation' },
-            ]}
+            name="monitors"
+            options={monitorsOptions}
+            value={formik.values.monitors}
             onChange={(value) => {
-              formik.setFieldValue('monitor', value)
+              formik.setFieldValue('monitors', value)
             }}
           />
           <button
