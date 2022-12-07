@@ -1,13 +1,23 @@
+import { useRouter } from 'next/router'
+import { useEffect, useMemo } from 'react'
+
 import Login from '~/components/forms/login'
 import Image from '~/components/image'
 import Layout from '~/layouts/clean'
-// import NotFound from '~/pages/404'
-// import { getPageData } from '~/services/page'
+import * as Cookies from '~/utils/cookies'
 
 const HomePage = () => {
-  // if (notFound || !pageData) {
-  //   return <NotFound message={notFoundMessage} />
-  // }
+  const router = useRouter()
+
+  const userToken = useMemo(() => Cookies.getUserToken(), [])
+
+  useEffect(() => {
+    if (userToken) {
+      router.push('/dashboard')
+    }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  if (userToken) return ''
 
   return (
     <Layout>
@@ -39,27 +49,5 @@ const HomePage = () => {
     </Layout>
   )
 }
-
-// eslint-disable-next-line unicorn/prevent-abbreviations
-// export const getServerSideProps = async ({ locale }) => {
-//   try {
-//     const response = await getPageData({ slug: 'homepage', lang: locale })
-//     const notFound = response.status !== 200 || !response?.data?.length
-
-//     return {
-//       props: {
-//         notFound,
-//         pageData: response?.data?.[0] || '',
-//       },
-//     }
-//   } catch (error) {
-//     return {
-//       props: {
-//         notFound: true,
-//         notFoundMessage: error?.message,
-//       },
-//     }
-//   }
-// }
 
 export default HomePage
