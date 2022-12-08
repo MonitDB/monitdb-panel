@@ -17,10 +17,13 @@ module.exports = plugin(function ({ addUtilities, theme }) {
       },
 
       '@screen md': {
-        '&:not([disabled]):hover': {
+        '&:not([disabled]):not(.btn-danger):hover': {
           backgroundColor: theme('colors.blue.light'),
         },
       },
+    },
+    '.btn-danger': {
+      backgroundColor: theme('colors.danger'),
     },
     '.btn--small': {
       fontSize: '12px',
