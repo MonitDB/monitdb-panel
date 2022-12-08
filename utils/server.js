@@ -20,5 +20,5 @@ export const formatServer = (
 }
 
 export const getServerDataById = (id, servers) => {
-  return servers.find((server) => server.idServer === id)
+  return servers.find((server) => server.id === id)
 }

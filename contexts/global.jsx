@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useState } from 'react'
+import React, { createContext, useCallback, useEffect, useState } from 'react'
 
 import { getEnvironments, getServers, getTypes } from '~/services/servers'
 
@@ -14,23 +14,23 @@ const GlobalContext = createContext(initialGlobalState)
 const GlobalContextProvider = ({ children }) => {
   const [globalState, setGlobalState] = useState(initialGlobalState)
 
-  const getData = async () => {
+  const getData = useCallback(async () => {
     try {
       const promises = [getServers(), getTypes(), getEnvironments()]
 
       const [responseServers, responseTypes, responseEnvironments] =
         await Promise.all(promises)
 
-      setGlobalState({
-        ...globalState,
-        servers: responseServers?.data?.result || [],
+      setGlobalState((oldGlobalState) => ({
+        ...oldGlobalState,
+        servers: responseServers?.data || [],
         serverTypes: responseTypes?.data?.result || [],
         serverEnvironments: responseEnvironments?.data?.result || [],
-      })
+      }))
     } catch (error) {
       console.error(error) // eslint-disable-line no-console
     }
-  }
+  }, [])
 
   useEffect(() => {
     getData()
@@ -41,6 +41,7 @@ const GlobalContextProvider = ({ children }) => {
       value={{
         globalState,
         setGlobalState,
+        refreshData: getData,
       }}
     >
       {children}

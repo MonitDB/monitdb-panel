@@ -83,7 +83,7 @@ const ReportsPage = () => {
     () => [
       { value: '', label: 'Todos os servidores' },
       ...(servers || []).map((server) => ({
-        value: server.idServer,
+        value: server.id,
         label: server.serverName,
       })),
     ],

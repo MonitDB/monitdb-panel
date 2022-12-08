@@ -45,13 +45,7 @@ const SERVER_STATUS = {
   DOWN: 5,
 }
 
-const ServerCard = ({
-  idServer,
-  serverEnable,
-  serverName,
-  type,
-  className = '',
-}) => {
+const ServerCard = ({ id, serverEnable, serverName, type, className = '' }) => {
   const windowSize = useWindowSize()
   const elementReference = useRef(null)
   const [tooltipPosition, setTooltipPosition] = useState('left')
@@ -64,7 +58,7 @@ const ServerCard = ({
 
   const getMetrics = async () => {
     try {
-      const response = await getServerMetrics({ id: idServer })
+      const response = await getServerMetrics({ id })
 
       if (response?.data?.result) {
         const { cpu, memory, disks, serverStatus } = response.data.result
@@ -224,10 +218,7 @@ const ServerCard = ({
           <p className="mb-2 text-xs">Discos</p>
           <div className="w-full grid grid-cols-2 gap-4 lg:grid-cols-4">
             {metrics.disks.map((disk, index) => (
-              <div
-                key={`server-${idServer}-disk-${index}`}
-                className="col-span-1"
-              >
+              <div key={`server-${id}-disk-${index}`} className="col-span-1">
                 <p className="text-center text-xs">
                   <strong>{disk.driveName}</strong>
                 </p>

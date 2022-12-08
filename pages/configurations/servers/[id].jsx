@@ -1,31 +1,37 @@
 import { useFormik } from 'formik'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
-import React, { useContext, useEffect, useMemo, useState } from 'react'
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import { toast } from 'react-toastify'
 
 import { Input, Label, Select, Textarea } from '~/components/form'
 import { PageContent, PageHeader, PageWrapper } from '~/components/page'
 import GlobalContext from '~/contexts/global'
-// import Link from '~/components/link'
-// import Loading from '~/components/loading'
 import DatabaseIcons from '~/helpers/database-icons'
 import Layout from '~/layouts/default'
-import { addServer } from '~/services/servers'
+import { deleteServer, updateServer } from '~/services/servers'
 import { handleException } from '~/utils/exceptions'
-// import { formatServer } from '~/utils/server'
+
+const serversPagePath = '/configurations/servers'
 
 const ConfigurationsServersSinglePage = () => {
   const {
     globalState: { servers, serverTypes, serverEnvironments },
+    refreshData,
   } = useContext(GlobalContext)
 
-  const [isLoading, setIsLoading] = useState(false)
-
   const router = useRouter()
+  const [isLoading, setIsLoading] = useState(false)
 
   const formik = useFormik({
     initialValues: {
+      id: router?.query?.id,
       name: '',
       serverType: '',
       environment: '',
@@ -41,19 +47,25 @@ const ConfigurationsServersSinglePage = () => {
       setIsLoading(true)
 
       try {
-        const response = await addServer(values)
+        const response = await updateServer({
+          ...values,
+          status: values.status === '1' ? true : false,
+        })
 
-        console.log(response) // eslint-disable-line no-console
+        if (response?.status === 200) {
+          toast.success(`Servidor ${values.name} editado!`)
+          router.push(serversPagePath)
+          refreshData()
+        }
       } catch (error) {
         toast.error(handleException(error))
-      } finally {
         setIsLoading(false)
       }
     },
   })
 
   const currentServer = useMemo(
-    () => servers.find((server) => server.idServer === +router?.query?.id),
+    () => servers.find((server) => server.id === +router?.query?.id),
     [servers, router?.query?.id]
   )
 
@@ -68,13 +80,44 @@ const ConfigurationsServersSinglePage = () => {
       : serverTypes[0]?.typeservername
   }, [formik?.values?.serverType, serverTypes])
 
+  const handleDelete = useCallback(async () => {
+    if (!currentServer || !window?.confirm) return
+
+    const confirm = window.confirm(
+      `Deseja deletar o servidor "${currentServer.serverName}"?`
+    )
+
+    if (!confirm) return
+
+    try {
+      const response = await deleteServer(currentServer.id)
+
+      if (response?.status === 200) {
+        toast.success(`Servidor ${currentServer.serverName} deletado!`)
+        router.push(serversPagePath)
+        refreshData()
+      }
+    } catch (error) {
+      toast.error(handleException(error))
+      setIsLoading(false)
+    }
+  }, [refreshData, currentServer]) // eslint-disable-line react-hooks/exhaustive-deps
+
   useEffect(() => {
     if (!currentServer) return
 
+    formik.setFieldValue('id', router?.query?.id)
     formik.setFieldValue('name', currentServer.serverName)
     formik.setFieldValue('description', currentServer.serverDescription)
     formik.setFieldValue('serverType', currentServer.idTypeServer?.toString())
     formik.setFieldValue('environment', currentServer.idTypeServerEnvironment)
+
+    formik.setFieldValue('connection', currentServer.idTypeServerConnection)
+    formik.setFieldValue('host', currentServer.serverHost)
+    formik.setFieldValue('user', currentServer.serverUser)
+    formik.setFieldValue('port', currentServer.serverPort)
+    formik.setFieldValue('description', currentServer.serverDescription)
+    formik.setFieldValue('status', currentServer.serverEnable ? '1' : '0')
   }, [currentServer]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
@@ -217,9 +260,16 @@ const ConfigurationsServersSinglePage = () => {
                     value={formik.values.description}
                   />
                 </Label>
-                <div className="col-span-2">
+                <div className="col-span-2 flex justify-between items-center">
                   <button type="submit" className="btn" disabled={isLoading}>
                     {isLoading ? 'Salvando...' : 'Salvar'}
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-danger ml-auto"
+                    onClick={() => handleDelete()}
+                  >
+                    Deletar
                   </button>
                 </div>
               </form>

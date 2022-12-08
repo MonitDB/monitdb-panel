@@ -1,4 +1,5 @@
 import { useFormik } from 'formik'
+import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
 import React, { useContext, useMemo, useState } from 'react'
 import { toast } from 'react-toastify'
@@ -14,7 +15,10 @@ import { handleException } from '~/utils/exceptions'
 const ConfigurationsServersSinglePage = () => {
   const {
     globalState: { serverTypes, serverEnvironments },
+    refreshData,
   } = useContext(GlobalContext)
+
+  const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
 
   const formik = useFormik({
@@ -28,7 +32,7 @@ const ConfigurationsServersSinglePage = () => {
       password: '',
       port: '',
       description: '',
-      status: '1',
+      // status: '1',
     },
     onSubmit: async (values) => {
       setIsLoading(true)
@@ -36,10 +40,13 @@ const ConfigurationsServersSinglePage = () => {
       try {
         const response = await addServer(values)
 
-        console.log(response) // eslint-disable-line no-console
+        if (response?.status === 200) {
+          toast.success(`Servidor ${values.name} criado!`)
+          router.push('/configurations/servers')
+          refreshData()
+        }
       } catch (error) {
         toast.error(handleException(error))
-      } finally {
         setIsLoading(false)
       }
     },
@@ -187,7 +194,7 @@ const ConfigurationsServersSinglePage = () => {
                     value={formik.values.port}
                   />
                 </Label>
-                <Label text="Status" className="col-span-1">
+                {/* <Label text="Status" className="col-span-1">
                   <Select
                     containerClass="bg-white"
                     name="status"
@@ -199,7 +206,7 @@ const ConfigurationsServersSinglePage = () => {
                     onBlur={formik.handleBlur}
                     value={formik.values.status}
                   />
-                </Label>
+                </Label> */}
                 <Label text="Descrição" className="col-span-2">
                   <Textarea
                     name="description"

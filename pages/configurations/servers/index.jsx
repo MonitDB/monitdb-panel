@@ -69,7 +69,7 @@ const ConfigurationsServersPage = () => {
                         })
                         return (
                           <tr
-                            key={`server-${server.idServer}-${index}`}
+                            key={`server-${server.id}-${index}`}
                             className="text-sm border-b border-gray-light transition-colors duration-200 ease-in-out lg:hover:bg-gray-light lg:hover:bg-opacity-50"
                           >
                             <td>{server.serverName}</td>
@@ -103,7 +103,7 @@ const ConfigurationsServersPage = () => {
                               <ul className="flex items-center space-x-2 list-none w-full p-0 m-0">
                                 <li>
                                   <Link
-                                    href={`/configurations/servers/${server.idServer}`}
+                                    href={`/configurations/servers/${server.id}`}
                                     className="text-blue"
                                   >
                                     Mostrar log
@@ -111,7 +111,7 @@ const ConfigurationsServersPage = () => {
                                 </li>
                                 <li>
                                   <Link
-                                    href={`/configurations/servers/${server.idServer}`}
+                                    href={`/configurations/servers/${server.id}`}
                                     className="text-blue"
                                   >
                                     Editar credenciais
