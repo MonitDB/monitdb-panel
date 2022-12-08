@@ -248,8 +248,9 @@ const ConfigurationsServersSinglePage = () => {
                       { value: '1', label: 'Ativo' },
                       { value: '0', label: 'Inativo' },
                     ]}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
+                    onChange={(value) => {
+                      formik.setFieldValue('status', value)
+                    }}
                     value={formik.values.status}
                   />
                 </Label>
