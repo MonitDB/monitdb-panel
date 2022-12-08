@@ -118,8 +118,9 @@ const ConfigurationsServersSinglePage = () => {
                           value: environment.idTypeServerEnvironment,
                         })) || []),
                       ]}
-                      onChange={formik.handleChange}
-                      onBlur={formik.handleBlur}
+                      onChange={(value) => {
+                        formik.setFieldValue('environment', value)
+                      }}
                       value={formik.values.environment}
                     />
                   ) : (
@@ -142,8 +143,9 @@ const ConfigurationsServersSinglePage = () => {
                             value: serverType.idtypeserver,
                           })) || []),
                         ]}
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
+                        onChange={(value) => {
+                          formik.setFieldValue('serverType', value)
+                        }}
                         value={formik.values.serverType}
                       />
                     ) : (
