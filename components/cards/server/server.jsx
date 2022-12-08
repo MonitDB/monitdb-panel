@@ -10,6 +10,7 @@ import DatabaseIcons from '~/helpers/database-icons'
 import useWindowSize from '~/hooks/use-window-size'
 import { getServerMetrics } from '~/services/servers'
 import { megaBytesToGigaBytes } from '~/utils/formats'
+import { SERVER_STATUS } from '~/utils/server'
 
 ChartJS.register(ArcElement, Tooltip, Legend)
 
@@ -36,14 +37,6 @@ const getPieChartData = ({ inUsePercent }) => {
 
 const getDiskTotal = ({ unitType, total }) =>
   unitType === 'MB' ? `${megaBytesToGigaBytes(total)} GB` : `${total} GB`
-
-const SERVER_STATUS = {
-  HEALTLY: 1,
-  INFO: 2,
-  WARNING: 3,
-  CRITICAL: 4,
-  DOWN: 5,
-}
 
 const ServerCard = ({ id, serverEnable, serverName, type, className = '' }) => {
   const windowSize = useWindowSize()
@@ -101,7 +94,7 @@ const ServerCard = ({ id, serverEnable, serverName, type, className = '' }) => {
       )}
     >
       <Link
-        href="/dashboard/"
+        href={`/dashboard/${id}`}
         className={classNames(
           `block p-2 h-full relative before:content-[""] before:absolute before:w-1
             before:top-0 before:left-0 before:h-full lg:p-4 lg:hover:before:w-2
