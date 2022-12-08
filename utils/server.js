@@ -1,3 +1,11 @@
+export const SERVER_STATUS = {
+  HEALTLY: 1,
+  INFO: 2,
+  WARNING: 3,
+  CRITICAL: 4,
+  DOWN: 5,
+}
+
 export const filterServersByEnvironmentId = (environmentId, servers) => {
   return servers.filter(
     (server) => server.idTypeServerEnvironment === environmentId
