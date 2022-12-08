@@ -8,8 +8,15 @@ const Select = ({
   className = '',
   name,
   options,
+  onChange,
   ...properties
 }) => {
+  const handleChange = (event) => {
+    const value = event.target.value
+
+    onChange(value)
+  }
+
   return (
     <div
       className={classNames(
@@ -23,6 +30,7 @@ const Select = ({
           'relative w-full bg-transparent px-2 h-10 appearance-none z-10 text-xs',
           className
         )}
+        onChange={handleChange}
         {...properties}
       >
         {options.map((option, index) => (
