@@ -267,6 +267,8 @@ const ConfigurationsServersSinglePage = () => {
                   <button type="submit" className="btn" disabled={isLoading}>
                     {isLoading ? 'Salvando...' : 'Salvar'}
                   </button>
+                </div>
+                <div className="col-span-2 flex bg-danger bg-opacity-10 border border-danger border-opacity-50 p-4 rounded-md">
                   <button
                     type="button"
                     className="btn btn-danger ml-auto"

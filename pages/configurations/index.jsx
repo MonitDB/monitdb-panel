@@ -110,7 +110,10 @@ const ConfigurationsPage = () => {
                     </li>
 
                     <li>
-                      <Link href="/configurations/" className="group block">
+                      <Link
+                        href="/configurations/users"
+                        className="group block"
+                      >
                         <strong className="block group-hover:text-blue">
                           Gerenciar usuários
                         </strong>
