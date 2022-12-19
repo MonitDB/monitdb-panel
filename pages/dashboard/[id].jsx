@@ -14,9 +14,11 @@ import faker from 'faker'
 import { useFormik } from 'formik'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
-import React, { useContext, useMemo } from 'react'
+import React, { useContext, useMemo, useState } from 'react'
 import { Line } from 'react-chartjs-2'
 
+import Code from '~/components/code'
+import { Textarea } from '~/components/form'
 import Checkbox from '~/components/form/checkbox'
 import Select from '~/components/form/select'
 import Grid from '~/components/grid'
@@ -136,7 +138,12 @@ const DashboardSingle = () => {
 
   const router = useRouter()
 
-  const serverId = useMemo(() => router.query.id, [router?.query?.id])
+  const [sqlCode, setSqlCode] = useState(
+    `CREATE USER 'user'@'server-ip' IDENTIFIED BY 'password';
+GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
+  )
+
+  // const serverId = useMemo(() => router.query.id, [router?.query?.id])
 
   const currentServer = useMemo(() => {
     const server = servers.find((server) => server.id === +router?.query?.id)
@@ -168,12 +175,6 @@ const DashboardSingle = () => {
     },
     onSubmit: () => {},
   })
-
-  // eslint-disable-next-line no-console
-  console.log('serverId', serverId)
-
-  // eslint-disable-next-line no-console
-  console.log('currentServer', currentServer)
 
   return (
     <>
@@ -279,15 +280,39 @@ const DashboardSingle = () => {
                 </form>
 
                 <Grid>
-                  <div className="col-span-2 border border-gray-light p-4 lg:col-span-6">
+                  <div className="col-span-2 bg-white border border-gray-light p-4 lg:col-span-12">
+                    <Textarea
+                      name="description"
+                      className="w-full px-4 h-10 bg-white leading-10 rounded outline-none text-sm"
+                      onChange={(event) => {
+                        const target = event.target
+
+                        setSqlCode(target.value)
+                      }}
+                      value={sqlCode}
+                    />
+                    {sqlCode && <Code code={sqlCode} language="javascript" />}
+                    <div className="w-full flex">
+                      <button
+                        type="button"
+                        className="btn mt-4 ml-auto"
+                        onClick={() => {
+                          setSqlCode('')
+                        }}
+                      >
+                        Run
+                      </button>
+                    </div>
+                  </div>
+                  <div className="col-span-2 border bg-white border-gray-light p-4 lg:col-span-6">
                     <h6 className="mb-4 heading-xs">CPU</h6>
                     <Line options={cpuOptions} data={cpuData} />
                   </div>
-                  <div className="col-span-2 border border-gray-light p-4 lg:col-span-6">
+                  <div className="col-span-2 border bg-white border-gray-light p-4 lg:col-span-6">
                     <h6 className="mb-4 heading-xs">Memória</h6>
                     <Line options={memoryOptions} data={memoryData} />
                   </div>
-                  <div className="col-span-2 border border-gray-light p-4 lg:col-span-6">
+                  <div className="col-span-2 border bg-white border-gray-light p-4 lg:col-span-6">
                     <h6 className="mb-4 heading-xs">Disk I/O</h6>
                     <Line options={diskOptions} data={diskData} />
                   </div>
