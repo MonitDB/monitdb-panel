@@ -28,7 +28,7 @@ const SignUp = () => {
     onSubmit: async () => {
       try {
         const response = await postLogin(formik.values)
-        const dataResult = response?.data?.result
+        const dataResult = response?.data
 
         if (dataResult?.token) {
           setUserState({
