@@ -1,8 +1,9 @@
 import Router from 'next/router'
 import { useCallback, useContext, useEffect } from 'react'
 
-import UserContext from '~/contexts/user'
+import UserContext, { userInitialState } from '~/contexts/user'
 import { postTokenValidate } from '~/services/user'
+import * as Cookies from '~/utils/cookies'
 
 const loginPath = '/?redirected=true'
 
@@ -22,6 +23,8 @@ const ProtectedPage = ({ children }) => {
       }
     } catch {
       Router.push(loginPath)
+      setUserState(userInitialState)
+      Cookies.reset()
     }
   }, [setUserState, userState?.token])
 

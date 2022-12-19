@@ -3,7 +3,7 @@ import React, { createContext, useEffect, useState } from 'react'
 import { getMe } from '~/services/user'
 import * as Cookies from '~/utils/cookies'
 
-const initialState = {
+export const userInitialState = {
   logged: false,
   name: '',
   email: '',
@@ -11,13 +11,13 @@ const initialState = {
   token: '',
 }
 
-const UserContext = createContext(initialState)
+const UserContext = createContext(userInitialState)
 
 const UserContextProvider = ({ children }) => {
-  const [userState, setUserState] = useState(initialState)
+  const [userState, setUserState] = useState(userInitialState)
 
   const unsetUserState = () => {
-    setUserState(initialState)
+    setUserState(userInitialState)
     Cookies.reset()
   }
 
