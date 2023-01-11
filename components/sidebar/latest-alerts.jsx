@@ -35,7 +35,7 @@ const LatestAlerts = () => {
   const [alerts, setAlerts] = useState([])
 
   const getAlertsData = useCallback(async () => {
-    const responseAlerts = await getAlerts({ pagesize: 6 })
+    const responseAlerts = await getAlerts({ PageLength: 6, PageNumber: 1 })
     // const responseAlertsParemeter = await getAlertsParameter()
 
     // const alertsFormatted = formatAlerts(
@@ -43,7 +43,7 @@ const LatestAlerts = () => {
     //   responseAlertsParemeter?.data?.result || []
     // )
 
-    setAlerts([...(responseAlerts?.data ?? [])].slice(0, 6))
+    setAlerts(responseAlerts?.data)
   }, [])
 
   useEffect(() => {

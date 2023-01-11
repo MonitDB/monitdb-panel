@@ -80,7 +80,7 @@ const AlertsPage = () => {
   })
 
   const getAlertsData = useCallback(async () => {
-    const responseAlerts = await getAlerts({ pagesize: 6 })
+    const responseAlerts = await getAlerts({ PageLength: 10, PageNumber: 1 })
     // const responseAlertsParemeter = await getAlertsParameter()
 
     // const alertsFormatted = formatAlerts(
