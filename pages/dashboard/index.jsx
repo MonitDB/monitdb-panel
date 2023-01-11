@@ -135,7 +135,7 @@ const DashboardPage = () => {
       ...serverEnvironments.map((environment) => ({
         ...environment,
         isActive: true,
-        isDropdownActive: false,
+        isDropdownActive: true,
         servers:
           filterServersByEnvironmentId(
             environment.idTypeServerEnvironment,
