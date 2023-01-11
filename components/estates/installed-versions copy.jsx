@@ -117,6 +117,7 @@ const InstalledVersions = () => {
   const toggleIsExpandedIndex = (index) => {
     setIsExpandedIndex(isExpandedIndex === index ? -1 : index)
   }
+
   return (
     <>
       <div className="flex items-center mb-20">

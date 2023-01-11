@@ -6,7 +6,13 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useFormik } from 'formik'
 import { NextSeo } from 'next-seo'
-import React, { useContext, useEffect, useMemo, useState } from 'react'
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 
 import Checkbox from '~/components/form/checkbox'
 import Selector from '~/components/form/selector'
@@ -19,7 +25,7 @@ import { getAlerts } from '~/services/alerts'
 import { formatAlert } from '~/utils/alert'
 import { getFormattedDate } from '~/utils/formats'
 
-const AlertsPage = ({ data }) => {
+const AlertsPage = () => {
   const {
     globalState: { servers, serverTypes, serverEnvironments },
   } = useContext(GlobalContext)
@@ -73,9 +79,18 @@ const AlertsPage = ({ data }) => {
     },
   })
 
-  useEffect(() => {
+  const getAlertsData = useCallback(async () => {
+    const responseAlerts = await getAlerts({ pagesize: 6 })
+    // const responseAlertsParemeter = await getAlertsParameter()
+
+    // const alertsFormatted = formatAlerts(
+    //   responseAlerts?.data?.result || [],
+    //   responseAlertsParemeter?.data?.result || []
+    // )
+
+    // setAlerts(responseAlerts?.data)
     setAlerts(
-      [...data].map((alert) =>
+      [...(responseAlerts?.data ?? [])].map((alert) =>
         formatAlert(alert, {
           servers,
           serverTypes,
@@ -83,7 +98,11 @@ const AlertsPage = ({ data }) => {
         })
       )
     )
-  }, [data, servers, serverTypes, serverEnvironments])
+  }, [servers, serverTypes, serverEnvironments])
+
+  useEffect(() => {
+    getAlertsData()
+  }, [getAlertsData])
 
   return (
     <>
@@ -224,17 +243,6 @@ const AlertsPage = ({ data }) => {
       </Layout>
     </>
   )
-}
-
-// eslint-disable-next-line unicorn/prevent-abbreviations
-export const getServerSideProps = async () => {
-  const response = await getAlerts({ pagesize: 20 })
-
-  return {
-    props: {
-      data: response?.data?.result || [],
-    },
-  }
 }
 
 export default AlertsPage

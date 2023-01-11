@@ -5,7 +5,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import classNames from 'classnames'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 
 import Select from '~/components/form/select'
 import Link from '~/components/link'
@@ -34,7 +34,7 @@ const LatestAlerts = () => {
   } = useContext(GlobalContext)
   const [alerts, setAlerts] = useState([])
 
-  const getAlertsData = async () => {
+  const getAlertsData = useCallback(async () => {
     const responseAlerts = await getAlerts({ pagesize: 6 })
     // const responseAlertsParemeter = await getAlertsParameter()
 
@@ -43,12 +43,12 @@ const LatestAlerts = () => {
     //   responseAlertsParemeter?.data?.result || []
     // )
 
-    setAlerts(responseAlerts?.data?.result)
-  }
+    setAlerts(responseAlerts?.data)
+  }, [])
 
   useEffect(() => {
     getAlertsData()
-  }, [])
+  }, [getAlertsData])
 
   return (
     <PageSidebar>
@@ -59,7 +59,8 @@ const LatestAlerts = () => {
         </PageSidebarTitle>
         <p className="text-sm">Alertas gerados ou atualizados recentemente:</p>
       </header>
-      {alerts.length > 0 ? (
+
+      {alerts?.length > 0 ? (
         <>
           <form className="mb-4 flex items-center space-x-2">
             <Select
