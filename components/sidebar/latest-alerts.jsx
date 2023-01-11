@@ -43,7 +43,7 @@ const LatestAlerts = () => {
     //   responseAlertsParemeter?.data?.result || []
     // )
 
-    setAlerts(responseAlerts?.data)
+    setAlerts([...(responseAlerts?.data ?? [])].slice(0, 6))
   }, [])
 
   useEffect(() => {
