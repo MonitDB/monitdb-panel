@@ -177,7 +177,14 @@ const AlertsPage = () => {
                   <thead>
                     <tr className="text-sm font-bold text-gray-dark text-left">
                       <th className="w-5 border-b-2 border-gray-light">
-                        <Checkbox name="all" value="1" />
+                        <Checkbox
+                          name="all"
+                          value="1"
+                          onChange={(value) => {
+                            // eslint-disable-next-line no-console
+                            console.log(`select all checkboxes ${value}`)
+                          }}
+                        />
                       </th>
                       <th className="border-b-2 border-gray-light">
                         Alert type
@@ -204,6 +211,10 @@ const AlertsPage = () => {
                             className="transform translate-y-1"
                             name="alerts"
                             value={alert.idAlert}
+                            onChange={(value) => {
+                              // eslint-disable-next-line no-console
+                              console.log(`select checkbox ${value}`)
+                            }}
                           />
                         </td>
                         <td>{alert.dsMessage}</td>
