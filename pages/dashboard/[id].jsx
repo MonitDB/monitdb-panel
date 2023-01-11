@@ -23,11 +23,17 @@ import Checkbox from '~/components/form/checkbox'
 import Select from '~/components/form/select'
 import Grid from '~/components/grid'
 import Loading from '~/components/loading'
-import { PageContent, PageWrapper } from '~/components/page'
+import {
+  PageContent,
+  PageSidebar,
+  PageSidebarLinksList,
+  PageWrapper,
+} from '~/components/page'
 import LatestAlertsSidebar from '~/components/sidebar/latest-alerts'
 import GlobalContext from '~/contexts/global'
 import DatabaseIcons from '~/helpers/database-icons'
 import Layout from '~/layouts/default'
+import { scrollToSection } from '~/utils/global'
 import { formatServer } from '~/utils/server'
 
 ChartJS.register(
@@ -91,6 +97,19 @@ const diskOptions = {
   },
 }
 
+const waitsOptions = {
+  ...options,
+  scales: {
+    y: {
+      ticks: {
+        callback: function (value) {
+          return value + ' MB/s'
+        },
+      },
+    },
+  },
+}
+
 const labels = ['08:00', '08:10', '08:20', '08:30', '08:40', '08:50', '09:00']
 
 const cpuData = {
@@ -130,6 +149,28 @@ const diskData = {
     },
   ],
 }
+
+const waitsData = {
+  labels,
+  datasets: [
+    {
+      fill: true,
+      data: labels.map(() => faker.datatype.number({ min: 0, max: 100 })),
+      borderColor: 'rgb(221, 123, 53)',
+      backgroundColor: 'rgba(221, 123, 53, 0.5)',
+    },
+  ],
+}
+
+const dashboardSections = [
+  { name: 'Server/host metrics', slug: 'allinstancemetrics' },
+  { name: 'tempdb', slug: 'tempdb' },
+  { name: 'Blocking processes', slug: 'blocking-processes' },
+  { name: 'SQL user processes', slug: 'sqlprocesses' },
+  { name: 'Processes', slug: 'processes' },
+  { name: 'Error log', slug: 'error-log' },
+  { name: 'Databases', slug: 'databases' },
+]
 
 const DashboardSingle = () => {
   const {
@@ -181,7 +222,18 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
       <NextSeo title="Dashboard - MonitDB" />
       <Layout>
         <PageWrapper>
-          <LatestAlertsSidebar />
+          <PageSidebar>
+            <PageSidebarLinksList>
+              {dashboardSections.map((section) => (
+                <li key={section.slug}>
+                  <button onClick={() => scrollToSection(`#${section.slug}`)}>
+                    {section.name}
+                  </button>
+                </li>
+              ))}
+            </PageSidebarLinksList>
+            <LatestAlertsSidebar />
+          </PageSidebar>
           <PageContent hideBreadcrumbs={true}>
             {!currentServer && <Loading />}
             {currentServer && (
@@ -279,44 +331,50 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
                   </div>
                 </form>
 
-                <Grid>
-                  <div className="col-span-2 bg-white border border-gray-light p-4 lg:col-span-12">
-                    <Textarea
-                      name="description"
-                      className="w-full px-4 h-10 bg-white leading-10 rounded outline-none text-sm"
-                      onChange={(event) => {
-                        const target = event.target
+                <div id="allinstancemetrics">
+                  <Grid>
+                    <div className="col-span-2 bg-white border border-gray-light p-4 lg:col-span-12">
+                      <Textarea
+                        name="description"
+                        className="w-full px-4 h-10 bg-white leading-10 rounded outline-none text-sm"
+                        onChange={(event) => {
+                          const target = event.target
 
-                        setSqlCode(target.value)
-                      }}
-                      value={sqlCode}
-                    />
-                    {sqlCode && <Code code={sqlCode} language="javascript" />}
-                    <div className="w-full flex">
-                      <button
-                        type="button"
-                        className="btn mt-4 ml-auto"
-                        onClick={() => {
-                          setSqlCode('')
+                          setSqlCode(target.value)
                         }}
-                      >
-                        Run
-                      </button>
+                        value={sqlCode}
+                      />
+                      {sqlCode && <Code code={sqlCode} language="javascript" />}
+                      <div className="w-full flex">
+                        <button
+                          type="button"
+                          className="btn mt-4 ml-auto"
+                          onClick={() => {
+                            setSqlCode('')
+                          }}
+                        >
+                          Run
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                  <div className="col-span-2 border bg-white border-gray-light p-4 lg:col-span-6">
-                    <h6 className="mb-4 heading-xs">CPU</h6>
-                    <Line options={cpuOptions} data={cpuData} />
-                  </div>
-                  <div className="col-span-2 border bg-white border-gray-light p-4 lg:col-span-6">
-                    <h6 className="mb-4 heading-xs">Memória</h6>
-                    <Line options={memoryOptions} data={memoryData} />
-                  </div>
-                  <div className="col-span-2 border bg-white border-gray-light p-4 lg:col-span-6">
-                    <h6 className="mb-4 heading-xs">Disk I/O</h6>
-                    <Line options={diskOptions} data={diskData} />
-                  </div>
-                </Grid>
+                    <div className="col-span-2 border bg-white border-gray-light p-4 lg:col-span-6">
+                      <h6 className="mb-4 heading-xs">CPU</h6>
+                      <Line options={cpuOptions} data={cpuData} />
+                    </div>
+                    <div className="col-span-2 border bg-white border-gray-light p-4 lg:col-span-6">
+                      <h6 className="mb-4 heading-xs">Memória</h6>
+                      <Line options={memoryOptions} data={memoryData} />
+                    </div>
+                    <div className="col-span-2 border bg-white border-gray-light p-4 lg:col-span-6">
+                      <h6 className="mb-4 heading-xs">Disk I/O</h6>
+                      <Line options={diskOptions} data={diskData} />
+                    </div>
+                    <div className="col-span-2 border bg-white border-gray-light p-4 lg:col-span-6">
+                      <h6 className="mb-4 heading-xs">Waits</h6>
+                      <Line options={waitsOptions} data={waitsData} />
+                    </div>
+                  </Grid>
+                </div>
               </div>
             )}
           </PageContent>

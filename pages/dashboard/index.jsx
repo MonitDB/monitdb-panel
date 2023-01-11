@@ -17,7 +17,7 @@ import React, {
 import ServerCard from '~/components/cards/server'
 import Selector from '~/components/form/selector'
 import Loading from '~/components/loading'
-import { PageContent, PageWrapper } from '~/components/page'
+import { PageContent, PageSidebar, PageWrapper } from '~/components/page'
 import LatestAlertsSidebar from '~/components/sidebar/latest-alerts'
 import GlobalContext from '~/contexts/global'
 import Reveal from '~/helpers/reveal'
@@ -147,7 +147,9 @@ const DashboardPage = () => {
       <NextSeo title="Dashboard - MonitDB" />
       <Layout>
         <PageWrapper>
-          <LatestAlertsSidebar />
+          <PageSidebar>
+            <LatestAlertsSidebar />
+          </PageSidebar>
 
           {servers?.length > 0 ? (
             <>
