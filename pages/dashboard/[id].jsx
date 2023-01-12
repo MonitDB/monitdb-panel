@@ -29,7 +29,7 @@ import {
   PageSidebarLinksList,
   PageWrapper,
 } from '~/components/page'
-import Server from '~/components/page/dashboard/server-hosts-metrics/server'
+import Server from '~/components/page/dashboard/server-host-metrics/server'
 import LatestAlertsSidebar from '~/components/sidebar/latest-alerts'
 import GlobalContext from '~/contexts/global'
 import DatabaseIcons from '~/helpers/database-icons'
