@@ -23,7 +23,7 @@ module.exports = {
       },
       gray: {
         DEFAULT: '#9da5b1',
-        light: '#d3d3d3',
+        light: '#d1d1d1',
         dark: '#161b22',
       },
       danger: '#ff4e4e',

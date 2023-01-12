@@ -29,7 +29,12 @@ import {
   PageSidebarLinksList,
   PageWrapper,
 } from '~/components/page'
-import Server from '~/components/page/dashboard/server-host-metrics/server'
+import {
+  Permissions,
+  Server,
+  ServerMetrics,
+  VmwareMetrics,
+} from '~/components/page/dashboard/server-host-metrics'
 import LatestAlertsSidebar from '~/components/sidebar/latest-alerts'
 import GlobalContext from '~/contexts/global'
 import DatabaseIcons from '~/helpers/database-icons'
@@ -384,6 +389,9 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
                   </Grid>
 
                   <Server />
+                  <ServerMetrics />
+                  <Permissions />
+                  <VmwareMetrics />
                 </div>
               </div>
             )}

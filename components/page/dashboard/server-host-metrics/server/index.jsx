@@ -144,9 +144,9 @@ const Server = () => {
         ))}
       </div>
       {activeTabId === 'top-queries' && (
-        <div className="prose max-w-full prose-p:m-0 prose-td:align-top prose-td:py-4 prose-th:border-b-4 prose-headings:m-0">
-          <div className="-mx-4 py-4 px-8 bg-white md:-mx-6">
-            <table className="m-0 w-full overflow-x-auto">
+        <div className="prose max-w-full prose-p:m-0 prose-td:align-top prose-td:py-4 prose-td:pl-0 prose-th:border-b-4 prose-headings:m-0">
+          <div className="py-4 px-8 bg-white overflow-x-auto">
+            <table className="m-0 w-full">
               <thead>
                 <tr>
                   <th>Query text</th>
@@ -173,12 +173,14 @@ const Server = () => {
                       <button
                         type="button"
                         onClick={() => toggleActiveTableRowIndex(itemIndex)}
-                        className="whitespace-nowrap truncate"
+                        className="whitespace-nowrap truncate pl-2"
                       >
                         <FontAwesomeIcon
+                          width={8}
+                          height={8}
                           icon={faChevronRight}
                           className={[
-                            'mr-1 transition-all duration-150 ease-in-out',
+                            'mr-2 transition-all duration-150 ease-in-out',
                             activeTableRowIndex === itemIndex && 'rotate-90',
                           ].join(' ')}
                         />
@@ -253,10 +255,7 @@ const Server = () => {
               </strong>{' '}
               Se você for um administrador, poderá acompanhar as consultas na
               guia principais consultas.{' '}
-              <a
-                href="https://www.red-gate.com/SM12/tracked-queries"
-                className="text-blue ml-[2px]"
-              >
+              <a href="#allinstancemetrics" className="text-blue ml-[2px]">
                 Saber mais.
               </a>
             </p>
@@ -266,7 +265,7 @@ const Server = () => {
       {activeTabId === 'top-waits' && (
         <>
           <Line options={options} data={waitsData} />
-          <div className="prose mt-10 max-w-full prose-p:m-0 prose-td:align-top prose-td:py-4 prose-th:border-b-4 prose-headings:m-0">
+          <div className="prose mt-10 max-w-full prose-p:m-0 prose-td:align-top prose-td:py-4 prose-td:pl-0 prose-thead:border-b-4 prose-headings:m-0">
             <div className="-mx-4 py-4 px-8 bg-white md:-mx-6">
               <table className="m-0 w-full overflow-x-auto">
                 <thead>
@@ -290,12 +289,14 @@ const Server = () => {
                         <button
                           type="button"
                           onClick={() => toggleActiveTableRowIndex(itemIndex)}
-                          className="whitespace-nowrap truncate"
+                          className="whitespace-nowrap truncate pl-2"
                         >
                           <FontAwesomeIcon
+                            width={8}
+                            height={8}
                             icon={faChevronRight}
                             className={[
-                              'mr-1 transition-all duration-150 ease-in-out',
+                              'mr-2 transition-all duration-150 ease-in-out',
                               activeTableRowIndex === itemIndex && 'rotate-90',
                             ].join(' ')}
                           />
@@ -357,7 +358,7 @@ const Server = () => {
         </>
       )}
       {activeTabId === 'top-procedures' && (
-        <div className="prose max-w-full prose-p:m-0 prose-td:align-top prose-td:py-4 prose-th:border-b-4 prose-headings:m-0">
+        <div className="prose max-w-full prose-p:m-0 prose-td:align-top prose-td:py-4 prose-td:pl-0 prose-th:border-b-4 prose-headings:m-0">
           <div className="-mx-4 py-4 px-8 bg-white md:-mx-6">
             <table className="m-0 w-full overflow-x-auto">
               <thead>
@@ -385,12 +386,14 @@ const Server = () => {
                       <button
                         type="button"
                         onClick={() => toggleActiveTableRowIndex(itemIndex)}
-                        className="whitespace-nowrap truncate"
+                        className="whitespace-nowrap truncate pl-2"
                       >
                         <FontAwesomeIcon
+                          width={8}
+                          height={8}
                           icon={faChevronRight}
                           className={[
-                            'mr-1 transition-all duration-150 ease-in-out',
+                            'mr-2 transition-all duration-150 ease-in-out',
                             activeTableRowIndex === itemIndex && 'rotate-90',
                           ].join(' ')}
                         />
