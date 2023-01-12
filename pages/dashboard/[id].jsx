@@ -10,6 +10,7 @@ import {
   Title,
   Tooltip,
 } from 'chart.js'
+import classNames from 'classnames'
 import faker from 'faker'
 import { useFormik } from 'formik'
 import { useRouter } from 'next/router'
@@ -174,7 +175,7 @@ export const waitsData = {
 
 const dashboardSections = [
   { name: 'Server/host metrics', slug: 'allinstancemetrics' },
-  { name: 'tempdb', slug: 'tempdb' },
+  { name: 'TEMPDB', slug: 'tempdb' },
   { name: 'Blocking processes', slug: 'blocking-processes' },
   { name: 'SQL user processes', slug: 'sqlprocesses' },
   { name: 'Processes', slug: 'processes' },
@@ -234,9 +235,14 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
         <PageWrapper>
           <PageSidebar>
             <PageSidebarLinksList>
-              {dashboardSections.map((section) => (
+              {dashboardSections.map((section, sectionIndex) => (
                 <li key={section.slug}>
-                  <button onClick={() => scrollToSection(`#${section.slug}`)}>
+                  <button
+                    onClick={() => scrollToSection(`#${section.slug}`)}
+                    className={classNames({
+                      active: sectionIndex === 0,
+                    })}
+                  >
                     {section.name}
                   </button>
                 </li>
