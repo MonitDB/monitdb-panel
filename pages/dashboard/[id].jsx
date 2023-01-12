@@ -29,6 +29,7 @@ import {
   PageSidebarLinksList,
   PageWrapper,
 } from '~/components/page'
+import Server from '~/components/page/dashboard/server-hosts-metrics/server'
 import LatestAlertsSidebar from '~/components/sidebar/latest-alerts'
 import GlobalContext from '~/contexts/global'
 import DatabaseIcons from '~/helpers/database-icons'
@@ -46,7 +47,7 @@ ChartJS.register(
   Legend
 )
 
-const options = {
+export const options = {
   responsive: true,
   plugins: {
     tooltip: { enabled: false },
@@ -54,7 +55,7 @@ const options = {
   },
 }
 
-const cpuOptions = {
+export const cpuOptions = {
   ...options,
   scales: {
     // x: {
@@ -71,7 +72,7 @@ const cpuOptions = {
   },
 }
 
-const memoryOptions = {
+export const memoryOptions = {
   ...options,
   scales: {
     y: {
@@ -84,7 +85,7 @@ const memoryOptions = {
   },
 }
 
-const diskOptions = {
+export const diskOptions = {
   ...options,
   scales: {
     y: {
@@ -97,22 +98,26 @@ const diskOptions = {
   },
 }
 
-const waitsOptions = {
+export const waitsOptions = {
   ...options,
   scales: {
     y: {
       ticks: {
         callback: function (value) {
-          return value + ' MB/s'
+          return value + ' s/s'
         },
       },
     },
   },
 }
 
-const labels = ['08:00', '08:10', '08:20', '08:30', '08:40', '08:50', '09:00']
+export const labels = Array.from({ length: 60 }, (_, index) => `8:${index}`)
 
-const cpuData = {
+export const tableDataItems = labels.map(() => ({
+  title: `SELECT user_id FROM ${faker.random.word()} WHERE meta_key = '${faker.random.word()}'`,
+}))
+
+export const cpuData = {
   labels,
   datasets: [
     {
@@ -126,7 +131,7 @@ const cpuData = {
   ],
 }
 
-const memoryData = {
+export const memoryData = {
   labels,
   datasets: [
     {
@@ -138,7 +143,7 @@ const memoryData = {
   ],
 }
 
-const diskData = {
+export const diskData = {
   labels,
   datasets: [
     {
@@ -150,14 +155,14 @@ const diskData = {
   ],
 }
 
-const waitsData = {
+export const waitsData = {
   labels,
   datasets: [
     {
       fill: true,
       data: labels.map(() => faker.datatype.number({ min: 0, max: 100 })),
-      borderColor: 'rgb(221, 123, 53)',
-      backgroundColor: 'rgba(221, 123, 53, 0.5)',
+      borderColor: 'rgb(252, 144, 3)',
+      backgroundColor: 'rgba(252, 144, 3, 0.5)',
     },
   ],
 }
@@ -238,19 +243,22 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
             {!currentServer && <Loading />}
             {currentServer && (
               <div className="w-full flex flex-col gap-y-8">
-                <header className="w-full flex items-center gap-4">
-                  <div className="flex items-center justify-center w-16 h-16 rounded-full border border-gray-light">
-                    <DatabaseIcons
-                      name={currentServer.type.typeservername}
-                      className="w-9 h-9"
-                    />
-                  </div>
-                  <div>
-                    <h4 className="heading-md">{currentServer.serverName}</h4>
-                    <p className="text-sm">
-                      4 GB Memory / 2 Intel vCPUs / 50 GB Disk + 25 GB / NYC1 -
-                      Plesk 18.0 on Ubuntu 20.04{' '}
-                    </p>
+                <header className="w-full">
+                  <h2 className="heading-lg mb-6">Dashboard - Overview</h2>
+                  <div className="w-full flex items-center gap-4">
+                    <div className="flex items-center justify-center w-16 h-16 rounded-full border border-gray-light">
+                      <DatabaseIcons
+                        name={currentServer.type.typeservername}
+                        className="w-9 h-9"
+                      />
+                    </div>
+                    <div>
+                      <h4 className="heading-md">{currentServer.serverName}</h4>
+                      <p className="text-sm">
+                        4 GB Memory / 2 Intel vCPUs / 50 GB Disk + 25 GB / NYC1
+                        - Plesk 18.0 on Ubuntu 20.04{' '}
+                      </p>
+                    </div>
                   </div>
                 </header>
 
@@ -272,8 +280,8 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
                 </div>
 
                 <form
-                  className="w-full flex items-center gap-x-8 py-4 border-t border-t-gray-light
-                    border-b border-b-gray-light text-sm"
+                  className="w-full flex items-center gap-x-8 p-4 border border-gray-light
+                    bg-white text-sm"
                   onSubmit={formik.handleSubmit}
                 >
                   <label
@@ -374,6 +382,8 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
                       <Line options={waitsOptions} data={waitsData} />
                     </div>
                   </Grid>
+
+                  <Server />
                 </div>
               </div>
             )}

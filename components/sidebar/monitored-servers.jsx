@@ -92,18 +92,18 @@ const MonitoredServers = () => {
                         sidebarEnvironmentActiveIndex === environmentIndex
                       }
                     >
-                      <div className="pt-4 pl-5">
+                      <div className="pt-4 pl-5 space-y-4">
                         {filteredServers.length > 0 ? (
                           filteredServers.map((server, serverIndex) => (
                             <button
                               key={`env-${environmentIndex}-server-${serverIndex}`}
                               type="button"
-                              className="flex items-center space-x-2"
+                              className="flex items-center space-x-2 transition-transform duration-300 ease-in-out transform hover:translate-x-2"
                             >
                               <FontAwesomeIcon icon={faDatabase} />{' '}
-                              <span>
+                              <span className="text-left text-xs">
                                 {server.serverName} -{' '}
-                                <span className="text-xs opacity-50">
+                                <span className="opacity-50">
                                   {server.type.typeservername}
                                 </span>
                               </span>

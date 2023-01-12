@@ -60,14 +60,17 @@ const DashboardPage = () => {
   const environmentsOptions = useMemo(
     () => [
       { value: '', label: 'Todos os grupos' },
-      ...serverEnvironments.map(
-        ({ idTypeServerEnvironment, typeServerEnvironmentName }) => ({
+      ...formattedEnvironments
+        .filter(
+          (environment) =>
+            environment.isActive && environment.servers.length > 0
+        )
+        .map(({ idTypeServerEnvironment, typeServerEnvironmentName }) => ({
           value: idTypeServerEnvironment,
           label: typeServerEnvironmentName,
-        })
-      ),
+        })),
     ],
-    [serverEnvironments]
+    [formattedEnvironments]
   )
 
   const totalServers = useMemo(
@@ -132,7 +135,7 @@ const DashboardPage = () => {
       ...serverEnvironments.map((environment) => ({
         ...environment,
         isActive: true,
-        isDropdownActive: false,
+        isDropdownActive: true,
         servers:
           filterServersByEnvironmentId(
             environment.idTypeServerEnvironment,
@@ -141,6 +144,9 @@ const DashboardPage = () => {
       })),
     ])
   }, [serverEnvironments, servers, serverTypes])
+
+  // eslint-disable-next-line no-console
+  console.log('formattedEnvironments', formattedEnvironments)
 
   return (
     <>

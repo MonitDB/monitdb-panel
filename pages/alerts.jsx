@@ -6,7 +6,13 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useFormik } from 'formik'
 import { NextSeo } from 'next-seo'
-import React, { useContext, useEffect, useMemo, useState } from 'react'
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 
 import Checkbox from '~/components/form/checkbox'
 import Selector from '~/components/form/selector'
@@ -19,7 +25,7 @@ import { getAlerts } from '~/services/alerts'
 import { formatAlert } from '~/utils/alert'
 import { getFormattedDate } from '~/utils/formats'
 
-const AlertsPage = ({ data }) => {
+const AlertsPage = () => {
   const {
     globalState: { servers, serverTypes, serverEnvironments },
   } = useContext(GlobalContext)
@@ -73,9 +79,18 @@ const AlertsPage = ({ data }) => {
     },
   })
 
-  useEffect(() => {
+  const getAlertsData = useCallback(async () => {
+    const responseAlerts = await getAlerts({ PageLength: 10, PageNumber: 1 })
+    // const responseAlertsParemeter = await getAlertsParameter()
+
+    // const alertsFormatted = formatAlerts(
+    //   responseAlerts?.data?.result || [],
+    //   responseAlertsParemeter?.data?.result || []
+    // )
+
+    // setAlerts(responseAlerts?.data)
     setAlerts(
-      [...data].map((alert) =>
+      [...(responseAlerts?.data ?? [])].map((alert) =>
         formatAlert(alert, {
           servers,
           serverTypes,
@@ -83,7 +98,11 @@ const AlertsPage = ({ data }) => {
         })
       )
     )
-  }, [data, servers, serverTypes, serverEnvironments])
+  }, [servers, serverTypes, serverEnvironments])
+
+  useEffect(() => {
+    getAlertsData()
+  }, [getAlertsData])
 
   return (
     <>
@@ -158,7 +177,14 @@ const AlertsPage = ({ data }) => {
                   <thead>
                     <tr className="text-sm font-bold text-gray-dark text-left">
                       <th className="w-5 border-b-2 border-gray-light">
-                        <Checkbox name="all" value="1" />
+                        <Checkbox
+                          name="all"
+                          value="1"
+                          onChange={(value) => {
+                            // eslint-disable-next-line no-console
+                            console.log(`select all checkboxes ${value}`)
+                          }}
+                        />
                       </th>
                       <th className="border-b-2 border-gray-light">
                         Alert type
@@ -185,6 +211,10 @@ const AlertsPage = ({ data }) => {
                             className="transform translate-y-1"
                             name="alerts"
                             value={alert.idAlert}
+                            onChange={(value) => {
+                              // eslint-disable-next-line no-console
+                              console.log(`select checkbox ${value}`)
+                            }}
                           />
                         </td>
                         <td>{alert.dsMessage}</td>
@@ -224,17 +254,6 @@ const AlertsPage = ({ data }) => {
       </Layout>
     </>
   )
-}
-
-// eslint-disable-next-line unicorn/prevent-abbreviations
-export const getServerSideProps = async () => {
-  const response = await getAlerts({ pagesize: 20 })
-
-  return {
-    props: {
-      data: response?.data?.result || [],
-    },
-  }
 }
 
 export default AlertsPage
