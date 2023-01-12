@@ -10,7 +10,7 @@ import React, { useCallback, useContext, useEffect, useState } from 'react'
 import Select from '~/components/form/select'
 import Link from '~/components/link'
 import Loading from '~/components/loading'
-import { PageSidebar, PageSidebarTitle } from '~/components/page'
+import { PageSidebarTitle } from '~/components/page'
 import GlobalContext from '~/contexts/global'
 import {
   getAlerts,
@@ -51,7 +51,7 @@ const LatestAlerts = () => {
   }, [getAlertsData])
 
   return (
-    <PageSidebar>
+    <div className="mt-8">
       <header className="mb-4">
         <PageSidebarTitle>
           <FontAwesomeIcon icon={faBell} />
@@ -146,7 +146,7 @@ const LatestAlerts = () => {
           <Loading />
         </div>
       )}
-    </PageSidebar>
+    </div>
   )
 }
 

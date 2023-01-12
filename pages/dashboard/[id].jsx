@@ -1,4 +1,4 @@
-import { faChevronRight, faWarning } from '@fortawesome/free-solid-svg-icons'
+import { faWarning } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   CategoryScale,
@@ -14,7 +14,7 @@ import faker from 'faker'
 import { useFormik } from 'formik'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
-import React, { useCallback, useContext, useMemo, useState } from 'react'
+import React, { useContext, useMemo, useState } from 'react'
 import { Line } from 'react-chartjs-2'
 
 import Code from '~/components/code'
@@ -23,12 +23,18 @@ import Checkbox from '~/components/form/checkbox'
 import Select from '~/components/form/select'
 import Grid from '~/components/grid'
 import Loading from '~/components/loading'
-import { PageContent, PageWrapper } from '~/components/page'
+import {
+  PageContent,
+  PageSidebar,
+  PageSidebarLinksList,
+  PageWrapper,
+} from '~/components/page'
+import Server from '~/components/page/dashboard/server-host-metrics/server'
 import LatestAlertsSidebar from '~/components/sidebar/latest-alerts'
 import GlobalContext from '~/contexts/global'
 import DatabaseIcons from '~/helpers/database-icons'
-import Reveal from '~/helpers/reveal'
 import Layout from '~/layouts/default'
+import { scrollToSection } from '~/utils/global'
 import { formatServer } from '~/utils/server'
 
 ChartJS.register(
@@ -41,7 +47,7 @@ ChartJS.register(
   Legend
 )
 
-const options = {
+export const options = {
   responsive: true,
   plugins: {
     tooltip: { enabled: false },
@@ -49,7 +55,7 @@ const options = {
   },
 }
 
-const cpuOptions = {
+export const cpuOptions = {
   ...options,
   scales: {
     // x: {
@@ -66,7 +72,7 @@ const cpuOptions = {
   },
 }
 
-const memoryOptions = {
+export const memoryOptions = {
   ...options,
   scales: {
     y: {
@@ -79,7 +85,7 @@ const memoryOptions = {
   },
 }
 
-const diskOptions = {
+export const diskOptions = {
   ...options,
   scales: {
     y: {
@@ -92,7 +98,7 @@ const diskOptions = {
   },
 }
 
-const waitsOptions = {
+export const waitsOptions = {
   ...options,
   scales: {
     y: {
@@ -105,13 +111,13 @@ const waitsOptions = {
   },
 }
 
-const labels = Array.from({ length: 60 }, (_, index) => `8:${index}`)
+export const labels = Array.from({ length: 60 }, (_, index) => `8:${index}`)
 
-const tableDataItems = labels.map(() => ({
+export const tableDataItems = labels.map(() => ({
   title: `SELECT user_id FROM ${faker.random.word()} WHERE meta_key = '${faker.random.word()}'`,
 }))
 
-const cpuData = {
+export const cpuData = {
   labels,
   datasets: [
     {
@@ -125,7 +131,7 @@ const cpuData = {
   ],
 }
 
-const memoryData = {
+export const memoryData = {
   labels,
   datasets: [
     {
@@ -137,7 +143,7 @@ const memoryData = {
   ],
 }
 
-const diskData = {
+export const diskData = {
   labels,
   datasets: [
     {
@@ -149,7 +155,7 @@ const diskData = {
   ],
 }
 
-const waitsData = {
+export const waitsData = {
   labels,
   datasets: [
     {
@@ -161,11 +167,20 @@ const waitsData = {
   ],
 }
 
+const dashboardSections = [
+  { name: 'Server/host metrics', slug: 'allinstancemetrics' },
+  { name: 'tempdb', slug: 'tempdb' },
+  { name: 'Blocking processes', slug: 'blocking-processes' },
+  { name: 'SQL user processes', slug: 'sqlprocesses' },
+  { name: 'Processes', slug: 'processes' },
+  { name: 'Error log', slug: 'error-log' },
+  { name: 'Databases', slug: 'databases' },
+]
+
 const DashboardSingle = () => {
   const {
     globalState: { servers, serverTypes },
   } = useContext(GlobalContext)
-  const [activeTableRowIndex, setActiveTableRowIndex] = useState(-1)
 
   const router = useRouter()
 
@@ -175,10 +190,6 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
   )
 
   // const serverId = useMemo(() => router.query.id, [router?.query?.id])
-
-  const toggleActiveTableRowIndex = useCallback((index) => {
-    setActiveTableRowIndex((oldIndex) => (oldIndex === index ? -1 : index))
-  }, [])
 
   const currentServer = useMemo(() => {
     const server = servers.find((server) => server.id === +router?.query?.id)
@@ -216,7 +227,18 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
       <NextSeo title="Dashboard - MonitDB" />
       <Layout>
         <PageWrapper>
-          <LatestAlertsSidebar />
+          <PageSidebar>
+            <PageSidebarLinksList>
+              {dashboardSections.map((section) => (
+                <li key={section.slug}>
+                  <button onClick={() => scrollToSection(`#${section.slug}`)}>
+                    {section.name}
+                  </button>
+                </li>
+              ))}
+            </PageSidebarLinksList>
+            <LatestAlertsSidebar />
+          </PageSidebar>
           <PageContent hideBreadcrumbs={true}>
             {!currentServer && <Loading />}
             {currentServer && (
@@ -317,167 +339,51 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
                   </div>
                 </form>
 
-                <Grid>
-                  <div className="col-span-2 bg-white border border-gray-light p-4 lg:col-span-12">
-                    <Textarea
-                      name="description"
-                      className="w-full px-4 h-10 bg-white leading-10 rounded outline-none text-sm"
-                      onChange={(event) => {
-                        const target = event.target
+                <div id="allinstancemetrics">
+                  <Grid>
+                    <div className="col-span-2 bg-white border border-gray-light p-4 lg:col-span-12">
+                      <Textarea
+                        name="description"
+                        className="w-full px-4 h-10 bg-white leading-10 rounded outline-none text-sm"
+                        onChange={(event) => {
+                          const target = event.target
 
-                        setSqlCode(target.value)
-                      }}
-                      value={sqlCode}
-                    />
-                    {sqlCode && <Code code={sqlCode} language="javascript" />}
-                    <div className="w-full flex">
-                      <button
-                        type="button"
-                        className="btn mt-4 ml-auto"
-                        onClick={() => {
-                          setSqlCode('')
+                          setSqlCode(target.value)
                         }}
-                      >
-                        Run
-                      </button>
-                    </div>
-                  </div>
-                  <div className="col-span-2 border bg-white border-gray-light p-4 lg:col-span-6">
-                    <h6 className="mb-4 heading-xs">CPU</h6>
-                    <Line options={cpuOptions} data={cpuData} />
-                  </div>
-                  <div className="col-span-2 border bg-white border-gray-light p-4 lg:col-span-6">
-                    <h6 className="mb-4 heading-xs">Memória</h6>
-                    <Line options={memoryOptions} data={memoryData} />
-                  </div>
-                  <div className="col-span-2 border bg-white border-gray-light p-4 lg:col-span-6">
-                    <h6 className="mb-4 heading-xs">Disk I/O</h6>
-                    <Line options={diskOptions} data={diskData} />
-                  </div>
-                  <div className="col-span-2 border bg-white border-gray-light p-4 lg:col-span-6">
-                    <h6 className="mb-4 heading-xs">Waits</h6>
-                    <Line options={waitsOptions} data={waitsData} />
-                  </div>
-                </Grid>
-
-                <div className="prose max-w-full prose-p:m-0 prose-td:align-top prose-td:py-4 prose-th:border-b-4 prose-headings:m-0">
-                  <div className="-mx-4 py-4 px-8 bg-white md:-mx-6">
-                    <table className="m-0 w-full">
-                      <thead>
-                        <tr>
-                          <th>Query text</th>
-                          <th>Execuções</th>
-                          <th>Duração (ms)</th>
-                          <th>CPU (ms)</th>
-                          <th>Physical reads</th>
-                          <th>Logical reads</th>
-                          <th>Logical writes</th>
-                          <th>Memory grant (KB)</th>
-                          <th>Database</th>
-                        </tr>
-                      </thead>
-                      {tableDataItems.map((item, itemIndex) => (
-                        <tbody
-                          key={`item-${itemIndex}`}
-                          className={[
-                            'transition-all duration-150 ease-in-out',
-                            activeTableRowIndex === itemIndex && 'bg-white',
-                          ].join(' ')}
+                        value={sqlCode}
+                      />
+                      {sqlCode && <Code code={sqlCode} language="javascript" />}
+                      <div className="w-full flex">
+                        <button
+                          type="button"
+                          className="btn mt-4 ml-auto"
+                          onClick={() => {
+                            setSqlCode('')
+                          }}
                         >
-                          <tr className="border-b-0">
-                            <td>
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  toggleActiveTableRowIndex(itemIndex)
-                                }
-                                className="whitespace-nowrap truncate"
-                              >
-                                <FontAwesomeIcon
-                                  icon={faChevronRight}
-                                  className={[
-                                    'mr-1 transition-all duration-150 ease-in-out',
-                                    activeTableRowIndex === itemIndex &&
-                                      'rotate-90',
-                                  ].join(' ')}
-                                />
-                                <span className="truncate">{item.title}</span>
-                              </button>
-                            </td>
-                            <td>
-                              {faker.datatype.number({ min: 0, max: 100 })}
-                            </td>
-                            <td>
-                              {faker.datatype.number({ min: 0, max: 100 })}
-                            </td>
-                            <td>
-                              {faker.datatype.number({ min: 0, max: 100 })}
-                            </td>
-                            <td>
-                              {faker.datatype.number({ min: 0, max: 100 })}
-                            </td>
-                            <td>
-                              {faker.datatype.number({ min: 0, max: 100 })}
-                            </td>
-                            <td>
-                              {faker.datatype.number({ min: 0, max: 100 })}
-                            </td>
-                            <td>
-                              {faker.datatype.number({ min: 0, max: 100 })}
-                            </td>
-                            <td>
-                              {faker.datatype.number({ min: 0, max: 100 })}
-                            </td>
-                          </tr>
-                          <tr
-                            className={
-                              itemIndex < labels.length - 1 &&
-                              'border-b border-b-gray border-opacity-50'
-                            }
-                          >
-                            <td colSpan={9} className="!p-0">
-                              <Reveal
-                                active={activeTableRowIndex === itemIndex}
-                              >
-                                <div className="p-4 border-t-2 border-t-gray bg-gray-light bg-opacity-25">
-                                  <div className="w-full mb-4">
-                                    <h4 className="!mb-2 font-bold text-base">
-                                      Query details
-                                    </h4>
-                                    <p className="text-xs">
-                                      <strong>Database:</strong>{' '}
-                                      {faker.random.word()}
-                                      <br />
-                                      <strong>Program duration:</strong> 18,582
-                                      ms
-                                      <br />
-                                      <strong>Plan handle:</strong>
-                                      {faker.datatype.uuid()}
-                                      <br />
-                                      SQL Monitor has identified 1 issues with
-                                      this query. Addressing them could improve
-                                      performance. Top query is a fragment of a
-                                      larger query. Show full query.
-                                    </p>
-                                  </div>
-                                  <div className="w-full">
-                                    <h2 className="!mb-4 text-base font-bold text-gray-dark font-oxygen">
-                                      Histórico de execução
-                                    </h2>
-                                    <Line
-                                      options={options}
-                                      data={diskData}
-                                      height={50}
-                                    />
-                                  </div>
-                                </div>
-                              </Reveal>
-                            </td>
-                          </tr>
-                        </tbody>
-                      ))}
-                    </table>
-                  </div>
+                          Run
+                        </button>
+                      </div>
+                    </div>
+                    <div className="col-span-2 border bg-white border-gray-light p-4 lg:col-span-6">
+                      <h6 className="mb-4 heading-xs">CPU</h6>
+                      <Line options={cpuOptions} data={cpuData} />
+                    </div>
+                    <div className="col-span-2 border bg-white border-gray-light p-4 lg:col-span-6">
+                      <h6 className="mb-4 heading-xs">Memória</h6>
+                      <Line options={memoryOptions} data={memoryData} />
+                    </div>
+                    <div className="col-span-2 border bg-white border-gray-light p-4 lg:col-span-6">
+                      <h6 className="mb-4 heading-xs">Disk I/O</h6>
+                      <Line options={diskOptions} data={diskData} />
+                    </div>
+                    <div className="col-span-2 border bg-white border-gray-light p-4 lg:col-span-6">
+                      <h6 className="mb-4 heading-xs">Waits</h6>
+                      <Line options={waitsOptions} data={waitsData} />
+                    </div>
+                  </Grid>
+
+                  <Server />
                 </div>
               </div>
             )}

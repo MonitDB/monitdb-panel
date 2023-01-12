@@ -7,6 +7,10 @@
 @import 'react-toastify/dist/ReactToastify.css';
 @import './toastify.css';
 
+html {
+  @apply scroll-smooth;
+}
+
 html,
 body {
   @apply w-full h-full;

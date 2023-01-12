@@ -2,11 +2,14 @@
   @apply text-sm;
 }
 
-.linksList a {
+.linksList a,
+.linksList button {
   @apply block border-l-2 border-white pl-4 py-2;
 }
 
 .linksList a:hover,
-.linksList a[class*='active'] {
+.linksList button:hover,
+.linksList a[class*='active'],
+.linksList button[class*='active'] {
   @apply border-l-8 border-blue;
 }

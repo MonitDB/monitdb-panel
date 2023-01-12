@@ -22,3 +22,17 @@ export const slugify = (text = '') => {
     .replace(/[^\w-]+/g, '')
     .replace(/--+/g, '-')
 }
+
+export const scrollToSection = (element) => {
+  const $DOMElement = document.querySelector(element)
+
+  if (!$DOMElement) return
+
+  const $headerHeight = 64
+  const $sectionMargin = 20
+  const $sectionTop = $DOMElement?.offsetTop || 0
+
+  window.scrollTo({
+    top: $sectionTop - $headerHeight - $sectionMargin,
+  })
+}
