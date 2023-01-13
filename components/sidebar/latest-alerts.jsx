@@ -51,7 +51,7 @@ const LatestAlerts = () => {
   }, [getAlertsData])
 
   return (
-    <div className="mt-8">
+    <div className="">
       <header className="mb-4">
         <PageSidebarTitle>
           <FontAwesomeIcon icon={faBell} />

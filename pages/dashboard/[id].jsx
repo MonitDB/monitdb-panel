@@ -34,12 +34,23 @@ import {
   Permissions,
   Server,
   ServerMetrics,
+  TempDB,
   VmwareMetrics,
-} from '~/components/page/dashboard/server-host-metrics'
+} from '~/components/page/dashboard'
 import LatestAlertsSidebar from '~/components/sidebar/latest-alerts'
 import GlobalContext from '~/contexts/global'
 import DatabaseIcons from '~/helpers/database-icons'
 import Layout from '~/layouts/default'
+import {
+  GB_DATA,
+  GB_OPTIONS,
+  MB_DATA,
+  MB_OPTIONS,
+  PERCENTE_DATA,
+  PERCENTE_OPTIONS,
+  S_DATA,
+  S_OPTIONS,
+} from '~/utils/chart'
 import { scrollToSection } from '~/utils/global'
 import { formatServer } from '~/utils/server'
 
@@ -61,81 +72,11 @@ export const options = {
   },
 }
 
-export const cpuOptions = {
-  ...options,
-  scales: {
-    // x: {
-    //   grid: { display: false },
-    // },
-    y: {
-      // grid: { display: false },
-      ticks: {
-        callback: function (value) {
-          return value + '%'
-        },
-      },
-    },
-  },
-}
-
-export const memoryOptions = {
-  ...options,
-  scales: {
-    y: {
-      ticks: {
-        callback: function (value) {
-          return value + ' GB'
-        },
-      },
-    },
-  },
-}
-
-export const diskOptions = {
-  ...options,
-  scales: {
-    y: {
-      ticks: {
-        callback: function (value) {
-          return value + ' MB/s'
-        },
-      },
-    },
-  },
-}
-
-export const waitsOptions = {
-  ...options,
-  scales: {
-    y: {
-      ticks: {
-        callback: function (value) {
-          return value + ' s/s'
-        },
-      },
-    },
-  },
-}
-
 export const labels = Array.from({ length: 60 }, (_, index) => `8:${index}`)
 
 export const tableDataItems = labels.map(() => ({
   title: `SELECT user_id FROM ${faker.random.word()} WHERE meta_key = '${faker.random.word()}'`,
 }))
-
-export const cpuData = {
-  labels,
-  datasets: [
-    {
-      label: 'Dataset 1',
-      data: labels.map(() =>
-        faker.datatype.number({ min: 0, max: 100, precision: 10 })
-      ),
-      borderColor: 'rgb(80, 70, 229)',
-      backgroundColor: 'rgba(80, 70, 229, 0.5)',
-    },
-  ],
-}
 
 export const memoryData = {
   labels,
@@ -145,18 +86,6 @@ export const memoryData = {
       data: labels.map(() => faker.datatype.number({ min: 0, max: 100 })),
       borderColor: 'rgb(53, 162, 235)',
       backgroundColor: 'rgba(53, 162, 235, 0.5)',
-    },
-  ],
-}
-
-export const diskData = {
-  labels,
-  datasets: [
-    {
-      fill: true,
-      data: labels.map(() => faker.datatype.number({ min: 0, max: 100 })),
-      borderColor: 'rgb(140, 216, 141)',
-      backgroundColor: 'rgba(140, 216, 141, 0.5)',
     },
   ],
 }
@@ -234,7 +163,8 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
       <Layout>
         <PageWrapper>
           <PageSidebar>
-            <PageSidebarLinksList>
+            <LatestAlertsSidebar />
+            <PageSidebarLinksList className="mt-5">
               {dashboardSections.map((section, sectionIndex) => (
                 <li key={section.slug}>
                   <button
@@ -248,7 +178,6 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
                 </li>
               ))}
             </PageSidebarLinksList>
-            <LatestAlertsSidebar />
           </PageSidebar>
           <PageContent hideBreadcrumbs={true}>
             {!currentServer && <Loading />}
@@ -378,19 +307,19 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
                     </div>
                     <div className="col-span-2 border bg-white border-gray-light p-4 lg:col-span-6">
                       <h6 className="mb-4 heading-xs">CPU</h6>
-                      <Line options={cpuOptions} data={cpuData} />
+                      <Line options={PERCENTE_OPTIONS} data={PERCENTE_DATA} />
                     </div>
                     <div className="col-span-2 border bg-white border-gray-light p-4 lg:col-span-6">
                       <h6 className="mb-4 heading-xs">Memória</h6>
-                      <Line options={memoryOptions} data={memoryData} />
+                      <Line options={GB_OPTIONS} data={GB_DATA} />
                     </div>
                     <div className="col-span-2 border bg-white border-gray-light p-4 lg:col-span-6">
                       <h6 className="mb-4 heading-xs">Disk I/O</h6>
-                      <Line options={diskOptions} data={diskData} />
+                      <Line options={MB_OPTIONS} data={MB_DATA} />
                     </div>
                     <div className="col-span-2 border bg-white border-gray-light p-4 lg:col-span-6">
                       <h6 className="mb-4 heading-xs">Waits</h6>
-                      <Line options={waitsOptions} data={waitsData} />
+                      <Line options={S_OPTIONS} data={S_DATA} />
                     </div>
                   </Grid>
 
@@ -398,6 +327,7 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
                   <ServerMetrics />
                   <Permissions />
                   <VmwareMetrics />
+                  <TempDB />
                 </div>
               </div>
             )}
