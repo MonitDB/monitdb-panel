@@ -78,30 +78,6 @@ export const tableDataItems = labels.map(() => ({
   title: `SELECT user_id FROM ${faker.random.word()} WHERE meta_key = '${faker.random.word()}'`,
 }))
 
-export const memoryData = {
-  labels,
-  datasets: [
-    {
-      fill: true,
-      data: labels.map(() => faker.datatype.number({ min: 0, max: 100 })),
-      borderColor: 'rgb(53, 162, 235)',
-      backgroundColor: 'rgba(53, 162, 235, 0.5)',
-    },
-  ],
-}
-
-export const waitsData = {
-  labels,
-  datasets: [
-    {
-      fill: true,
-      data: labels.map(() => faker.datatype.number({ min: 0, max: 100 })),
-      borderColor: 'rgb(252, 144, 3)',
-      backgroundColor: 'rgba(252, 144, 3, 0.5)',
-    },
-  ],
-}
-
 const dashboardSections = [
   { name: 'Server/host metrics', slug: 'allinstancemetrics' },
   { name: 'TEMPDB', slug: 'tempdb' },

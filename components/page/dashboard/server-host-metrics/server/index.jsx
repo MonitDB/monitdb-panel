@@ -7,7 +7,7 @@ import { useCallback, useState } from 'react'
 import { Line } from 'react-chartjs-2'
 
 import Reveal from '~/helpers/reveal'
-import { diskData, options, waitsData } from '~/pages/dashboard/[id]'
+import { MB_DATA, MB_OPTIONS, S_DATA, S_OPTIONS } from '~/utils/chart'
 
 const labelsTopQueries = Array.from({ length: 5 }, (_, index) => `8:${index}`)
 
@@ -229,8 +229,8 @@ const Server = () => {
                                 Histórico de execução
                               </h2>
                               <Line
-                                options={options}
-                                data={diskData}
+                                options={S_OPTIONS}
+                                data={S_DATA}
                                 height={50}
                               />
                             </div>
@@ -268,7 +268,7 @@ const Server = () => {
         )}
         {activeTabId === 'top-waits' && (
           <>
-            <Line options={options} data={waitsData} />
+            <Line options={S_OPTIONS} data={S_DATA} />
             <div className="prose mt-10 max-w-full prose-p:m-0 prose-td:align-top prose-td:py-4 prose-th:border-b-4 prose-headings:m-0">
               <div className="-mx-4 py-4 px-8 bg-white md:-mx-6">
                 <table className="m-0 w-full overflow-x-auto">
@@ -345,8 +345,8 @@ const Server = () => {
                                   Histórico de execução
                                 </h2>
                                 <Line
-                                  options={options}
-                                  data={diskData}
+                                  options={MB_OPTIONS}
+                                  data={MB_DATA}
                                   height={50}
                                 />
                               </div>
@@ -447,8 +447,8 @@ const Server = () => {
                                 Histórico de execução
                               </h2>
                               <Line
-                                options={options}
-                                data={diskData}
+                                options={MB_OPTIONS}
+                                data={MB_DATA}
                                 height={50}
                               />
                             </div>
