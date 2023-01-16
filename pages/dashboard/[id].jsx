@@ -31,9 +31,13 @@ import {
   PageWrapper,
 } from '~/components/page'
 import {
+  BlockingProcesses,
+  Databases,
+  ErrorLog,
   Permissions,
   Server,
   ServerMetrics,
+  SqlUserProcesses,
   TempDB,
   VmwareMetrics,
 } from '~/components/page/dashboard'
@@ -304,6 +308,10 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
                   <Permissions />
                   <VmwareMetrics />
                   <TempDB />
+                  <BlockingProcesses />
+                  <SqlUserProcesses />
+                  <ErrorLog />
+                  <Databases />
                 </div>
               </div>
             )}
