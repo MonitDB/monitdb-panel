@@ -4,7 +4,7 @@ import Image from '~/components/image'
 
 function ErrorLog() {
   return (
-    <div className="mt-4">
+    <div id="error-log" className="mt-4">
       <div className="grid grid-cols-[26px_auto_1fr] gap-2 items-center my-8">
         <Image
           src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAQAAABKfvVzAAABK0lEQVR42qzUUUobURQG4IlgphtRdBFFuoQWLIYUX/qQ4OdiWlBwDWpdigQXoE21XYKJefn7kJaZTKYjYjlPc+G7/Peec6dI8bIqXgm8cejKDwsL310a6ncAA7+kUff2W4ENZyKujWzp69s2NhFxYmMdnIlHnxsRe0Zm4qQBDMSjt23HtGcmf4Mtl0o/pb67SO1rLO6Xx18uHIrrlV1XQc9EDCtwJUb/BikciYsKTMVWJ9gRdxVYyGqD1kApnl4BpmK7a4LsitsKfBPjTnAszivwSUz0Oq71RgzqjXtYvdgGIKa1xqXwUczstcZ5Zy4+NIfvVMyM6sFS6GEuvraN96mIiSM7SqVdx25EfGkZ7z/BHtYe0NT7ridaGrp058ncrXMHNv/vT+D5+j0AXi5ORJDEpLEAAAAASUVORK5CYII="
