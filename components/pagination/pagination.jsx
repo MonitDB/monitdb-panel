@@ -7,7 +7,7 @@ import { PAGINATION_DOTS, usePagination } from './use-pagination'
 
 const Pagination = ({
   currentPage = 1,
-  totalPages = 1,
+  // totalPages = 1,
   onChangePage = () => {},
 }) => {
   const paginationRange = usePagination({
