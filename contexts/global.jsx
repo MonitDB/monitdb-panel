@@ -11,7 +11,7 @@ const initialGlobalState = {
 
 const GlobalContext = createContext(initialGlobalState)
 
-const GlobalContextProvider = ({ children }) => {
+export const GlobalContextProvider = ({ children }) => {
   const [globalState, setGlobalState] = useState(initialGlobalState)
 
   const getData = useCallback(async () => {
@@ -36,6 +36,9 @@ const GlobalContextProvider = ({ children }) => {
     getData()
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
+  // eslint-disable-next-line no-console
+  console.log('global globalState', globalState)
+
   return (
     <GlobalContext.Provider
       value={{
@@ -48,7 +51,5 @@ const GlobalContextProvider = ({ children }) => {
     </GlobalContext.Provider>
   )
 }
-
-export { GlobalContextProvider }
 
 export default GlobalContext

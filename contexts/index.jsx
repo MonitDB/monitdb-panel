@@ -1,13 +1,16 @@
 import React from 'react'
 
+import { AlertsContextProvider } from './alerts'
 import { GlobalContextProvider } from './global'
 import { UserContextProvider } from './user'
 
 const Contexts = ({ children }) => {
   return (
-    <GlobalContextProvider>
-      <UserContextProvider>{children}</UserContextProvider>
-    </GlobalContextProvider>
+    <UserContextProvider>
+      <GlobalContextProvider>
+        <AlertsContextProvider>{children}</AlertsContextProvider>
+      </GlobalContextProvider>
+    </UserContextProvider>
   )
 }
 
