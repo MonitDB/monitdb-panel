@@ -36,9 +36,6 @@ export const GlobalContextProvider = ({ children }) => {
     getData()
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-  // eslint-disable-next-line no-console
-  console.log('global globalState', globalState)
-
   return (
     <GlobalContext.Provider
       value={{
