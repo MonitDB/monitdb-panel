@@ -64,10 +64,11 @@ const Pagination = ({
             key={`pagination-${pageNumber}`}
             type="button"
             className={classNames(
-              `block py-1 px-2 text-xs text-gray-dark
+              `block py-1 px-2 text-xs
             lg:hover:bg-gray-dark lg:hover:text-white rounded`,
               {
                 'bg-gray-dark text-white': pageNumber === currentPage,
+                'text-gray-dark': pageNumber !== currentPage,
               }
             )}
             onClick={() => onChangePage(pageNumber)}
