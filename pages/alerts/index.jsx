@@ -25,6 +25,7 @@ import GlobalContext from '~/contexts/global'
 import Layout from '~/layouts/default'
 import { getAlerts } from '~/services/alerts'
 import { formatAlert } from '~/utils/alert'
+import { scrollToTop } from '~/utils/browser'
 import { getFormattedDate } from '~/utils/formats'
 
 const AlertsPage = () => {
@@ -90,14 +91,7 @@ const AlertsPage = () => {
     })
 
     setIsLoadingData(false)
-    // const responseAlertsParemeter = await getAlertsParameter()
 
-    // const alertsFormatted = formatAlerts(
-    //   responseAlerts?.data?.result || [],
-    //   responseAlertsParemeter?.data?.result || []
-    // )
-
-    // setAlerts(responseAlerts?.data)
     setAlerts(
       [...(responseAlerts?.data ?? [])].map((alert) =>
         formatAlert(alert, {
@@ -111,6 +105,7 @@ const AlertsPage = () => {
 
   useEffect(() => {
     setIsLoadingData(true)
+    scrollToTop()
   }, [currentPage])
 
   useEffect(() => {
