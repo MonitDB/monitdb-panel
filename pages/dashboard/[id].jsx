@@ -86,7 +86,7 @@ const dashboardSections = [
   { name: 'Server/host metrics', slug: 'allinstancemetrics' },
   { name: 'TEMPDB', slug: 'tempdb' },
   { name: 'Blocking processes', slug: 'blocking-processes' },
-  { name: 'SQL user processes', slug: 'sql-user-processes' },
+  { name: 'SQL user processes', slug: 'sqlprocesses' },
   { name: 'Processes', slug: 'processes' },
   { name: 'Error log', slug: 'error-log' },
   { name: 'Databases', slug: 'databases' },

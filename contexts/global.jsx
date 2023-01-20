@@ -11,7 +11,7 @@ const initialGlobalState = {
 
 const GlobalContext = createContext(initialGlobalState)
 
-const GlobalContextProvider = ({ children }) => {
+export const GlobalContextProvider = ({ children }) => {
   const [globalState, setGlobalState] = useState(initialGlobalState)
 
   const getData = useCallback(async () => {
@@ -48,7 +48,5 @@ const GlobalContextProvider = ({ children }) => {
     </GlobalContext.Provider>
   )
 }
-
-export { GlobalContextProvider }
 
 export default GlobalContext

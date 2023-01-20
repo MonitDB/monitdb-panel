@@ -1,57 +1,78 @@
 import {
   faBell,
-  faCircleInfo,
+  // faCircleInfo,
   faWarning,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import classNames from 'classnames'
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 
 import Select from '~/components/form/select'
 import Link from '~/components/link'
 import Loading from '~/components/loading'
 import { PageSidebarTitle } from '~/components/page'
-import GlobalContext from '~/contexts/global'
-import {
-  getAlerts,
-  // getAlertsParameter
-} from '~/services/alerts'
+import useAlerts from '~/hooks/use-alerts'
+import useGlobal from '~/hooks/use-global'
+import { getAlerts } from '~/services/alerts'
 
-// const formatAlerts = (alerts, alertsParameter) => {
-//   return alertsParameter
-//     .map((alertParameter) => ({
-//       ...alertParameter,
-//       totalAlerts: alerts.filter(
-//         (alert) => alert.idAlertParameter === alertParameter.idAlertParameter
-//       ).length,
-//     }))
-//     .filter((alert) => alert.totalAlerts > 0)
-// }
+const combineAlertsAndParameters = ({ alerts, parameters }) => {
+  const result = {}
+
+  for (const alert of alerts) {
+    const parameter = parameters.find(
+      (parameter) => parameter.id === alert.idAlertParameter
+    )
+
+    if (!parameter) continue
+
+    if (!result[parameter.id]) {
+      result[parameter.id] = {
+        ...parameter,
+        totalAlerts: 0,
+      }
+    }
+
+    result[parameter.id].totalAlerts += 1
+  }
+
+  return result
+}
 
 const LatestAlerts = () => {
   const {
     globalState: { serverEnvironments },
-  } = useContext(GlobalContext)
+  } = useGlobal()
+
+  const {
+    state: { parameters },
+  } = useAlerts()
+
   const [alerts, setAlerts] = useState([])
+  const [alertGroups, setAlertGroups] = useState([])
 
   const getAlertsData = useCallback(async () => {
-    const responseAlerts = await getAlerts({ PageLength: 6, PageNumber: 1 })
-    // const responseAlertsParemeter = await getAlertsParameter()
-
-    // const alertsFormatted = formatAlerts(
-    //   responseAlerts?.data?.result || [],
-    //   responseAlertsParemeter?.data?.result || []
-    // )
+    const responseAlerts = await getAlerts({ PageLength: 100, PageNumber: 1 })
 
     setAlerts(responseAlerts?.data)
   }, [])
+
+  useEffect(() => {
+    if (alerts.length === 0 || parameters.length === 0) return
+
+    setAlertGroups(
+      combineAlertsAndParameters({
+        alerts,
+        parameters,
+      })
+    )
+  }, [alerts, parameters])
 
   useEffect(() => {
     getAlertsData()
   }, [getAlertsData])
 
   return (
-    <div className="">
+    <div>
       <header className="mb-4">
         <PageSidebarTitle>
           <FontAwesomeIcon icon={faBell} />
@@ -60,7 +81,7 @@ const LatestAlerts = () => {
         <p className="text-sm">Alertas gerados ou atualizados recentemente:</p>
       </header>
 
-      {alerts?.length > 0 ? (
+      {Object.keys(alertGroups)?.length > 0 ? (
         <>
           <form className="mb-4 flex items-center space-x-2">
             <Select
@@ -89,51 +110,55 @@ const LatestAlerts = () => {
             />
           </form>
           <ul>
-            {alerts.map((alertItem, alertIndex) => (
-              <li
-                key={`dashboard-${alertIndex}`}
-                className="py-2 border-b border-gray-light border-opacity-25"
-              >
-                <Link
-                  href="/alerts/"
-                  className={classNames(
-                    `flex items-center space-x-2 border-l-2 pl-2 text-sm transition-all
-                    duration-150 ease-in-out border-orange lg:hover:border-l-8`,
-                    {
-                      // 'border-orange': alertItem.type === 'warning',
-                      // 'border-blue': alertItem.type === 'info',
-                    }
-                  )}
+            {Object.keys(alertGroups).map((parameterId) => {
+              const { nmAlert, totalAlerts } = alertGroups[parameterId]
+
+              return (
+                <li
+                  key={`dashboard-group-${parameterId}`}
+                  className="py-2 border-b border-gray-light border-opacity-25"
                 >
-                  <span className="w-6 min-w-6 text-lg">
-                    {alertItem?.type === 'info' && (
-                      <FontAwesomeIcon icon={faCircleInfo} />
-                    )}
-                    {/* {alertItem.type === 'warning' && (
-                        <FontAwesomeIcon icon={faWarning} />
-                      )} */}
-                    <FontAwesomeIcon icon={faWarning} />
-                  </span>
-                  <div className="w-full">
-                    <p>{alertItem.nmAlert}</p>
-                    <p className="text-xs text-opacity-50 text-white">
-                      1 alertas ativo
-                    </p>
-                  </div>
-                  <span
+                  <Link
+                    href="/alerts/"
                     className={classNames(
-                      'flex items-center justify-center rounded-full w-6 min-w-6 h-6 ml-auto text-xs bg-orange',
+                      `flex items-center space-x-2 border-l-2 pl-2 text-sm transition-all
+                    duration-150 ease-in-out border-orange lg:hover:border-l-8`,
                       {
-                        // 'bg-blue': alertItem?.type === 'info',
-                        // 'bg-orange': alertItem?.type === 'warning',
+                        // 'border-orange': alertItem.type === 'warning',
+                        // 'border-blue': alertItem.type === 'info',
                       }
                     )}
                   >
-                    {alertItem.totalAlerts}
-                  </span>
-                </Link>
-              </li>
-            ))}
+                    <span className="w-6 min-w-6 text-lg">
+                      {/* {alertItem?.type === 'info' && (
+                        <FontAwesomeIcon icon={faCircleInfo} />
+                      )} */}
+                      {/* {alertItem.type === 'warning' && (
+                        <FontAwesomeIcon icon={faWarning} />
+                      )} */}
+                      <FontAwesomeIcon icon={faWarning} />
+                    </span>
+                    <div className="w-full">
+                      <p>{nmAlert}</p>
+                      <p className="text-xs text-opacity-50 text-white">
+                        {totalAlerts} alertas ativo
+                      </p>
+                    </div>
+                    <span
+                      className={classNames(
+                        'flex items-center justify-center rounded-full w-6 min-w-6 h-6 ml-auto text-xs bg-orange',
+                        {
+                          // 'bg-blue': alertItem?.type === 'info',
+                          // 'bg-orange': alertItem?.type === 'warning',
+                        }
+                      )}
+                    >
+                      {totalAlerts}
+                    </span>
+                  </Link>
+                </li>
+              )
+            })}
           </ul>
           <div className="py-4">
             <Link href="/alerts/" className="btn btn--small">

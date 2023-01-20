@@ -4,7 +4,7 @@ import Image from '~/components/image'
 
 function SqlUserProcesses() {
   return (
-    <div id="sql-user-processes" className="mt-4">
+    <div id="sqlprocesses" className="mt-4">
       <div className="grid grid-cols-[26px_auto_1fr] gap-2 items-center my-8">
         <Image
           src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAATAQMAAAC0i49FAAAABlBMVEUAAAB3d3daxsy0AAAAAXRSTlMAQObYZgAAACdJREFUCNdj/M/AcJDh//8DDkwMQAAmGMFicADhfmBgIKTk/wcMJQBnHBDweU6BeQAAAABJRU5ErkJggg=="

@@ -4,6 +4,7 @@ import {
   faTag,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import classNames from 'classnames'
 import { useFormik } from 'formik'
 import { NextSeo } from 'next-seo'
 import React, {
@@ -18,11 +19,13 @@ import Checkbox from '~/components/form/checkbox'
 import Selector from '~/components/form/selector'
 import Loading from '~/components/loading'
 import { PageContent, PageWrapper } from '~/components/page'
+import Pagination from '~/components/pagination'
 import MonitoredServersSidebar from '~/components/sidebar/monitored-servers'
 import GlobalContext from '~/contexts/global'
 import Layout from '~/layouts/default'
 import { getAlerts } from '~/services/alerts'
 import { formatAlert } from '~/utils/alert'
+import { scrollToTop } from '~/utils/browser'
 import { getFormattedDate } from '~/utils/formats'
 
 const AlertsPage = () => {
@@ -31,6 +34,8 @@ const AlertsPage = () => {
   } = useContext(GlobalContext)
 
   const [alerts, setAlerts] = useState([])
+  const [currentPage, setCurrentPage] = useState(1)
+  const [isLoadingData, setIsLoadingData] = useState(true)
 
   const statusOptions = useMemo(
     () => [
@@ -80,15 +85,13 @@ const AlertsPage = () => {
   })
 
   const getAlertsData = useCallback(async () => {
-    const responseAlerts = await getAlerts({ PageLength: 10, PageNumber: 1 })
-    // const responseAlertsParemeter = await getAlertsParameter()
+    const responseAlerts = await getAlerts({
+      PageLength: 10,
+      PageNumber: currentPage,
+    })
 
-    // const alertsFormatted = formatAlerts(
-    //   responseAlerts?.data?.result || [],
-    //   responseAlertsParemeter?.data?.result || []
-    // )
+    setIsLoadingData(false)
 
-    // setAlerts(responseAlerts?.data)
     setAlerts(
       [...(responseAlerts?.data ?? [])].map((alert) =>
         formatAlert(alert, {
@@ -98,7 +101,12 @@ const AlertsPage = () => {
         })
       )
     )
-  }, [servers, serverTypes, serverEnvironments])
+  }, [servers, serverTypes, serverEnvironments, currentPage])
+
+  useEffect(() => {
+    setIsLoadingData(true)
+    scrollToTop()
+  }, [currentPage])
 
   useEffect(() => {
     getAlertsData()
@@ -173,7 +181,11 @@ const AlertsPage = () => {
           <PageContent>
             {alerts.length > 0 ? (
               <>
-                <table className="prose max-w-full w-full">
+                <table
+                  className={classNames('prose max-w-full w-full mb-4', {
+                    'opacity-25': isLoadingData,
+                  })}
+                >
                   <thead>
                     <tr className="text-sm font-bold text-gray-dark text-left">
                       <th className="w-5 border-b-2 border-gray-light">
@@ -243,6 +255,11 @@ const AlertsPage = () => {
                     ))}
                   </tbody>
                 </table>
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={10}
+                  onChangePage={(page) => setCurrentPage(page)}
+                />
               </>
             ) : (
               <div className="flex justify-center items-center w-full min-h-28">

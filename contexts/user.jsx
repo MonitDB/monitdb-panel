@@ -13,7 +13,7 @@ export const userInitialState = {
 
 const UserContext = createContext(userInitialState)
 
-const UserContextProvider = ({ children }) => {
+export const UserContextProvider = ({ children }) => {
   const [userState, setUserState] = useState(userInitialState)
 
   const unsetUserState = () => {
@@ -57,7 +57,5 @@ const UserContextProvider = ({ children }) => {
     </UserContext.Provider>
   )
 }
-
-export { UserContextProvider }
 
 export default UserContext
