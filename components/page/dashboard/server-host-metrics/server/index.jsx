@@ -6,6 +6,7 @@ import faker from 'faker'
 import { useCallback, useState } from 'react'
 import { Line } from 'react-chartjs-2'
 
+import BlockMessage from '~/components/block-message'
 import Reveal from '~/helpers/reveal'
 import { MB_DATA, MB_OPTIONS, S_DATA, S_OPTIONS } from '~/utils/chart'
 
@@ -148,7 +149,7 @@ const Server = () => {
       <div className="w-full min-h-96">
         {activeTabId === 'top-queries' && (
           <div className="prose max-w-full prose-p:m-0 prose-td:align-top prose-td:py-4 prose-th:border-b-4 prose-headings:m-0">
-            <div className="-mx-4 py-4 px-8 bg-white md:-mx-6">
+            <div className="py-4 px-8 bg-white overflow-x-auto">
               <table className="m-0 w-full overflow-x-auto">
                 <thead>
                   <tr>
@@ -245,26 +246,21 @@ const Server = () => {
           </div>
         )}
         {activeTabId === 'tracked-queries' && (
-          <div className="border-l-[10px] border-l-blue shadow bg-gray-default py-4 px-3 rounded-[4px]">
-            <div className="flex items-start">
-              <span className="font-bold rounded-full text-[10px] min-h-[18px] min-w-[18px] h-[18px] w-[18px] bg-blue text-white flex items-center justify-center mr-2">
-                i
-              </span>
+          <BlockMessage
+            type="information"
+            message={
               <p className="text-xs">
                 <strong className="mr-[2px]">
                   Você não tem nenhuma consulta rastreada.
                 </strong>{' '}
                 Se você for um administrador, poderá acompanhar as consultas na
                 guia principais consultas.{' '}
-                <a
-                  href="https://www.red-gate.com/SM12/tracked-queries"
-                  className="text-blue ml-[2px]"
-                >
+                <a href="#server" className="text-blue ml-[2px]">
                   Saber mais.
                 </a>
               </p>
-            </div>
-          </div>
+            }
+          />
         )}
         {activeTabId === 'top-waits' && (
           <>

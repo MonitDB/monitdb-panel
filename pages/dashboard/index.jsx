@@ -146,7 +146,10 @@ const DashboardPage = () => {
   }, [serverEnvironments, servers, serverTypes])
 
   // eslint-disable-next-line no-console
-  console.log('formattedEnvironments', formattedEnvironments)
+  console.log(
+    'formattedEnvironmentsformattedEnvironments',
+    formattedEnvironments
+  )
 
   return (
     <>
@@ -223,10 +226,9 @@ const DashboardPage = () => {
                   {formattedEnvironments
                     .filter(({ isActive }) => isActive)
                     .map((formattedEnvironment, environmentIndex) => {
-                      const formattedServers =
-                        formattedEnvironment.servers.filter(
-                          ({ isActive }) => isActive
-                        )
+                      const formattedServers = formattedEnvironment.servers.filter(
+                        ({ isActive }) => isActive
+                      )
 
                       if (formattedServers.length === 0) {
                         return ''
@@ -245,8 +247,7 @@ const DashboardPage = () => {
                               {
                                 'border-gray':
                                   formattedEnvironment.isDropdownActive,
-                                'border-gray-light':
-                                  !formattedEnvironment.isDropdownActive,
+                                'border-gray-light': !formattedEnvironment.isDropdownActive,
                               }
                             )}
                             onClick={() => toggleIndexActive(environmentIndex)}
@@ -256,8 +257,7 @@ const DashboardPage = () => {
                               className={classNames(
                                 'transition-all duration-300 ease-in-out transform',
                                 {
-                                  'rotate-180':
-                                    !formattedEnvironment.isDropdownActive,
+                                  'rotate-180': !formattedEnvironment.isDropdownActive,
                                 }
                               )}
                             />
