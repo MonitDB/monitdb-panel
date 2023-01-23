@@ -157,20 +157,22 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
         <PageWrapper>
           <PageSidebar>
             <LatestAlertsSidebar />
-            <PageSidebarLinksList className="mt-5">
-              {dashboardSections.map((section, sectionIndex) => (
-                <li key={section.slug}>
-                  <button
-                    onClick={() => scrollToSection(`#${section.slug}`)}
-                    className={classNames({
-                      active: sectionIndex === 0,
-                    })}
-                  >
-                    {section.name}
-                  </button>
-                </li>
-              ))}
-            </PageSidebarLinksList>
+            {activeTabId === 'history' && (
+              <PageSidebarLinksList className="mt-5">
+                {dashboardSections.map((section, sectionIndex) => (
+                  <li key={section.slug}>
+                    <button
+                      onClick={() => scrollToSection(`#${section.slug}`)}
+                      className={classNames({
+                        active: sectionIndex === 0,
+                      })}
+                    >
+                      {section.name}
+                    </button>
+                  </li>
+                ))}
+              </PageSidebarLinksList>
+            )}
           </PageSidebar>
           <PageContent hideBreadcrumbs={true}>
             <div className="min-h-[calc(100vh-64px]">
