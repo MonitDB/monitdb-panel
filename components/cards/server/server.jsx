@@ -115,9 +115,9 @@ const ServerCard = ({ id, serverEnable, serverName, type, className = '' }) => {
           <FontAwesomeIcon icon={faDatabase} className="text-base" />
           <span>{serverName}</span>
         </h4>
-        {type?.typeservername && (
+        {type?.typeServerName && (
           <div className="absolute top-0 right-0 rounded-full border-gray-light p-4">
-            <DatabaseIcons name={type.typeservername} className="w-10 h-10" />
+            <DatabaseIcons name={type.typeServerName} className="w-10 h-10" />
           </div>
         )}
         <dl className="text-xs w-full text-gray">
