@@ -95,9 +95,9 @@ const MonitoredServers = () => {
                       <div className="pt-4 pl-5 space-y-4">
                         {filteredServers.length > 0 ? (
                           filteredServers.map((server, serverIndex) => (
-                            <button
+                            <Link
                               key={`env-${environmentIndex}-server-${serverIndex}`}
-                              type="button"
+                              href={`/alerts/${server.id}`}
                               className="flex items-center space-x-2 transition-transform duration-300 ease-in-out transform hover:translate-x-2"
                             >
                               <FontAwesomeIcon icon={faDatabase} />{' '}
@@ -107,7 +107,7 @@ const MonitoredServers = () => {
                                   {server.type.typeServerName}
                                 </span>
                               </span>
-                            </button>
+                            </Link>
                           ))
                         ) : (
                           <p className="opacity-50">
