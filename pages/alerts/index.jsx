@@ -1,12 +1,10 @@
 import { faDatabase } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import classNames from 'classnames'
 import { NextSeo } from 'next-seo'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
 import Grid from '~/components/grid'
 import Link from '~/components/link'
-import Loading from '~/components/loading'
 import { PageContent, PageWrapper } from '~/components/page'
 import MonitoredServersSidebar from '~/components/sidebar/monitored-servers'
 import DatabaseIcons from '~/helpers/database-icons'
@@ -19,7 +17,6 @@ const AlertsPage = () => {
     globalState: { servers, serverTypes },
   } = useGlobal()
 
-  const [isLoading, setIsLoading] = useState(false)
   const [formattedServers, setFormattedServers] = useState([])
   const [search, setSearch] = useState('')
 
@@ -86,17 +83,6 @@ const AlertsPage = () => {
                   onChange={handleSearchChanges}
                   value={search}
                 />
-                <div
-                  className={classNames(
-                    `absolute top-1/2 transform -translate-y-1/2 right-8
-                      transition-all duration-200 ease-in-out`,
-                    {
-                      'opacity-0 invisible': !isLoading,
-                    }
-                  )}
-                >
-                  <Loading />
-                </div>
               </div>
               {search && (
                 <p className="absolute -bottom-8 left-0 w-full text-center text-sm text-gray">

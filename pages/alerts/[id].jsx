@@ -1,8 +1,4 @@
-import {
-  faDatabase,
-  faMagnifyingGlass,
-  faTag,
-} from '@fortawesome/free-solid-svg-icons'
+import { faDatabase, faTag } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import classNames from 'classnames'
 import { useFormik } from 'formik'
