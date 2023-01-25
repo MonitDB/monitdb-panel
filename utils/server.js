@@ -19,7 +19,7 @@ export const formatServer = (
   return {
     ...server,
     isActive: true,
-    type: serverTypes.find((type) => server.idTypeServer === type.idtypeserver),
+    type: serverTypes.find((type) => server.idTypeServer === type.id),
     environment: serverEnvironments.find(
       (environment) =>
         server.idTypeServerEnvironment === environment.idTypeServerEnvironment

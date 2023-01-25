@@ -53,8 +53,8 @@ const ServerCard = ({ id, serverEnable, serverName, type, className = '' }) => {
     try {
       const response = await getServerMetrics({ id })
 
-      if (response?.data?.result) {
-        const { cpu, memory, disks, serverStatus } = response.data.result
+      if (response?.data) {
+        const { cpu, memory, disks, serverStatus } = response.data
 
         setMetrics({ cpu, memory, disks, serverStatus })
       }
