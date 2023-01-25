@@ -14,7 +14,7 @@ export const AlertsContextProvider = ({ children }) => {
     userState: { logged },
   } = useUser()
 
-  const [state, setState] = useState(initialAlertsState)
+  const [stateAlerts, setStateAlerts] = useState(initialAlertsState)
 
   const getData = useCallback(async () => {
     try {
@@ -23,7 +23,7 @@ export const AlertsContextProvider = ({ children }) => {
         pagelength: 999,
       })
 
-      setState((oldState) => ({
+      setStateAlerts((oldState) => ({
         ...oldState,
         parameters: responseParameters?.data || [],
       }))
@@ -41,8 +41,8 @@ export const AlertsContextProvider = ({ children }) => {
   return (
     <AlertsContext.Provider
       value={{
-        state,
-        setState,
+        stateAlerts,
+        setStateAlerts,
         refreshData: getData,
       }}
     >

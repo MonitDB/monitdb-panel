@@ -1,118 +1,69 @@
-import {
-  faDatabase,
-  faMagnifyingGlass,
-  faTag,
-} from '@fortawesome/free-solid-svg-icons'
+import { faDatabase } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import classNames from 'classnames'
-import { useFormik } from 'formik'
 import { NextSeo } from 'next-seo'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
-import Checkbox from '~/components/form/checkbox'
-import Selector from '~/components/form/selector'
+import Grid from '~/components/grid'
+import Link from '~/components/link'
 import Loading from '~/components/loading'
 import { PageContent, PageWrapper } from '~/components/page'
-import Pagination from '~/components/pagination'
 import MonitoredServersSidebar from '~/components/sidebar/monitored-servers'
+import DatabaseIcons from '~/helpers/database-icons'
 import useGlobal from '~/hooks/use-global'
 import Layout from '~/layouts/default'
-import { getAlerts } from '~/services/alerts'
-import { formatAlert } from '~/utils/alert'
-import { scrollToTop } from '~/utils/browser'
-import { getFormattedDate } from '~/utils/formats'
+import { formatServer } from '~/utils/server'
 
 const AlertsPage = () => {
   const {
-    globalState: { servers, serverTypes, serverEnvironments },
+    globalState: { servers, serverTypes },
   } = useGlobal()
 
-  const [alerts, setAlerts] = useState([])
-  const [currentPage, setCurrentPage] = useState(1)
-  const [isLoadingData, setIsLoadingData] = useState(true)
-  const [pagination, setPagination] = useState({})
+  const [isLoading, setIsLoading] = useState(false)
+  const [formattedServers, setFormattedServers] = useState([])
+  const [search, setSearch] = useState('')
 
-  const statusOptions = useMemo(
-    () => [
-      { value: '', label: 'Todos os status' },
-      { value: 'critical', label: 'Critical' },
-      { value: 'warning', label: 'Warning' },
-      { value: 'info', label: 'Info' },
-      { value: 'healthy', label: 'Healthy' },
-    ],
-    []
+  const activeServersCount = useMemo(
+    () => formattedServers.filter(({ active }) => active).length,
+    [formattedServers]
   )
 
-  const groupsOptions = useMemo(
-    () => [
-      { value: '', label: 'Todos os grupos' },
-      ...serverEnvironments.map(({ id, typeServerEnvironmentName }) => ({
-        value: id,
-        label: typeServerEnvironmentName,
-      })),
-    ],
-    [serverEnvironments]
-  )
+  const handleSubmit = useCallback((event) => {
+    event.preventDefault()
 
-  const monitorsOptions = useMemo(
-    () => [
-      { value: '', label: 'All base monitors' },
-      { value: 'primary', label: 'Primary' },
-      { value: 'secondary', label: 'Secondary' },
-      { value: 'azure', label: 'Azure' },
-      { value: 'simulation', label: 'Simulation' },
-    ],
-    []
-  )
+    return false
+  }, [])
 
-  const formik = useFormik({
-    initialValues: {
-      name: '',
-      status: [],
-      groups: [],
-      monitors: [],
-    },
-    onSubmit: (values) => {
-      console.log('submit', values) // eslint-disable-line no-console
-    },
-  })
+  const handleSearchChanges = useCallback((event) => {
+    const target = event.target
+    const { value } = target
 
-  const getAlertsData = useCallback(async () => {
-    const responseAlerts = await getAlerts({
-      PageLength: 10,
-      PageNumber: currentPage,
-    })
+    setSearch(value)
+  }, [])
 
-    if (currentPage === 1) {
-      setPagination({
-        totalResults: Number.parseInt(
-          responseAlerts?.headers?.['x-paging-totalrecordcount'],
-          10
-        ),
-      })
+  useEffect(() => {
+    if (servers.length === 0 || serverTypes.length === 0) {
+      return
     }
 
-    setIsLoadingData(false)
-
-    setAlerts(
-      [...(responseAlerts?.data ?? [])].map((alert) =>
-        formatAlert(alert, {
-          servers,
-          serverTypes,
-          serverEnvironments,
-        })
-      )
+    setFormattedServers(
+      [...servers].map((server) => ({
+        ...formatServer(server, { serverTypes }),
+        active: true,
+      }))
     )
-  }, [servers, serverTypes, serverEnvironments, currentPage])
+  }, [servers, serverTypes])
 
   useEffect(() => {
-    setIsLoadingData(true)
-    scrollToTop()
-  }, [currentPage])
-
-  useEffect(() => {
-    getAlertsData()
-  }, [getAlertsData])
+    setFormattedServers((oldFormattedServers) =>
+      [...oldFormattedServers].map((server) => ({
+        ...server,
+        active: search
+          ? server.serverName.toLowerCase().includes(search.toLowerCase())
+          : true,
+      }))
+    )
+  }, [search])
 
   return (
     <>
@@ -121,154 +72,85 @@ const AlertsPage = () => {
         <PageWrapper>
           <MonitoredServersSidebar />
 
-          <PageContent className="border-b border-gray-light">
+          <PageContent className="lg:pt-20">
             <form
-              className="w-full flex flex-col space-y-4 xl:space-x-4 xl:space-y-0 xl:flex-row"
-              onSubmit={formik.handleSubmit}
+              className="relative w-full mx-auto mb-10 lg:w-2/3 lg:mb-20"
+              onSubmit={handleSubmit}
             >
-              <div className="relative min-w-56">
+              <div className="relative">
                 <input
                   type="text"
-                  name="name"
-                  className="w-full px-4 h-10 bg-white leading-10 rounded outline-none text-sm"
-                  placeholder="Filtrar por nomes"
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  value={formik.values.name}
+                  name="search"
+                  className="w-full pl-8 pr-20 h-20 shadow-md bg-white leading-10 rounded outline-none text-lg"
+                  placeholder="Procure por servidor..."
+                  onChange={handleSearchChanges}
+                  value={search}
                 />
-                <button
-                  type="submit"
-                  className="group absolute top-1/2 transform -translate-y-1/2 right-4"
+                <div
+                  className={classNames(
+                    `absolute top-1/2 transform -translate-y-1/2 right-8
+                      transition-all duration-200 ease-in-out`,
+                    {
+                      'opacity-0 invisible': !isLoading,
+                    }
+                  )}
                 >
-                  <FontAwesomeIcon
-                    icon={faMagnifyingGlass}
-                    className="text-sm text-gray lg:group-hover:text-gray-dark"
-                  />
-                </button>
+                  <Loading />
+                </div>
               </div>
-              <Selector
-                name="status"
-                options={statusOptions}
-                value={formik.values.status}
-                onChange={(value) => {
-                  formik.setFieldValue('status', value)
-                }}
-              />
-              <Selector
-                name="groups"
-                options={groupsOptions}
-                value={formik.values.groups}
-                onChange={(value) => {
-                  formik.setFieldValue('groups', value)
-                }}
-              />
-              <Selector
-                name="monitors"
-                options={monitorsOptions}
-                value={formik.values.monitors}
-                onChange={(value) => {
-                  formik.setFieldValue('monitors', value)
-                }}
-              />
-              <button
-                type="reset"
-                className="btn"
-                onClick={() => formik.resetForm()}
-              >
-                Limpar
-              </button>
+              {search && (
+                <p className="absolute -bottom-8 left-0 w-full text-center text-sm text-gray">
+                  {activeServersCount === 0 && <>Nenhum servidor encontrado</>}
+                  {activeServersCount === 1 && <>1 servidor encontrado</>}
+                  {activeServersCount > 1 && (
+                    <>
+                      <strong>{activeServersCount}</strong> servidores
+                      encontrados
+                    </>
+                  )}
+                </p>
+              )}
             </form>
-          </PageContent>
 
-          <PageContent>
-            {alerts.length > 0 ? (
-              <>
-                <table
-                  className={classNames('prose max-w-full w-full mb-4', {
-                    'opacity-25': isLoadingData,
-                  })}
-                >
-                  <thead>
-                    <tr className="text-sm font-bold text-gray-dark text-left">
-                      <th className="w-5 border-b-2 border-gray-light">
-                        <Checkbox
-                          name="all"
-                          value="1"
-                          onChange={(value) => {
-                            // eslint-disable-next-line no-console
-                            console.log(`select all checkboxes ${value}`)
-                          }}
-                        />
-                      </th>
-                      <th className="border-b-2 border-gray-light">
-                        Alert type
-                      </th>
-                      <th className="border-b-2 border-gray-light w-60">
-                        Source object
-                      </th>
-                      <th className="border-b-2 border-gray-light w-20">
-                        Status
-                      </th>
-                      <th className="border-b-2 border-gray-light w-40">
-                        Last updated
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {alerts.map((alert, index) => (
-                      <tr
-                        key={`alert-${index}`}
-                        className="text-sm border-b border-gray-light transition-colors duration-200 ease-in-out lg:hover:bg-gray-light lg:hover:bg-opacity-50"
+            {activeServersCount >= 0 ? (
+              <div className="w-full">
+                <h2 className="mb-10 heading-md">Servidores</h2>
+                <Grid>
+                  {formattedServers.map(({ id, serverName, type, active }) =>
+                    active ? (
+                      <div
+                        key={`alerts-server-${id}`}
+                        className="col-span-2 md:col-span-3 lg:col-span-4 xl:col-span-3"
                       >
-                        <td>
-                          <Checkbox
-                            className="transform translate-y-1"
-                            name="alerts"
-                            value={alert.idAlert}
-                            onChange={(value) => {
-                              // eslint-disable-next-line no-console
-                              console.log(`select checkbox ${value}`)
-                            }}
-                          />
-                        </td>
-                        <td>{alert.dsMessage}</td>
-                        <td>
-                          <div className="flex items-center space-x-4 w-full">
-                            <div className="flex items-center space-x-1">
-                              <FontAwesomeIcon icon={faDatabase} />
-                              <strong>{alert.server?.serverName}</strong>
+                        <Link
+                          href={`/alerts/${id}`}
+                          className="group relative block p-4 pr-14 border border-gray border-opacity-50 transition-all duration-200 ease-in-out lg:hover:bg-gray lg:hover:bg-opacity-25 lg:hover:border-opacity-25"
+                        >
+                          <h4 className="flex items-center text-sm space-x-2">
+                            <FontAwesomeIcon
+                              icon={faDatabase}
+                              className="text-base"
+                            />
+                            <span>{serverName}</span>
+                          </h4>
+                          {type?.typeServerName && (
+                            <div className="absolute top-1/2 right-0 transform -translate-y-1/2 rounded-full border-gray-light p-4 transition-all duration-200 ease-in-out opacity-50 lg:group-hover:opacity-100">
+                              <DatabaseIcons
+                                name={type.typeServerName}
+                                className="w-8 h-8"
+                              />
                             </div>
-                            {alert.serverEnvironment && (
-                              <span className="flex items-center space-x-1">
-                                <FontAwesomeIcon icon={faTag} />{' '}
-                                <span className="rounded py-px px-1 text-xs bg-blue text-white">
-                                  {
-                                    alert.serverEnvironment
-                                      .typeServerEnvironmentName
-                                  }
-                                </span>
-                              </span>
-                            )}
-                          </div>
-                        </td>
-                        <td>Enabled</td>
-                        <td>{getFormattedDate(alert.dtAlert)}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-                {pagination?.totalResults > 0 && (
-                  <Pagination
-                    currentPage={currentPage}
-                    totalResults={pagination.totalResults}
-                    onChangePage={(page) => setCurrentPage(page)}
-                  />
-                )}
-              </>
-            ) : (
-              <div className="flex justify-center items-center w-full min-h-28">
-                <Loading light />
+                          )}
+                        </Link>
+                      </div>
+                    ) : (
+                      ''
+                    )
+                  )}
+                </Grid>
               </div>
+            ) : (
+              ''
             )}
           </PageContent>
         </PageWrapper>
