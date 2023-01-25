@@ -15,7 +15,7 @@ import faker from 'faker'
 import { useFormik } from 'formik'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
-import React, { useContext, useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { Line } from 'react-chartjs-2'
 
 import BlockMessage from '~/components/block-message'
@@ -43,8 +43,8 @@ import {
   VmwareMetrics,
 } from '~/components/page/dashboard'
 import LatestAlertsSidebar from '~/components/sidebar/latest-alerts'
-import GlobalContext from '~/contexts/global'
 import DatabaseIcons from '~/helpers/database-icons'
+import useGlobal from '~/hooks/use-global'
 import Layout from '~/layouts/default'
 import {
   GB_DATA,
@@ -105,10 +105,11 @@ const tabItems = [
 ]
 
 const DashboardSingle = () => {
-  const [activeTabId, setActiveTabId] = useState(tabItems[0]['id'])
   const {
     globalState: { servers, serverTypes },
-  } = useContext(GlobalContext)
+  } = useGlobal()
+
+  const [activeTabId, setActiveTabId] = useState(tabItems[0]['id'])
 
   const router = useRouter()
 

@@ -1,11 +1,11 @@
 import { useFormik } from 'formik'
 import { useRouter } from 'next/router'
-import React, { useContext, useState } from 'react'
+import React, { useState } from 'react'
 import * as Yup from 'yup'
 
 import { Field, Input, Submit } from '~/components/form'
 import Link from '~/components/link'
-import UserContext from '~/contexts/user'
+import useUser from '~/hooks/use-user'
 import { postLogin } from '~/services/user'
 // import FacebookIcon from '~/icons/facebook.svg'
 // import GoogleIcon from '~/icons/google.svg'
@@ -16,7 +16,8 @@ const SignUpFormSchema = Yup.object().shape({
 })
 
 const SignUp = () => {
-  const { setUserState } = useContext(UserContext)
+  const { setUserState } = useUser()
+
   const [error, setError] = useState('')
   const router = useRouter()
   const formik = useFormik({

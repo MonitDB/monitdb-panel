@@ -7,17 +7,17 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useFormik } from 'formik'
-import React, { useContext, useMemo } from 'react'
+import React, { useMemo } from 'react'
 
 import Selector from '~/components/form/selector'
 import { PageContent } from '~/components/page'
-import GlobalContext from '~/contexts/global'
+import useGlobal from '~/hooks/use-global'
 import { filterServersByEnvironmentId, formatServer } from '~/utils/server'
 
 const InstalledVersions = ({ tabName }) => {
   const {
     globalState: { servers, serverTypes, serverEnvironments },
-  } = useContext(GlobalContext)
+  } = useGlobal()
 
   const statusOptions = useMemo(
     () => [

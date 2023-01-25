@@ -7,14 +7,15 @@ import { PAGINATION_DOTS, usePagination } from './use-pagination'
 
 const Pagination = ({
   currentPage = 1,
-  // totalPages = 1,
+  totalResults = 1,
+  postsPerPage = 10,
   onChangePage = () => {},
 }) => {
   const paginationRange = usePagination({
     currentPage,
-    totalCount: 100,
+    totalCount: totalResults,
     siblingCount: 1,
-    pageSize: 10,
+    pageSize: postsPerPage,
   })
 
   const onNext = useCallback(() => {

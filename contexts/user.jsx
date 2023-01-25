@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useState } from 'react'
+import React, { createContext, useCallback, useEffect, useState } from 'react'
 
 import { getMe } from '~/services/user'
 import * as Cookies from '~/utils/cookies'
@@ -38,9 +38,19 @@ export const UserContextProvider = ({ children }) => {
     }
   }
 
+  const handleChangeUserState = useCallback((newUserState) => {
+    if (newUserState?.logged && newUserState?.token) {
+      Cookies.setUserToken(newUserState.token)
+    }
+
+    setUserState((oldUserState) => ({
+      ...oldUserState,
+      ...newUserState,
+    }))
+  }, [])
+
   useEffect(() => {
     if (userState?.token) {
-      Cookies.setUserToken(userState?.token)
       getUserData()
     }
   }, [userState?.token]) // eslint-disable-line react-hooks/exhaustive-deps
@@ -49,7 +59,7 @@ export const UserContextProvider = ({ children }) => {
     <UserContext.Provider
       value={{
         userState,
-        setUserState,
+        setUserState: handleChangeUserState,
         unsetUserState,
       }}
     >

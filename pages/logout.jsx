@@ -1,10 +1,10 @@
 import Router from 'next/router'
-import { useContext, useEffect } from 'react'
+import { useEffect } from 'react'
 
-import UserContext from '~/contexts/user'
+import useUser from '~/hooks/use-user'
 
 const LogoutPage = () => {
-  const { unsetUserState } = useContext(UserContext)
+  const { unsetUserState } = useUser()
 
   useEffect(() => {
     unsetUserState()

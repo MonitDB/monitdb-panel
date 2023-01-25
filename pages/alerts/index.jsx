@@ -7,13 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import classNames from 'classnames'
 import { useFormik } from 'formik'
 import { NextSeo } from 'next-seo'
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
 import Checkbox from '~/components/form/checkbox'
 import Selector from '~/components/form/selector'
@@ -21,7 +15,7 @@ import Loading from '~/components/loading'
 import { PageContent, PageWrapper } from '~/components/page'
 import Pagination from '~/components/pagination'
 import MonitoredServersSidebar from '~/components/sidebar/monitored-servers'
-import GlobalContext from '~/contexts/global'
+import useGlobal from '~/hooks/use-global'
 import Layout from '~/layouts/default'
 import { getAlerts } from '~/services/alerts'
 import { formatAlert } from '~/utils/alert'
@@ -31,11 +25,12 @@ import { getFormattedDate } from '~/utils/formats'
 const AlertsPage = () => {
   const {
     globalState: { servers, serverTypes, serverEnvironments },
-  } = useContext(GlobalContext)
+  } = useGlobal()
 
   const [alerts, setAlerts] = useState([])
   const [currentPage, setCurrentPage] = useState(1)
   const [isLoadingData, setIsLoadingData] = useState(true)
+  const [pagination, setPagination] = useState({})
 
   const statusOptions = useMemo(
     () => [
@@ -51,12 +46,10 @@ const AlertsPage = () => {
   const groupsOptions = useMemo(
     () => [
       { value: '', label: 'Todos os grupos' },
-      ...serverEnvironments.map(
-        ({ idTypeServerEnvironment, typeServerEnvironmentName }) => ({
-          value: idTypeServerEnvironment,
-          label: typeServerEnvironmentName,
-        })
-      ),
+      ...serverEnvironments.map(({ id, typeServerEnvironmentName }) => ({
+        value: id,
+        label: typeServerEnvironmentName,
+      })),
     ],
     [serverEnvironments]
   )
@@ -89,6 +82,15 @@ const AlertsPage = () => {
       PageLength: 10,
       PageNumber: currentPage,
     })
+
+    if (currentPage === 1) {
+      setPagination({
+        totalResults: Number.parseInt(
+          responseAlerts?.headers?.['x-paging-totalrecordcount'],
+          10
+        ),
+      })
+    }
 
     setIsLoadingData(false)
 
@@ -255,11 +257,13 @@ const AlertsPage = () => {
                     ))}
                   </tbody>
                 </table>
-                <Pagination
-                  currentPage={currentPage}
-                  totalPages={10}
-                  onChangePage={(page) => setCurrentPage(page)}
-                />
+                {pagination?.totalResults > 0 && (
+                  <Pagination
+                    currentPage={currentPage}
+                    totalResults={pagination.totalResults}
+                    onChangePage={(page) => setCurrentPage(page)}
+                  />
+                )}
               </>
             ) : (
               <div className="flex justify-center items-center w-full min-h-28">

@@ -1,9 +1,9 @@
-import React, { useContext } from 'react'
+import React from 'react'
 
-import GlobalContext from '~/contexts/global'
+import useGlobal from '~/hooks/use-global'
 
 const Modal = () => {
-  const { globalState, setGlobalState } = useContext(GlobalContext)
+  const { globalState, setGlobalState } = useGlobal()
 
   const closeModal = () => {
     setGlobalState({ ...globalState, isModalActive: false })

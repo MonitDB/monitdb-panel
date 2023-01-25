@@ -6,28 +6,22 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import classNames from 'classnames'
 import { useFormik } from 'formik'
 import { NextSeo } from 'next-seo'
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
 import ServerCard from '~/components/cards/server'
 import Selector from '~/components/form/selector'
 import Loading from '~/components/loading'
 import { PageContent, PageSidebar, PageWrapper } from '~/components/page'
 import LatestAlertsSidebar from '~/components/sidebar/latest-alerts'
-import GlobalContext from '~/contexts/global'
 import Reveal from '~/helpers/reveal'
+import useGlobal from '~/hooks/use-global'
 import Layout from '~/layouts/default'
 import { filterServersByEnvironmentId, formatServer } from '~/utils/server'
 
 const DashboardPage = () => {
   const {
     globalState: { servers, serverTypes, serverEnvironments },
-  } = useContext(GlobalContext)
+  } = useGlobal()
 
   const [formattedEnvironments, setFormattedEnvironments] = useState([])
 
@@ -65,8 +59,8 @@ const DashboardPage = () => {
           (environment) =>
             environment.isActive && environment.servers.length > 0
         )
-        .map(({ idTypeServerEnvironment, typeServerEnvironmentName }) => ({
-          value: idTypeServerEnvironment,
+        .map(({ id, typeServerEnvironmentName }) => ({
+          value: id,
           label: typeServerEnvironmentName,
         })),
     ],
@@ -112,9 +106,7 @@ const DashboardPage = () => {
           !hasAnyFilter ||
           environments.length === 0 ||
           (environments.length > 0 &&
-            environments.includes(
-              formattedEnvironment.idTypeServerEnvironment.toString()
-            ))
+            environments.includes(formattedEnvironment.id.toString()))
             ? true
             : false,
         servers: formattedEnvironment.servers.map((server) => ({
@@ -137,10 +129,9 @@ const DashboardPage = () => {
         isActive: true,
         isDropdownActive: true,
         servers:
-          filterServersByEnvironmentId(
-            environment.idTypeServerEnvironment,
-            servers
-          ).map((server) => formatServer(server, { serverTypes })) || [],
+          filterServersByEnvironmentId(environment.id, servers).map((server) =>
+            formatServer(server, { serverTypes })
+          ) || [],
       })),
     ])
   }, [serverEnvironments, servers, serverTypes])

@@ -8,7 +8,7 @@ import classNames from 'classnames'
 import { useFormik } from 'formik'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
-import React, { useContext, useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 
 import Selector from '~/components/form/selector'
 import Link from '~/components/link'
@@ -20,7 +20,7 @@ import {
   PageSidebarTitle,
   PageWrapper,
 } from '~/components/page'
-import GlobalContext from '~/contexts/global'
+import useGlobal from '~/hooks/use-global'
 import Layout from '~/layouts/default'
 import { getRepostsByType } from '~/services/reports'
 import { getServerDataById } from '~/utils/server'
@@ -73,7 +73,7 @@ const filterData = (data, { servers }) => {
 const ReportsPage = () => {
   const {
     globalState: { servers, serverEnvironments },
-  } = useContext(GlobalContext)
+  } = useGlobal()
   const router = useRouter()
   const [data, setData] = useState()
   const [isLoading, setIsLoading] = useState(true)

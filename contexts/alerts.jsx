@@ -1,5 +1,6 @@
 import React, { createContext, useCallback, useEffect, useState } from 'react'
 
+import useUser from '~/hooks/use-user'
 import { getAlertsParameter } from '~/services/alerts'
 
 const initialAlertsState = {
@@ -9,6 +10,10 @@ const initialAlertsState = {
 const AlertsContext = createContext(initialAlertsState)
 
 export const AlertsContextProvider = ({ children }) => {
+  const {
+    userState: { logged },
+  } = useUser()
+
   const [state, setState] = useState(initialAlertsState)
 
   const getData = useCallback(async () => {
@@ -28,8 +33,10 @@ export const AlertsContextProvider = ({ children }) => {
   }, [])
 
   useEffect(() => {
+    if (!logged) return
+
     getData()
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [logged]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <AlertsContext.Provider
