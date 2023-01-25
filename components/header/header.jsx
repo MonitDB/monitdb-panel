@@ -77,9 +77,11 @@ const Header = () => {
                     href={item.href}
                     className={classNames(buttonClasses, {
                       [buttonClassesActive]:
-                        item.href.search(router.pathname) >= 0,
+                        router.pathname.search(item.href.replace(/\/$/, '')) >=
+                        0,
                       'border-gray-dark text-opacity-50':
-                        item.href.search(router.pathname) < 0,
+                        router.pathname.search(item.href.replace(/\/$/, '')) <
+                        0,
                     })}
                   >
                     {item.title}
