@@ -5,7 +5,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import classNames from 'classnames'
-import React, { useContext, useState } from 'react'
+import React, { useState } from 'react'
 
 import Link from '~/components/link'
 import Loading from '~/components/loading'
@@ -14,14 +14,14 @@ import {
   PageSidebarLinksList,
   PageSidebarTitle,
 } from '~/components/page'
-import GlobalContext from '~/contexts/global'
 import Reveal from '~/helpers/reveal'
+import useGlobal from '~/hooks/use-global'
 import { filterServersByEnvironmentId, formatServer } from '~/utils/server'
 
 const MonitoredServers = () => {
   const {
     globalState: { servers, serverTypes, serverEnvironments },
-  } = useContext(GlobalContext)
+  } = useGlobal()
   const [sidebarEnvironmentActiveIndex, setSidebarEnvironmentActiveIndex] =
     useState(-1)
   const [sidebarShowAllServers, setSidebarShowAllServers] = useState(true)
@@ -49,7 +49,7 @@ const MonitoredServers = () => {
             <div className="w-full space-y-4">
               {serverEnvironments.map((environment, environmentIndex) => {
                 const filteredServers = filterServersByEnvironmentId(
-                  environment.idTypeServerEnvironment,
+                  environment.id,
                   servers
                 ).map((server) => formatServer(server, { serverTypes }))
 
@@ -95,19 +95,19 @@ const MonitoredServers = () => {
                       <div className="pt-4 pl-5 space-y-4">
                         {filteredServers.length > 0 ? (
                           filteredServers.map((server, serverIndex) => (
-                            <button
+                            <Link
                               key={`env-${environmentIndex}-server-${serverIndex}`}
-                              type="button"
+                              href={`/alerts/${server.id}`}
                               className="flex items-center space-x-2 transition-transform duration-300 ease-in-out transform hover:translate-x-2"
                             >
                               <FontAwesomeIcon icon={faDatabase} />{' '}
                               <span className="text-left text-xs">
                                 {server.serverName} -{' '}
                                 <span className="opacity-50">
-                                  {server.type.typeservername}
+                                  {server.type.typeServerName}
                                 </span>
                               </span>
-                            </button>
+                            </Link>
                           ))
                         ) : (
                           <p className="opacity-50">

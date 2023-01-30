@@ -44,7 +44,7 @@ const LatestAlerts = () => {
   } = useGlobal()
 
   const {
-    state: { parameters },
+    stateAlerts: { parameters },
   } = useAlerts()
 
   const [alerts, setAlerts] = useState([])

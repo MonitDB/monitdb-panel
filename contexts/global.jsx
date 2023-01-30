@@ -1,5 +1,6 @@
 import React, { createContext, useCallback, useEffect, useState } from 'react'
 
+import useUser from '~/hooks/use-user'
 import { getEnvironments, getServers, getTypes } from '~/services/servers'
 
 const initialGlobalState = {
@@ -12,6 +13,10 @@ const initialGlobalState = {
 const GlobalContext = createContext(initialGlobalState)
 
 export const GlobalContextProvider = ({ children }) => {
+  const {
+    userState: { logged },
+  } = useUser()
+
   const [globalState, setGlobalState] = useState(initialGlobalState)
 
   const getData = useCallback(async () => {
@@ -24,8 +29,8 @@ export const GlobalContextProvider = ({ children }) => {
       setGlobalState((oldGlobalState) => ({
         ...oldGlobalState,
         servers: responseServers?.data || [],
-        serverTypes: responseTypes?.data?.result || [],
-        serverEnvironments: responseEnvironments?.data?.result || [],
+        serverTypes: responseTypes?.data || [],
+        serverEnvironments: responseEnvironments?.data || [],
       }))
     } catch (error) {
       console.error(error) // eslint-disable-line no-console
@@ -33,8 +38,10 @@ export const GlobalContextProvider = ({ children }) => {
   }, [])
 
   useEffect(() => {
+    if (!logged) return
+
     getData()
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [logged]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <GlobalContext.Provider

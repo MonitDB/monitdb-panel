@@ -6,16 +6,16 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import faker from 'faker'
 import { useFormik } from 'formik'
-import React, { useContext, useMemo } from 'react'
+import React, { useMemo } from 'react'
 
 import Selector from '~/components/form/selector'
 import { PageContent } from '~/components/page'
-import GlobalContext from '~/contexts/global'
+import useGlobal from '~/hooks/use-global'
 
 const InstalledVersions = ({ tabName }) => {
   const {
     globalState: { servers, serverEnvironments },
-  } = useContext(GlobalContext)
+  } = useGlobal()
 
   const statusOptions = useMemo(
     () => [

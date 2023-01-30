@@ -1,14 +1,15 @@
 import Router from 'next/router'
-import { useCallback, useContext, useEffect } from 'react'
+import { useCallback, useEffect } from 'react'
 
-import UserContext, { userInitialState } from '~/contexts/user'
+import { userInitialState } from '~/contexts/user'
+import useUser from '~/hooks/use-user'
 import { postTokenValidate } from '~/services/user'
 import * as Cookies from '~/utils/cookies'
 
 const loginPath = '/?redirected=true'
 
 const ProtectedPage = ({ children }) => {
-  const { userState, setUserState } = useContext(UserContext)
+  const { userState, setUserState } = useUser()
 
   const validateToken = useCallback(async () => {
     try {

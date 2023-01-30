@@ -5,15 +5,15 @@ export const getServers = async () => {
 }
 
 export const getServerMetrics = async ({ id }) => {
-  return clientApi().get(`/server/metrics/${id}`)
+  return clientApi().get(`/api/metrics/${id}`)
 }
 
 export const getTypes = async () => {
-  return clientApi().get(`/typeserver`)
+  return clientApi().get(`/api/typeserver`)
 }
 
 export const getEnvironments = async () => {
-  return clientApi().get(`/typeserverenvironment`)
+  return clientApi().get(`/api/typeserverenvironment`)
 }
 
 export const addServer = async (values) => {

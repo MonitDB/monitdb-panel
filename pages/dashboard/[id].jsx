@@ -16,7 +16,7 @@ import faker from 'faker'
 import { useFormik } from 'formik'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
-import React, { useContext, useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { Line } from 'react-chartjs-2'
 
 import BlockMessage from '~/components/block-message'
@@ -44,8 +44,8 @@ import {
   VmwareMetrics,
 } from '~/components/page/dashboard'
 import LatestAlertsSidebar from '~/components/sidebar/latest-alerts'
-import GlobalContext from '~/contexts/global'
 import DatabaseIcons from '~/helpers/database-icons'
+import useGlobal from '~/hooks/use-global'
 import Layout from '~/layouts/default'
 import {
   GB_DATA,
@@ -114,10 +114,11 @@ const tabItems = [
 ]
 
 const DashboardSingle = () => {
-  const [activeTabId, setActiveTabId] = useState(tabItems[0]['id'])
   const {
     globalState: { servers, serverTypes },
-  } = useContext(GlobalContext)
+  } = useGlobal()
+
+  const [activeTabId, setActiveTabId] = useState(tabItems[0]['id'])
 
   const router = useRouter()
 
@@ -219,7 +220,7 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
                       <div className="w-full flex items-center gap-4">
                         <div className="flex items-center justify-center w-16 h-16 rounded-full border border-gray-light">
                           <DatabaseIcons
-                            name={currentServer.type.typeservername}
+                            name={currentServer.type.typeServerName}
                             className="w-9 h-9"
                           />
                         </div>

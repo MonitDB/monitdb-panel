@@ -1,19 +1,19 @@
 import { faAdd, faTag } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { NextSeo } from 'next-seo'
-import React, { useContext } from 'react'
+import React from 'react'
 
 import Link from '~/components/link'
 import Loading from '~/components/loading'
 import { PageContent, PageHeader, PageWrapper } from '~/components/page'
-import GlobalContext from '~/contexts/global'
+import useGlobal from '~/hooks/use-global'
 import Layout from '~/layouts/default'
 import { formatServer } from '~/utils/server'
 
 const ConfigurationsServersPage = () => {
   const {
     globalState: { servers, serverTypes, serverEnvironments },
-  } = useContext(GlobalContext)
+  } = useGlobal()
   return (
     <>
       <NextSeo title="Configurações - MonitDB" />

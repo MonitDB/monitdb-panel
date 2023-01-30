@@ -1,19 +1,13 @@
 import { useFormik } from 'formik'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { toast } from 'react-toastify'
 
 import { Input, Label, Select, Textarea } from '~/components/form'
 import { PageContent, PageHeader, PageWrapper } from '~/components/page'
-import GlobalContext from '~/contexts/global'
 import DatabaseIcons from '~/helpers/database-icons'
+import useGlobal from '~/hooks/use-global'
 import Layout from '~/layouts/default'
 import { deleteServer, updateServer } from '~/services/servers'
 import { handleException } from '~/utils/exceptions'
@@ -24,7 +18,7 @@ const ConfigurationsServersSinglePage = () => {
   const {
     globalState: { servers, serverTypes, serverEnvironments },
     refreshData,
-  } = useContext(GlobalContext)
+  } = useGlobal()
 
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)

@@ -1,9 +1,9 @@
 import { useFormik } from 'formik'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import * as Yup from 'yup'
 
 import { Field, Input, Submit } from '~/components/form'
-import UserContext from '~/contexts/user'
+import useUser from '~/hooks/use-user'
 
 const MyAccountFormSchema = Yup.object().shape({
   name: Yup.string().required(),
@@ -11,7 +11,7 @@ const MyAccountFormSchema = Yup.object().shape({
 })
 
 const MyAccount = () => {
-  const { userState } = useContext(UserContext)
+  const { userState } = useUser()
   const [error, setError] = useState('')
   const formik = useFormik({
     initialValues: {

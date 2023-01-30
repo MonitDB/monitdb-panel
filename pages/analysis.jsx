@@ -8,13 +8,13 @@ import Selector from '~/components/form/selector'
 // import Checkbox from '~/components/form/checkbox'
 import Link from '~/components/link'
 import { PageContent, PageWrapper } from '~/components/page'
-// import GlobalContext from '~/contexts/global'
+// import useGlobal from '~/hooks/use-global'
 import Layout from '~/layouts/default'
 
 const AnalysisPage = () => {
   // const {
   //   globalState: { serverEnvironments },
-  // } = useContext(GlobalContext)
+  // } = useGlobal()
   const statusOptions = useMemo(
     () => [
       { value: '15min', label: '15 minutos' },
