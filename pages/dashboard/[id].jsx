@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   CategoryScale,
   Chart as ChartJS,
+  Filler,
   Legend,
   LinearScale,
   LineElement,
@@ -66,14 +67,22 @@ ChartJS.register(
   LineElement,
   Title,
   Tooltip,
+  Filler,
   Legend
 )
 
 export const options = {
   responsive: true,
   plugins: {
-    tooltip: { enabled: false },
+    tooltip: { enabled: true },
     legend: { display: false },
+  },
+  scales: {
+    x: {
+      grid: {
+        display: false,
+      },
+    },
   },
 }
 
@@ -150,6 +159,30 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
     onSubmit: () => {},
   })
 
+  // const TESTE_OPTIONS = {
+  //   ...options,
+  //   scales: {
+  //     x: {
+  //       grid: { display: false },
+  //     },
+  //     y: {
+  //       // grid: { display: false },
+  //       ticks: {
+  //         // Include a dollar sign in the ticks
+  //         callback: function (value, index, ticks) {
+  //           const $firstTick = ticks[0]
+  //           const $lastTick = ticks[ticks.length - 1]
+
+  //           if (value > $firstTick.value && value < $lastTick.value) {
+  //             return
+  //           }
+  //           return value
+  //         },
+  //       },
+  //     },
+  //   },
+  // }
+
   return (
     <>
       <NextSeo title="Dashboard - MonitDB" />
@@ -176,6 +209,7 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
           </PageSidebar>
           <PageContent hideBreadcrumbs={true}>
             <div className="min-h-[calc(100vh-64px]">
+              {/* <Line options={TESTE_OPTIONS} data={TESTE_DATA} /> */}
               {!currentServer && <Loading />}
               {currentServer && (
                 <>

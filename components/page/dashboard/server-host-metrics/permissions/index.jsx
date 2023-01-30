@@ -29,8 +29,15 @@ export const labels = Array.from({ length: 100 }, () => '')
 const options = {
   responsive: true,
   plugins: {
-    tooltip: { enabled: false },
+    tooltip: { enabled: true },
     legend: { display: false },
+  },
+  scales: {
+    x: {
+      grid: {
+        display: false,
+      },
+    },
   },
 }
 
