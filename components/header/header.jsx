@@ -23,23 +23,23 @@ const navMenuList = [
     href: '/dashboard/',
   },
   {
-    title: 'Alertas',
+    title: 'Alerts',
     href: '/alerts/',
   },
   {
-    title: 'Análises',
+    title: 'Analysis',
     href: '/analysis/',
   },
   {
-    title: 'Relatórios',
+    title: 'Reports',
     href: '/reports/',
   },
   {
-    title: 'Propriedades',
+    title: 'Estates',
     href: '/estates/',
   },
   {
-    title: 'Configurações',
+    title: 'Configurations',
     href: '/configurations/',
   },
 ]
