@@ -259,7 +259,7 @@ const ConfigurationsServersSinglePage = () => {
                 </Label>
                 <div className="col-span-2 flex justify-between items-center">
                   <button type="submit" className="btn" disabled={isLoading}>
-                    {isLoading ? 'Salvando...' : 'Salvar'}
+                    {isLoading ? 'Saving...' : 'Save'}
                   </button>
                 </div>
                 <div className="col-span-2 flex bg-danger bg-opacity-10 border border-danger border-opacity-50 p-4 rounded-md">

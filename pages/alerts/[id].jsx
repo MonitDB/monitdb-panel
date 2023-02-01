@@ -58,7 +58,7 @@ const AlertsDetailsPage = () => {
       { value: 60, label: '1 hora' },
       { value: 3600, label: '1 dia' },
       { value: 25_200, label: '1 semana' },
-      { value: 32_000, label: '24 horas por dia' },
+      { value: 32_000, label: '1 mês' },
     ],
     []
   )
@@ -118,6 +118,8 @@ const AlertsDetailsPage = () => {
 
   useEffect(() => {
     if (router?.query?.id) {
+      // setPagination({})
+      // setCurrentPage(1)
       setIsLoadingData(true)
       setAlerts([])
       getAlertsData()
