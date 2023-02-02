@@ -93,12 +93,10 @@ const ReportsPage = () => {
   const groupsOptions = useMemo(
     () => [
       { value: '', label: 'Todos os ambientes' },
-      ...serverEnvironments.map(
-        ({ idTypeServerEnvironment, typeServerEnvironmentName }) => ({
-          value: idTypeServerEnvironment,
-          label: typeServerEnvironmentName,
-        })
-      ),
+      ...serverEnvironments.map(({ id, typeServerEnvironmentName }) => ({
+        value: id,
+        label: typeServerEnvironmentName,
+      })),
     ],
     [serverEnvironments]
   )

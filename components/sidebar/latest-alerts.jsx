@@ -86,6 +86,7 @@ const LatestAlerts = () => {
           <form className="mb-4 flex items-center space-x-2">
             <Select
               name="hour"
+              containerClass="bg-white text-gray-dark"
               options={[
                 { value: '3', label: '3 dias' },
                 { value: '1440', label: '24 horas' },
@@ -95,9 +96,11 @@ const LatestAlerts = () => {
                 { value: '60', label: '1 hora' },
                 { value: '15', label: '15 minutos' },
               ]}
+              onChange={() => {}}
             />
             <Select
               name="group"
+              containerClass="bg-white text-gray-dark"
               options={[
                 { value: '', label: 'Todos os grupos' },
                 ...serverEnvironments.map(
@@ -107,6 +110,7 @@ const LatestAlerts = () => {
                   })
                 ),
               ]}
+              onChange={() => {}}
             />
           </form>
           <ul>

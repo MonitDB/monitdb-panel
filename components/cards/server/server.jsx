@@ -14,13 +14,13 @@ import { SERVER_STATUS } from '~/utils/server'
 
 ChartJS.register(ArcElement, Tooltip, Legend)
 
-const getPieChartData = ({ inUsePercent }) => {
-  const percentages = [inUsePercent, 100 - inUsePercent]
+const getPieChartData = ({ availablePercent }) => {
+  const inUserPercentage = 100 - availablePercent
   let inUseColor = '#5046e5'
 
-  if (inUsePercent > 85 && inUsePercent < 95) {
+  if (inUserPercentage > 85 && inUserPercentage < 95) {
     inUseColor = '#fc9003'
-  } else if (inUsePercent >= 95) {
+  } else if (inUserPercentage >= 95) {
     inUseColor = '#ff4e4e'
   }
 
@@ -28,7 +28,7 @@ const getPieChartData = ({ inUsePercent }) => {
     labels: ['Em uso', 'Livre'],
     datasets: [
       {
-        data: [inUsePercent, percentages[1]],
+        data: [inUserPercentage, availablePercent],
         backgroundColor: [inUseColor, '#d3d3d3'],
       },
     ],
@@ -225,7 +225,7 @@ const ServerCard = ({ id, serverEnable, serverName, type, className = '' }) => {
                   }}
                 />
                 <p className="text-center text-[10px] whitespace-nowrap">
-                  {Number.parseInt(disk.inUsePercent)}% em uso
+                  {Number.parseInt(100 - disk.availablePercent)}% em uso
                   <br />
                   {getDiskTotal(disk)} total
                 </p>

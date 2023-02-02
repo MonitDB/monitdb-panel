@@ -5,6 +5,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import classNames from 'classnames'
+import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 
 import Link from '~/components/link'
@@ -22,6 +23,8 @@ const MonitoredServers = () => {
   const {
     globalState: { servers, serverTypes, serverEnvironments },
   } = useGlobal()
+  const router = useRouter()
+
   const [sidebarEnvironmentActiveIndex, setSidebarEnvironmentActiveIndex] =
     useState(-1)
   const [sidebarShowAllServers, setSidebarShowAllServers] = useState(true)
@@ -132,7 +135,17 @@ const MonitoredServers = () => {
         <h3 className="mb-5 heading-xs">Ações</h3>
         <PageSidebarLinksList>
           <li>
-            <Link href="/alerts/">Crie métricas e alertas personalizados</Link>
+            <Link
+              href="/alerts/metrics/"
+              className={classNames({
+                active:
+                  router.pathname.search(
+                    '/alerts/metrics/'.replace(/\/$/, '')
+                  ) >= 0,
+              })}
+            >
+              Crie métricas e alertas personalizados
+            </Link>
           </li>
           <li>
             <Link href="/configurations/servers/">

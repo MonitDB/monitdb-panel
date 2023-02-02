@@ -32,12 +32,10 @@ const InstalledVersions = ({ tabName }) => {
   const groupsOptions = useMemo(
     () => [
       { value: '', label: 'Todos os grupos' },
-      ...serverEnvironments.map(
-        ({ idTypeServerEnvironment, typeServerEnvironmentName }) => ({
-          value: idTypeServerEnvironment,
-          label: typeServerEnvironmentName,
-        })
-      ),
+      ...serverEnvironments.map(({ id, typeServerEnvironmentName }) => ({
+        value: id,
+        label: typeServerEnvironmentName,
+      })),
     ],
     [serverEnvironments]
   )
