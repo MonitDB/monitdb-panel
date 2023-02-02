@@ -4,11 +4,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import classNames from 'classnames'
 import faker from 'faker'
 import { useCallback, useState } from 'react'
-import { Line } from 'react-chartjs-2'
 
 import BlockMessage from '~/components/block-message'
+import Chart from '~/components/chart'
 import Reveal from '~/helpers/reveal'
-import { MB_DATA, MB_OPTIONS, S_DATA, S_OPTIONS } from '~/utils/chart'
 
 const labelsTopQueries = Array.from({ length: 5 }, (_, index) => `8:${index}`)
 
@@ -229,11 +228,6 @@ const Server = () => {
                               <h2 className="!mb-4 text-base font-bold text-gray-dark font-oxygen">
                                 Histórico de execução
                               </h2>
-                              <Line
-                                options={S_OPTIONS}
-                                data={S_DATA}
-                                height={50}
-                              />
                             </div>
                           </div>
                         </Reveal>
@@ -264,7 +258,19 @@ const Server = () => {
         )}
         {activeTabId === 'top-waits' && (
           <>
-            <Line options={S_OPTIONS} data={S_DATA} />
+            <div className="bg-white h-full min-h-96">
+              <Chart
+                height="100%"
+                legend={{
+                  show: false,
+                }}
+                xaxis={{
+                  labels: {
+                    show: false,
+                  },
+                }}
+              />
+            </div>
             <div className="prose mt-10 max-w-full prose-p:m-0 prose-td:align-top prose-td:py-4 prose-th:border-b-4 prose-headings:m-0">
               <div className="-mx-4 py-4 px-8 bg-white md:-mx-6">
                 <table className="m-0 w-full overflow-x-auto">
@@ -340,11 +346,6 @@ const Server = () => {
                                 <h2 className="!mb-4 text-base font-bold text-gray-dark font-oxygen">
                                   Histórico de execução
                                 </h2>
-                                <Line
-                                  options={MB_OPTIONS}
-                                  data={MB_DATA}
-                                  height={50}
-                                />
                               </div>
                             </div>
                           </Reveal>
@@ -442,11 +443,6 @@ const Server = () => {
                               <h2 className="!mb-4 text-base font-bold text-gray-dark font-oxygen">
                                 Histórico de execução
                               </h2>
-                              <Line
-                                options={MB_OPTIONS}
-                                data={MB_DATA}
-                                height={50}
-                              />
                             </div>
                           </div>
                         </Reveal>

@@ -1,60 +1,5 @@
-import {
-  CategoryScale,
-  Chart as ChartJS,
-  Legend,
-  LinearScale,
-  LineElement,
-  PointElement,
-  Title,
-  Tooltip,
-} from 'chart.js'
-import faker from 'faker'
-import { Line } from 'react-chartjs-2'
-
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend
-)
-
-export const labels = Array.from({ length: 100 }, () => '')
-
-const options = {
-  responsive: true,
-  plugins: {
-    tooltip: { enabled: true },
-    legend: { display: false },
-  },
-  scales: {
-    x: {
-      grid: {
-        display: false,
-      },
-    },
-  },
-}
-
-const batchRequestsData = {
-  labels,
-  datasets: [
-    {
-      fill: true,
-      data: labels.map(() =>
-        faker.datatype.number({ min: 0, max: 200, precision: 10 })
-      ),
-      borderColor: 'rgb(140, 216, 141)',
-      backgroundColor: 'rgba(140, 216, 141, 0.5)',
-    },
-  ],
-}
-
-const batchRequestsOptions = {
-  ...options,
-}
+import Chart from '~/components/chart'
+import Grid from '~/components/grid'
 
 const VmwareMetrics = () => {
   return (
@@ -87,28 +32,40 @@ const VmwareMetrics = () => {
           </tbody>
         </table>
       </div>
-      <div className="mt-6">
-        <h4 className="mb-4 text-sm">VMware CPU</h4>
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <Line options={batchRequestsOptions} data={batchRequestsData} />
-          </div>
-          <div>
-            <Line options={batchRequestsOptions} data={batchRequestsData} />
-          </div>
-        </div>
-      </div>
-      <div>
-        <h4 className="mb-4 text-sm">VMware memory and I/O</h4>
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <Line options={batchRequestsOptions} data={batchRequestsData} />
-          </div>
-          <div>
-            <Line options={batchRequestsOptions} data={batchRequestsData} />
+      <Grid className="mt-6">
+        <div className="col-span-2 md:col-span-6">
+          <h4 className="mb-4 text-sm">VMware CPU</h4>
+          <div className="bg-white">
+            <Chart
+              height="140"
+              legend={{
+                show: false,
+              }}
+              xaxis={{
+                labels: {
+                  show: false,
+                },
+              }}
+            />
           </div>
         </div>
-      </div>
+        <div className="col-span-2 md:col-span-6">
+          <h4 className="mb-4 text-sm">VMware memory and I/O</h4>
+          <div className="bg-white">
+            <Chart
+              height="140"
+              legend={{
+                show: false,
+              }}
+              xaxis={{
+                labels: {
+                  show: false,
+                },
+              }}
+            />
+          </div>
+        </div>
+      </Grid>
       <div className="mt-4">
         <h4 className="mb-4 text-sm font-normal">Disk usage</h4>
         <div className="prose prose-thead:bg-gray-light max-w-full prose-th:capitalize prose-th:border-b-0 prose-tr:border-gray-light prose-td:text-[11px]">

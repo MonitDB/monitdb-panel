@@ -3,17 +3,9 @@ import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import classNames from 'classnames'
 import React, { useState } from 'react'
-import { Line } from 'react-chartjs-2'
 
+import Chart from '~/components/chart'
 import Image from '~/components/image'
-import {
-  GB_DATA,
-  GB_OPTIONS,
-  KB_DATA,
-  KB_OPTIONS,
-  MS_DATA,
-  MS_OPTIONS,
-} from '~/utils/chart'
 
 const tabDataItems = [
   {
@@ -81,7 +73,19 @@ const Temppdb = () => {
             <h6 className="my-4 text-xs">
               Summary of tempdb usage by class of object
             </h6>
-            <Line options={GB_OPTIONS} data={GB_DATA} />
+            <div className="bg-white min-h-96">
+              <Chart
+                height="100%"
+                legend={{
+                  show: false,
+                }}
+                xaxis={{
+                  labels: {
+                    show: false,
+                  },
+                }}
+              />
+            </div>
           </>
         )}
 
@@ -93,8 +97,18 @@ const Temppdb = () => {
                 ?
               </span>
             </p>
-            <div>
-              <Line options={KB_OPTIONS} data={KB_DATA} />
+            <div className="bg-white min-h-96">
+              <Chart
+                height="100%"
+                legend={{
+                  show: false,
+                }}
+                xaxis={{
+                  labels: {
+                    show: false,
+                  },
+                }}
+              />
             </div>
             <div className="prose prose-thead:bg-gray-light max-w-full prose-th:capitalize prose-th:border-b-0 prose-tr:border-gray-light prose-td:text-[11px] prose-th:whitespace-nowrap prose-td:whitespace-nowrap prose-th:px-2 prose-th:h-[35px] prose-th:text-xs prose-tr:cursor-pointer overflow-x-auto">
               <table className="m-0 py-4 prose-tr:last:!border-b overflow-x-auto">
@@ -184,24 +198,69 @@ const Temppdb = () => {
             <h6 className="my-4 text-xs">
               Summary of tempdb usage by class of object
             </h6>
-            <Line options={KB_OPTIONS} data={KB_DATA} />
+            <div className="bg-white min-h-96">
+              <Chart
+                height="100%"
+                legend={{
+                  show: false,
+                }}
+                xaxis={{
+                  labels: {
+                    show: false,
+                  },
+                }}
+              />
+            </div>
 
             <div className="mt-4">
               <h4 className="mb-4 text-sm">Performance</h4>
               <div className="grid grid-cols-3 gap-3">
                 <div>
                   <h6 className="mb-4 text-xs">Generation rate</h6>
-                  <Line options={KB_OPTIONS} data={KB_DATA} />
+                  <div className="bg-white">
+                    <Chart
+                      legend={{
+                        show: false,
+                      }}
+                      xaxis={{
+                        labels: {
+                          show: false,
+                        },
+                      }}
+                    />
+                  </div>
                 </div>
                 <div>
                   <h6 className="mb-4 text-xs">Cleanup rate</h6>
-                  <Line options={KB_OPTIONS} data={KB_DATA} />
+                  <div className="bg-white">
+                    <Chart
+                      legend={{
+                        show: false,
+                      }}
+                      xaxis={{
+                        labels: {
+                          show: false,
+                        },
+                      }}
+                    />
+                  </div>
                 </div>
                 <div>
                   <h6 className="mb-4 text-xs">
                     Longest running transaction time
                   </h6>
-                  <Line options={MS_OPTIONS} data={MS_DATA} />
+                  <div className="bg-white">
+                    <Chart
+                      legend={{
+                        show: false,
+                      }}
+                      xaxis={{
+                        labels: {
+                          show: false,
+                        },
+                      }}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -216,7 +275,19 @@ const Temppdb = () => {
                 ?
               </span>
             </p>
-            <Line options={KB_OPTIONS} data={KB_DATA} />
+            <div className="bg-white min-h-96">
+              <Chart
+                height="100%"
+                legend={{
+                  show: false,
+                }}
+                xaxis={{
+                  labels: {
+                    show: false,
+                  },
+                }}
+              />
+            </div>
           </>
         )}
 
@@ -228,7 +299,19 @@ const Temppdb = () => {
                 ?
               </span>
             </p>
-            <Line options={KB_OPTIONS} data={KB_DATA} />
+            <div className="bg-white min-h-96">
+              <Chart
+                height="100%"
+                legend={{
+                  show: false,
+                }}
+                xaxis={{
+                  labels: {
+                    show: false,
+                  },
+                }}
+              />
+            </div>
           </>
         )}
         {activeTabId === 'database' && (
@@ -239,8 +322,25 @@ const Temppdb = () => {
                 ?
               </span>
             </p>
-            <Line options={KB_OPTIONS} data={KB_DATA} />
+            <div className="bg-white min-h-96">
+              <Chart
+                height="100%"
+                legend={{
+                  show: false,
+                }}
+                xaxis={{
+                  labels: {
+                    show: false,
+                  },
+                }}
+              />
+            </div>
           </>
+        )}
+        {activeTabId === 'files' && (
+          <p className="min-h-96 flex items-center justify-center text-xs">
+            <strong>No data to display</strong>
+          </p>
         )}
       </div>
     </div>

@@ -1,63 +1,9 @@
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  CategoryScale,
-  Chart as ChartJS,
-  Legend,
-  LinearScale,
-  LineElement,
-  PointElement,
-  Title,
-  Tooltip,
-} from 'chart.js'
-import faker from 'faker'
 import React from 'react'
-import { Line } from 'react-chartjs-2'
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend
-)
-
-export const labels = Array.from({ length: 100 }, () => '')
-
-const options = {
-  responsive: true,
-  plugins: {
-    tooltip: { enabled: true },
-    legend: { display: false },
-  },
-  scales: {
-    x: {
-      grid: {
-        display: false,
-      },
-    },
-  },
-}
-
-const batchRequestsData = {
-  labels,
-  datasets: [
-    {
-      fill: true,
-      data: labels.map(() =>
-        faker.datatype.number({ min: 0, max: 200, precision: 10 })
-      ),
-      borderColor: 'rgb(140, 216, 141)',
-      backgroundColor: 'rgba(140, 216, 141, 0.5)',
-    },
-  ],
-}
-
-const batchRequestsOptions = {
-  ...options,
-}
+import Chart from '~/components/chart'
+import Grid from '~/components/grid'
 
 const Permissions = () => {
   return (
@@ -113,14 +59,14 @@ const Permissions = () => {
       <h3 className="mt-6 mb-4 text-sm text-gray-dark font-bold">
         Host machine metrics (sqm-sqlmonitor)
       </h3>
-      <div className="mt-6 grid grid-cols-2 gap-2">
-        <div>
+      <Grid className="mt-6">
+        <div className="col-span-2 md:col-span-6">
           <h6 className="mb-4 text-sm">Network utilization</h6>
           <div className="text-xs">
             <p>
               <small>Intel[R] 82574L Gigabit Network Connection</small>
             </p>
-            <div className="grid grid-cols-[1fr_50px] gap-2 text-xs">
+            <div className="grid grid-cols-[1fr_50px] gap-4 text-xs">
               <div
                 className="w-full h-[20px]"
                 style={{
@@ -132,7 +78,7 @@ const Permissions = () => {
             <p className="mt-2.5">
               <small>Intel[R] 82574L Gigabit Network Connection</small>
             </p>
-            <div className="grid grid-cols-[1fr_50px] gap-2 text-xs">
+            <div className="grid grid-cols-[1fr_50px] gap-4 text-xs">
               <div
                 className="w-full h-[20px]"
                 style={{
@@ -143,11 +89,23 @@ const Permissions = () => {
             </div>
           </div>
         </div>
-        <div>
+        <div className="col-span-2 md:col-span-6">
           <h4 className="mb-4 text-sm">Performance</h4>
-          <Line options={batchRequestsOptions} data={batchRequestsData} />
+          <div className="bg-white">
+            <Chart
+              height="140"
+              legend={{
+                show: false,
+              }}
+              xaxis={{
+                labels: {
+                  show: false,
+                },
+              }}
+            />
+          </div>
         </div>
-      </div>
+      </Grid>
       <div>
         <h4 className="mb-4 text-sm">OS Properties</h4>
         <div className="w-full mb-4 prose max-w-full prose-p:m-0 prose-td:align-top prose-tr:border-gray-light prose-headings:m-0">

@@ -1,25 +1,14 @@
 import { faArrowsRotate, faWarning } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  CategoryScale,
-  Chart as ChartJS,
-  Filler,
-  Legend,
-  LinearScale,
-  LineElement,
-  PointElement,
-  Title,
-  Tooltip,
-} from 'chart.js'
 import classNames from 'classnames'
 import faker from 'faker'
 import { useFormik } from 'formik'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
 import React, { useMemo, useState } from 'react'
-import { Line } from 'react-chartjs-2'
 
 import BlockMessage from '~/components/block-message'
+import Chart from '~/components/chart'
 import Code from '~/components/code'
 import { Textarea } from '~/components/form'
 import Checkbox from '~/components/form/checkbox'
@@ -47,44 +36,8 @@ import LatestAlertsSidebar from '~/components/sidebar/latest-alerts'
 import DatabaseIcons from '~/helpers/database-icons'
 import useGlobal from '~/hooks/use-global'
 import Layout from '~/layouts/default'
-import {
-  GB_DATA,
-  GB_OPTIONS,
-  MB_DATA,
-  MB_OPTIONS,
-  PERCENTE_DATA,
-  PERCENTE_OPTIONS,
-  S_DATA,
-  S_OPTIONS,
-} from '~/utils/chart'
 import { scrollToSection } from '~/utils/global'
 import { formatServer } from '~/utils/server'
-
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Filler,
-  Legend
-)
-
-export const options = {
-  responsive: true,
-  plugins: {
-    tooltip: { enabled: true },
-    legend: { display: false },
-  },
-  scales: {
-    x: {
-      grid: {
-        display: false,
-      },
-    },
-  },
-}
 
 export const labels = Array.from({ length: 60 }, (_, index) => `8:${index}`)
 
@@ -160,30 +113,6 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
     onSubmit: () => {},
   })
 
-  // const TESTE_OPTIONS = {
-  //   ...options,
-  //   scales: {
-  //     x: {
-  //       grid: { display: false },
-  //     },
-  //     y: {
-  //       // grid: { display: false },
-  //       ticks: {
-  //         // Include a dollar sign in the ticks
-  //         callback: function (value, index, ticks) {
-  //           const $firstTick = ticks[0]
-  //           const $lastTick = ticks[ticks.length - 1]
-
-  //           if (value > $firstTick.value && value < $lastTick.value) {
-  //             return
-  //           }
-  //           return value
-  //         },
-  //       },
-  //     },
-  //   },
-  // }
-
   return (
     <>
       <NextSeo title="Dashboard - MonitDB" />
@@ -210,7 +139,6 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
           </PageSidebar>
           <PageContent hideBreadcrumbs={true}>
             <div className="min-h-[calc(100vh-64px]">
-              {/* <Line options={TESTE_OPTIONS} data={TESTE_DATA} /> */}
               {!currentServer && <Loading />}
               {currentServer && (
                 <>
@@ -364,24 +292,48 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
                               </button>
                             </div>
                           </div>
-                          <div className="col-span-2 border bg-white border-gray-light p-4 lg:col-span-6">
-                            <h6 className="mb-4 heading-xs">CPU</h6>
-                            <Line
-                              options={PERCENTE_OPTIONS}
-                              data={PERCENTE_DATA}
+                          <div className="col-span-2 bg-white lg:col-span-6">
+                            <Chart
+                              colors={['#ff5500']}
+                              title={{
+                                text: 'DTU',
+                                offsetY: 10,
+                                offsetX: 5,
+                              }}
+                              serieName="% Utilization"
                             />
                           </div>
-                          <div className="col-span-2 border bg-white border-gray-light p-4 lg:col-span-6">
-                            <h6 className="mb-4 heading-xs">Memória</h6>
-                            <Line options={GB_OPTIONS} data={GB_DATA} />
+                          <div className="col-span-2 bg-white lg:col-span-6">
+                            <Chart
+                              title={{
+                                text: 'CPU',
+                                offsetY: 10,
+                                offsetX: 5,
+                              }}
+                              serieName="% Utilization"
+                            />
                           </div>
-                          <div className="col-span-2 border bg-white border-gray-light p-4 lg:col-span-6">
-                            <h6 className="mb-4 heading-xs">Disk I/O</h6>
-                            <Line options={MB_OPTIONS} data={MB_DATA} />
+                          <div className="col-span-2 bg-white lg:col-span-6">
+                            <Chart
+                              colors={['#4abc4b']}
+                              title={{
+                                text: 'Data I/O',
+                                offsetY: 10,
+                                offsetX: 5,
+                              }}
+                              serieName="% Utilization"
+                            />
                           </div>
-                          <div className="col-span-2 border bg-white border-gray-light p-4 lg:col-span-6">
-                            <h6 className="mb-4 heading-xs">Waits</h6>
-                            <Line options={S_OPTIONS} data={S_DATA} />
+                          <div className="col-span-2 bg-white lg:col-span-6">
+                            <Chart
+                              colors={['#0e5b10']}
+                              title={{
+                                text: 'Log I/O',
+                                offsetY: 10,
+                                offsetX: 5,
+                              }}
+                              serieName="% Utilization"
+                            />
                           </div>
                         </Grid>
 
