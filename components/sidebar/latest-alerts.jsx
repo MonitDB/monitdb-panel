@@ -123,10 +123,10 @@ const LatestAlerts = () => {
                   className="py-2 border-b border-gray-light border-opacity-25"
                 >
                   <Link
-                    href="/alerts/"
+                    href={`/alerts/results/?metric=${parameterId}`}
                     className={classNames(
                       `flex items-center space-x-2 border-l-2 pl-2 text-sm transition-all
-                    duration-150 ease-in-out border-orange lg:hover:border-l-8`,
+                        duration-150 ease-in-out border-orange lg:hover:border-l-8`,
                       {
                         // 'border-orange': alertItem.type === 'warning',
                         // 'border-blue': alertItem.type === 'info',

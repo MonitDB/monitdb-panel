@@ -7,6 +7,7 @@ import { NextSeo } from 'next-seo'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
 import Checkbox from '~/components/form/checkbox'
+import Select from '~/components/form/select'
 import Selector from '~/components/form/selector'
 import Loading from '~/components/loading'
 import { PageContent, PageWrapper } from '~/components/page'
@@ -40,7 +41,7 @@ const AlertsDetailsPage = () => {
 
   const typesOptions = useMemo(
     () => [
-      { value: '', label: 'Todos os tipos' },
+      { value: '', label: 'All metrics' },
       ...parameters.map(({ id, nmAlert }) => ({
         value: id,
         label: nmAlert,
@@ -49,34 +50,48 @@ const AlertsDetailsPage = () => {
     [parameters]
   )
 
-  const scheduleOptions = useMemo(
+  const serversOptions = useMemo(
     () => [
-      { value: '', label: 'Todos os horários' },
-      { value: 1, label: '1 minuto' },
-      { value: 5, label: '5 minutos' },
-      { value: 20, label: '20 minutos' },
-      { value: 60, label: '1 hora' },
-      { value: 3600, label: '1 dia' },
-      { value: 25_200, label: '1 semana' },
-      { value: 32_000, label: '1 mês' },
+      { value: '', label: 'All servers' },
+      ...servers.map(({ id, serverName }) => ({
+        value: id,
+        label: serverName,
+      })),
+    ],
+    [servers]
+  )
+
+  const timeOptions = useMemo(
+    () => [
+      { value: '', label: 'All time' },
+      { value: 1, label: '1 minute' },
+      { value: 5, label: '5 minutes' },
+      { value: 20, label: '20 minutes' },
+      { value: 60, label: '1 hour' },
+      { value: 3600, label: '1 day' },
+      { value: 25_200, label: '1 week' },
+      { value: 32_000, label: '1 month' },
     ],
     []
   )
 
   const currentServer = useMemo(() => {
-    const server = servers.find((server) => server.id === +router?.query?.id)
+    const server = servers.find(
+      (server) => server.id === +router?.query?.server
+    )
 
     if (!server) {
       return
     }
 
     return formatServer(server, { serverTypes })
-  }, [servers, serverTypes, router?.query?.id])
+  }, [servers, serverTypes, router?.query?.server])
 
   const formik = useFormik({
     initialValues: {
       types: [],
-      schedule: [],
+      time: '',
+      server: '',
     },
     onSubmit: (values) => {
       console.log('submit', values) // eslint-disable-line no-console
@@ -84,7 +99,7 @@ const AlertsDetailsPage = () => {
   })
 
   const getAlertsData = useCallback(async () => {
-    const responseAlerts = await getAlertsById(router?.query?.id, {
+    const responseAlerts = await getAlertsById(router?.query?.server, {
       PageLength: 10,
       PageNumber: currentPage,
     })
@@ -109,7 +124,13 @@ const AlertsDetailsPage = () => {
         })
       )
     )
-  }, [router?.query?.id, servers, serverTypes, serverEnvironments, currentPage])
+  }, [
+    router?.query?.server,
+    servers,
+    serverTypes,
+    serverEnvironments,
+    currentPage,
+  ])
 
   useEffect(() => {
     setIsLoadingData(true)
@@ -117,14 +138,14 @@ const AlertsDetailsPage = () => {
   }, [currentPage])
 
   useEffect(() => {
-    if (router?.query?.id) {
+    if (router?.query?.server) {
       // setPagination({})
       // setCurrentPage(1)
       setIsLoadingData(true)
       setAlerts([])
       getAlertsData()
     }
-  }, [router?.query?.id, getAlertsData])
+  }, [router?.query?.server, getAlertsData])
 
   return (
     <>
@@ -163,12 +184,22 @@ const AlertsDetailsPage = () => {
                     formik.setFieldValue('types', value)
                   }}
                 />
-                <Selector
-                  name="schedule"
-                  options={scheduleOptions}
-                  value={formik.values.schedule}
+                <Select
+                  name="time"
+                  containerClass="bg-white border-white"
+                  options={timeOptions}
+                  value={formik.values.time}
                   onChange={(value) => {
-                    formik.setFieldValue('schedule', value)
+                    formik.setFieldValue('time', value)
+                  }}
+                />
+                <Select
+                  name="schedule"
+                  containerClass="bg-white border-white"
+                  options={serversOptions}
+                  value={formik.values.server}
+                  onChange={(value) => {
+                    formik.setFieldValue('server', value)
                   }}
                 />
                 <button
@@ -176,7 +207,7 @@ const AlertsDetailsPage = () => {
                   className="btn"
                   onClick={() => formik.resetForm()}
                 >
-                  Limpar
+                  Clear
                 </button>
               </form>
             </PageContent>
@@ -184,80 +215,82 @@ const AlertsDetailsPage = () => {
             <PageContent>
               {alerts.length > 0 ? (
                 <>
-                  <table
-                    className={classNames('prose max-w-full w-full mb-4', {
-                      'opacity-25': isLoadingData,
-                    })}
-                  >
-                    <thead>
-                      <tr className="text-sm font-bold text-gray-dark text-left">
-                        <th className="w-5 border-b-2 border-gray-light">
-                          <Checkbox
-                            name="all"
-                            value="1"
-                            onChange={(value) => {
-                              // eslint-disable-next-line no-console
-                              console.log(`select all checkboxes ${value}`)
-                            }}
-                          />
-                        </th>
-                        <th className="border-b-2 border-gray-light">
-                          Alert type
-                        </th>
-                        <th className="border-b-2 border-gray-light w-60">
-                          Source object
-                        </th>
-                        <th className="border-b-2 border-gray-light w-20">
-                          Status
-                        </th>
-                        <th className="border-b-2 border-gray-light w-40">
-                          Last updated
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {alerts.map((alert, index) => (
-                        <tr
-                          key={`alert-${index}`}
-                          className="text-sm border-b border-gray-light transition-colors duration-200 ease-in-out lg:hover:bg-gray-light lg:hover:bg-opacity-50"
-                        >
-                          <td>
+                  <div className="-mx-4 mb-4 py-4 px-8 bg-white md:-mx-6">
+                    <table
+                      className={classNames('prose max-w-full w-full mb-4', {
+                        'opacity-25': isLoadingData,
+                      })}
+                    >
+                      <thead>
+                        <tr className="text-sm font-bold text-gray-dark text-left">
+                          <th className="w-5 border-b-2 border-gray-light">
                             <Checkbox
-                              className="transform translate-y-1"
-                              name="alerts"
-                              value={alert.idAlert}
+                              name="all"
+                              value="1"
                               onChange={(value) => {
                                 // eslint-disable-next-line no-console
-                                console.log(`select checkbox ${value}`)
+                                console.log(`select all checkboxes ${value}`)
                               }}
                             />
-                          </td>
-                          <td>{alert.dsMessage}</td>
-                          <td>
-                            <div className="flex items-center space-x-4 w-full">
-                              <div className="flex items-center space-x-1">
-                                <FontAwesomeIcon icon={faDatabase} />
-                                <strong>{alert.server?.serverName}</strong>
-                              </div>
-                              {alert.serverEnvironment && (
-                                <span className="flex items-center space-x-1">
-                                  <FontAwesomeIcon icon={faTag} />{' '}
-                                  <span className="rounded py-px px-1 text-xs bg-blue text-white">
-                                    {
-                                      alert.serverEnvironment
-                                        .typeServerEnvironmentName
-                                    }
-                                  </span>
-                                </span>
-                              )}
-                            </div>
-                          </td>
-                          <td>Enabled</td>
-                          <td>{getFormattedDate(alert.dtAlert)}</td>
+                          </th>
+                          <th className="border-b-2 border-gray-light">
+                            Alert type
+                          </th>
+                          <th className="border-b-2 border-gray-light w-60">
+                            Source object
+                          </th>
+                          <th className="border-b-2 border-gray-light w-20">
+                            Status
+                          </th>
+                          <th className="border-b-2 border-gray-light w-40">
+                            Last updated
+                          </th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody>
+                        {alerts.map((alert, index) => (
+                          <tr
+                            key={`alert-${index}`}
+                            className="text-sm border-b border-gray-light transition-colors duration-200 ease-in-out lg:hover:bg-gray-light lg:hover:bg-opacity-50"
+                          >
+                            <td>
+                              <Checkbox
+                                className="transform translate-y-1"
+                                name="alerts"
+                                value={alert.idAlert}
+                                onChange={(value) => {
+                                  // eslint-disable-next-line no-console
+                                  console.log(`select checkbox ${value}`)
+                                }}
+                              />
+                            </td>
+                            <td>{alert.dsMessage}</td>
+                            <td>
+                              <div className="flex items-center space-x-4 w-full">
+                                <div className="flex items-center space-x-1">
+                                  <FontAwesomeIcon icon={faDatabase} />
+                                  <strong>{alert.server?.serverName}</strong>
+                                </div>
+                                {alert.serverEnvironment && (
+                                  <span className="flex items-center space-x-1">
+                                    <FontAwesomeIcon icon={faTag} />{' '}
+                                    <span className="rounded py-px px-1 text-xs bg-blue text-white">
+                                      {
+                                        alert.serverEnvironment
+                                          .typeServerEnvironmentName
+                                      }
+                                    </span>
+                                  </span>
+                                )}
+                              </div>
+                            </td>
+                            <td>Enabled</td>
+                            <td>{getFormattedDate(alert.dtAlert)}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                   {pagination?.totalResults > 0 && (
                     <Pagination
                       currentPage={currentPage}

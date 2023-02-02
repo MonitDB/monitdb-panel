@@ -35,7 +35,7 @@ const MonitoredServers = () => {
         <>
           <header className="mb-4">
             <PageSidebarTitle>
-              <span>Servidores monitorados</span>
+              <span>Monitored servers</span>
             </PageSidebarTitle>
           </header>
 
@@ -45,8 +45,7 @@ const MonitoredServers = () => {
               className="flex items-center space-x-2 mb-4"
               onClick={() => setSidebarShowAllServers(!sidebarShowAllServers)}
             >
-              <FontAwesomeIcon icon={faFolder} />{' '}
-              <strong>Todos os servidores</strong>
+              <FontAwesomeIcon icon={faFolder} /> <strong>All servers</strong>
             </button>
 
             <div className="w-full space-y-4">
@@ -113,9 +112,7 @@ const MonitoredServers = () => {
                             </Link>
                           ))
                         ) : (
-                          <p className="opacity-50">
-                            Nenhum servidor encontrado.
-                          </p>
+                          <p className="opacity-50">No servers found.</p>
                         )}
                       </div>
                     </Reveal>
@@ -132,7 +129,7 @@ const MonitoredServers = () => {
       )}
 
       <div>
-        <h3 className="mb-5 heading-xs">Ações</h3>
+        <h3 className="mb-5 heading-xs">Actions</h3>
         <PageSidebarLinksList>
           <li>
             <Link
@@ -144,25 +141,25 @@ const MonitoredServers = () => {
                   ) >= 0,
               })}
             >
-              Crie métricas e alertas personalizados
+              Create custom metrics and alerts
             </Link>
           </li>
           <li>
             <Link href="/configurations/servers/">
-              Gerenciar servidores monitorados
+              Manage monitored servers
             </Link>
           </li>
           <li>
-            <Link href="/alerts/">Gerenciar grupos de servidores</Link>
+            <Link href="/alerts/">Manage groups</Link>
           </li>
           <li>
-            <Link href="/alerts/">Configurar alertas</Link>
+            <Link href="/alerts/">Configure alerts</Link>
           </li>
           <li>
-            <Link href="/alerts/">Gerenciar supressões de alerta</Link>
+            <Link href="/alerts/">Manage alert suppressions</Link>
           </li>
           <li>
-            <Link href="/alerts/">Assine o feed de alerta RSS</Link>
+            <Link href="/alerts/">Subscribe to RSS alert feed</Link>
           </li>
         </PageSidebarLinksList>
       </div>

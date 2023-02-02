@@ -131,7 +131,7 @@ const InstalledVersions = ({ tabName }) => {
             className="btn"
             onClick={() => formik.resetForm()}
           >
-            Limpar
+            Clear
           </button>
         </form>
       </PageContent>

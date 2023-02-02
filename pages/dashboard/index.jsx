@@ -55,10 +55,7 @@ const DashboardPage = () => {
     () => [
       { value: '', label: 'Todos os grupos' },
       ...formattedEnvironments
-        .filter(
-          (environment) =>
-            environment.isActive && environment.servers.length > 0
-        )
+        .filter((environment) => environment.servers.length > 0)
         .map(({ id, typeServerEnvironmentName }) => ({
           value: id,
           label: typeServerEnvironmentName,
@@ -207,7 +204,7 @@ const DashboardPage = () => {
                     disabled={!hasAnyFilter}
                     onClick={() => formik.resetForm()}
                   >
-                    Limpar
+                    Clear
                   </button>
                 </form>
               </PageContent>

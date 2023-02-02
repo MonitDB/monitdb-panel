@@ -1,26 +1,47 @@
-import { faAdd } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { useRouter } from 'next/router'
+import { useFormik } from 'formik'
 import { NextSeo } from 'next-seo'
-import React from 'react'
+import React, { useMemo, useState } from 'react'
 
-import Link from '~/components/link'
+import Select from '~/components/form/select'
 import Loading from '~/components/loading'
 import { PageContent, PageHeader, PageWrapper } from '~/components/page'
 import MonitoredServersSidebar from '~/components/sidebar/monitored-servers'
 import useAlerts from '~/hooks/use-alerts'
-// import useGlobal from '~/hooks/use-global'
+import useGlobal from '~/hooks/use-global'
 import Layout from '~/layouts/default'
 
-const AlertsDetailsPage = () => {
-  // const {
-  //   globalState: { servers, serverTypes, serverEnvironments },
-  // } = useGlobal()
+import MetricsModal from './modal'
+
+const MetricsPage = () => {
+  const {
+    globalState: { servers },
+  } = useGlobal()
   const {
     stateAlerts: { parameters },
   } = useAlerts()
 
-  const router = useRouter()
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [parameterIdActive, setParameterIdActive] = useState(0)
+
+  const serversOptions = useMemo(
+    () => [
+      { value: '', label: 'All servers' },
+      ...servers.map(({ id, serverName }) => ({
+        value: id,
+        label: serverName,
+      })),
+    ],
+    [servers]
+  )
+
+  const formik = useFormik({
+    initialValues: {
+      server: '',
+    },
+    onSubmit: (values) => {
+      console.log('submit', values) // eslint-disable-line no-console
+    },
+  })
 
   return (
     <>
@@ -30,27 +51,41 @@ const AlertsDetailsPage = () => {
           <MonitoredServersSidebar />
 
           <PageContent>
-            <header className="flex flex-col mb-10">
-              <PageHeader
-                title="Custom Metrics"
-                breadcrumbs={[
-                  {
-                    title: 'Alerts',
-                    href: '/alerts/',
-                  },
-                  {
-                    title: 'Custom Metrics',
-                    href: '/alerts/metrics/',
-                  },
-                ]}
+            <PageHeader
+              title="Custom Metrics"
+              breadcrumbs={[
+                {
+                  title: 'Alerts',
+                  href: '/alerts/',
+                },
+                {
+                  title: 'Custom Metrics',
+                  href: '/alerts/metrics/',
+                },
+              ]}
+            />
+
+            <form
+              className="w-full flex flex-col space-y-4 max-w-[400px] mb-10 xl:space-x-4 xl:space-y-0 xl:flex-row"
+              onSubmit={formik.handleSubmit}
+            >
+              <Select
+                name="schedule"
+                containerClass="bg-white border-white"
+                options={serversOptions}
+                value={formik.values.server}
+                onChange={(value) => {
+                  formik.setFieldValue('server', value)
+                }}
               />
-              <div>
-                <Link href="/alerts/metrics/new/" className="btn btn--small">
-                  <FontAwesomeIcon icon={faAdd} className="mr-2" />
-                  Adicionar
-                </Link>
-              </div>
-            </header>
+              <button
+                type="reset"
+                className="btn"
+                onClick={() => formik.resetForm()}
+              >
+                Clear
+              </button>
+            </form>
 
             {parameters.length > 0 ? (
               <div className="-mx-4 py-4 px-8 bg-white md:-mx-6">
@@ -84,7 +119,8 @@ const AlertsDetailsPage = () => {
                         className={`text-sm border-b border-gray-light transition-colors
                           duration-200 ease-in-out cursor-pointer lg:hover:bg-gray-light lg:hover:bg-opacity-50`}
                         onClick={() => {
-                          router.push(`/alerts/metrics/${parameter.id}/`)
+                          setIsModalOpen(true)
+                          setParameterIdActive(parameter.id)
                         }}
                       >
                         <td>{parameter.nmAlert}</td>
@@ -105,8 +141,17 @@ const AlertsDetailsPage = () => {
           </PageContent>
         </PageWrapper>
       </Layout>
+      {isModalOpen && parameterIdActive && (
+        <MetricsModal
+          parameterId={parameterIdActive}
+          onClose={() => {
+            setIsModalOpen(false)
+            setParameterIdActive(0)
+          }}
+        />
+      )}
     </>
   )
 }
 
-export default AlertsDetailsPage
+export default MetricsPage

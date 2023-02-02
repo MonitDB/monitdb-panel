@@ -215,7 +215,7 @@ const ReportsPage = () => {
                 className="btn"
                 onClick={() => formik.resetForm()}
               >
-                Limpar
+                Clear
               </button>
             </form>
           </PageContent>
