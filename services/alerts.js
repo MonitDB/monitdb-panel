@@ -14,3 +14,7 @@ export const getAlertsParameter = async (parameters = {}) => {
     `/api/alertparameter?${formatObjectToQuery(parameters)}`
   )
 }
+
+export const getAlertsParameterByServerId = async (serverId) => {
+  return clientApi().get(`/api/alertparameterbyserver/${serverId}`)
+}
