@@ -34,6 +34,7 @@ const AlertsDetailsPage = () => {
 
   const router = useRouter()
 
+  const [isDataLoaded, setIsDataLoaded] = useState(false)
   const [alerts, setAlerts] = useState([])
   const [currentPage, setCurrentPage] = useState(1)
   const [isLoadingData, setIsLoadingData] = useState(true)
@@ -98,32 +99,68 @@ const AlertsDetailsPage = () => {
     },
   })
 
-  const getAlertsData = useCallback(async () => {
-    const responseAlerts = await getAlertsById(router?.query?.server, {
-      PageLength: 10,
-      PageNumber: currentPage,
-    })
+  const handleChangeField = useCallback(
+    (name, value) => {
+      const parameters_ = {
+        ...formik.values,
+        [name]: value,
+      }
 
-    if (currentPage === 1) {
-      setPagination({
-        totalResults: Number.parseInt(
-          responseAlerts?.headers?.['x-paging-totalrecordcount'],
-          10
-        ),
-      })
+      const query = Object.keys(parameters_)
+        .filter((key) => parameters_[key])
+        .map((key) => `${key}=${parameters_[key]}`)
+        .join('&')
+
+      formik.setFieldValue(name, value)
+
+      router.push(`/alerts/results/?${query}`)
+    },
+    [formik.values] // eslint-disable-line react-hooks/exhaustive-deps
+  )
+
+  const updateFormFields = useCallback(() => {
+    // get all fields from router.query and update field
+    const fields = Object.keys(router.query)
+
+    for (const field of fields) {
+      formik.setFieldValue(field, router.query[field])
     }
+  }, [router.query]) // eslint-disable-line react-hooks/exhaustive-deps
 
-    setIsLoadingData(false)
+  const getAlertsData = useCallback(async () => {
+    setIsLoadingData(true)
 
-    setAlerts(
-      [...(responseAlerts?.data ?? [])].map((alert) =>
-        formatAlert(alert, {
-          servers,
-          serverTypes,
-          serverEnvironments,
+    try {
+      const responseAlerts = await getAlertsById(router?.query?.server, {
+        PageLength: 10,
+        PageNumber: currentPage,
+      })
+
+      setIsDataLoaded(true)
+
+      if (currentPage === 1) {
+        setPagination({
+          totalResults: Number.parseInt(
+            responseAlerts?.headers?.['x-paging-totalrecordcount'],
+            10
+          ),
         })
+      }
+
+      setAlerts(
+        [...(responseAlerts?.data ?? [])].map((alert) =>
+          formatAlert(alert, {
+            servers,
+            serverTypes,
+            serverEnvironments,
+          })
+        )
       )
-    )
+    } catch (error) {
+      console.error(error) // eslint-disable-line no-console
+    } finally {
+      setIsLoadingData(false)
+    }
   }, [
     router?.query?.server,
     servers,
@@ -133,19 +170,23 @@ const AlertsDetailsPage = () => {
   ])
 
   useEffect(() => {
-    setIsLoadingData(true)
+    if (!isDataLoaded) return
+
+    getAlertsData()
     scrollToTop()
-  }, [currentPage])
+  }, [currentPage]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
+    updateFormFields()
+
     if (router?.query?.server) {
       // setPagination({})
-      // setCurrentPage(1)
+      setCurrentPage(1)
       setIsLoadingData(true)
       setAlerts([])
       getAlertsData()
     }
-  }, [router?.query?.server, getAlertsData])
+  }, [router?.query]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>
@@ -156,21 +197,23 @@ const AlertsDetailsPage = () => {
             <MonitoredServersSidebar />
 
             <PageContent className="border-b border-gray-light">
-              <div className="w-full flex items-center gap-4 mb-10">
-                <div className="flex items-center justify-center w-16 h-16 rounded-full border border-gray-light">
-                  <DatabaseIcons
-                    name={currentServer.type.typeServerName}
-                    className="w-9 h-9"
-                  />
+              {currentServer && (
+                <div className="w-full flex items-center gap-4 mb-10">
+                  <div className="flex items-center justify-center w-16 h-16 rounded-full border border-gray-light">
+                    <DatabaseIcons
+                      name={currentServer.type.typeServerName}
+                      className="w-9 h-9"
+                    />
+                  </div>
+                  <div>
+                    <h4 className="heading-md">{currentServer.serverName}</h4>
+                    <p className="text-sm">
+                      4 GB Memory / 2 Intel vCPUs / 50 GB Disk + 25 GB / NYC1 -
+                      Plesk 18.0 on Ubuntu 20.04{' '}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="heading-md">{currentServer.serverName}</h4>
-                  <p className="text-sm">
-                    4 GB Memory / 2 Intel vCPUs / 50 GB Disk + 25 GB / NYC1 -
-                    Plesk 18.0 on Ubuntu 20.04{' '}
-                  </p>
-                </div>
-              </div>
+              )}
 
               <form
                 className="w-full flex flex-col space-y-4 max-w-[760px] xl:space-x-4 xl:space-y-0 xl:flex-row"
@@ -180,35 +223,23 @@ const AlertsDetailsPage = () => {
                   name="types"
                   options={typesOptions}
                   value={formik.values.types}
-                  onChange={(value) => {
-                    formik.setFieldValue('types', value)
-                  }}
+                  onChange={(value) => handleChangeField('types', value)}
+                  className="w-full md:w-1/3 md:min-w-1/3"
                 />
                 <Select
                   name="time"
-                  containerClass="bg-white border-white"
+                  containerClass="w-full md:w-1/3 bg-white border-white md:min-w-1/3"
                   options={timeOptions}
                   value={formik.values.time}
-                  onChange={(value) => {
-                    formik.setFieldValue('time', value)
-                  }}
+                  onChange={(value) => handleChangeField('time', value)}
                 />
                 <Select
                   name="schedule"
-                  containerClass="bg-white border-white"
+                  containerClass="w-full md:w-1/3 bg-white border-white md:min-w-1/3"
                   options={serversOptions}
                   value={formik.values.server}
-                  onChange={(value) => {
-                    formik.setFieldValue('server', value)
-                  }}
+                  onChange={(value) => handleChangeField('server', value)}
                 />
-                <button
-                  type="reset"
-                  className="btn"
-                  onClick={() => formik.resetForm()}
-                >
-                  Clear
-                </button>
               </form>
             </PageContent>
 
@@ -291,6 +322,7 @@ const AlertsDetailsPage = () => {
                       </tbody>
                     </table>
                   </div>
+
                   {pagination?.totalResults > 0 && (
                     <Pagination
                       currentPage={currentPage}
