@@ -1,0 +1,5 @@
+@screen lg {
+  .serversList:hover > div {
+    @apply opacity-50;
+  }
+}
