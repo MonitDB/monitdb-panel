@@ -240,7 +240,8 @@ const InstalledVersions = ({ tabName }) => {
     <div className="relative">
       <div
         className={classNames({
-          'absolute top-9 left-0 w-full h-full z-10 bg-white bg-opacity-30': isLoading,
+          'absolute top-9 left-0 w-full h-full z-10 bg-white bg-opacity-30':
+            isLoading,
         })}
       />
       <PageContent
