@@ -191,6 +191,7 @@ const MetricsPage = () => {
 
       {isModalOpen && parameterIdActive && (
         <MetricsModal
+          serverId={router.query.server}
           parameterId={parameterIdActive}
           onClose={() => {
             setIsModalOpen(false)
