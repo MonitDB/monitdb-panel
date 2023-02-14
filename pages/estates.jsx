@@ -12,12 +12,12 @@ import Layout from '~/layouts/default'
 
 const tabs = [
   {
-    name: 'Versões instaladas',
+    name: 'Installed versions',
     slug: 'installed-versions',
     component: dynamic(() => import('~/components/estates/installed-versions')),
   },
   {
-    name: 'Uso de disco',
+    name: 'Disk usage',
     slug: 'disk-usage',
     component: dynamic(() => import('~/components/estates/disk-usage')),
   },
