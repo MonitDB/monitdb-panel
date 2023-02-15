@@ -3,3 +3,15 @@ import clientApi from '~/utils/client-api'
 export const getVersions = async () => {
   return clientApi().get(`/api/execcomponent/PRVER`)
 }
+
+export const getBackups = async () => {
+  return clientApi().get(`/api/execcomponent/prbackup`)
+}
+
+export const getSqlServerLicensing = async () => {
+  return clientApi().get(`/api/execcomponent/prlcn`)
+}
+
+export const getSqlAgentJobs = async () => {
+  return clientApi().get(`/api/execcomponent/prjobrd`)
+}

@@ -2,23 +2,21 @@ import { faClose } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useFormik } from 'formik'
 import React, { useEffect, useMemo, useState } from 'react'
+import { toast } from 'react-toastify'
 
 import Checkbox from '~/components/form/checkbox'
 import Select from '~/components/form/select'
-// import Selector from '~/components/form/selector'
 import Grid from '~/components/grid'
 import useAlerts from '~/hooks/use-alerts'
-// import useGlobal from '~/hooks/use-global'
+import { updateAlertsParameterByServerId } from '~/services/alerts'
+import { handleException } from '~/utils/exceptions'
 
-const MetricsModal = ({ onClose, parameterId }) => {
-  // const {
-  //   globalState: { servers, serverTypes },
-  // } = useGlobal()
+const MetricsModal = ({ onClose, serverId, parameterId }) => {
   const {
     stateAlerts: { parameters },
   } = useAlerts()
 
-  const [isLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const [currentParameter, setCurrentParameter] = useState({})
 
   const frequencyOptions = useMemo(
@@ -48,7 +46,24 @@ const MetricsModal = ({ onClose, parameterId }) => {
       vlParameter2: 0,
       dsMetric2: '',
     },
-    onSubmit: () => {},
+    onSubmit: async (values) => {
+      setIsLoading(true)
+
+      try {
+        const response = await updateAlertsParameterByServerId(serverId, {
+          ...values,
+        })
+
+        if (response?.status === 200) {
+          toast.success(`Metrics updated!`)
+          onClose()
+        }
+      } catch (error) {
+        toast.error(handleException(error))
+      } finally {
+        setIsLoading(false)
+      }
+    },
   })
 
   useEffect(() => {

@@ -2,7 +2,6 @@ import {
   faDatabase,
   faDownload,
   faFileExport,
-  faMagnifyingGlass,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
@@ -18,11 +17,10 @@ import {
 } from 'chart.js'
 import classNames from 'classnames'
 import { format, parseISO } from 'date-fns'
-import { useFormik } from 'formik'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { getElementAtEvent, Pie } from 'react-chartjs-2'
 
-import Selector from '~/components/form/selector'
+import Loading from '~/components/loading'
 import { PageContent } from '~/components/page'
 import useGlobal from '~/hooks/use-global'
 import { getVersions } from '~/services/estates'
@@ -153,51 +151,6 @@ const InstalledVersions = ({ tabName }) => {
     }
   }, [groupedVersions])
 
-  const statusOptions = useMemo(
-    () => [
-      { value: '', label: 'Todos os status' },
-      { value: 'critical', label: 'Critical' },
-      { value: 'warning', label: 'Warning' },
-      { value: 'info', label: 'Info' },
-      { value: 'healthy', label: 'Healthy' },
-    ],
-    []
-  )
-
-  const groupsOptions = useMemo(
-    () => [
-      { value: '', label: 'Todos os grupos' },
-      ...serverEnvironments.map(({ id, typeServerEnvironmentName }) => ({
-        value: id,
-        label: typeServerEnvironmentName,
-      })),
-    ],
-    [serverEnvironments]
-  )
-
-  const monitorsOptions = useMemo(
-    () => [
-      { value: '', label: 'All base monitors' },
-      { value: 'primary', label: 'Primary' },
-      { value: 'secondary', label: 'Secondary' },
-      { value: 'azure', label: 'Azure' },
-      { value: 'simulation', label: 'Simulation' },
-    ],
-    []
-  )
-
-  const formik = useFormik({
-    initialValues: {
-      name: '',
-      status: [],
-      groups: [],
-      monitors: [],
-    },
-    onSubmit: (values) => {
-      console.log('submit', values) // eslint-disable-line no-console
-    },
-  })
-
   const onClick = (event) => {
     const { current: chart } = pieReference
 
@@ -220,19 +173,17 @@ const InstalledVersions = ({ tabName }) => {
     )
   }
 
+  const getData = async () => {
+    const { data } = await getVersions()
+
+    if (!data) return
+
+    setVersions(data)
+    setIsLoading(false)
+  }
+
   useEffect(() => {
     setIsLoading(true)
-    async function getData() {
-      try {
-        const { data } = await getVersions()
-        setVersions(data)
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.log(error)
-      }
-
-      setIsLoading(false)
-    }
     getData()
   }, [])
 
@@ -247,212 +198,170 @@ const InstalledVersions = ({ tabName }) => {
       <PageContent
         removeSidebarMargin={true}
         hideBreadcrumbs={true}
-        className="flex flex-wrap items-start justify-between border-b border-gray-light"
+        className="flex flex-wrap items-start justify-between"
       >
-        <header className="pt-8 mb-10 w-full">
+        <header className="pt-8 w-full">
           <h1 className="heading-lg">{tabName}</h1>
         </header>
-        <form
-          className="w-full flex flex-col space-y-4 xl:space-x-4 xl:space-y-0 xl:flex-row"
-          onSubmit={formik.handleSubmit}
-        >
-          <div className="relative min-w-56">
-            <input
-              type="text"
-              name="name"
-              className="w-full px-4 h-10 bg-white leading-10 rounded outline-none text-sm"
-              placeholder="Filtrar por nomes"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={formik.values.name}
-            />
-            <button
-              type="submit"
-              className="group absolute top-1/2 transform -translate-y-1/2 right-4"
-            >
-              <FontAwesomeIcon
-                icon={faMagnifyingGlass}
-                className="text-sm text-gray lg:group-hover:text-gray-dark"
-              />
-            </button>
-          </div>
-          <Selector
-            name="status"
-            options={statusOptions}
-            value={formik.values.status}
-            onChange={(value) => {
-              formik.setFieldValue('status', value)
-            }}
-          />
-          <Selector
-            name="groups"
-            options={groupsOptions}
-            value={formik.values.groups}
-            onChange={(value) => {
-              formik.setFieldValue('groups', value)
-            }}
-          />
-          <Selector
-            name="monitors"
-            options={monitorsOptions}
-            value={formik.values.monitors}
-            onChange={(value) => {
-              formik.setFieldValue('monitors', value)
-            }}
-          />
-          <button
-            type="reset"
-            className="btn"
-            onClick={() => formik.resetForm()}
-          >
-            Clear
-          </button>
-        </form>
       </PageContent>
 
-      {groupedVersions?.length > 0 ? (
-        <PageContent removeSidebarMargin={true}>
-          <div className="flex items-center mb-20">
-            <div className="w-full md:w-1/4">
-              <Pie ref={pieReference} data={chartPieData} onClick={onClick} />
-            </div>
-            <div className="w-full md:w-3/4 md:pl-10">
-              <table className="prose w-full max-w-full">
-                <thead>
-                  <tr>
-                    <th>Versões</th>
-                    <th>Última atualização</th>
-                    {/* <th>Data de lançamento</th> */}
-                  </tr>
-                </thead>
-                <tbody className="text-sm">
-                  {groupedVersions.map(
-                    (
-                      { Version, ProductLevel, LastUpdate, LinkUpdate },
-                      labelIndex
-                    ) => (
-                      <tr key={`label-${labelIndex}`}>
-                        <td>
-                          <div className="w-full flex items-center space-x-2">
-                            <i
-                              className="w-5 h-5 block"
-                              style={{
-                                backgroundColor:
-                                  chartPieData.datasets[0].backgroundColor[
-                                    labelIndex
-                                  ],
-                              }}
-                            />
-                            <strong>{Version}</strong>
-                          </div>
-                        </td>
-                        <td>
-                          <a
-                            href={LinkUpdate}
-                            className="inline-flex items-center space-x-2 text-blue no-underline"
-                            target="_blank"
-                            rel="noreferrer"
-                          >
-                            <FontAwesomeIcon icon={faDownload} />
-                            <span>
-                              {ProductLevel} {LastUpdate}
-                            </span>
-                          </a>
-                        </td>
-                        {/* <td>28 Sep 2022</td> */}
+      {isLoading ? (
+        <Loading />
+      ) : (
+        <>
+          {groupedVersions?.length > 0 ? (
+            <PageContent removeSidebarMargin={true}>
+              <div className="flex items-center mb-20">
+                <div className="w-full md:w-1/4">
+                  <Pie
+                    ref={pieReference}
+                    data={chartPieData}
+                    onClick={onClick}
+                  />
+                </div>
+                <div className="w-full md:w-3/4 md:pl-10">
+                  <table className="prose w-full max-w-full">
+                    <thead>
+                      <tr>
+                        <th>Versões</th>
+                        <th>Última atualização</th>
+                        {/* <th>Data de lançamento</th> */}
                       </tr>
-                    )
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </div>
+                    </thead>
+                    <tbody className="text-sm">
+                      {groupedVersions.map(
+                        (
+                          { Version, ProductLevel, LastUpdate, LinkUpdate },
+                          labelIndex
+                        ) => (
+                          <tr key={`label-${labelIndex}`}>
+                            <td>
+                              <div className="w-full flex items-center space-x-2">
+                                <i
+                                  className="w-5 h-5 block"
+                                  style={{
+                                    backgroundColor:
+                                      chartPieData.datasets[0].backgroundColor[
+                                        labelIndex
+                                      ],
+                                  }}
+                                />
+                                <strong>{Version}</strong>
+                              </div>
+                            </td>
+                            <td>
+                              <a
+                                href={LinkUpdate}
+                                className="inline-flex items-center space-x-2 text-blue no-underline"
+                                target="_blank"
+                                rel="noreferrer"
+                              >
+                                <FontAwesomeIcon icon={faDownload} />
+                                <span>
+                                  {ProductLevel} {LastUpdate}
+                                </span>
+                              </a>
+                            </td>
+                            {/* <td>28 Sep 2022</td> */}
+                          </tr>
+                        )
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
 
-          <div className="w-full prose max-w-full prose-p:m-0 prose-td:align-top prose-th:border-b-4 prose-headings:m-0">
-            <header className="flex flex-col mb-5 md:flex-row md:justify-between md:items-center">
-              <button type="button" className="btn btn--small md:ml-auto">
-                <FontAwesomeIcon icon={faFileExport} className="mr-2" />
-                Exportar
-              </button>
-            </header>
+              <div className="w-full prose max-w-full prose-p:m-0 prose-td:align-top prose-th:border-b-4 prose-headings:m-0">
+                <header className="flex flex-col mb-5 md:flex-row md:justify-between md:items-center">
+                  <button type="button" className="btn btn--small md:ml-auto">
+                    <FontAwesomeIcon icon={faFileExport} className="mr-2" />
+                    Exportar
+                  </button>
+                </header>
 
-            <div className="-mx-4 py-4 px-8 bg-white md:-mx-6">
-              <table className="m-0">
-                <thead>
-                  <tr>
-                    <th>Nome</th>
-                    <th>Versões</th>
-                    {/* <th>Status | Nº da versão</th> */}
-                    <th>Última atualização disponível</th>
-                    <th>Fim do suporte principal</th>
-                  </tr>
-                </thead>
+                <div className="-mx-4 py-4 px-8 bg-white md:-mx-6">
+                  <table className="m-0">
+                    <thead>
+                      <tr>
+                        <th>Nome</th>
+                        <th>Versões</th>
+                        {/* <th>Status | Nº da versão</th> */}
+                        <th>Última atualização disponível</th>
+                        <th>Fim do suporte principal</th>
+                      </tr>
+                    </thead>
 
-                {servers?.length
-                  ? serverEnvironments.map(
-                      ({ id, typeServerEnvironmentName }, environmentIndex) => {
-                        const filteredServers = filterServersByEnvironmentId(
-                          id,
-                          servers
-                        ).map((server) => formatServer(server, { serverTypes }))
+                    {servers?.length
+                      ? serverEnvironments.map(
+                          (
+                            { id, typeServerEnvironmentName },
+                            environmentIndex
+                          ) => {
+                            const filteredServers =
+                              filterServersByEnvironmentId(id, servers).map(
+                                (server) =>
+                                  formatServer(server, { serverTypes })
+                              )
 
-                        const filteredVersions = []
+                            const filteredVersions = []
 
-                        for (let version of versions) {
-                          const server = filteredServers.find(
-                            (server) => server.id === version.ServerId
-                          )
+                            for (let version of versions) {
+                              const server = filteredServers.find(
+                                (server) => server.id === version.ServerId
+                              )
 
-                          if (!server) continue
+                              if (!server) continue
 
-                          filteredVersions.push({
-                            ...version,
-                            Server: server.serverName,
-                          })
-                        }
+                              filteredVersions.push({
+                                ...version,
+                                Server: server.serverName,
+                              })
+                            }
 
-                        if (filteredVersions.length === 0) {
-                          return ''
-                        }
+                            if (filteredVersions.length === 0) {
+                              return ''
+                            }
 
-                        return (
-                          <tbody key={`server-${id}-${environmentIndex}`}>
-                            <tr>
-                              <td colSpan="5">
-                                <h3 className="heading-xs pt-5">
-                                  {environmentIndex + 1} -{' '}
-                                  {typeServerEnvironmentName}
-                                </h3>
-                              </td>
-                            </tr>
-                            {filteredVersions.map(
-                              (
-                                {
-                                  Server,
-                                  Version,
-                                  Edition,
-                                  SuportEndDate,
-                                  LastUpdate,
-                                  ProductLevel,
-                                },
-                                index
-                              ) => (
-                                <tr key={`server-production-${index}`}>
-                                  <td className="border-l-4 border-gray">
-                                    <FontAwesomeIcon
-                                      icon={faDatabase}
-                                      className="mr-2"
-                                    />
-                                    {Server}
+                            return (
+                              <tbody key={`server-${id}-${environmentIndex}`}>
+                                <tr>
+                                  <td colSpan="5">
+                                    <h3 className="heading-xs pt-5">
+                                      {environmentIndex + 1} -{' '}
+                                      {typeServerEnvironmentName}
+                                    </h3>
                                   </td>
-                                  <td>
-                                    <p>
-                                      {Version}
-                                      <br />
-                                      <span className="text-xs">{Edition}</span>
-                                    </p>
-                                  </td>
-                                  {/* <td>
+                                </tr>
+                                {filteredVersions.map(
+                                  (
+                                    {
+                                      Server,
+                                      Version,
+                                      Edition,
+                                      SuportEndDate,
+                                      LastUpdate,
+                                      ProductLevel,
+                                    },
+                                    index
+                                  ) => (
+                                    <tr key={`server-production-${index}`}>
+                                      <td className="border-l-4 border-gray">
+                                        <FontAwesomeIcon
+                                          icon={faDatabase}
+                                          className="mr-2"
+                                        />
+                                        {Server}
+                                      </td>
+                                      <td>
+                                        <p>
+                                          {Version}
+                                          <br />
+                                          <span className="text-xs">
+                                            {Edition}
+                                          </span>
+                                        </p>
+                                      </td>
+                                      {/* <td>
                                     <div className="w-full flex items-center space-x-4">
                                       <FontAwesomeIcon
                                         icon={faUpload}
@@ -467,42 +376,44 @@ const InstalledVersions = ({ tabName }) => {
                                       </p>
                                     </div>
                                   </td> */}
-                                  <td>
-                                    <a
-                                      href="/estates/"
-                                      className="inline-flex items-center space-x-2 text-blue no-underline"
-                                      target="_blank"
-                                    >
-                                      <FontAwesomeIcon icon={faDownload} />
-                                      <span>
-                                        {ProductLevel} {LastUpdate}
-                                      </span>
-                                    </a>
-                                    {/* <p>
+                                      <td>
+                                        <a
+                                          href="/estates/"
+                                          className="inline-flex items-center space-x-2 text-blue no-underline"
+                                          target="_blank"
+                                        >
+                                          <FontAwesomeIcon icon={faDownload} />
+                                          <span>
+                                            {ProductLevel} {LastUpdate}
+                                          </span>
+                                        </a>
+                                        {/* <p>
                                       <span className="text-xs">
                                         Released 13 days ago on 20 Sep 2022
                                       </span>
                                     </p> */}
-                                  </td>
-                                  <td>
-                                    {format(
-                                      parseISO(SuportEndDate),
-                                      'dd MMM yyyy'
-                                    )}
-                                  </td>
-                                </tr>
-                              )
-                            )}
-                          </tbody>
+                                      </td>
+                                      <td>
+                                        {format(
+                                          parseISO(SuportEndDate),
+                                          'dd MMM yyyy'
+                                        )}
+                                      </td>
+                                    </tr>
+                                  )
+                                )}
+                              </tbody>
+                            )
+                          }
                         )
-                      }
-                    )
-                  : undefined}
-              </table>
-            </div>
-          </div>
-        </PageContent>
-      ) : undefined}
+                      : undefined}
+                  </table>
+                </div>
+              </div>
+            </PageContent>
+          ) : undefined}
+        </>
+      )}
     </div>
   )
 }
