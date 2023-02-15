@@ -1,7 +1,4 @@
-import {
-  faFileExport,
-  faMagnifyingGlass,
-} from '@fortawesome/free-solid-svg-icons'
+import { faFileExport } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import faker from 'faker'
 import React from 'react'
