@@ -16,11 +16,13 @@ export const getAlertsParameter = async (parameters = {}) => {
 }
 
 export const getAlertsParameterByServerId = async (serverId) => {
-  return clientApi().get(`/api/alertparameterbyserver/${serverId}`)
+  return clientApi().get(`/api/alertparameter/${serverId}`)
 }
 
 export const updateAlertsParameterByServerId = async (serverId, values) => {
-  return clientApi().post(`/api/alertparameterbyserver/${serverId}`, {
+  return clientApi().put(`/api/alertparameter/${serverId}`, {
     ...values,
   })
 }
+
+// TODO: get alerts parameter by server id & parameter id
