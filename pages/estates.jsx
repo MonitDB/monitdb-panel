@@ -12,12 +12,12 @@ import Layout from '~/layouts/default'
 
 const tabs = [
   {
-    name: 'Versões instaladas',
+    name: 'Installed versions',
     slug: 'installed-versions',
     component: dynamic(() => import('~/components/estates/installed-versions')),
   },
   {
-    name: 'Uso de disco',
+    name: 'Disk usage',
     slug: 'disk-usage',
     component: dynamic(() => import('~/components/estates/disk-usage')),
   },
@@ -27,7 +27,7 @@ const tabs = [
     component: dynamic(() => import('~/components/estates/backups')),
   },
   {
-    name: 'SQL Agent Jobs',
+    name: 'Jobs',
     slug: 'sql-agent-jobs',
     component: dynamic(() => import('~/components/estates/sql-agent-jobs')),
   },
