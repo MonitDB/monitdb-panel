@@ -64,6 +64,16 @@ const MetricsPage = () => {
     }
   }, [router.query])
 
+  const handleMetricsModalClose = useCallback(
+    (forceRefresh) => {
+      setIsModalOpen(false)
+      setParameterIdActive(0)
+
+      forceRefresh && getParameters()
+    },
+    [getParameters]
+  )
+
   const handleChangeServer = useCallback((value) => {
     formik.setFieldValue('server', value)
 
@@ -193,10 +203,7 @@ const MetricsPage = () => {
         <MetricsModal
           serverId={router.query.server}
           parameterId={parameterIdActive}
-          onClose={() => {
-            setIsModalOpen(false)
-            setParameterIdActive(0)
-          }}
+          onClose={handleMetricsModalClose}
         />
       )}
     </>

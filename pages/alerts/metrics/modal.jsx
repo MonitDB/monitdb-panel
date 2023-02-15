@@ -17,7 +17,6 @@ const MetricsModal = ({ onClose, serverId, parameterId }) => {
   } = useAlerts()
 
   const [isLoading, setIsLoading] = useState(false)
-  const [currentParameter, setCurrentParameter] = useState({})
 
   const frequencyOptions = useMemo(
     () => [
@@ -35,6 +34,7 @@ const MetricsModal = ({ onClose, serverId, parameterId }) => {
 
   const formik = useFormik({
     initialValues: {
+      id: -1,
       nmAlert: '',
       nmProcedure: '',
       frequencyMinutes: 0,
@@ -56,7 +56,7 @@ const MetricsModal = ({ onClose, serverId, parameterId }) => {
 
         if (response?.status === 200) {
           toast.success(`Metrics updated!`)
-          onClose()
+          onClose(true)
         }
       } catch (error) {
         toast.error(handleException(error))
@@ -71,6 +71,7 @@ const MetricsModal = ({ onClose, serverId, parameterId }) => {
 
     const parameter = parameters.find((p) => p.id === parameterId)
 
+    formik.setFieldValue('id', parameter?.id)
     formik.setFieldValue('nmAlert', parameter?.nmAlert)
     formik.setFieldValue('nmProcedure', parameter?.nmProcedure)
     formik.setFieldValue('frequencyMinutes', parameter?.frequencyMinutes)
@@ -81,12 +82,7 @@ const MetricsModal = ({ onClose, serverId, parameterId }) => {
     formik.setFieldValue('dsMetric', parameter?.dsMetric)
     formik.setFieldValue('vlParameter2', parameter?.vlParameter2)
     formik.setFieldValue('dsMetric2', parameter?.dsMetric2)
-
-    setCurrentParameter(parameter)
-  }, [setCurrentParameter, parameters, parameterId]) // eslint-disable-line react-hooks/exhaustive-deps
-
-  // eslint-disable-next-line no-console
-  console.log(currentParameter)
+  }, [parameters, parameterId]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="fixed top-0 left-0 w-full h-full bg-white z-50 overflow-y-auto md:bg-transparent md:overflow-hidden md:flex md:items-center md:justify-center md:bg-black md:bg-opacity-75">
@@ -97,7 +93,11 @@ const MetricsModal = ({ onClose, serverId, parameterId }) => {
             <FontAwesomeIcon icon={faClose} className="text-lg" />
           </button>
         </header>
-        <form className="relative w-full">
+        <form
+          onSubmit={formik.handleSubmit}
+          className="relative w-full"
+          noValidate
+        >
           <Grid>
             <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
               <label className="w-full font-bold lg:w-1/3" htmlFor="nmAlert">
@@ -116,18 +116,18 @@ const MetricsModal = ({ onClose, serverId, parameterId }) => {
             <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
               <label
                 className="w-full font-bold lg:w-1/3"
-                htmlFor="NmProcedure"
+                htmlFor="nmProcedure"
               >
-                NmProcedure
+                nmProcedure
               </label>
               <input
                 type="text"
-                name="NmProcedure"
+                name="nmProcedure"
                 className="w-full px-4 h-10 border border-gray-light bg-white leading-10 rounded outline-none text-sm lg:w-2/3"
-                placeholder="NmProcedure"
+                placeholder="nmProcedure"
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                value={formik.values.NmProcedure}
+                value={formik.values.nmProcedure}
               />
             </div>
             <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
