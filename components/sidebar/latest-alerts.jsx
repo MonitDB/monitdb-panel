@@ -76,7 +76,7 @@ const LatestAlerts = () => {
       <header className="mb-4">
         <PageSidebarTitle>
           <FontAwesomeIcon icon={faBell} />
-          <span>Últimos alertas</span>
+          <span>Latest alerts</span>
         </PageSidebarTitle>
         <p className="text-sm">Alertas gerados ou atualizados recentemente:</p>
       </header>
