@@ -8,6 +8,10 @@ export const getBackups = async () => {
   return clientApi().get(`/api/execcomponent/prbackup`)
 }
 
+export const getDiskUsage = async () => {
+  return clientApi().get(`/api/execcomponent/prdisks`)
+}
+
 export const getSqlServerLicensing = async () => {
   return clientApi().get(`/api/execcomponent/prlcn`)
 }

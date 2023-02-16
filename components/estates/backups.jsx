@@ -15,7 +15,7 @@ import { megaBytesToGigaBytes } from '~/utils/formats'
 import { getIntervalTimeBetweenDates } from '~/utils/global'
 import { filterServersByEnvironmentId, formatServer } from '~/utils/server'
 
-const InstalledVersions = ({ tabName }) => {
+const Backups = ({ tabName }) => {
   const {
     globalState: { servers, serverTypes, serverEnvironments },
   } = useGlobal()
@@ -205,4 +205,4 @@ const InstalledVersions = ({ tabName }) => {
   )
 }
 
-export default InstalledVersions
+export default Backups

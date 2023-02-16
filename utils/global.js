@@ -32,6 +32,10 @@ export const getIntervalTimeBetweenDates = (start, end) => {
   })
 }
 
+export const getPercentage = (value, totalValue) => {
+  return (value / totalValue) * 100
+}
+
 export const scrollToSection = (element) => {
   const $DOMElement = document.querySelector(element)
 
