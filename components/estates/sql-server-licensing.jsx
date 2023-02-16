@@ -1,15 +1,36 @@
-import { faDatabase, faFileExport } from '@fortawesome/free-solid-svg-icons'
+import { faFileExport } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import faker from 'faker'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
+import Loading from '~/components/loading'
 import { PageContent } from '~/components/page'
 import useGlobal from '~/hooks/use-global'
+import { getSqlServerLicensing } from '~/services/estates'
 
-const InstalledVersions = ({ tabName }) => {
+const SqlServerLicensing = ({ tabName }) => {
+  const [isLoading, setIsLoading] = useState(true)
+  const [sqlServerLicensing, setSqlServerLicensing] = useState([])
+
   const {
     globalState: { servers },
   } = useGlobal()
+
+  const getData = async () => {
+    const { data } = await getSqlServerLicensing()
+
+    if (!data) return
+
+    // eslint-disable-next-line no-console
+    console.log('sql server licensing', data)
+
+    setSqlServerLicensing(data)
+    setIsLoading(false)
+  }
+
+  useEffect(() => {
+    setIsLoading(true)
+    getData()
+  }, [])
 
   if (servers?.length === 0) {
     return ''
@@ -40,47 +61,57 @@ const InstalledVersions = ({ tabName }) => {
           </header>
 
           <div className="-mx-4 py-4 px-8 bg-white md:-mx-6">
-            <table className="m-0">
-              <thead>
-                <tr>
-                  <th>Nome do servidor</th>
-                  <th>Processadores</th>
-                  <th>Cores</th>
-                  <th>Processadores lógicos</th>
-                  <th>License req</th>
-                  <th>Sempre ligado</th>
-                  <th>Instância SQL</th>
-                  <th>Versão</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {servers.map(({ serverName }, serverIndex) => (
-                  <tr key={`server-item-${serverIndex}`}>
-                    <td>
-                      <span className="rounded py-px px-1 text-xs bg-blue text-white">
-                        VM
-                      </span>{' '}
-                      <strong>{serverName}</strong>
-                    </td>
-                    <td>{faker.random.number()}</td>
-                    <td>{faker.random.number()}</td>
-                    <td>{faker.random.number()}</td>
-                    <td>4 cores</td>
-                    <td>{serverIndex % 2 === 0 ? 'Ativo' : 'Passivo'}</td>
-                    <td>
-                      <FontAwesomeIcon icon={faDatabase} className="mr-2" />{' '}
-                      {faker.random.word()}
-                    </td>
-                    <td>
-                      SQL Server 2019 <span className="text-xs">Standard</span>
-                      <br />
-                      <span className="text-xs">Edition (64-bit)</span>
-                    </td>
+            {isLoading ? (
+              <Loading />
+            ) : (
+              <table className="m-0">
+                <thead>
+                  <tr>
+                    <th>Nome do servidor</th>
+                    <th>Processadores</th>
+                    <th>Cores</th>
+                    <th>Processadores lógicos</th>
+                    <th>License req</th>
+                    <th>Sempre ligado</th>
+                    <th>Instância SQL</th>
+                    <th>Versão</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+
+                <tbody>
+                  {servers.map(({ id, serverName }) => {
+                    const filteredSqlServerLicensing =
+                      sqlServerLicensing.filter(
+                        ({ ServerId }) => ServerId === id
+                      )
+
+                    if (filteredSqlServerLicensing.length === 0) {
+                      return ''
+                    }
+
+                    return filteredSqlServerLicensing.map(
+                      (licensing, index) => (
+                        <tr key={`server-item-${id}-${index}`}>
+                          <td>
+                            <span className="rounded py-px px-1 text-xs bg-blue text-white">
+                              VM
+                            </span>{' '}
+                            <strong>{serverName}</strong>
+                          </td>
+                          <td>{licensing['Processadores']}</td>
+                          <td>{licensing['Cores por Processador']}</td>
+                          <td>{licensing['Processadores Logicos']}</td>
+                          <td>{licensing['Licenças Requeridas']}</td>
+                          <td>{licensing['Always On']}</td>
+                          <td>{licensing['InstanciaSQL'] ?? 'null'}</td>
+                          <td>{licensing['Version']}</td>
+                        </tr>
+                      )
+                    )
+                  })}
+                </tbody>
+              </table>
+            )}
           </div>
         </div>
       </PageContent>
@@ -88,4 +119,4 @@ const InstalledVersions = ({ tabName }) => {
   )
 }
 
-export default InstalledVersions
+export default SqlServerLicensing

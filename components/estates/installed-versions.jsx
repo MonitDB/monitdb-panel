@@ -178,6 +178,9 @@ const InstalledVersions = ({ tabName }) => {
 
     if (!data) return
 
+    // eslint-disable-next-line no-console
+    console.log('versions', data)
+
     setVersions(data)
     setIsLoading(false)
   }
