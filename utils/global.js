@@ -1,3 +1,5 @@
+import intervalToDuration from 'date-fns/intervalToDuration'
+
 export const isEmail = (email) => {
   const regex = /\S+@\S+\.\S+/
   return regex.test(email)
@@ -21,6 +23,13 @@ export const slugify = (text = '') => {
     .replace(/\s+/g, '-')
     .replace(/[^\w-]+/g, '')
     .replace(/--+/g, '-')
+}
+
+export const getIntervalTimeBetweenDates = (start, end) => {
+  return intervalToDuration({
+    start,
+    end,
+  })
 }
 
 export const scrollToSection = (element) => {
