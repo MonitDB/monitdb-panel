@@ -1,25 +1,27 @@
 import { faFileExport } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import faker from 'faker'
+import { format, parseISO } from 'date-fns'
 import React, { useEffect, useMemo, useState } from 'react'
 
 import Loading from '~/components/loading'
 import { PageContent } from '~/components/page'
-import useGlobal from '~/hooks/use-global'
 import { getSqlAgentJobs } from '~/services/estates'
-import { filterServersByEnvironmentId, formatServer } from '~/utils/server'
+
+const DATE_FORMAT = "dd MMM yyyy kk':'mm"
 
 const SqlAgentJobs = ({ tabName }) => {
   const [isLoading, setIsLoading] = useState(true)
   const [sqlAgentJobs, setSqlAgentJobs] = useState({})
-  const execution = useMemo(
-    () => sqlAgentJobs.executions?.execution,
-    [sqlAgentJobs]
-  )
 
-  const {
-    globalState: { servers, serverTypes, serverEnvironments },
-  } = useGlobal()
+  const failedExecutions = useMemo(() => {
+    const executions = sqlAgentJobs?.executions?.execution || []
+    return executions.filter((item) => item['@status'] === 'failed')
+  }, [sqlAgentJobs])
+
+  const succeededExecutions = useMemo(() => {
+    const executions = sqlAgentJobs?.executions?.execution || []
+    return executions.filter((item) => item['@status'] === 'succeeded')
+  }, [sqlAgentJobs])
 
   const getData = async () => {
     const { data } = await getSqlAgentJobs()
@@ -38,10 +40,6 @@ const SqlAgentJobs = ({ tabName }) => {
     getData()
   }, [])
 
-  if (servers?.length === 0) {
-    return ''
-  }
-
   return (
     <>
       <PageContent
@@ -59,7 +57,7 @@ const SqlAgentJobs = ({ tabName }) => {
           <Loading />
         ) : (
           <>
-            <div className="w-full prose max-w-full prose-p:m-0 prose-td:align-top prose-th:border-b-4 prose-headings:m-0">
+            <div className="w-full prose max-w-full prose-p:m-0 prose-td:align-top prose-th:border-b-4 prose-headings:m-0 prose-td:whitespace-nowrap prose-td:text-ellipsis prose-td:overflow-hidden prose-table:table-fixed">
               <header className="flex flex-col mb-5 md:flex-row md:justify-between md:items-center">
                 <div className="w-full md:w-3/4">
                   <h2 className="heading-md">Jobs com falha</h2>
@@ -77,70 +75,58 @@ const SqlAgentJobs = ({ tabName }) => {
                 <table className="m-0">
                   <thead>
                     <tr>
-                      <th>Nome do servidor</th>
-                      <th>Categoria | Nome</th>
-                      <th>Execuções</th>
-                      <th>Sucessos</th>
-                      <th>Falhas</th>
-                      <th>Última execução</th>
-                      <th>Próxima</th>
-                      <th>Etapa falhou</th>
+                      <th className="w-[6%]">Id</th>
+                      <th>Project</th>
+                      <th className="w-[10%]">User</th>
+                      <th>Started</th>
+                      <th>Ended</th>
+                      <th className="w-[8%]">Duration</th>
+                      <th>Access</th>
+                      <th>Name</th>
+                      <th>Description</th>
                     </tr>
                   </thead>
 
-                  {serverEnvironments.map(
-                    ({ id, typeServerEnvironmentName }, environmentIndex) => {
-                      const filteredServers = filterServersByEnvironmentId(
-                        id,
-                        servers
-                      ).map((server) => formatServer(server, { serverTypes }))
-
-                      const failedExecutions = execution.filter(
-                        (item) =>
-                          item['@status'] === 'failed' &&
-                          filteredServers.findIndex(
-                            ({ id }) => id === item['@id']
-                          ) !== -1
-                      )
-
-                      if (failedExecutions.length === 0) {
-                        return ''
-                      }
-
-                      return (
-                        <tbody key={`jobs-failed-${id}-${environmentIndex}`}>
-                          <tr>
-                            <td
-                              colSpan="12"
-                              className="px-4 !border-l-0 !border-r-0"
-                            >
-                              <h3 className="heading-xs pt-5">
-                                {environmentIndex + 1} -{' '}
-                                {typeServerEnvironmentName}
-                              </h3>
-                            </td>
-                          </tr>
-                          {failedExecutions.map((server, index) => (
-                            <tr key={`job-item-${id}-failed-${index}`}>
-                              <td>{server.serverName}</td>
-                              <td>{faker.random.word()}</td>
-                              <td>{faker.random.number()}</td>
-                              <td>0</td>
-                              <td>{faker.random.number()}</td>
-                              <td>04 Oct 2022 10:06</td>
-                              <td>04 Oct 2022 11:06</td>
-                              <td>{faker.random.number()}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      )
-                    }
-                  )}
+                  {failedExecutions.length > 0 ? (
+                    <tbody>
+                      {failedExecutions.map((execution, index) => (
+                        <tr
+                          key={`job-item-${execution['@id']}-failed-${index}`}
+                        >
+                          <td className="w-[6%]">{execution['@id']}</td>
+                          <td>{execution['@project']}</td>
+                          <td className="w-[10%]">{execution.user}</td>
+                          <td>
+                            {format(
+                              parseISO(execution['date-started']['#text']),
+                              DATE_FORMAT
+                            )}
+                          </td>
+                          <td>
+                            {format(
+                              parseISO(execution['date-ended']['#text']),
+                              DATE_FORMAT
+                            )}
+                          </td>
+                          <td className="w-[8%]">
+                            {execution.job['@averageDuration']}
+                          </td>
+                          <td>{execution.job['@permalink']}</td>
+                          <td title={execution.job.name}>
+                            {execution.job.name}
+                          </td>
+                          <td title={execution.description}>
+                            {execution.description}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  ) : undefined}
                 </table>
               </div>
             </div>
 
-            <div className="w-full prose max-w-full prose-p:m-0 prose-td:align-top prose-th:border-b-4 prose-headings:m-0">
+            <div className="w-full prose max-w-full prose-p:m-0 prose-td:align-top prose-th:border-b-4 prose-headings:m-0 prose-td:whitespace-nowrap prose-td:text-ellipsis prose-td:overflow-hidden prose-table:table-fixed">
               <header className="flex flex-col mb-5 md:flex-row md:justify-between md:items-center">
                 <div className="w-full md:w-3/4">
                   <h2 className="heading-md">Jobs com sucesso</h2>
@@ -158,65 +144,55 @@ const SqlAgentJobs = ({ tabName }) => {
                 <table className="m-0">
                   <thead>
                     <tr>
-                      <th>Nome do servidor</th>
-                      <th>Categoria | Nome</th>
-                      <th>Execuções</th>
-                      <th>Sucessos</th>
-                      <th>Falhas</th>
-                      <th>Última execução</th>
-                      <th>Próxima</th>
-                      <th>Última duração</th>
+                      <th className="w-[6%]">Id</th>
+                      <th>Project</th>
+                      <th className="w-[10%]">User</th>
+                      <th>Started</th>
+                      <th>Ended</th>
+                      <th className="w-[8%]">Duration</th>
+                      <th>Access</th>
+                      <th>Name</th>
+                      <th>Description</th>
                     </tr>
                   </thead>
 
-                  {serverEnvironments.map(
-                    ({ id, typeServerEnvironmentName }, environmentIndex) => {
-                      const filteredServers = filterServersByEnvironmentId(
-                        id,
-                        servers
-                      ).map((server) => formatServer(server, { serverTypes }))
-
-                      const successfulExecutions = execution.filter(
-                        (item) =>
-                          item['@status'] === 'succeeded' &&
-                          filteredServers.findIndex(
-                            ({ id }) => id === item['@id']
-                          ) !== -1
-                      )
-
-                      if (successfulExecutions.length === 0) {
-                        return ''
-                      }
-
-                      return (
-                        <tbody key={`jobs-succeeded-${id}-${environmentIndex}`}>
-                          <tr>
-                            <td
-                              colSpan="12"
-                              className="px-4 !border-l-0 !border-r-0"
-                            >
-                              <h3 className="heading-xs pt-5">
-                                {environmentIndex + 1} -{' '}
-                                {typeServerEnvironmentName}
-                              </h3>
-                            </td>
-                          </tr>
-                          {successfulExecutions.map((server, index) => (
-                            <tr key={`job-item-${id}-succeeded-${index}`}>
-                              <td>{server.serverName}</td>
-                              <td>{faker.random.word()}</td>
-                              <td>{faker.random.number()}</td>
-                              <td>0</td>
-                              <td>{faker.random.number()}</td>
-                              <td>04 Oct 2022 10:06</td>
-                              <td>04 Oct 2022 11:06</td>
-                              <td>{faker.random.number()}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      )
-                    }
-                  )}
+                  {succeededExecutions.length > 0 ? (
+                    <tbody>
+                      {succeededExecutions.map((execution, index) => (
+                        <tr
+                          key={`job-item-${execution['@id']}-succeeded-${index}`}
+                        >
+                          <td className="w-[6%]">{execution['@id']}</td>
+                          <td>{execution['@project']}</td>
+                          <td className="w-[10%]">{execution.user}</td>
+                          <td>
+                            {format(
+                              parseISO(execution['date-started']['#text']),
+                              DATE_FORMAT
+                            )}
+                          </td>
+                          <td>
+                            {format(
+                              parseISO(execution['date-ended']['#text']),
+                              DATE_FORMAT
+                            )}
+                          </td>
+                          <td className="w-[8%]">
+                            {execution.job['@averageDuration']}
+                          </td>
+                          <td title={execution.job['@permalink']}>
+                            {execution.job['@permalink']}
+                          </td>
+                          <td title={execution.job.name}>
+                            {execution.job.name}
+                          </td>
+                          <td title={execution.description}>
+                            {execution.description}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  ) : undefined}
                 </table>
               </div>
             </div>
