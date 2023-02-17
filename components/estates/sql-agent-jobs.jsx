@@ -1,3 +1,4 @@
+/* eslint-disable sonarjs/no-duplicate-string */
 import { faFileExport } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { format, parseISO } from 'date-fns'
@@ -29,8 +30,6 @@ const SqlAgentJobs = ({ tabName }) => {
     if (!data) return
 
     // eslint-disable-next-line no-console
-    console.log('jobs', data)
-
     setSqlAgentJobs(data)
     setIsLoading(false)
   }
@@ -111,7 +110,9 @@ const SqlAgentJobs = ({ tabName }) => {
                           <td className="w-[8%]">
                             {execution.job['@averageDuration']}
                           </td>
-                          <td>{execution.job['@permalink']}</td>
+                          <td title={execution.job['@permalink']}>
+                            {execution.job['@permalink']}
+                          </td>
                           <td title={execution.job.name}>
                             {execution.job.name}
                           </td>
