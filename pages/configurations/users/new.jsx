@@ -43,7 +43,7 @@ const UsersSinglePage = () => {
         })
 
         if (response?.status === 200) {
-          toast.success(`Usuário ${values.loginName} criado!`)
+          toast.success(`User ${values.loginName} created!`)
           router.push('/configurations/users')
         }
       } catch (error) {
@@ -67,7 +67,7 @@ const UsersSinglePage = () => {
   const rolesOptions = useMemo(() => {
     return [
       {
-        label: 'Selecione a função',
+        label: 'Select...',
         value: '',
       },
       ...roles.map((role) => ({
@@ -79,9 +79,9 @@ const UsersSinglePage = () => {
 
   const statusOptions = useMemo(
     () => [
-      { value: '', label: 'Selecione o status' },
-      { value: '1', label: 'Ativo' },
-      { value: '0', label: 'Inativo' },
+      { value: '', label: 'Select...' },
+      { value: '1', label: 'Active' },
+      { value: '0', label: 'Inactive' },
     ],
     []
   )
@@ -92,23 +92,23 @@ const UsersSinglePage = () => {
 
   return (
     <>
-      <NextSeo title="Configurações - MonitDB" />
+      <NextSeo title="Configurations - MonitDB" />
       <Layout>
         <PageWrapper className="p-8">
           <PageContent removeSidebarMargin={true}>
             <PageHeader
-              title="Configurações"
+              title="Configurations"
               breadcrumbs={[
                 {
-                  title: 'Configurações',
+                  title: 'Configurations',
                   href: '/configurations',
                 },
                 {
-                  title: 'Usuários',
+                  title: 'Users',
                   href: '/configurations/users',
                 },
                 {
-                  title: `Novo usuário`,
+                  title: `New user`,
                   href: `/configurations/users/new`,
                 },
               ]}
@@ -119,7 +119,7 @@ const UsersSinglePage = () => {
                 onSubmit={formik.handleSubmit}
                 className="grid grid-cols-2 gap-4 md:max-w-[50%]"
               >
-                <Label text="Nome" className="col-span-1">
+                <Label text="Name" className="col-span-1">
                   <Input
                     type="text"
                     name="loginName"
@@ -159,7 +159,7 @@ const UsersSinglePage = () => {
                     }
                   />
                 </Label>
-                <Label text="Função" className="col-span-1">
+                <Label text="Role" className="col-span-1">
                   <Select
                     name="idRole"
                     containerClass="bg-white"
@@ -171,7 +171,7 @@ const UsersSinglePage = () => {
                     }}
                   />
                 </Label>
-                <Label text="Ativo" className="col-span-1">
+                <Label text="Status" className="col-span-1">
                   <Select
                     name="loginEnable"
                     containerClass="bg-white"
@@ -185,7 +185,7 @@ const UsersSinglePage = () => {
                 </Label>
                 <div className="col-span-2">
                   <button type="submit" className="btn" disabled={isLoading}>
-                    {isLoading ? 'Criando...' : 'Criar'}
+                    {isLoading ? 'Creating...' : 'Create'}
                   </button>
                 </div>
               </form>

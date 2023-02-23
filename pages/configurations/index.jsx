@@ -9,11 +9,11 @@ import Layout from '~/layouts/default'
 const ConfigurationsPage = () => {
   return (
     <>
-      <NextSeo title="Configurações - MonitDB" />
+      <NextSeo title="Configurations - MonitDB" />
       <Layout>
         <PageWrapper className="p-8">
           <PageContent removeSidebarMargin={true}>
-            <PageHeader title="Configurações" />
+            <PageHeader title="Configurations" />
 
             <Grid>
               <div className="col-span-2 space-y-10 md:col-span-6">
@@ -26,12 +26,11 @@ const ConfigurationsPage = () => {
                         className="group block"
                       >
                         <strong className="block group-hover:text-blue">
-                          Servidores monitorados
+                          Servers monitorados
                         </strong>
                         <span className="group-hover:opacity-75">
-                          Adicionar servidores para monitorar; editar
-                          credenciais de conexão; remover ou suspender
-                          servidores monitorados.
+                          Add servidores para monitorar; editar credenciais de
+                          conexão; remover ou suspender servidores monitorados.
                         </span>
                       </Link>
                     </li>
@@ -101,7 +100,7 @@ const ConfigurationsPage = () => {
                     <li>
                       <Link href="/configurations/" className="group block">
                         <strong className="block group-hover:text-blue">
-                          Configurações de autenticação
+                          Configurations de autenticação
                         </strong>
                         <span className="group-hover:opacity-75">
                           Defina as preferências de autenticação para o MonitDB.
@@ -136,7 +135,7 @@ const ConfigurationsPage = () => {
                     <li>
                       <Link href="/configurations/" className="group block">
                         <strong className="block group-hover:text-blue">
-                          Configurações do visor
+                          Configurations do visor
                         </strong>
                         <span className="group-hover:opacity-75">
                           Defina as preferências de exibição do usuário para o
@@ -192,7 +191,7 @@ const ConfigurationsPage = () => {
                     <li>
                       <Link href="/configurations/" className="group block">
                         <strong className="block group-hover:text-blue">
-                          Configurações de alerta
+                          Configurations de alerta
                         </strong>
                         <span className="group-hover:opacity-75">
                           Habilitar e desabilitar tipos de alerta; alterar os
@@ -204,7 +203,7 @@ const ConfigurationsPage = () => {
                     <li>
                       <Link href="/configurations/" className="group block">
                         <strong className="block group-hover:text-blue">
-                          Configurações de notificação
+                          Configurations de notificação
                         </strong>
                         <span className="group-hover:opacity-75">
                           Configure e gerencie notificações de alertas
@@ -248,7 +247,7 @@ const ConfigurationsPage = () => {
                           <i className="rounded py-px px-1 text-xs bg-blue text-white not-italic">
                             aprimoradas
                           </i>{' '}
-                          Configurações de dados
+                          Configurations de dados
                         </strong>
                         <span className="group-hover:opacity-75">
                           Especifique por quanto tempo o MonitDB mantém os dados

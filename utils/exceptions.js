@@ -7,9 +7,9 @@ export const HandleExceptionMessagesTypes = {
 }
 
 const HandleExceptionMessages = {
-  USER_CREDENTIALS: 'Usuário ou senha inválidos',
-  USER_TOKEN_EXPIRED: 'Seu login expirou',
-  GENERAL: 'Algum erro aconteceu, favor tentar novamente em alguns instantes',
+  USER_CREDENTIALS: 'User or password invalid',
+  USER_TOKEN_EXPIRED: 'Token expired',
+  GENERAL: 'An error occurred, please try again later',
 }
 
 export const handleException = (error, errorMessage) => {
@@ -22,7 +22,7 @@ export const handleException = (error, errorMessage) => {
     const serverResponse = serverError?.response
 
     if (serverResponse?.status === 401) {
-      return 'Acesso não autorizado.'
+      return 'Unauthorized'
     }
 
     return serverResponse?.message || HandleExceptionMessages.GENERAL

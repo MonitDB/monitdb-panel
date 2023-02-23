@@ -99,7 +99,7 @@ const MonitoredServers = () => {
                           filteredServers.map((server, serverIndex) => (
                             <Link
                               key={`env-${environmentIndex}-server-${serverIndex}`}
-                              href={`/alerts/${server.id}`}
+                              href={`/alerts/results?server=${server.id}`}
                               className="flex items-center space-x-2 transition-transform duration-300 ease-in-out transform hover:translate-x-2"
                             >
                               <FontAwesomeIcon icon={faDatabase} />{' '}

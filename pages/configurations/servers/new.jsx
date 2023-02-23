@@ -41,7 +41,7 @@ const ConfigurationsServersSinglePage = () => {
         const response = await addServer(values)
 
         if (response?.status === 200) {
-          toast.success(`Servidor ${values.name} criado!`)
+          toast.success(`Server ${values.name} created!`)
           router.push('/configurations/servers')
           refreshData()
         }
@@ -65,23 +65,23 @@ const ConfigurationsServersSinglePage = () => {
 
   return (
     <>
-      <NextSeo title="Configurações - MonitDB" />
+      <NextSeo title="Configurations - MonitDB" />
       <Layout>
         <PageWrapper className="p-8">
           <PageContent removeSidebarMargin={true}>
             <PageHeader
-              title="Configurações"
+              title="Configurations"
               breadcrumbs={[
                 {
-                  title: 'Configurações',
+                  title: 'Configurations',
                   href: '/configurations',
                 },
                 {
-                  title: 'Servidores',
+                  title: 'Servers',
                   href: '/configurations/servers',
                 },
                 {
-                  title: `Novo servidor`,
+                  title: `New server`,
                   href: `/configurations/servers/new`,
                 },
               ]}
@@ -92,7 +92,7 @@ const ConfigurationsServersSinglePage = () => {
                 onSubmit={formik.handleSubmit}
                 className="grid grid-cols-2 gap-4 md:max-w-[50%]"
               >
-                <Label text="Nome do servidor" className="col-span-2">
+                <Label text="Server name" className="col-span-2">
                   <Input
                     type="text"
                     name="name"
@@ -103,14 +103,14 @@ const ConfigurationsServersSinglePage = () => {
                     value={formik.values.name}
                   />
                 </Label>
-                <Label text="Ambiente" className="col-span-1">
+                <Label text="Environment" className="col-span-1">
                   {serverEnvironments.length > 0 ? (
                     <Select
                       containerClass="bg-white"
                       name="environment"
                       options={[
                         {
-                          label: 'Selecione...',
+                          label: 'Select...',
                           value: '',
                         },
                         ...(serverEnvironments?.map((environment) => ({
@@ -128,14 +128,14 @@ const ConfigurationsServersSinglePage = () => {
                   )}
                 </Label>
                 <div className="col-span-1 relative flex items-end">
-                  <Label text="Tipo de servidor" className="w-3/5">
+                  <Label text="Server type" className="w-3/5">
                     {serverTypes.length > 0 ? (
                       <Select
                         containerClass="bg-white"
                         name="serverType"
                         options={[
                           {
-                            label: 'Selecione...',
+                            label: 'Select...',
                             value: '',
                           },
                           ...(serverTypes?.map((serverType) => ({
@@ -166,7 +166,7 @@ const ConfigurationsServersSinglePage = () => {
                     value={formik.values.host}
                   />
                 </Label>
-                <Label text="Usuário" className="col-span-1">
+                <Label text="User" className="col-span-1">
                   <Input
                     type="text"
                     name="user"
@@ -186,7 +186,7 @@ const ConfigurationsServersSinglePage = () => {
                     value={formik.values.password}
                   />
                 </Label>
-                <Label text="Porta" className="col-span-1">
+                <Label text="Port" className="col-span-1">
                   <Input
                     type="text"
                     name="port"
@@ -209,7 +209,7 @@ const ConfigurationsServersSinglePage = () => {
                     value={formik.values.status}
                   />
                 </Label> */}
-                <Label text="Descrição" className="col-span-2">
+                <Label text="Description" className="col-span-2">
                   <Textarea
                     name="description"
                     className="w-full px-4 h-10 bg-white leading-10 rounded outline-none text-sm"
@@ -220,7 +220,7 @@ const ConfigurationsServersSinglePage = () => {
                 </Label>
                 <div className="col-span-2">
                   <button type="submit" className="btn" disabled={isLoading}>
-                    {isLoading ? 'Criando...' : 'Criar'}
+                    {isLoading ? 'Creating...' : 'Create'}
                   </button>
                 </div>
               </form>

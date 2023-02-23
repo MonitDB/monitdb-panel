@@ -16,19 +16,19 @@ const ConfigurationsServersPage = () => {
   } = useGlobal()
   return (
     <>
-      <NextSeo title="Configurações - MonitDB" />
+      <NextSeo title="Configurations - MonitDB" />
       <Layout>
         <PageWrapper className="p-8">
           <PageContent removeSidebarMargin={true}>
             <PageHeader
-              title="Configurações"
+              title="Configurations"
               breadcrumbs={[
                 {
-                  title: 'Configurações',
+                  title: 'Configurations',
                   href: '/configurations',
                 },
                 {
-                  title: 'Servidores',
+                  title: 'Servers',
                   href: '/configurations/servers',
                 },
               ]}
@@ -41,7 +41,7 @@ const ConfigurationsServersPage = () => {
                   className="btn btn--small"
                 >
                   <FontAwesomeIcon icon={faAdd} className="mr-2" />
-                  Adicionar
+                  Add
                 </Link>
               </header>
 
@@ -51,14 +51,16 @@ const ConfigurationsServersPage = () => {
                     <thead>
                       <tr className="text-sm font-bold text-gray-dark text-left">
                         <th className="border-b-2 border-gray-light w-2/5">
-                          Servidor
+                          Server
                         </th>
                         <th className="border-b-2 border-gray-light">Status</th>
                         <th className="border-b-2 border-gray-light">
-                          Credenciais
+                          Credentials
                         </th>
                         <th className="border-b-2 border-gray-light">Tags</th>
-                        <th className="border-b-2 border-gray-light">Ações</th>
+                        <th className="border-b-2 border-gray-light">
+                          Actions
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
@@ -73,7 +75,9 @@ const ConfigurationsServersPage = () => {
                             className="text-sm border-b border-gray-light transition-colors duration-200 ease-in-out lg:hover:bg-gray-light lg:hover:bg-opacity-50"
                           >
                             <td>{server.serverName}</td>
-                            <td>{server.serverEnable ? 'Ativo' : 'Inativo'}</td>
+                            <td>
+                              {server.serverEnable ? 'Active' : 'Inactive'}
+                            </td>
                             <td>admin@gmail.com</td>
                             <td>
                               <div className="flex items-center space-x-4">
@@ -106,7 +110,7 @@ const ConfigurationsServersPage = () => {
                                     href={`/configurations/servers/${server.id}`}
                                     className="text-blue"
                                   >
-                                    Mostrar log
+                                    Show log
                                   </Link>
                                 </li>
                                 <li>
@@ -114,7 +118,7 @@ const ConfigurationsServersPage = () => {
                                     href={`/configurations/servers/${server.id}`}
                                     className="text-blue"
                                   >
-                                    Editar credenciais
+                                    Edit credentials
                                   </Link>
                                 </li>
                               </ul>
