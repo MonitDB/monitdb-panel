@@ -344,6 +344,7 @@ const InstalledVersions = ({ tabName }) => {
                                       SuportEndDate,
                                       LastUpdate,
                                       ProductLevel,
+                                      LinkUpdate,
                                     },
                                     index
                                   ) => (
@@ -381,9 +382,10 @@ const InstalledVersions = ({ tabName }) => {
                                   </td> */}
                                       <td>
                                         <a
-                                          href="/estates/"
+                                          href={LinkUpdate}
                                           className="inline-flex items-center space-x-2 text-blue no-underline"
                                           target="_blank"
+                                          rel="noreferrer"
                                         >
                                           <FontAwesomeIcon icon={faDownload} />
                                           <span>
