@@ -47,7 +47,7 @@ const ConfigurationsServersSinglePage = () => {
         })
 
         if (response?.status === 200) {
-          toast.success(`Servidor ${values.name} editado!`)
+          toast.success(`Server ${values.name} edited!`)
           router.push(serversPagePath)
           refreshData()
         }
@@ -78,7 +78,7 @@ const ConfigurationsServersSinglePage = () => {
     if (!currentServer || !window?.confirm) return
 
     const confirm = window.confirm(
-      `Deseja deletar o servidor "${currentServer.serverName}"?`
+      `Are you sure you want to delete the server "${currentServer.serverName}"?`
     )
 
     if (!confirm) return
@@ -87,7 +87,7 @@ const ConfigurationsServersSinglePage = () => {
       const response = await deleteServer(currentServer.id)
 
       if (response?.status === 200) {
-        toast.success(`Servidor ${currentServer.serverName} deletado!`)
+        toast.success(`Server ${currentServer.serverName} deleted!`)
         router.push(serversPagePath)
         refreshData()
       }
@@ -116,23 +116,23 @@ const ConfigurationsServersSinglePage = () => {
 
   return (
     <>
-      <NextSeo title="Configurações - MonitDB" />
+      <NextSeo title="Configurations - MonitDB" />
       <Layout>
         <PageWrapper className="p-8">
           <PageContent removeSidebarMargin={true}>
             <PageHeader
-              title="Configurações"
+              title="Configurations"
               breadcrumbs={[
                 {
-                  title: 'Configurações',
+                  title: 'Configurations',
                   href: '/configurations',
                 },
                 {
-                  title: 'Servidores',
+                  title: 'Servers',
                   href: '/configurations/servers',
                 },
                 {
-                  title: `Editar - ${currentServer?.serverName}`,
+                  title: `Edit - ${currentServer?.serverName}`,
                   href: `/configurations/servers/${router?.query?.id}`,
                 },
               ]}
@@ -143,7 +143,7 @@ const ConfigurationsServersSinglePage = () => {
                 onSubmit={formik.handleSubmit}
                 className="grid grid-cols-2 gap-4 md:max-w-[50%]"
               >
-                <Label text="Nome do servidor" className="col-span-2">
+                <Label text="Server name" className="col-span-2">
                   <Input
                     type="text"
                     name="name"
@@ -153,7 +153,7 @@ const ConfigurationsServersSinglePage = () => {
                     value={formik.values.name}
                   />
                 </Label>
-                <Label text="Ambiente" className="col-span-1">
+                <Label text="Environment" className="col-span-1">
                   {serverEnvironments?.length > 0 ? (
                     <Select
                       containerClass="bg-white"
@@ -172,7 +172,7 @@ const ConfigurationsServersSinglePage = () => {
                   )}
                 </Label>
                 <div className="col-span-1 relative flex items-end">
-                  <Label text="Tipo de servidor" className="w-3/5">
+                  <Label text="Server type" className="w-3/5">
                     {serverTypes.length > 0 ? (
                       <Select
                         containerClass="bg-white"
@@ -204,7 +204,7 @@ const ConfigurationsServersSinglePage = () => {
                     value={formik.values.host}
                   />
                 </Label>
-                <Label text="Usuário" className="col-span-1">
+                <Label text="User" className="col-span-1">
                   <Input
                     type="text"
                     name="user"
@@ -224,7 +224,7 @@ const ConfigurationsServersSinglePage = () => {
                     value={formik.values.password}
                   />
                 </Label>
-                <Label text="Porta" className="col-span-1">
+                <Label text="Port" className="col-span-1">
                   <Input
                     type="text"
                     name="port"
@@ -248,7 +248,7 @@ const ConfigurationsServersSinglePage = () => {
                     value={formik.values.status}
                   />
                 </Label>
-                <Label text="Descrição" className="col-span-2">
+                <Label text="Description" className="col-span-2">
                   <Textarea
                     name="description"
                     className="w-full px-4 h-10 bg-white leading-10 rounded outline-none text-sm"
@@ -262,13 +262,16 @@ const ConfigurationsServersSinglePage = () => {
                     {isLoading ? 'Saving...' : 'Save'}
                   </button>
                 </div>
-                <div className="col-span-2 flex bg-danger bg-opacity-10 border border-danger border-opacity-50 p-4 rounded-md">
+                <div
+                  className="col-span-2 flex bg-danger bg-opacity-10 border
+                  border-danger border-opacity-50 p-4 rounded-md"
+                >
                   <button
                     type="button"
                     className="btn btn-danger ml-auto"
                     onClick={() => handleDelete()}
                   >
-                    Deletar
+                    Delete
                   </button>
                 </div>
               </form>

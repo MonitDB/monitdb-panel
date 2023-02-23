@@ -32,19 +32,19 @@ const ServersPage = () => {
 
   return (
     <>
-      <NextSeo title="Configurações - MonitDB" />
+      <NextSeo title="Configurations - MonitDB" />
       <Layout>
         <PageWrapper className="p-8">
           <PageContent removeSidebarMargin={true}>
             <PageHeader
-              title="Configurações"
+              title="Configurations"
               breadcrumbs={[
                 {
-                  title: 'Configurações',
+                  title: 'Configurations',
                   href: '/configurations',
                 },
                 {
-                  title: 'Usuários',
+                  title: 'Users',
                   href: '/configurations/users',
                 },
               ]}
@@ -57,7 +57,7 @@ const ServersPage = () => {
                   className="btn btn--small"
                 >
                   <FontAwesomeIcon icon={faAdd} className="mr-2" />
-                  Adicionar
+                  Add
                 </Link>
               </header>
 
@@ -67,13 +67,13 @@ const ServersPage = () => {
                     <thead>
                       <tr className="text-sm font-bold text-gray-dark text-left">
                         <th className="border-b-2 border-gray-light w-2/5">
-                          Usuário
+                          User
                         </th>
                         <th className="border-b-2 border-gray-light">E-mail</th>
                         <th className="border-b-2 border-gray-light">
-                          Criado em
+                          Created at
                         </th>
-                        <th className="border-b-2 border-gray-light">Ativo</th>
+                        <th className="border-b-2 border-gray-light">Active</th>
                         <th className="border-b-2 border-gray-light">&nbsp;</th>
                       </tr>
                     </thead>
@@ -95,7 +95,7 @@ const ServersPage = () => {
                                   href={`/configurations/users/${user.id}`}
                                   className="text-blue"
                                 >
-                                  Editar dados
+                                  Edit
                                 </Link>
                               </li>
                             </ul>

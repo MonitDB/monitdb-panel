@@ -48,7 +48,7 @@ const UserSinglePage = () => {
         })
 
         if (response?.status === 200) {
-          toast.success(`Usuário ${values.loginName} editado!`)
+          toast.success(`User ${values.loginName} edited!`)
           router.push(usersPagePath)
         }
       } catch (error) {
@@ -84,7 +84,7 @@ const UserSinglePage = () => {
     if (!userData?.id || !window?.confirm) return
 
     const confirm = window.confirm(
-      `Deseja deletar o usuário "${userData.loginName}"?`
+      `Are you sure you want to delete the user "${userData.loginName}"?`
     )
 
     if (!confirm) return
@@ -93,7 +93,7 @@ const UserSinglePage = () => {
       const response = await UserServices.remove(userData.id)
 
       if (response?.status === 200) {
-        toast.success(`Usuário ${userData.loginName} deletado!`)
+        toast.success(`User ${userData.loginName} deleted!`)
         router.push(usersPagePath)
       }
     } catch (error) {
@@ -105,7 +105,7 @@ const UserSinglePage = () => {
   const rolesOptions = useMemo(() => {
     return [
       {
-        label: 'Selecione a função',
+        label: 'Select...',
         value: '',
       },
       ...roles.map((role) => ({
@@ -117,9 +117,9 @@ const UserSinglePage = () => {
 
   const statusOptions = useMemo(
     () => [
-      { value: '', label: 'Selecione o status' },
-      { value: '1', label: 'Ativo' },
-      { value: '0', label: 'Inativo' },
+      { value: '', label: 'Select...' },
+      { value: '1', label: 'Active' },
+      { value: '0', label: 'Inactive' },
     ],
     []
   )
@@ -146,23 +146,23 @@ const UserSinglePage = () => {
 
   return (
     <>
-      <NextSeo title="Configurações - MonitDB" />
+      <NextSeo title="Configurations - MonitDB" />
       <Layout>
         <PageWrapper className="p-8">
           <PageContent removeSidebarMargin={true}>
             <PageHeader
-              title="Configurações"
+              title="Configurations"
               breadcrumbs={[
                 {
-                  title: 'Configurações',
+                  title: 'Configurations',
                   href: '/configurations',
                 },
                 {
-                  title: 'Usuários',
+                  title: 'Users',
                   href: '/configurations/users',
                 },
                 {
-                  title: `Editar - ${userData?.loginName || ''}`,
+                  title: `Edit - ${userData?.loginName || ''}`,
                   href: `/configurations/users/${router?.query?.id}`,
                 },
               ]}
@@ -174,7 +174,7 @@ const UserSinglePage = () => {
               onSubmit={formik.handleSubmit}
               className="grid grid-cols-2 gap-4 md:max-w-[50%]"
             >
-              <Label text="Nome" className="col-span-1">
+              <Label text="Name" className="col-span-1">
                 <Input
                   type="text"
                   name="loginName"
@@ -211,7 +211,7 @@ const UserSinglePage = () => {
                   }
                 />
               </Label>
-              <Label text="Função" className="col-span-1">
+              <Label text="Role" className="col-span-1">
                 <Select
                   name="idRole"
                   containerClass="bg-white"
@@ -223,7 +223,7 @@ const UserSinglePage = () => {
                   }}
                 />
               </Label>
-              <Label text="Ativo" className="col-span-1">
+              <Label text="Status" className="col-span-1">
                 <Select
                   name="loginEnable"
                   containerClass="bg-white"
@@ -237,7 +237,7 @@ const UserSinglePage = () => {
               </Label>
               <div className="col-span-2 flex justify-between items-center">
                 <button type="submit" className="btn" disabled={isLoading}>
-                  {isLoading ? 'Salvando...' : 'Salvar'}
+                  {isLoading ? 'Saving...' : 'Save'}
                 </button>
               </div>
               <div className="col-span-2 flex bg-danger bg-opacity-10 border border-danger border-opacity-50 p-4 rounded-md">
@@ -246,7 +246,7 @@ const UserSinglePage = () => {
                   className="btn btn-danger ml-auto"
                   onClick={() => handleDelete()}
                 >
-                  Deletar
+                  Delete
                 </button>
               </div>
             </form>
