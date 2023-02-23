@@ -17,7 +17,7 @@ import DatabaseIcons from '~/helpers/database-icons'
 import useAlerts from '~/hooks/use-alerts'
 import useGlobal from '~/hooks/use-global'
 import Layout from '~/layouts/default'
-import { getAlertsById } from '~/services/alerts'
+import { getAlerts, getAlertsById } from '~/services/alerts'
 import { formatAlert } from '~/utils/alert'
 import { scrollToTop } from '~/utils/browser'
 import { getFormattedDate } from '~/utils/formats'
@@ -39,6 +39,14 @@ const AlertsDetailsPage = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const [isLoadingData, setIsLoadingData] = useState(true)
   const [pagination, setPagination] = useState({})
+
+  const isAllServersInfoLoaded = useMemo(
+    () =>
+      servers.length > 0 &&
+      serverTypes.length > 0 &&
+      serverEnvironments.length > 0,
+    [servers, serverTypes, serverEnvironments]
+  )
 
   const typesOptions = useMemo(
     () => [
@@ -94,9 +102,6 @@ const AlertsDetailsPage = () => {
       time: '',
       server: '',
     },
-    onSubmit: (values) => {
-      console.log('submit', values) // eslint-disable-line no-console
-    },
   })
 
   const handleChangeField = useCallback(
@@ -128,13 +133,20 @@ const AlertsDetailsPage = () => {
   }, [router.query]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const getAlertsData = useCallback(async () => {
+    const serverId = router?.query?.server
+    const requestQuery = {
+      PageLength: 10,
+      PageNumber: currentPage,
+      time: router?.query?.time,
+      metrics: router?.query?.types,
+    }
+
     setIsLoadingData(true)
 
     try {
-      const responseAlerts = await getAlertsById(router?.query?.server, {
-        PageLength: 10,
-        PageNumber: currentPage,
-      })
+      const responseAlerts = serverId
+        ? await getAlertsById(serverId, requestQuery)
+        : await getAlerts(requestQuery)
 
       setIsDataLoaded(true)
 
@@ -161,13 +173,7 @@ const AlertsDetailsPage = () => {
     } finally {
       setIsLoadingData(false)
     }
-  }, [
-    router?.query?.server,
-    servers,
-    serverTypes,
-    serverEnvironments,
-    currentPage,
-  ])
+  }, [router?.query, servers, serverTypes, serverEnvironments, currentPage])
 
   useEffect(() => {
     if (!isDataLoaded) return
@@ -177,168 +183,164 @@ const AlertsDetailsPage = () => {
   }, [currentPage]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    updateFormFields()
+    if (!isAllServersInfoLoaded) return
 
-    if (router?.query?.server) {
-      // setPagination({})
-      setCurrentPage(1)
-      setIsLoadingData(true)
-      setAlerts([])
-      getAlertsData()
-    }
-  }, [router?.query]) // eslint-disable-line react-hooks/exhaustive-deps
+    updateFormFields()
+    setCurrentPage(1)
+    setIsLoadingData(true)
+    setAlerts([])
+    getAlertsData()
+  }, [router?.query, isAllServersInfoLoaded]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>
       <NextSeo title="Alerts - MonitDB" />
       <Layout>
-        {currentServer && (
-          <PageWrapper>
-            <MonitoredServersSidebar />
+        <PageWrapper>
+          <MonitoredServersSidebar />
 
-            <PageContent className="border-b border-gray-light">
-              {currentServer && (
-                <div className="w-full flex items-center gap-4 mb-10">
-                  <div className="flex items-center justify-center w-16 h-16 rounded-full border border-gray-light">
-                    <DatabaseIcons
-                      name={currentServer.type.typeServerName}
-                      className="w-9 h-9"
-                    />
-                  </div>
-                  <div>
-                    <h4 className="heading-md">{currentServer.serverName}</h4>
-                    <p className="text-sm">
-                      4 GB Memory / 2 Intel vCPUs / 50 GB Disk + 25 GB / NYC1 -
-                      Plesk 18.0 on Ubuntu 20.04{' '}
-                    </p>
-                  </div>
+          <PageContent className="border-b border-gray-light">
+            {currentServer && (
+              <div className="w-full flex items-center gap-4 mb-10">
+                <div className="flex items-center justify-center w-16 h-16 rounded-full border border-gray-light">
+                  <DatabaseIcons
+                    name={currentServer.type.typeServerName}
+                    className="w-9 h-9"
+                  />
                 </div>
-              )}
+                <div>
+                  <h4 className="heading-md">{currentServer.serverName}</h4>
+                  <p className="text-sm">
+                    4 GB Memory / 2 Intel vCPUs / 50 GB Disk + 25 GB / NYC1 -
+                    Plesk 18.0 on Ubuntu 20.04{' '}
+                  </p>
+                </div>
+              </div>
+            )}
 
-              <form
-                className="w-full flex flex-col space-y-4 max-w-[760px] xl:space-x-4 xl:space-y-0 xl:flex-row"
-                onSubmit={formik.handleSubmit}
-              >
-                <Selector
-                  name="types"
-                  options={typesOptions}
-                  value={formik.values.types}
-                  onChange={(value) => handleChangeField('types', value)}
-                  className="w-full md:w-1/3 md:min-w-1/3"
-                />
-                <Select
-                  name="time"
-                  containerClass="w-full md:w-1/3 bg-white border-white md:min-w-1/3"
-                  options={timeOptions}
-                  value={formik.values.time}
-                  onChange={(value) => handleChangeField('time', value)}
-                />
-                <Select
-                  name="schedule"
-                  containerClass="w-full md:w-1/3 bg-white border-white md:min-w-1/3"
-                  options={serversOptions}
-                  value={formik.values.server}
-                  onChange={(value) => handleChangeField('server', value)}
-                />
-              </form>
-            </PageContent>
+            <form
+              className="w-full flex flex-col space-y-4 max-w-[760px]
+                  xl:space-x-4 xl:space-y-0 xl:flex-row"
+            >
+              <Selector
+                name="types"
+                options={typesOptions}
+                value={formik.values.types}
+                onChange={(value) => handleChangeField('types', value)}
+                className="w-full md:w-1/3 md:min-w-1/3"
+              />
+              <Select
+                name="time"
+                containerClass="w-full md:w-1/3 bg-white border-white md:min-w-1/3"
+                options={timeOptions}
+                value={formik.values.time}
+                onChange={(value) => handleChangeField('time', value)}
+              />
+              <Select
+                name="schedule"
+                containerClass="w-full md:w-1/3 bg-white border-white md:min-w-1/3"
+                options={serversOptions}
+                value={formik.values.server}
+                onChange={(value) => handleChangeField('server', value)}
+              />
+            </form>
+          </PageContent>
 
-            <PageContent>
-              {alerts.length > 0 ? (
-                <>
-                  <div className="-mx-4 mb-4 py-4 px-8 bg-white md:-mx-6">
-                    <table
-                      className={classNames('prose max-w-full w-full mb-4', {
-                        'opacity-25': isLoadingData,
-                      })}
-                    >
-                      <thead>
-                        <tr className="text-sm font-bold text-gray-dark text-left">
-                          <th className="w-5 border-b-2 border-gray-light">
+          <PageContent>
+            {alerts.length > 0 ? (
+              <>
+                <div className="-mx-4 mb-4 py-4 px-8 bg-white md:-mx-6">
+                  <table
+                    className={classNames('prose max-w-full w-full mb-4', {
+                      'opacity-25': isLoadingData,
+                    })}
+                  >
+                    <thead>
+                      <tr className="text-sm font-bold text-gray-dark text-left">
+                        <th className="w-5 border-b-2 border-gray-light">
+                          <Checkbox
+                            name="all"
+                            value="1"
+                            onChange={(value) => {
+                              // eslint-disable-next-line no-console
+                              console.log(`select all checkboxes ${value}`)
+                            }}
+                          />
+                        </th>
+                        <th className="border-b-2 border-gray-light">
+                          Alert type
+                        </th>
+                        <th className="border-b-2 border-gray-light w-60">
+                          Source object
+                        </th>
+                        <th className="border-b-2 border-gray-light w-20">
+                          Status
+                        </th>
+                        <th className="border-b-2 border-gray-light w-40">
+                          Last updated
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {alerts.map((alert, index) => (
+                        <tr
+                          key={`alert-${index}`}
+                          className="text-sm border-b border-gray-light transition-colors duration-200 ease-in-out lg:hover:bg-gray-light lg:hover:bg-opacity-50"
+                        >
+                          <td>
                             <Checkbox
-                              name="all"
-                              value="1"
+                              className="transform translate-y-1"
+                              name="alerts"
+                              value={alert.idAlert}
                               onChange={(value) => {
                                 // eslint-disable-next-line no-console
-                                console.log(`select all checkboxes ${value}`)
+                                console.log(`select checkbox ${value}`)
                               }}
                             />
-                          </th>
-                          <th className="border-b-2 border-gray-light">
-                            Alert type
-                          </th>
-                          <th className="border-b-2 border-gray-light w-60">
-                            Source object
-                          </th>
-                          <th className="border-b-2 border-gray-light w-20">
-                            Status
-                          </th>
-                          <th className="border-b-2 border-gray-light w-40">
-                            Last updated
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {alerts.map((alert, index) => (
-                          <tr
-                            key={`alert-${index}`}
-                            className="text-sm border-b border-gray-light transition-colors duration-200 ease-in-out lg:hover:bg-gray-light lg:hover:bg-opacity-50"
-                          >
-                            <td>
-                              <Checkbox
-                                className="transform translate-y-1"
-                                name="alerts"
-                                value={alert.idAlert}
-                                onChange={(value) => {
-                                  // eslint-disable-next-line no-console
-                                  console.log(`select checkbox ${value}`)
-                                }}
-                              />
-                            </td>
-                            <td>{alert.dsMessage}</td>
-                            <td>
-                              <div className="flex items-center space-x-4 w-full">
-                                <div className="flex items-center space-x-1">
-                                  <FontAwesomeIcon icon={faDatabase} />
-                                  <strong>{alert.server?.serverName}</strong>
-                                </div>
-                                {alert.serverEnvironment && (
-                                  <span className="flex items-center space-x-1">
-                                    <FontAwesomeIcon icon={faTag} />{' '}
-                                    <span className="rounded py-px px-1 text-xs bg-blue text-white">
-                                      {
-                                        alert.serverEnvironment
-                                          .typeServerEnvironmentName
-                                      }
-                                    </span>
-                                  </span>
-                                )}
+                          </td>
+                          <td>{alert.dsMessage}</td>
+                          <td>
+                            <div className="flex items-center space-x-4 w-full">
+                              <div className="flex items-center space-x-1">
+                                <FontAwesomeIcon icon={faDatabase} />
+                                <strong>{alert.server?.serverName}</strong>
                               </div>
-                            </td>
-                            <td>Enabled</td>
-                            <td>{getFormattedDate(alert.dtAlert)}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-
-                  {pagination?.totalResults > 0 && (
-                    <Pagination
-                      currentPage={currentPage}
-                      totalResults={pagination.totalResults}
-                      onChangePage={(page) => setCurrentPage(page)}
-                    />
-                  )}
-                </>
-              ) : (
-                <div className="flex justify-center items-center w-full min-h-28">
-                  <Loading light />
+                              {alert.serverEnvironment && (
+                                <span className="flex items-center space-x-1">
+                                  <FontAwesomeIcon icon={faTag} />{' '}
+                                  <span className="rounded py-px px-1 text-xs bg-blue text-white">
+                                    {
+                                      alert.serverEnvironment
+                                        .typeServerEnvironmentName
+                                    }
+                                  </span>
+                                </span>
+                              )}
+                            </div>
+                          </td>
+                          <td>Enabled</td>
+                          <td>{getFormattedDate(alert.dtAlert)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
-              )}
-            </PageContent>
-          </PageWrapper>
-        )}
+
+                {pagination?.totalResults > 0 && (
+                  <Pagination
+                    currentPage={currentPage}
+                    totalResults={pagination.totalResults}
+                    onChangePage={(page) => setCurrentPage(page)}
+                  />
+                )}
+              </>
+            ) : (
+              <div className="flex justify-center items-center w-full min-h-28">
+                <Loading light />
+              </div>
+            )}
+          </PageContent>
+        </PageWrapper>
       </Layout>
     </>
   )
