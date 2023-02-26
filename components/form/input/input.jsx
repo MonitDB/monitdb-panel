@@ -1,9 +1,25 @@
 import classNames from 'classnames'
 import React from 'react'
+import { useEffect, useRef } from 'react'
 
-const Input = ({ type = 'text', className = '', hasError, ...properties }) => {
+const Input = ({
+  type = 'text',
+  className = '',
+  hasError,
+  defaultValue,
+  ...properties
+}) => {
+  const inputReference = useRef()
+
+  useEffect(() => {
+    if (defaultValue) {
+      inputReference.current.value = defaultValue
+    }
+  }, [defaultValue])
+
   return (
     <input
+      ref={inputReference}
       type={type}
       className={classNames(
         `block w-full h-10 px-2 rounded border border-gray
