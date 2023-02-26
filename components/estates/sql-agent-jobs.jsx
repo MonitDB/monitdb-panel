@@ -74,8 +74,8 @@ const SqlAgentJobs = () => {
 
   const formik = useFormik({
     initialValues: {
-      JobName: '',
-      JobDescription: '',
+      JobName: modalRundeckJobs.data?.['JobName'],
+      JobDescription: modalRundeckJobs.data?.['JobDescription'],
     },
     validationSchema: RundeckJobsFormSchema,
     onSubmit: async () => {
@@ -199,13 +199,14 @@ const SqlAgentJobs = () => {
                                         <tr
                                           className="cursor-pointer"
                                           key={`job-item-${ServerId}-${index}`}
-                                          onClick={() =>
+                                          onClick={() => {
+                                            formik.handleReset()
                                             setModalRundeckJobs({
                                               index,
                                               data: filteredJobs[index],
                                               isOpen: !modalRundeckJobs.isOpen,
                                             })
-                                          }
+                                          }}
                                         >
                                           <td className="w-[6%]">{ServerId}</td>
                                           <td>{JobName}</td>
@@ -318,9 +319,10 @@ const SqlAgentJobs = () => {
               <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center">
                 <button
                   className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50"
-                  onClick={() =>
+                  onClick={() => {
+                    formik.handleReset()
                     setModalRundeckJobs({ ...modalRundeckJobs, isOpen: false })
-                  }
+                  }}
                 />
                 <div className="relative pt-12 p-5 bg-white text-blue font-bold min-w-full md:min-w-[500px]">
                   <button
