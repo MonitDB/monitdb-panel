@@ -215,14 +215,14 @@ const InstalledVersions = ({ tabName }) => {
           {groupedVersions?.length > 0 ? (
             <PageContent removeSidebarMargin={true}>
               <div className="flex items-center mb-20">
-                <div className="w-full md:w-1/4">
+                <div className="w-full md:w-2/12">
                   <Pie
                     ref={pieReference}
                     data={chartPieData}
                     onClick={onClick}
                   />
                 </div>
-                <div className="w-full md:w-3/4 md:pl-10">
+                <div className="w-full md:w-10/12 md:pl-10">
                   <table className="prose w-full max-w-full">
                     <thead>
                       <tr>
@@ -330,7 +330,6 @@ const InstalledVersions = ({ tabName }) => {
                                 <tr>
                                   <td colSpan="5">
                                     <h3 className="heading-xs pt-5">
-                                      {environmentIndex + 1} -{' '}
                                       {typeServerEnvironmentName}
                                     </h3>
                                   </td>

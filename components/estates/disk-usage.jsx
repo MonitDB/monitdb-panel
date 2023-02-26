@@ -108,7 +108,6 @@ const DiskUsage = ({ tabName }) => {
                         <tr>
                           <td colSpan="8">
                             <h3 className="heading-xs pt-5">
-                              {environmentIndex + 1} -{' '}
                               {typeServerEnvironmentName}
                             </h3>
                           </td>

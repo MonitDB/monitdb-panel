@@ -174,7 +174,6 @@ const Backups = ({ tabName }) => {
                             className="px-4 !border-l-0 !border-r-0"
                           >
                             <h3 className="heading-xs pt-5 pb-2">
-                              {environmentIndex + 1} -{' '}
                               {typeServerEnvironmentName}
                             </h3>
                           </td>
