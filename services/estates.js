@@ -19,3 +19,7 @@ export const getSqlServerLicensing = async () => {
 export const getSqlAgentJobs = async () => {
   return clientApi().get(`/api/execcomponent/prjobrd`)
 }
+
+export const getSqlAgentPRjobs = async () => {
+  return clientApi().get(`/api/execcomponent/prjob`)
+}
