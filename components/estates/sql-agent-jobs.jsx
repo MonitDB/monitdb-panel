@@ -324,9 +324,9 @@ const SqlAgentJobs = () => {
                     setModalRundeckJobs({ ...modalRundeckJobs, isOpen: false })
                   }}
                 />
-                <div className="relative pt-12 p-5 bg-white text-blue font-bold min-w-full md:min-w-[500px]">
+                <div className="relative pt-9 p-5 bg-white text-blue font-bold min-w-full md:min-w-[500px]">
                   <button
-                    className="w-4 h-4 absolute top-3 right-3"
+                    className="w-4 h-4 absolute top-5 right-5"
                     onClick={() =>
                       setModalRundeckJobs({
                         ...modalRundeckJobs,
