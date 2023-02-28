@@ -239,7 +239,10 @@ const ConfigurationsPage = () => {
                   <h3 className="mb-5 heading-md">Components</h3>
                   <ul className="space-y-4 text-sm">
                     <li>
-                      <Link href="/alerts/" className="group block">
+                      <Link
+                        href="/configurations/components/"
+                        className="group block"
+                      >
                         <strong className="block group-hover:text-blue">
                           Component settings
                         </strong>
