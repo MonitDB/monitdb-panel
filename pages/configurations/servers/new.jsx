@@ -65,7 +65,7 @@ const ConfigurationsServersSinglePage = () => {
 
   return (
     <>
-      <NextSeo title="Configurations - MonitDB" />
+      <NextSeo title="Servers - Configurations - MonitDB" />
       <Layout>
         <PageWrapper className="p-8">
           <PageContent removeSidebarMargin={true}>
