@@ -4,6 +4,8 @@ import React, { useCallback, useEffect, useState } from 'react'
 import Loading from '~/components/loading'
 import { PageContent, PageHeader, PageWrapper } from '~/components/page'
 import Layout from '~/layouts/default'
+// import { getComponents } from '~/services/components'
+import { getFeatures } from '~/services/features'
 
 import DataMock from './mock.json'
 import ComponentsModal from './modal'
@@ -12,26 +14,35 @@ const ComponentsPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [componentIdActive, setComponentIdActive] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
+  const [features, setFeatures] = useState([])
   const [data, setData] = useState([])
 
-  // const getComponents = useCallback(async () => {
-  //   const { server } = router.query
+  const getComponents = useCallback(async () => {
+    setIsLoading(true)
+    setData([])
 
-  //   if (!server) return
+    try {
+      // const componentsResponse = await getComponents()
+      const featuresResponse = await getFeatures()
 
-  //   setIsLoading(true)
-  //   setData([])
+      // setData(componentsResponse?.data)
+      setFeatures(featuresResponse?.data)
+      setData(DataMock)
+    } catch (error) {
+      console.error(error) // eslint-disable-line no-console
+    } finally {
+      setIsLoading(false)
+    }
+  }, [])
 
-  //   try {
-  //     const parameters = await getAlertsParameterByServerId(server)
+  const getFeatureNameById = useCallback(
+    (featureId) => {
+      const feature = features.find((feature) => feature.id === featureId)
 
-  //     setData(parameters?.data)
-  //   } catch (error) {
-  //     console.error(error) // eslint-disable-line no-console
-  //   } finally {
-  //     setIsLoading(false)
-  //   }
-  // }, [router.query])
+      return feature?.featureName
+    },
+    [features]
+  )
 
   const handleComponentsModalClose = useCallback(() => {
     setIsModalOpen(false)
@@ -41,9 +52,10 @@ const ComponentsPage = () => {
   }, [])
 
   useEffect(() => {
-    setData(DataMock)
+    // setData(DataMock)
+    getComponents()
     setIsLoading(false)
-  }, [])
+  }, [getComponents])
 
   return (
     <>
@@ -74,9 +86,7 @@ const ComponentsPage = () => {
                       <th className="border-b-2 border-gray-light">
                         Type Component ID
                       </th>
-                      <th className="border-b-2 border-gray-light">
-                        Feature ID
-                      </th>
+                      <th className="border-b-2 border-gray-light">Feature</th>
                       <th className="border-b-2 border-gray-light">Code</th>
                       <th className="border-b-2 border-gray-light">Name</th>
                       <th className="border-b-2 border-gray-light">
@@ -110,7 +120,7 @@ const ComponentsPage = () => {
                         >
                           <td>{component.IDCOMPONENT}</td>
                           <td>{component.IDTYPECOMPONENT}</td>
-                          <td>{component.IDFEATURE}</td>
+                          <td>{getFeatureNameById(component.IDFEATURE)}</td>
                           <td>{component.COMPONENTCODE}</td>
                           <td>{component.COMPONENTNAME}</td>
                           <td>{component.COMPONENTQUERY}</td>

@@ -2,37 +2,46 @@ import { faClose } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import classNames from 'classnames'
 import { useFormik } from 'formik'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { toast } from 'react-toastify'
 
 import Select from '~/components/form/select'
 import Grid from '~/components/grid'
 import Loading from '~/components/loading'
-import { getComponentById, updateComponentById } from '~/services/components'
+import {
+  // getComponentById,
+  updateComponentById,
+} from '~/services/components'
+import { getFeatures } from '~/services/features'
 import { handleException } from '~/utils/exceptions'
 
 const MetricsModal = ({ onClose, componentId }) => {
   const [isLoading, setIsLoading] = useState(false)
   const [isSending, setIsSending] = useState(false)
+  const [features, setFeatures] = useState([])
 
   const getComponentData = useCallback(async () => {
     setIsLoading(true)
 
     try {
-      const response = await getComponentById(componentId)
-      const componentData = response?.data
+      // const response = await getComponentById(componentId)
+      const featuresResponse = await getFeatures()
 
-      formik.setFieldValue('IDCOMPONENT', componentData?.IDCOMPONENT)
-      formik.setFieldValue('IDTYPECOMPONENT', componentData?.IDTYPECOMPONENT)
-      formik.setFieldValue('IDFEATURE', componentData?.IDFEATURE)
-      formik.setFieldValue('COMPONENTCODE', componentData?.COMPONENTCODE)
-      formik.setFieldValue('COMPONENTNAME', componentData?.COMPONENTNAME)
-      formik.setFieldValue('COMPONENTQUERY', componentData?.COMPONENTQUERY)
-      formik.setFieldValue(
-        'COMPONENTDATACREATE',
-        componentData?.COMPONENTDATACREATE
-      )
-      formik.setFieldValue('COMPONENTENABLE', componentData?.COMPONENTENABLE)
+      setFeatures(featuresResponse?.data)
+
+      // const componentData = response?.data
+
+      // formik.setFieldValue('IDCOMPONENT', componentData?.IDCOMPONENT)
+      // formik.setFieldValue('IDTYPECOMPONENT', componentData?.IDTYPECOMPONENT)
+      // formik.setFieldValue('IDFEATURE', componentData?.IDFEATURE)
+      // formik.setFieldValue('COMPONENTCODE', componentData?.COMPONENTCODE)
+      // formik.setFieldValue('COMPONENTNAME', componentData?.COMPONENTNAME)
+      // formik.setFieldValue('COMPONENTQUERY', componentData?.COMPONENTQUERY)
+      // formik.setFieldValue(
+      //   'COMPONENTDATACREATE',
+      //   componentData?.COMPONENTDATACREATE
+      // )
+      // formik.setFieldValue('COMPONENTENABLE', componentData?.COMPONENTENABLE)
     } catch (error) {
       console.error(error) // eslint-disable-line no-console
     } finally {
@@ -70,6 +79,15 @@ const MetricsModal = ({ onClose, componentId }) => {
       }
     },
   })
+
+  const featuresOptions = useMemo(
+    () =>
+      features.map((feature) => ({
+        value: feature.id,
+        label: feature.featureName,
+      })),
+    [features]
+  )
 
   useEffect(() => {
     if (!componentId) return
@@ -109,7 +127,6 @@ const MetricsModal = ({ onClose, componentId }) => {
                   type="text"
                   name="IDCOMPONENT"
                   className="w-full px-4 h-10 border border-gray-light leading-10 rounded outline-none text-sm lg:w-2/3"
-                  placeholder="IDCOMPONENT"
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   value={formik.values.IDCOMPONENT}
@@ -126,7 +143,6 @@ const MetricsModal = ({ onClose, componentId }) => {
                   type="text"
                   name="IDTYPECOMPONENT"
                   className="w-full px-4 h-10 border border-gray-light leading-10 rounded outline-none text-sm lg:w-2/3"
-                  placeholder="IDTYPECOMPONENT"
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   value={formik.values.IDTYPECOMPONENT}
@@ -139,13 +155,13 @@ const MetricsModal = ({ onClose, componentId }) => {
                 >
                   Feature ID
                 </label>
-                <input
-                  type="text"
+                <Select
+                  containerClass="bg-white w-full lg:w-2/3"
                   name="IDFEATURE"
-                  className="w-full px-4 h-10 border border-gray-light leading-10 rounded outline-none text-sm lg:w-2/3"
-                  placeholder="IDFEATURE"
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
+                  options={featuresOptions}
+                  onChange={(value) => {
+                    formik.setFieldValue('IDFEATURE', value)
+                  }}
                   value={formik.values.IDFEATURE}
                 />
               </div>
@@ -161,7 +177,6 @@ const MetricsModal = ({ onClose, componentId }) => {
                   type="text"
                   name="COMPONENTCODE"
                   className="w-full px-4 h-10 border border-gray-light leading-10 rounded outline-none text-sm lg:w-2/3"
-                  placeholder="COMPONENTCODE"
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   value={formik.values.COMPONENTCODE}
@@ -179,7 +194,6 @@ const MetricsModal = ({ onClose, componentId }) => {
                   type="text"
                   name="COMPONENTNAME"
                   className="w-full px-4 h-10 border border-gray-light leading-10 rounded outline-none text-sm lg:w-2/3"
-                  placeholder="COMPONENTNAME"
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   value={formik.values.COMPONENTNAME}
@@ -197,7 +211,6 @@ const MetricsModal = ({ onClose, componentId }) => {
                   type="text"
                   name="COMPONENTQUERY"
                   className="w-full px-4 h-10 border border-gray-light leading-10 rounded outline-none text-sm lg:w-2/3"
-                  placeholder="COMPONENTQUERY"
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   value={formik.values.COMPONENTQUERY}
@@ -215,7 +228,6 @@ const MetricsModal = ({ onClose, componentId }) => {
                   type="text"
                   name="COMPONENTDATACREATE"
                   className="w-full px-4 h-10 border border-gray-light leading-10 rounded outline-none text-sm lg:w-2/3"
-                  placeholder="COMPONENTDATACREATE"
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   value={formik.values.COMPONENTDATACREATE}
