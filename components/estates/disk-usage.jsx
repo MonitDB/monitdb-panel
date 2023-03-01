@@ -127,7 +127,7 @@ const DiskUsage = ({ tabName }) => {
                                   href="/estates/?tab=disk-usage"
                                   className="text-blue no-underline"
                                 >
-                                  {disk.Drive}:
+                                  {disk.Drive ? `${disk.Drive}:` : disk.Volume}
                                 </Link>
                               </p>
                             </td>
