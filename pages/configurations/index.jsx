@@ -18,7 +18,7 @@ const ConfigurationsPage = () => {
             <Grid>
               <div className="col-span-2 space-y-10 md:col-span-6">
                 <div className="w-full">
-                  <h3 className="mb-5 heading-md">Monitoramento</h3>
+                  <h3 className="mb-5 heading-md">Monitoring</h3>
                   <ul className="space-y-4 text-sm">
                     <li>
                       <Link
@@ -26,68 +26,67 @@ const ConfigurationsPage = () => {
                         className="group block"
                       >
                         <strong className="block group-hover:text-blue">
-                          Servers monitorados
+                          Monitored servers
                         </strong>
                         <span className="group-hover:opacity-75">
-                          Add servidores para monitorar; editar credenciais de
-                          conexão; remover ou suspender servidores monitorados.
+                          Add servers to monitor; edit connection credentials;
+                          remove or suspend monitored servers.
                         </span>
                       </Link>
                     </li>
 
-                    <li>
+                    <li className="opacity-25">
                       <Link href="/configurations/" className="group block">
                         <strong className="block group-hover:text-blue">
-                          Descoberta de instância
+                          Instance discovery
                         </strong>
                         <span className="group-hover:opacity-75">
-                          Descubra novas instâncias em sua propriedade.
+                          Discover new instances across your estate.
                         </span>
                       </Link>
                     </li>
 
-                    <li>
+                    <li className="opacity-25">
                       <Link href="/configurations/" className="group block">
                         <strong className="block group-hover:text-blue">
-                          Hosts VMware
+                          VMware hosts
                         </strong>
                         <span className="group-hover:opacity-75">
-                          Configure hosts VMware para monitoramento.
+                          Configure VMware hosts for monitoring.
                         </span>
                       </Link>
                     </li>
 
-                    <li>
+                    <li className="opacity-25">
                       <Link href="/configurations/" className="group block">
                         <strong className="block group-hover:text-blue">
-                          Vestígio
+                          Trace
                         </strong>
                         <span className="group-hover:opacity-75">
-                          Habilite ou desabilite o rastreamento do Profiler em
-                          servidores selecionados.
+                          Enable or disable Profiler trace on selected servers.
                         </span>
                       </Link>
                     </li>
 
-                    <li>
+                    <li className="opacity-25">
                       <Link href="/configurations/" className="group block">
                         <strong className="block group-hover:text-blue">
-                          Eventos estendidos
+                          Extended Events
                         </strong>
                         <span className="group-hover:opacity-75">
-                          Habilite ou desabilite eventos estendidos para alerta
-                          avançado.
+                          Enable or disable extended events for advanced
+                          alerting.
                         </span>
                       </Link>
                     </li>
 
-                    <li>
+                    <li className="opacity-25">
                       <Link href="/configurations/" className="group block">
                         <strong className="block group-hover:text-blue">
-                          Grupos
+                          Groups
                         </strong>
                         <span className="group-hover:opacity-75">
-                          Organize seus servidores monitorados em grupos.
+                          Organize your monitored servers into groups.
                         </span>
                       </Link>
                     </li>
@@ -95,15 +94,15 @@ const ConfigurationsPage = () => {
                 </div>
 
                 <div className="w-full">
-                  <h3 className="mb-5 heading-md">Opções do aplicativo</h3>
+                  <h3 className="mb-5 heading-md">Application options</h3>
                   <ul className="space-y-4 text-sm">
-                    <li>
+                    <li className="opacity-25">
                       <Link href="/configurations/" className="group block">
                         <strong className="block group-hover:text-blue">
-                          Configurations de autenticação
+                          Authentication settings
                         </strong>
                         <span className="group-hover:opacity-75">
-                          Defina as preferências de autenticação para o MonitDB.
+                          Set authentication preferences for MonitDB.
                         </span>
                       </Link>
                     </li>
@@ -114,32 +113,31 @@ const ConfigurationsPage = () => {
                         className="group block"
                       >
                         <strong className="block group-hover:text-blue">
-                          Gerenciar usuários
+                          Manage users
                         </strong>
                         <span className="group-hover:opacity-75">
-                          Gerencie usuários, funções e permissões.
+                          Manage users, roles and permissions.
                         </span>
                       </Link>
                     </li>
-                    <li>
+                    <li className="opacity-25">
                       <Link href="/configurations/" className="group block">
                         <strong className="block group-hover:text-blue">
-                          Conexões do monitor básico
+                          Base monitor connections
                         </strong>
                         <span className="group-hover:opacity-75">
-                          Veja os detalhes das conexões do seu monitor base;
-                          conectar a diferentes monitores de base.
+                          View details of your base monitor connections; connect
+                          to different base monitors.
                         </span>
                       </Link>
                     </li>
-                    <li>
+                    <li className="opacity-25">
                       <Link href="/configurations/" className="group block">
                         <strong className="block group-hover:text-blue">
-                          Configurations do visor
+                          Display settings
                         </strong>
                         <span className="group-hover:opacity-75">
-                          Defina as preferências de exibição do usuário para o
-                          MonitDB.
+                          Set user display preferences for MonitDB.
                         </span>
                       </Link>
                     </li>
@@ -150,34 +148,34 @@ const ConfigurationsPage = () => {
                   <h3 className="mb-5 heading-md">API</h3>
 
                   <ul className="space-y-4 text-sm">
-                    <li>
+                    <li className="opacity-25">
                       <Link href="/configurations/" className="group block">
                         <strong className="block group-hover:text-blue">
-                          Tokens de autenticação
+                          Authentication tokens
                         </strong>
                         <span className="group-hover:opacity-75">
-                          Gerencie tokens de autenticação para o MonitDB.
+                          Manage authentication tokens for MonitDB.
                         </span>
                       </Link>
                     </li>
 
-                    <li>
+                    <li className="opacity-25">
                       <Link href="/configurations/" className="group block">
                         <strong className="block group-hover:text-blue">
-                          Baixe o módulo PowerShell
+                          Download PowerShell Module
                         </strong>
                         <span className="group-hover:opacity-75">
-                          Configure o MonitDB por meio do PowerShell.
+                          Configure MonitDB via PowerShell.
                         </span>
                       </Link>
                     </li>
-                    <li>
+                    <li className="opacity-25">
                       <Link href="/configurations/" className="group block">
                         <strong className="block group-hover:text-blue">
-                          Veja exemplos de scripts do PowerShell
+                          View example PowerShell scripts
                         </strong>
                         <span className="group-hover:opacity-75">
-                          Baixe exemplos de scripts do PowerShell para a API.
+                          Download example PowerShell scripts for the API.
                         </span>
                       </Link>
                     </li>
@@ -186,52 +184,51 @@ const ConfigurationsPage = () => {
               </div>
               <div className="col-span-2 space-y-10 md:col-span-6">
                 <div className="w-full">
-                  <h3 className="mb-5 heading-md">Alertas e métricas</h3>
+                  <h3 className="mb-5 heading-md">Alerts and metrics</h3>
                   <ul className="space-y-4 text-sm">
                     <li>
-                      <Link href="/configurations/" className="group block">
+                      <Link href="/alerts/" className="group block">
                         <strong className="block group-hover:text-blue">
-                          Configurations de alerta
+                          Alert settings
                         </strong>
                         <span className="group-hover:opacity-75">
-                          Habilitar e desabilitar tipos de alerta; alterar os
-                          limites e níveis de alerta.
+                          Enable and disable alert types; change alert
+                          thresholds and levels.
                         </span>
                       </Link>
                     </li>
 
-                    <li>
+                    <li className="opacity-25">
                       <Link href="/configurations/" className="group block">
                         <strong className="block group-hover:text-blue">
-                          Configurations de notificação
+                          Notification settings
                         </strong>
                         <span className="group-hover:opacity-75">
-                          Configure e gerencie notificações de alertas
+                          Set up and manage notifications for alerts
                           (Email/Slack/SNMP/Webhook/EventLog).
                         </span>
                       </Link>
                     </li>
 
                     <li>
-                      <Link href="/configurations/" className="group block">
+                      <Link href="/alerts/metrics/" className="group block">
                         <strong className="block group-hover:text-blue">
-                          Métricas personalizadas
+                          Custom metrics
                         </strong>
                         <span className="group-hover:opacity-75">
-                          Crie e gerencie métricas personalizadas e alertas
-                          personalizados.
+                          Create and manage custom metrics and custom alerts.
                         </span>
                       </Link>
                     </li>
 
-                    <li>
+                    <li className="opacity-25">
                       <Link href="/configurations/" className="group block">
                         <strong className="block group-hover:text-blue">
-                          Supressão de alerta
+                          Alert suppression
                         </strong>
                         <span className="group-hover:opacity-75">
-                          Crie janelas de supressão de alertas agendadas ou
-                          pontuais (anteriormente janelas de manutenção).
+                          Create scheduled or one-off alert suppression windows
+                          (formerly maintenance windows).
                         </span>
                       </Link>
                     </li>
@@ -239,19 +236,38 @@ const ConfigurationsPage = () => {
                 </div>
 
                 <div className="w-full">
-                  <h3 className="mb-5 heading-md">Gestão de dados</h3>
+                  <h3 className="mb-5 heading-md">Components</h3>
                   <ul className="space-y-4 text-sm">
                     <li>
+                      <Link
+                        href="/configurations/components/"
+                        className="group block"
+                      >
+                        <strong className="block group-hover:text-blue">
+                          Component settings
+                        </strong>
+                        <span className="group-hover:opacity-75">
+                          Set up and manage component settings
+                        </span>
+                      </Link>
+                    </li>
+                  </ul>
+                </div>
+
+                <div className="w-full">
+                  <h3 className="mb-5 heading-md">Data Management</h3>
+                  <ul className="space-y-4 text-sm">
+                    <li className="opacity-25">
                       <Link href="/configurations/" className="group block">
                         <strong className="block group-hover:text-blue">
                           <i className="rounded py-px px-1 text-xs bg-blue text-white not-italic">
-                            aprimoradas
+                            improved
                           </i>{' '}
-                          Configurations de dados
+                          Data settings
                         </strong>
                         <span className="group-hover:opacity-75">
-                          Especifique por quanto tempo o MonitDB mantém os dados
-                          históricos em seu Repositório de Dados.
+                          Specify how long MonitDB keeps historic data in its
+                          Data Repository.
                         </span>
                       </Link>
                     </li>
@@ -259,15 +275,15 @@ const ConfigurationsPage = () => {
                 </div>
 
                 <div className="w-full">
-                  <h3 className="mb-5 heading-md">Licenciamento</h3>
+                  <h3 className="mb-5 heading-md">Licensing</h3>
                   <ul className="space-y-4 text-sm">
-                    <li>
+                    <li className="opacity-25">
                       <Link href="/configurations/" className="group block">
                         <strong className="block group-hover:text-blue">
-                          Licenciamento
+                          Licensing
                         </strong>
                         <span className="group-hover:opacity-75">
-                          Aloque licenças para seus servidores.
+                          Allocate licenses to your servers.
                         </span>
                       </Link>
                     </li>
@@ -275,15 +291,15 @@ const ConfigurationsPage = () => {
                 </div>
 
                 <div className="w-full">
-                  <h3 className="mb-5 heading-md">Sobre</h3>
+                  <h3 className="mb-5 heading-md">About</h3>
                   <ul className="space-y-4 text-sm">
-                    <li>
+                    <li className="opacity-25">
                       <Link href="/configurations/" className="group block">
                         <strong className="block group-hover:text-blue">
-                          Sobre
+                          About
                         </strong>
                         <span className="group-hover:opacity-75">
-                          Exiba informações sobre os componentes do MonitDB.
+                          View information about MonitDB components.
                         </span>
                       </Link>
                     </li>

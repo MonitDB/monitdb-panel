@@ -146,7 +146,7 @@ const UserSinglePage = () => {
 
   return (
     <>
-      <NextSeo title="Configurations - MonitDB" />
+      <NextSeo title="Users - Configurations - MonitDB" />
       <Layout>
         <PageWrapper className="p-8">
           <PageContent removeSidebarMargin={true}>
