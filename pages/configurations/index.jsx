@@ -251,6 +251,19 @@ const ConfigurationsPage = () => {
                         </span>
                       </Link>
                     </li>
+                    <li>
+                      <Link
+                        href="/configurations/logs/"
+                        className="group block"
+                      >
+                        <strong className="block group-hover:text-blue">
+                          Logs
+                        </strong>
+                        <span className="group-hover:opacity-75">
+                          View logs for MonitDB components.
+                        </span>
+                      </Link>
+                    </li>
                   </ul>
                 </div>
 

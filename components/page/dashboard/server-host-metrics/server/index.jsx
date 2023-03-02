@@ -166,10 +166,12 @@ const Server = () => {
                 {tableTopQueriesItems.map((item, itemIndex) => (
                   <tbody
                     key={`item-${itemIndex}`}
-                    className={[
+                    className={classNames(
                       'transition-all duration-150 ease-in-out',
-                      activeTableRowIndex === itemIndex && 'bg-white',
-                    ].join(' ')}
+                      {
+                        'bg-white': activeTableRowIndex === itemIndex,
+                      }
+                    )}
                   >
                     <tr className="border-b-0">
                       <td>
@@ -180,10 +182,12 @@ const Server = () => {
                         >
                           <FontAwesomeIcon
                             icon={faChevronRight}
-                            className={[
+                            className={classNames(
                               'mr-1 transition-all duration-150 ease-in-out',
-                              activeTableRowIndex === itemIndex && 'rotate-90',
-                            ].join(' ')}
+                              {
+                                'rotate-90': activeTableRowIndex === itemIndex,
+                              }
+                            )}
                           />
                           <span className="truncate">{item.title}</span>
                         </button>
@@ -198,10 +202,10 @@ const Server = () => {
                       <td>{faker.datatype.number({ min: 0, max: 100 })}</td>
                     </tr>
                     <tr
-                      className={
-                        itemIndex < labelsTopQueries.length - 1 &&
-                        'border-b border-b-gray border-opacity-50'
-                      }
+                      className={classNames({
+                        'border-b border-b-gray border-opacity-50':
+                          itemIndex < labelsTopQueries.length - 1,
+                      })}
                     >
                       <td colSpan={9} className="!p-0">
                         <Reveal active={activeTableRowIndex === itemIndex}>
