@@ -9,7 +9,8 @@ import Select from '~/components/form/select'
 import Grid from '~/components/grid'
 import Loading from '~/components/loading'
 import {
-  // getComponentById,
+  getComponentById,
+  getComponentTypes,
   updateComponentById,
 } from '~/services/components'
 import { getFeatures } from '~/services/features'
@@ -19,29 +20,31 @@ const MetricsModal = ({ onClose, componentId }) => {
   const [isLoading, setIsLoading] = useState(false)
   const [isSending, setIsSending] = useState(false)
   const [features, setFeatures] = useState([])
+  const [componentTypes, setComponentTypes] = useState([])
 
   const getComponentData = useCallback(async () => {
     setIsLoading(true)
 
     try {
-      // const response = await getComponentById(componentId)
-      const featuresResponse = await getFeatures()
+      const [componentResponse, featuresResponse, componentTypesResponse] =
+        await Promise.all([
+          getComponentById(componentId),
+          getFeatures(),
+          getComponentTypes(),
+        ])
+
+      const componentData = componentResponse?.data
+
+      formik.setValues({
+        idTypeComponent: componentData?.idTypeComponent,
+        idFeature: componentData?.idFeature,
+        componentCode: componentData?.componentCode,
+        componentName: componentData?.componentName,
+        componentQuery: componentData?.componentQuery,
+      })
 
       setFeatures(featuresResponse?.data)
-
-      // const componentData = response?.data
-
-      // formik.setFieldValue('IDCOMPONENT', componentData?.IDCOMPONENT)
-      // formik.setFieldValue('IDTYPECOMPONENT', componentData?.IDTYPECOMPONENT)
-      // formik.setFieldValue('IDFEATURE', componentData?.IDFEATURE)
-      // formik.setFieldValue('COMPONENTCODE', componentData?.COMPONENTCODE)
-      // formik.setFieldValue('COMPONENTNAME', componentData?.COMPONENTNAME)
-      // formik.setFieldValue('COMPONENTQUERY', componentData?.COMPONENTQUERY)
-      // formik.setFieldValue(
-      //   'COMPONENTDATACREATE',
-      //   componentData?.COMPONENTDATACREATE
-      // )
-      // formik.setFieldValue('COMPONENTENABLE', componentData?.COMPONENTENABLE)
+      setComponentTypes(componentTypesResponse?.data)
     } catch (error) {
       console.error(error) // eslint-disable-line no-console
     } finally {
@@ -51,14 +54,11 @@ const MetricsModal = ({ onClose, componentId }) => {
 
   const formik = useFormik({
     initialValues: {
-      IDTYPECOMPONENT: -1,
-      IDFEATURE: -1,
-      IDCOMPONENT: -1,
-      COMPONENTCODE: '',
-      COMPONENTNAME: '',
-      COMPONENTQUERY: '',
-      COMPONENTDATACREATE: '',
-      COMPONENTENABLE: -1,
+      idTypeComponent: -1,
+      idFeature: -1,
+      componentCode: '',
+      componentName: '',
+      componentQuery: '',
     },
     onSubmit: async (values) => {
       setIsSending(true)
@@ -87,6 +87,15 @@ const MetricsModal = ({ onClose, componentId }) => {
         label: feature.featureName,
       })),
     [features]
+  )
+
+  const componentTypesOptions = useMemo(
+    () =>
+      componentTypes.map((componentType) => ({
+        value: componentType.id,
+        label: componentType.typeComponentName,
+      })),
+    [componentTypes]
   )
 
   useEffect(() => {
@@ -119,139 +128,87 @@ const MetricsModal = ({ onClose, componentId }) => {
               <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
                 <label
                   className="w-full font-bold lg:w-1/3"
-                  htmlFor="IDCOMPONENT"
-                >
-                  ID
-                </label>
-                <input
-                  type="text"
-                  name="IDCOMPONENT"
-                  className="w-full px-4 h-10 border border-gray-light leading-10 rounded outline-none text-sm lg:w-2/3"
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  value={formik.values.IDCOMPONENT}
-                />
-              </div>
-              <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
-                <label
-                  className="w-full font-bold lg:w-1/3"
-                  htmlFor="IDTYPECOMPONENT"
-                >
-                  Type Component ID
-                </label>
-                <input
-                  type="text"
-                  name="IDTYPECOMPONENT"
-                  className="w-full px-4 h-10 border border-gray-light leading-10 rounded outline-none text-sm lg:w-2/3"
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  value={formik.values.IDTYPECOMPONENT}
-                />
-              </div>
-              <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
-                <label
-                  className="w-full font-bold lg:w-1/3"
-                  htmlFor="IDFEATURE"
-                >
-                  Feature ID
-                </label>
-                <Select
-                  containerClass="bg-white w-full lg:w-2/3"
-                  name="IDFEATURE"
-                  options={featuresOptions}
-                  onChange={(value) => {
-                    formik.setFieldValue('IDFEATURE', value)
-                  }}
-                  value={formik.values.IDFEATURE}
-                />
-              </div>
-
-              <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
-                <label
-                  className="w-full font-bold lg:w-1/3"
-                  htmlFor="COMPONENTCODE"
+                  htmlFor="componentCode"
                 >
                   Code
                 </label>
                 <input
                   type="text"
-                  name="COMPONENTCODE"
+                  name="componentCode"
                   className="w-full px-4 h-10 border border-gray-light leading-10 rounded outline-none text-sm lg:w-2/3"
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  value={formik.values.COMPONENTCODE}
+                  value={formik.values.componentCode}
+                />
+              </div>
+              <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
+                <label
+                  className="w-full font-bold lg:w-1/3"
+                  htmlFor="idTypeComponent"
+                >
+                  Component type
+                </label>
+
+                <Select
+                  containerClass="bg-white w-full lg:w-2/3"
+                  name="idTypeComponent"
+                  options={componentTypesOptions}
+                  onChange={(value) => {
+                    formik.setFieldValue('idTypeComponent', value)
+                  }}
+                  value={formik.values.idTypeComponent}
+                />
+              </div>
+              <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
+                <label
+                  className="w-full font-bold lg:w-1/3"
+                  htmlFor="idFeature"
+                >
+                  Feature ID
+                </label>
+                <Select
+                  containerClass="bg-white w-full lg:w-2/3"
+                  name="idFeature"
+                  options={featuresOptions}
+                  onChange={(value) => {
+                    formik.setFieldValue('idFeature', value)
+                  }}
+                  value={formik.values.idFeature}
                 />
               </div>
 
               <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
                 <label
                   className="w-full font-bold lg:w-1/3"
-                  htmlFor="COMPONENTNAME"
+                  htmlFor="componentName"
                 >
                   Name
                 </label>
                 <input
                   type="text"
-                  name="COMPONENTNAME"
+                  name="componentName"
                   className="w-full px-4 h-10 border border-gray-light leading-10 rounded outline-none text-sm lg:w-2/3"
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  value={formik.values.COMPONENTNAME}
+                  value={formik.values.componentName}
                 />
               </div>
 
               <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
                 <label
                   className="w-full font-bold lg:w-1/3"
-                  htmlFor="COMPONENTQUERY"
+                  htmlFor="componentQuery"
                 >
                   Query or URL
                 </label>
-                <input
+                <textarea
                   type="text"
-                  name="COMPONENTQUERY"
-                  className="w-full px-4 h-10 border border-gray-light leading-10 rounded outline-none text-sm lg:w-2/3"
+                  name="componentQuery"
+                  className="w-full h-24 p-2 border border-gray-light leading-6
+                    rounded outline-none text-sm lg:w-2/3"
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  value={formik.values.COMPONENTQUERY}
-                />
-              </div>
-
-              <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
-                <label
-                  className="w-full font-bold lg:w-1/3"
-                  htmlFor="COMPONENTDATACREATE"
-                >
-                  Created at
-                </label>
-                <input
-                  type="text"
-                  name="COMPONENTDATACREATE"
-                  className="w-full px-4 h-10 border border-gray-light leading-10 rounded outline-none text-sm lg:w-2/3"
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  value={formik.values.COMPONENTDATACREATE}
-                />
-              </div>
-
-              <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
-                <label
-                  className="w-full font-bold lg:w-1/3"
-                  htmlFor="COMPONENTENABLE"
-                >
-                  Enable
-                </label>
-                <Select
-                  containerClass="bg-white w-full lg:w-2/3"
-                  name="COMPONENTENABLE"
-                  options={[
-                    { value: 1, label: 'Active' },
-                    { value: 0, label: 'Inactive' },
-                  ]}
-                  onChange={(value) => {
-                    formik.setFieldValue('COMPONENTENABLE', value)
-                  }}
-                  value={formik.values.COMPONENTENABLE}
+                  value={formik.values.componentQuery}
                 />
               </div>
 

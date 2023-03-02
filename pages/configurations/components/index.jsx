@@ -14,7 +14,7 @@ import ComponentsModal from './modal'
 
 const ComponentsPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [componentIdActive, setComponentIdActive] = useState(0)
+  const [componentIdActive, setComponentIdActive] = useState('')
   const [isLoading, setIsLoading] = useState(true)
   const [isLoaded, setIsLoaded] = useState(false)
   const [features, setFeatures] = useState([])
@@ -50,7 +50,7 @@ const ComponentsPage = () => {
   const handleComponentsModalClose = useCallback(
     (forceRefresh) => {
       setIsModalOpen(false)
-      setComponentIdActive(0)
+      setComponentIdActive('')
 
       forceRefresh && getData()
     },
@@ -93,16 +93,13 @@ const ComponentsPage = () => {
                   <thead>
                     <tr className="text-sm font-bold text-gray-dark text-left">
                       <th className="border-b-2 border-gray-light whitespace-nowrap">
-                        ID
+                        Code
                       </th>
                       <th className="border-b-2 border-gray-light whitespace-nowrap">
                         Type Component ID
                       </th>
                       <th className="border-b-2 border-gray-light whitespace-nowrap">
                         Feature
-                      </th>
-                      <th className="border-b-2 border-gray-light whitespace-nowrap">
-                        Code
                       </th>
                       <th className="border-b-2 border-gray-light whitespace-nowrap">
                         Name
@@ -128,20 +125,19 @@ const ComponentsPage = () => {
                     )}
 
                     {data.length > 0 &&
-                      data.map((component, componentIndex) => (
+                      data.map((component) => (
                         <tr
-                          key={`component-${componentIndex}`}
+                          key={`component-${component.componentCode}`}
                           className={`text-sm border-b border-gray-light transition-colors
                           duration-200 ease-in-out cursor-pointer lg:hover:bg-gray-light lg:hover:bg-opacity-50`}
                           onClick={() => {
                             setIsModalOpen(true)
-                            setComponentIdActive(componentIndex)
+                            setComponentIdActive(component.componentCode)
                           }}
                         >
-                          <td>{componentIndex}</td>
+                          <td>{component.componentCode}</td>
                           <td>{component.idTypeComponent}</td>
                           <td>{getFeatureNameById(component.idFeature)}</td>
-                          <td>{component.componentCode}</td>
                           <td>{component.componentName}</td>
                           <td>{component.componentQuery}</td>
                           <td className="whitespace-nowrap">

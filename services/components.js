@@ -14,3 +14,9 @@ export const updateComponentById = async (values) => {
     ...values,
   })
 }
+
+export const getComponentTypes = async (parameters = {}) => {
+  return clientApi().get(
+    `/api/typecomponent?${formatObjectToQuery(parameters)}`
+  )
+}
