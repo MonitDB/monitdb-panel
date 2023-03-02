@@ -245,8 +245,8 @@ const MetricsModal = ({ onClose, componentId }) => {
                   containerClass="bg-white w-full lg:w-2/3"
                   name="COMPONENTENABLE"
                   options={[
-                    { value: 1, label: 'Ativo' },
-                    { value: 0, label: 'Inativo' },
+                    { value: 1, label: 'Active' },
+                    { value: 0, label: 'Inactive' },
                   ]}
                   onChange={(value) => {
                     formik.setFieldValue('COMPONENTENABLE', value)
