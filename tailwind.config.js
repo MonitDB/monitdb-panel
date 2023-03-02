@@ -36,6 +36,7 @@ module.exports = {
       fontFamily: {
         ibm: '"IBM Plex Sans", sans-serif',
         oxygen: '"Oxygen", sans-serif',
+        courier: '"Courier Prime", "Courier New", monospace',
       },
       fontSize: {
         0: '0px',
