@@ -5,7 +5,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { format, parseISO } from 'date-fns'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 
 import Link from '~/components/link'
 import Loading from '~/components/loading'
@@ -16,7 +16,8 @@ const DATE_FORMAT = "dd MMM yyyy kk':'mm"
 function RundeckJobs() {
   const [rundeckJobs, setRundeckJobs] = useState()
   const [isLoading, setIsLoading] = useState(true)
-  const getData = async () => {
+
+  const getData = useCallback(async () => {
     const { data } = await getSqlAgentRundeckJobs()
 
     if (!data) return
@@ -25,10 +26,11 @@ function RundeckJobs() {
 
     setRundeckJobs(data.executions)
     setIsLoading(false)
-  }
+  }, [])
 
   useEffect(() => {
     getData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
