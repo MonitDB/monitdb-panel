@@ -8,6 +8,7 @@ import { format, parseISO } from 'date-fns'
 import React, { useEffect, useMemo, useState } from 'react'
 import { useCallback } from 'react'
 
+import Loading from '~/components/loading'
 import Reveal from '~/helpers/reveal'
 import { getSqlAgentPRjobsExe } from '~/services/estates'
 
@@ -21,6 +22,7 @@ function Servers({ environmentServers, serversJobs }) {
   })
   const [jobsExe, setJobsExe] = useState()
   const [activeTableRowIndex, toggleActiveTableRowIndex] = useState()
+  const [isLoading, setIsLoading] = useState(true)
 
   const currentRunsJob = useMemo(
     () =>
@@ -65,6 +67,7 @@ function Servers({ environmentServers, serversJobs }) {
 
       if (!data) return
 
+      setIsLoading(false)
       setJobsExe(data)
     } catch (error) {
       // eslint-disable-next-line no-console
@@ -188,7 +191,7 @@ function Servers({ environmentServers, serversJobs }) {
               setJobModal({ ...jobModal, isOpen: false })
             }}
           />
-          <div className="relative h-full mt-[20px] m-5 p-5 bg-white overflow-hidden prose max-w-full prose-p:m-0 prose-th:text-center prose-td:text-center prose-td:align-top prose-th:border-b-4 prose-headings:m-0 prose-td:whitespace-nowrap prose-td:text-ellipsis prose-td:overflow-hidden prose-table:table-fixed py-4 px-8">
+          <div className="relative h-full w-full mt-[20px] m-5 p-5 bg-white overflow-hidden prose max-w-full prose-p:m-0 prose-th:text-center prose-td:text-center prose-td:align-top prose-th:border-b-4 prose-headings:m-0 prose-td:whitespace-nowrap prose-td:text-ellipsis prose-td:overflow-hidden prose-table:table-fixed py-9 px-8">
             <div className="absolute top-0 left-0 bg-gray bg-opacity-20 w-full h-full" />
             <button
               className="w-4 h-4 absolute top-5 right-5 z-[1]"
@@ -201,7 +204,7 @@ function Servers({ environmentServers, serversJobs }) {
             </button>
 
             <div className="relative">
-              <header className="flex flex-col mt-5 mb-5 md:flex-row md:justify-between md:items-center">
+              <header className="flex flex-col mb-5 md:flex-row md:justify-between md:items-center">
                 <div className="w-full md:w-3/4">
                   <h2 className="heading-md">Job</h2>
                 </div>
@@ -235,156 +238,160 @@ function Servers({ environmentServers, serversJobs }) {
                   <h2 className="heading-md">Jobs Exe</h2>
                 </div>
               </header>
-              <div
-                className={classNames(
-                  'py-4 pt-0 px-8 bg-white max-h-[40vh] overflow-auto'
-                )}
-              >
-                <table className="m-0">
-                  <thead className="sticky top-0 bg-white border-0 z-[2]">
-                    <tr>
-                      <th className="w-[3%] !border-0"></th>
-                      <th className="pt-0 pb-3.5 !border-0">Run Date Time</th>
-                      <th className="pt-6 pb-3.5 !border-0">
-                        Job
-                        <span className="absolute bottom-0 left-0 block h-1 w-full bg-[#9da5b1]" />
-                      </th>
-                      <th className="pt-6 pb-3.5 !border-0">
-                        Enabled
-                        <span className="absolute bottom-0 left-0 block h-1 w-full bg-[#9da5b1]" />
-                      </th>
-                      <th className="pt-6 pb-3.5 !border-0">
-                        Status
-                        <span className="absolute bottom-0 left-0 block h-1 w-full bg-[#9da5b1]" />
-                      </th>
-                      <th className="pt-6 pb-3.5 !border-0">
-                        Run Duration
-                        <span className="absolute bottom-0 left-0 block h-1 w-full bg-[#9da5b1]" />
-                      </th>
-                    </tr>
-                  </thead>
+              {isLoading ? (
+                <Loading />
+              ) : (
+                <div
+                  className={classNames(
+                    'py-4 pt-0 px-8 bg-white max-h-[40vh] overflow-auto'
+                  )}
+                >
+                  <table className="m-0">
+                    <thead className="sticky top-0 bg-white border-0 z-[2]">
+                      <tr>
+                        <th className="w-[3%] !border-0"></th>
+                        <th className="pt-0 pb-3.5 !border-0">Run Date Time</th>
+                        <th className="pt-6 pb-3.5 !border-0">
+                          Job
+                          <span className="absolute bottom-0 left-0 block h-1 w-full bg-[#9da5b1]" />
+                        </th>
+                        <th className="pt-6 pb-3.5 !border-0">
+                          Enabled
+                          <span className="absolute bottom-0 left-0 block h-1 w-full bg-[#9da5b1]" />
+                        </th>
+                        <th className="pt-6 pb-3.5 !border-0">
+                          Status
+                          <span className="absolute bottom-0 left-0 block h-1 w-full bg-[#9da5b1]" />
+                        </th>
+                        <th className="pt-6 pb-3.5 !border-0">
+                          Run Duration
+                          <span className="absolute bottom-0 left-0 block h-1 w-full bg-[#9da5b1]" />
+                        </th>
+                      </tr>
+                    </thead>
 
-                  {currentRunsJob.length > 0 ? (
-                    <tbody>
-                      {currentRunsJob.map(
-                        (
-                          {
-                            ServerId,
-                            Job,
-                            Enabled,
-                            Status,
-                            RunDuration,
-                            RunDateTime,
-                          },
-                          exeIndex
-                        ) => {
-                          return (
-                            <>
-                              <tr
-                                className={classNames('cursor-pointer', {
-                                  // 'bg-gray-light bg-opacity-30':
-                                  //   activeTableRowIndex === exeIndex,
-                                })}
-                                key={`exec-item-${ServerId}-${exeIndex}`}
-                                onClick={() =>
-                                  toggleActiveTableRowIndex(
-                                    activeTableRowIndex === exeIndex
-                                      ? undefined
-                                      : exeIndex
-                                  )
-                                }
-                              >
-                                <td>
-                                  <button
-                                    className="relative z-[1]"
-                                    type="button"
-                                  >
-                                    <FontAwesomeIcon
-                                      icon={faChevronRight}
-                                      className={classNames(
-                                        'mr-1 transition-all duration-150 ease-in-out',
-                                        {
-                                          'rotate-90':
-                                            activeTableRowIndex === exeIndex,
-                                        }
-                                      )}
-                                    />
-                                  </button>
-                                </td>
-                                <td>
-                                  {' '}
-                                  {format(parseISO(RunDateTime), DATE_FORMAT)}
-                                </td>
-                                <td>{Job}</td>
-                                <td>{Enabled}</td>
-                                <td>{Status}</td>
-                                <td>{RunDuration}</td>
-                              </tr>
-                              <tr>
-                                <td className="p-0" colSpan={6}>
-                                  <Reveal
-                                    active={activeTableRowIndex === exeIndex}
-                                  >
-                                    <div className="py-3 px-5 bg-gray-light bg-opacity-25">
-                                      <table className="m-0">
-                                        <thead className="border-0 z-[2]">
-                                          <tr>
-                                            <th className="relative pb-3.5 !border-0 w-[15%]">
-                                              Step Id
-                                              <span className="absolute bottom-0 left-0 block h-1 w-full bg-[#9da5b1]" />
-                                            </th>
-                                            <th className="relative pb-3.5 !border-0 w-[15%]">
-                                              Status
-                                              <span className="absolute bottom-0 left-0 block h-1 w-full bg-[#9da5b1]" />
-                                            </th>
-                                            <th className="relative pb-3.5 !border-0">
-                                              Message
-                                              <span className="absolute bottom-0 left-0 block h-1 w-full bg-[#9da5b1]" />
-                                            </th>
-                                          </tr>
-                                        </thead>
+                    {currentRunsJob.length > 0 ? (
+                      <tbody>
+                        {currentRunsJob.map(
+                          (
+                            {
+                              ServerId,
+                              Job,
+                              Enabled,
+                              Status,
+                              RunDuration,
+                              RunDateTime,
+                            },
+                            exeIndex
+                          ) => {
+                            return (
+                              <>
+                                <tr
+                                  className={classNames('cursor-pointer', {
+                                    // 'bg-gray-light bg-opacity-30':
+                                    //   activeTableRowIndex === exeIndex,
+                                  })}
+                                  key={`exec-item-${ServerId}-${exeIndex}`}
+                                  onClick={() =>
+                                    toggleActiveTableRowIndex(
+                                      activeTableRowIndex === exeIndex
+                                        ? undefined
+                                        : exeIndex
+                                    )
+                                  }
+                                >
+                                  <td>
+                                    <button
+                                      className="relative z-[1]"
+                                      type="button"
+                                    >
+                                      <FontAwesomeIcon
+                                        icon={faChevronRight}
+                                        className={classNames(
+                                          'mr-1 transition-all duration-150 ease-in-out',
+                                          {
+                                            'rotate-90':
+                                              activeTableRowIndex === exeIndex,
+                                          }
+                                        )}
+                                      />
+                                    </button>
+                                  </td>
+                                  <td>
+                                    {' '}
+                                    {format(parseISO(RunDateTime), DATE_FORMAT)}
+                                  </td>
+                                  <td>{Job}</td>
+                                  <td>{Enabled}</td>
+                                  <td>{Status}</td>
+                                  <td>{RunDuration}</td>
+                                </tr>
+                                <tr>
+                                  <td className="p-0" colSpan={6}>
+                                    <Reveal
+                                      active={activeTableRowIndex === exeIndex}
+                                    >
+                                      <div className="py-3 px-5 bg-gray-light bg-opacity-25">
+                                        <table className="m-0">
+                                          <thead className="border-0 z-[2]">
+                                            <tr>
+                                              <th className="relative pb-3.5 !border-0 w-[15%]">
+                                                Step Id
+                                                <span className="absolute bottom-0 left-0 block h-1 w-full bg-[#9da5b1]" />
+                                              </th>
+                                              <th className="relative pb-3.5 !border-0 w-[15%]">
+                                                Status
+                                                <span className="absolute bottom-0 left-0 block h-1 w-full bg-[#9da5b1]" />
+                                              </th>
+                                              <th className="relative pb-3.5 !border-0">
+                                                Message
+                                                <span className="absolute bottom-0 left-0 block h-1 w-full bg-[#9da5b1]" />
+                                              </th>
+                                            </tr>
+                                          </thead>
 
-                                        {selectedRunsJob.length > 0 ? (
-                                          <tbody>
-                                            {selectedRunsJob.map(
-                                              (
-                                                {
-                                                  ServerId,
-                                                  Status,
-                                                  Step_Id,
-                                                  Message,
-                                                },
-                                                exeIndex
-                                              ) => {
-                                                return (
-                                                  <tr
-                                                    className="cursor-pointer"
-                                                    key={`exec-item-${ServerId}-${exeIndex}`}
-                                                  >
-                                                    <td>{Step_Id}</td>
-                                                    <td>{Status}</td>
-                                                    <td className="leading-[23px] line-clamp-3 !whitespace-normal">
-                                                      {Message}
-                                                    </td>
-                                                  </tr>
-                                                )
-                                              }
-                                            )}
-                                          </tbody>
-                                        ) : undefined}
-                                      </table>
-                                    </div>
-                                  </Reveal>
-                                </td>
-                              </tr>
-                            </>
-                          )
-                        }
-                      )}
-                    </tbody>
-                  ) : undefined}
-                </table>
-              </div>
+                                          {selectedRunsJob.length > 0 ? (
+                                            <tbody>
+                                              {selectedRunsJob.map(
+                                                (
+                                                  {
+                                                    ServerId,
+                                                    Status,
+                                                    Step_Id,
+                                                    Message,
+                                                  },
+                                                  exeIndex
+                                                ) => {
+                                                  return (
+                                                    <tr
+                                                      className="cursor-pointer"
+                                                      key={`exec-item-${ServerId}-${exeIndex}`}
+                                                    >
+                                                      <td>{Step_Id}</td>
+                                                      <td>{Status}</td>
+                                                      <td className="leading-[23px] line-clamp-3 !whitespace-normal">
+                                                        {Message}
+                                                      </td>
+                                                    </tr>
+                                                  )
+                                                }
+                                              )}
+                                            </tbody>
+                                          ) : undefined}
+                                        </table>
+                                      </div>
+                                    </Reveal>
+                                  </td>
+                                </tr>
+                              </>
+                            )
+                          }
+                        )}
+                      </tbody>
+                    ) : undefined}
+                  </table>
+                </div>
+              )}
             </div>
           </div>
         </div>
