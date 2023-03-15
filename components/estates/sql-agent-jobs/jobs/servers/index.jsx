@@ -1,8 +1,12 @@
+/* eslint-disable sonarjs/no-duplicate-string */
+/* eslint-disable react-hooks/exhaustive-deps */
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons'
+import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import classNames from 'classnames'
 import { format, parseISO } from 'date-fns'
 import React, { useEffect, useMemo, useState } from 'react'
+import { useCallback } from 'react'
 
 import Reveal from '~/helpers/reveal'
 import { getSqlAgentPRjobsExe } from '~/services/estates'
@@ -16,18 +20,46 @@ function Servers({ environmentServers, serversJobs }) {
     jobData: {},
   })
   const [jobsExe, setJobsExe] = useState()
+  const [activeTableRowIndex, toggleActiveTableRowIndex] = useState()
 
-  const currentServerRuns = useMemo(
+  const currentRunsJob = useMemo(
     () =>
-      jobModal.isOpen && jobModal.jobData?.ServerId && jobsExe.length > 0
+      jobModal.isOpen && jobModal.jobData?.ServerId && jobsExe?.length > 0
         ? jobsExe.filter(
-            ({ ServerId }) => ServerId === jobModal.jobData.ServerId
+            ({ ServerId, Step_Id, Job }) =>
+              Step_Id === 0 &&
+              ServerId === jobModal.jobData.ServerId &&
+              Job === jobModal.jobData['Job Name']
           )
         : [],
     [jobModal, jobsExe]
   )
 
-  const getData = async () => {
+  const selectedRunsJob = useMemo(
+    () =>
+      jobModal.isOpen && jobModal.jobData?.ServerId && jobsExe?.length > 0
+        ? jobsExe.filter(
+            ({ ServerId, Step_Id, Job, RunDateTime }) =>
+              Step_Id !== 0 &&
+              ServerId === jobModal.jobData.ServerId &&
+              Job === jobModal.jobData['Job Name'] &&
+              currentRunsJob[activeTableRowIndex] &&
+              currentRunsJob[activeTableRowIndex]['RunDateTime'] === RunDateTime
+          )
+        : [],
+    [jobModal, jobsExe, currentRunsJob]
+  )
+
+  console.log({
+    environmentServers,
+    serversJobs,
+    jobsExe,
+    currentRunsJob,
+    selectedRunsJob,
+    activeTableRowIndex,
+  })
+
+  const getData = useCallback(async () => {
     try {
       const { data } = await getSqlAgentPRjobsExe()
 
@@ -38,19 +70,22 @@ function Servers({ environmentServers, serversJobs }) {
       // eslint-disable-next-line no-console
       console.log(error)
     }
-  }
+  }, [])
 
-  const handleServerExpandedIndices = (index) => {
-    const indices = new Set(serverExpandedIndices)
+  const handleServerExpandedIndices = useCallback(
+    (index) => {
+      const indices = new Set(serverExpandedIndices)
 
-    if (indices.has(index)) {
-      indices.delete(index)
-    } else {
-      indices.add(index)
-    }
+      if (indices.has(index)) {
+        indices.delete(index)
+      } else {
+        indices.add(index)
+      }
 
-    setServerExpandedIndices(indices)
-  }
+      setServerExpandedIndices(indices)
+    },
+    [serverExpandedIndices]
+  )
 
   useEffect(() => {
     getData()
@@ -58,52 +93,53 @@ function Servers({ environmentServers, serversJobs }) {
 
   return (
     <>
-      <div className="p-4 space-y-2">
-        {environmentServers.map(({ id, serverName }) => {
+      <div className="p-3 pb-0">
+        {environmentServers.map(({ id, serverName }, index) => {
           const serverJobs = serversJobs.filter(
             ({ ServerId }) => ServerId === id
           )
-
-          if (serverJobs.length === 0) return
-
           return (
             <>
               <button
-                key={`server-${id}`}
+                key={`environment-server-${index}`}
                 type="button"
                 className={classNames(
                   `w-full py-2 px-4 bg-white border space-x-4
                         rounded-sm font-bold text-left text-sm lg:hover:border-gray`,
                   {
-                    'border-gray': serverExpandedIndices.has(id),
-                    'border-gray-light': !serverExpandedIndices.has(id),
+                    'border-gray': serverExpandedIndices.has(index),
+                    'border-gray-light': !serverExpandedIndices.has(index),
+                    'mt-3': index !== 0,
                   }
                 )}
-                onClick={() => handleServerExpandedIndices(id)}
+                onClick={() => handleServerExpandedIndices(index)}
+                disabled={serverJobs.length === 0}
               >
                 <FontAwesomeIcon
                   icon={faChevronDown}
                   className={classNames(
                     'transition-all duration-300 ease-in-out transform',
                     {
-                      'rotate-180': serverExpandedIndices.has(id),
+                      'rotate-180': serverExpandedIndices.has(index),
                     }
                   )}
                 />
-                <span>
-                  {serverName} {`(${serverJobs.length})`}
-                </span>
+                <span>{serverName}</span>
               </button>
-              <Reveal active={serverExpandedIndices.has(id)}>
-                <div className={classNames('py-4 px-8 bg-white')}>
+              <Reveal active={serverExpandedIndices.has(index)}>
+                <div
+                  className={classNames(
+                    'prose max-w-full prose-p:m-0 prose-th:text-center prose-td:text-center prose-td:align-top prose-th:border-b-4 prose-headings:m-0 prose-td:whitespace-nowrap prose-td:text-ellipsis prose-td:overflow-hidden prose-table:table-fixed py-4 px-8 bg-white mt-3'
+                  )}
+                >
                   <table className="m-0">
                     <thead>
                       <tr>
                         <th className="w-[6%]">Id</th>
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th>Started</th>
-                        <th>Ended</th>
+                        <th>Job Name</th>
+                        <th>Enabled</th>
+                        <th>Job Created Date</th>
+                        <th>Frequency</th>
                       </tr>
                     </thead>
 
@@ -121,21 +157,18 @@ function Servers({ environmentServers, serversJobs }) {
                               })
                             }}
                           >
-                            <td className="w-[6%]">{jobData.ServerId}</td>
-                            <td>{jobData.JobName}</td>
-                            <td>{jobData.JobDescription}</td>
+                            <td>{jobData['ServerId']}</td>
+                            <td>{jobData['Job Name']}</td>
+                            <td>{jobData['Enabled']}</td>
                             <td>
-                              {format(
-                                parseISO(jobData.JobCreatedOn),
-                                DATE_FORMAT
-                              )}
+                              {jobData['Job Created Date']
+                                ? format(
+                                    parseISO(jobData['Job Created Date']),
+                                    DATE_FORMAT
+                                  )
+                                : undefined}
                             </td>
-                            <td>
-                              {format(
-                                parseISO(jobData.JobLastModifiedOn),
-                                DATE_FORMAT
-                              )}
-                            </td>
+                            <td>{jobData['Frequency']}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -155,7 +188,7 @@ function Servers({ environmentServers, serversJobs }) {
               setJobModal({ ...jobModal, isOpen: false })
             }}
           />
-          <div className="relative h-full mt-[20px] m-5 p-5 bg-white overflow-hidden">
+          <div className="relative h-full mt-[20px] m-5 p-5 bg-white overflow-hidden prose max-w-full prose-p:m-0 prose-th:text-center prose-td:text-center prose-td:align-top prose-th:border-b-4 prose-headings:m-0 prose-td:whitespace-nowrap prose-td:text-ellipsis prose-td:overflow-hidden prose-table:table-fixed py-4 px-8">
             <div className="absolute top-0 left-0 bg-gray bg-opacity-20 w-full h-full" />
             <button
               className="w-4 h-4 absolute top-5 right-5 z-[1]"
@@ -181,40 +214,18 @@ function Servers({ environmentServers, serversJobs }) {
                 <table className="m-0 whitespace-nowrap !table-auto">
                   <thead>
                     <tr>
-                      <th>Id</th>
                       <th>Job Name</th>
                       <th>Enabled</th>
-                      <th>Creation date</th>
-                      <th>Last modified date</th>
-                      <th>Step Nº</th>
-                      <th>Step name</th>
-                      <th>Job Owner</th>
-                      <th>Job Category</th>
-                      <th>Step Type</th>
-                      <th>Database name</th>
-                      <th>Command</th>
-                      <th>Occurrence</th>
-                      <th>Recurrence</th>
+                      <th>Job Created Date</th>
                       <th>Frequency</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr key={`job-item-${jobModal.jobData?.ServerId}`}>
-                      <td>{jobModal.jobData?.ServerId}</td>
-                      <td>{jobModal.jobData?.JobName}</td>
-                      <td>{jobModal.jobData?.IsEnabled}</td>
-                      <td>{jobModal.jobData?.JobCreatedOn}</td>
-                      <td>{jobModal.jobData?.JobLastModifiedOn}</td>
-                      <td>{jobModal.jobData?.StepNo}</td>
-                      <td>{jobModal.jobData?.StepName}</td>
-                      <td>{jobModal.jobData?.JobOwner}</td>
-                      <td>{jobModal.jobData?.JobCategory}</td>
-                      <td>{jobModal.jobData?.StepType}</td>
-                      <td>{jobModal.jobData?.Database}</td>
-                      <td>{jobModal.jobData?.ExecutableCommand}</td>
-                      <td>{jobModal.jobData?.Occurrence}</td>
-                      <td>{jobModal.jobData?.Recurrence}</td>
-                      <td>{jobModal.jobData?.Frequency}</td>
+                      <td>{jobModal.jobData['Job Name']}</td>
+                      <td>{jobModal.jobData['Enabled']}</td>
+                      <td>{jobModal.jobData['Job Created Date']}</td>
+                      <td>{jobModal.jobData['Frequency']}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -230,12 +241,10 @@ function Servers({ environmentServers, serversJobs }) {
                 )}
               >
                 <table className="m-0">
-                  <thead className="sticky top-0 bg-white border-0">
+                  <thead className="sticky top-0 bg-white border-0 z-[2]">
                     <tr>
-                      <th className="w-[6%] pt-6 pb-3.5 !border-0">
-                        Id
-                        <span className="absolute bottom-0 left-0 block h-1 w-full bg-[#9da5b1]" />
-                      </th>
+                      <th className="w-[3%] !border-0"></th>
+                      <th className="pt-0 pb-3.5 !border-0">Run Date Time</th>
                       <th className="pt-6 pb-3.5 !border-0">
                         Job
                         <span className="absolute bottom-0 left-0 block h-1 w-full bg-[#9da5b1]" />
@@ -255,21 +264,120 @@ function Servers({ environmentServers, serversJobs }) {
                     </tr>
                   </thead>
 
-                  {currentServerRuns.length > 0 ? (
+                  {currentRunsJob.length > 0 ? (
                     <tbody>
-                      {currentServerRuns.map(
+                      {currentRunsJob.map(
                         (
-                          { ServerId, Job, Enabled, Status, RunDuration },
-                          index
+                          {
+                            ServerId,
+                            Job,
+                            Enabled,
+                            Status,
+                            RunDuration,
+                            RunDateTime,
+                          },
+                          exeIndex
                         ) => {
                           return (
-                            <tr key={`job-item-${ServerId}-${index}`}>
-                              <td className="w-[6%]">{ServerId}</td>
-                              <td>{Job}</td>
-                              <td>{Enabled}</td>
-                              <td>{Status}</td>
-                              <td>{RunDuration}</td>
-                            </tr>
+                            <>
+                              <tr
+                                className={classNames('cursor-pointer', {
+                                  // 'bg-gray-light bg-opacity-30':
+                                  //   activeTableRowIndex === exeIndex,
+                                })}
+                                key={`exec-item-${ServerId}-${exeIndex}`}
+                                onClick={() =>
+                                  toggleActiveTableRowIndex(
+                                    activeTableRowIndex === exeIndex
+                                      ? undefined
+                                      : exeIndex
+                                  )
+                                }
+                              >
+                                <td>
+                                  <button
+                                    className="relative z-[1]"
+                                    type="button"
+                                  >
+                                    <FontAwesomeIcon
+                                      icon={faChevronRight}
+                                      className={classNames(
+                                        'mr-1 transition-all duration-150 ease-in-out',
+                                        {
+                                          'rotate-90':
+                                            activeTableRowIndex === exeIndex,
+                                        }
+                                      )}
+                                    />
+                                  </button>
+                                </td>
+                                <td>
+                                  {' '}
+                                  {format(parseISO(RunDateTime), DATE_FORMAT)}
+                                </td>
+                                <td>{Job}</td>
+                                <td>{Enabled}</td>
+                                <td>{Status}</td>
+                                <td>{RunDuration}</td>
+                              </tr>
+                              <tr>
+                                <td className="p-0" colSpan={6}>
+                                  <Reveal
+                                    active={activeTableRowIndex === exeIndex}
+                                  >
+                                    <div className="py-3 px-5 bg-gray-light bg-opacity-25">
+                                      <table className="m-0">
+                                        <thead className="border-0 z-[2]">
+                                          <tr>
+                                            <th className="relative pb-3.5 !border-0 w-[15%]">
+                                              Step Id
+                                              <span className="absolute bottom-0 left-0 block h-1 w-full bg-[#9da5b1]" />
+                                            </th>
+                                            <th className="relative pb-3.5 !border-0 w-[15%]">
+                                              Status
+                                              <span className="absolute bottom-0 left-0 block h-1 w-full bg-[#9da5b1]" />
+                                            </th>
+                                            <th className="relative pb-3.5 !border-0">
+                                              Message
+                                              <span className="absolute bottom-0 left-0 block h-1 w-full bg-[#9da5b1]" />
+                                            </th>
+                                          </tr>
+                                        </thead>
+
+                                        {selectedRunsJob.length > 0 ? (
+                                          <tbody>
+                                            {selectedRunsJob.map(
+                                              (
+                                                {
+                                                  ServerId,
+                                                  Status,
+                                                  Step_Id,
+                                                  Message,
+                                                },
+                                                exeIndex
+                                              ) => {
+                                                return (
+                                                  <tr
+                                                    className="cursor-pointer"
+                                                    key={`exec-item-${ServerId}-${exeIndex}`}
+                                                  >
+                                                    <td>{Step_Id}</td>
+                                                    <td>{Status}</td>
+                                                    <td className="leading-[23px] line-clamp-3 !whitespace-normal">
+                                                      {Message}
+                                                    </td>
+                                                  </tr>
+                                                )
+                                              }
+                                            )}
+                                          </tbody>
+                                        ) : undefined}
+                                      </table>
+                                    </div>
+                                  </Reveal>
+                                </td>
+                              </tr>
+                            </>
                           )
                         }
                       )}

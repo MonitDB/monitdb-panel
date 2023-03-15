@@ -4,6 +4,7 @@ import { faChevronDown } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import classNames from 'classnames'
 import React, { useEffect, useState } from 'react'
+import { useCallback } from 'react'
 
 import Servers from '~/components/estates/sql-agent-jobs/jobs/servers'
 import Loading from '~/components/loading'
@@ -23,27 +24,33 @@ function Jobs() {
     globalState: { servers, serverTypes, serverEnvironments },
   } = useGlobal()
 
-  const handleEnvironmentExpandedIndices = (index) => {
-    const indices = new Set(environmentExpandedIndices)
+  const handleEnvironmentExpandedIndices = useCallback(
+    (index) => {
+      const indices = new Set(environmentExpandedIndices)
 
-    if (indices.has(index)) {
-      indices.delete(index)
-    } else {
-      indices.add(index)
-    }
+      if (indices.has(index)) {
+        indices.delete(index)
+      } else {
+        indices.add(index)
+      }
 
-    setEnvironmentExpandedIndices(indices)
-  }
+      setEnvironmentExpandedIndices(indices)
+    },
+    [environmentExpandedIndices]
+  )
 
-  const getData = async () => {
+  const getData = useCallback(async () => {
     const { data } = await getSqlAgentPRjobs()
+
+    console.log('AgentPRjobs', data)
 
     setSqlAgentPRjobs(data)
     setIsLoading(false)
-  }
+  }, [])
 
   useEffect(() => {
     getData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
@@ -56,7 +63,7 @@ function Jobs() {
       {isLoading ? (
         <Loading />
       ) : (
-        <>
+        <div className="space-y-3">
           {servers?.length
             ? serverEnvironments.map(
                 ({ id, typeServerEnvironmentName }, environmentIndex) => {
@@ -84,7 +91,7 @@ function Jobs() {
                   return (
                     <div
                       key={`environment-${id}-${environmentIndex}-`}
-                      className="w-full prose max-w-full prose-p:m-0 prose-th:text-center prose-td:text-center prose-td:align-top prose-th:border-b-4 prose-headings:m-0 prose-td:whitespace-nowrap prose-td:text-ellipsis prose-td:overflow-hidden prose-table:table-fixed"
+                      className="w-full"
                     >
                       <button
                         type="button"
@@ -112,9 +119,11 @@ function Jobs() {
                         <span>{typeServerEnvironmentName}</span>
                       </button>
                       <div
-                        className={classNames('overflow-hidden max-h-0', {
-                          'max-h-[9999px]':
+                        className={classNames({
+                          block:
                             environmentExpandedIndices.has(environmentIndex),
+                          hidden:
+                            !environmentExpandedIndices.has(environmentIndex),
                         })}
                       >
                         <Servers
@@ -127,7 +136,7 @@ function Jobs() {
                 }
               )
             : undefined}
-        </>
+        </div>
       )}
     </section>
   )
