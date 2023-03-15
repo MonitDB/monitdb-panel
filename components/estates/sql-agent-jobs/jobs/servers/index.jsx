@@ -52,6 +52,7 @@ function Servers({ environmentServers, serversJobs }) {
     [jobModal, jobsExe, currentRunsJob]
   )
 
+  // eslint-disable-next-line no-console
   console.log({
     environmentServers,
     serversJobs,
