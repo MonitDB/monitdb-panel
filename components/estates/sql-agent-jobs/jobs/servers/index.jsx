@@ -41,24 +41,21 @@ function Servers({ environmentServers, serversJobs }) {
     () =>
       jobModal.isOpen && jobModal.jobData?.ServerId && jobsExe?.length > 0
         ? jobsExe.filter(
-            ({ ServerId, Step_Id, Job, RunDateTime }) =>
+            ({ Step_Id, ServerId, Job, RunDateTime }) =>
               Step_Id !== 0 &&
               ServerId === jobModal.jobData.ServerId &&
               Job === jobModal.jobData['Job Name'] &&
               currentRunsJob[activeTableRowIndex] &&
-              currentRunsJob[activeTableRowIndex]['RunDateTime'] === RunDateTime
+              RunDateTime === currentRunsJob[activeTableRowIndex]['RunDateTime']
           )
         : [],
-    [jobModal, jobsExe, currentRunsJob]
+    [activeTableRowIndex]
   )
 
   // eslint-disable-next-line no-console
   console.log({
-    environmentServers,
-    serversJobs,
     jobsExe,
     currentRunsJob,
-    selectedRunsJob,
     activeTableRowIndex,
   })
 
