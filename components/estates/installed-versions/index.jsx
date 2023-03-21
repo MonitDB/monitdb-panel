@@ -1,5 +1,8 @@
-import { faDownload, faFileExport } from '@fortawesome/free-solid-svg-icons'
-import { faChevronDown } from '@fortawesome/free-solid-svg-icons'
+import {
+  faDatabase,
+  faDownload,
+  faFileExport,
+} from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   ArcElement,
@@ -13,10 +16,10 @@ import {
   Tooltip,
 } from 'chart.js'
 import classNames from 'classnames'
+import { format, parseISO } from 'date-fns'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { getElementAtEvent, Pie } from 'react-chartjs-2'
 
-import ServersInstalledVersions from '~/components/estates/installed-versions/servers'
 import Loading from '~/components/loading'
 import { PageContent } from '~/components/page'
 import useGlobal from '~/hooks/use-global'
@@ -80,21 +83,6 @@ const InstalledVersions = ({ tabName }) => {
   const pieReference = useRef(null)
 
   const [versions, setVersions] = useState([])
-  const [environmentExpandedIndices, setEnvironmentExpandedIndices] = useState(
-    new Set()
-  )
-
-  const handleEnvironmentExpandedIndices = (index) => {
-    const indices = new Set(environmentExpandedIndices)
-
-    if (indices.has(index)) {
-      indices.delete(index)
-    } else {
-      indices.add(index)
-    }
-
-    setEnvironmentExpandedIndices(indices)
-  }
 
   const groupedVersions = useMemo(() => {
     if (versions.length === 0) {
@@ -225,8 +213,8 @@ const InstalledVersions = ({ tabName }) => {
       ) : (
         <>
           {groupedVersions?.length > 0 ? (
-            <PageContent className="pb-12" removeSidebarMargin={true}>
-              <div className="flex items-center">
+            <PageContent removeSidebarMargin={true}>
+              <div className="flex items-center mb-20">
                 <div className="w-full md:w-2/12">
                   <Pie
                     ref={pieReference}
@@ -286,7 +274,7 @@ const InstalledVersions = ({ tabName }) => {
                 </div>
               </div>
 
-              <div className="w-full">
+              <div className="w-full prose max-w-full prose-p:m-0 prose-td:align-top prose-th:border-b-4 prose-headings:m-0">
                 <header className="flex flex-col mb-5 md:flex-row md:justify-between md:items-center">
                   <button type="button" className="btn btn--small md:ml-auto">
                     <FontAwesomeIcon icon={faFileExport} className="mr-2" />
@@ -294,82 +282,136 @@ const InstalledVersions = ({ tabName }) => {
                   </button>
                 </header>
 
-                <div className="space-y-4 py-4 px-8">
-                  {servers?.length
-                    ? serverEnvironments.map(
-                        (
-                          { id, typeServerEnvironmentName },
-                          environmentIndex
-                        ) => {
-                          const filteredServers = filterServersByEnvironmentId(
-                            id,
-                            servers
-                          ).map((server) =>
-                            formatServer(server, { serverTypes })
-                          )
+                <div className="-mx-4 py-4 px-8 bg-white md:-mx-6">
+                  <table className="m-0">
+                    <thead>
+                      <tr>
+                        <th>Nome</th>
+                        <th>Versões</th>
+                        {/* <th>Status | Nº da versão</th> */}
+                        <th>Última atualização disponível</th>
+                        <th>Fim do suporte principal</th>
+                      </tr>
+                    </thead>
 
-                          const filteredVersions = []
+                    {servers?.length
+                      ? serverEnvironments.map(
+                          (
+                            { id, typeServerEnvironmentName },
+                            environmentIndex
+                          ) => {
+                            const filteredServers =
+                              filterServersByEnvironmentId(id, servers).map(
+                                (server) =>
+                                  formatServer(server, { serverTypes })
+                              )
 
-                          for (let version of versions) {
-                            const server = filteredServers.find(
-                              (server) => server.id === version.ServerId
-                            )
+                            const filteredVersions = []
 
-                            if (!server) continue
+                            for (let version of versions) {
+                              const server = filteredServers.find(
+                                (server) => server.id === version.ServerId
+                              )
 
-                            filteredVersions.push({
-                              ...version,
-                              Server: server.serverName,
-                            })
-                          }
+                              if (!server) continue
 
-                          if (filteredVersions.length === 0) {
-                            return ''
-                          }
+                              filteredVersions.push({
+                                ...version,
+                                Server: server.serverName,
+                              })
+                            }
 
-                          return (
-                            <div key={`environment-${id}-${environmentIndex}-`}>
-                              <button
-                                type="button"
-                                className={classNames(
-                                  `w-full py-2 px-4 bg-white border space-x-4
-                        rounded-sm font-bold text-left text-sm lg:hover:border-gray`,
-                                  {
-                                    'border-gray':
-                                      environmentExpandedIndices.has(id),
-                                    'border-gray-light':
-                                      !environmentExpandedIndices.has(id),
-                                  }
+                            if (filteredVersions.length === 0) {
+                              return ''
+                            }
+
+                            return (
+                              <tbody key={`server-${id}-${environmentIndex}`}>
+                                <tr>
+                                  <td colSpan="5">
+                                    <h3 className="heading-xs pt-5">
+                                      {typeServerEnvironmentName}
+                                    </h3>
+                                  </td>
+                                </tr>
+                                {filteredVersions.map(
+                                  (
+                                    {
+                                      Server,
+                                      Version,
+                                      Edition,
+                                      SuportEndDate,
+                                      LastUpdate,
+                                      ProductLevel,
+                                      LinkUpdate,
+                                    },
+                                    index
+                                  ) => (
+                                    <tr key={`server-production-${index}`}>
+                                      <td className="border-l-4 border-gray">
+                                        <FontAwesomeIcon
+                                          icon={faDatabase}
+                                          className="mr-2"
+                                        />
+                                        {Server}
+                                      </td>
+                                      <td>
+                                        <p>
+                                          {Version}
+                                          <br />
+                                          <span className="text-xs">
+                                            {Edition}
+                                          </span>
+                                        </p>
+                                      </td>
+                                      {/* <td>
+                                    <div className="w-full flex items-center space-x-4">
+                                      <FontAwesomeIcon
+                                        icon={faUpload}
+                                        className="text-lg text-gray-dark"
+                                      />
+                                      <p>
+                                        RTM CU29, June 14, 2022
+                                        <br />
+                                        <span className="text-xs">
+                                          14.0.3445.2
+                                        </span>
+                                      </p>
+                                    </div>
+                                  </td> */}
+                                      <td>
+                                        <a
+                                          href={LinkUpdate}
+                                          className="inline-flex items-center space-x-2 text-blue no-underline"
+                                          target="_blank"
+                                          rel="noreferrer"
+                                        >
+                                          <FontAwesomeIcon icon={faDownload} />
+                                          <span>
+                                            {ProductLevel} {LastUpdate}
+                                          </span>
+                                        </a>
+                                        {/* <p>
+                                      <span className="text-xs">
+                                        Released 13 days ago on 20 Sep 2022
+                                      </span>
+                                    </p> */}
+                                      </td>
+                                      <td>
+                                        {format(
+                                          parseISO(SuportEndDate),
+                                          'dd MMM yyyy'
+                                        )}
+                                      </td>
+                                    </tr>
+                                  )
                                 )}
-                                onClick={() =>
-                                  handleEnvironmentExpandedIndices(id)
-                                }
-                              >
-                                <FontAwesomeIcon
-                                  icon={faChevronDown}
-                                  className={classNames('transform', {
-                                    'rotate-180':
-                                      environmentExpandedIndices.has(id),
-                                  })}
-                                />
-                                <span>{typeServerEnvironmentName}</span>
-                              </button>
-                              <div
-                                className={classNames({
-                                  block: environmentExpandedIndices.has(id),
-                                  hidden: !environmentExpandedIndices.has(id),
-                                })}
-                              >
-                                <ServersInstalledVersions
-                                  environmentServers={filteredServers}
-                                  serversVerions={filteredVersions}
-                                />
-                              </div>
-                            </div>
-                          )
-                        }
-                      )
-                    : undefined}
+                              </tbody>
+                            )
+                          }
+                        )
+                      : undefined}
+                  </table>
                 </div>
               </div>
             </PageContent>
