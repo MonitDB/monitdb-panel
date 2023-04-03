@@ -14,5 +14,6 @@ export const formatObjectToQuery = (object) => {
 }
 
 export const megaBytesToGigaBytes = (mb) => {
+  if (!mb) return mb
   return Math.ceil(Number.parseInt(mb) / 1024)
 }

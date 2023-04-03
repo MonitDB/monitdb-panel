@@ -59,20 +59,6 @@ function Servers({ environmentServers, serversJobs }) {
     activeTableRowIndex,
   })
 
-  const getData = useCallback(async () => {
-    try {
-      const { data } = await getSqlAgentPRjobsExe()
-
-      if (!data) return
-
-      setIsLoading(false)
-      setJobsExe(data)
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.log(error)
-    }
-  }, [])
-
   const handleServerExpandedIndices = useCallback(
     (index) => {
       const indices = new Set(serverExpandedIndices)
@@ -87,6 +73,20 @@ function Servers({ environmentServers, serversJobs }) {
     },
     [serverExpandedIndices]
   )
+
+  const getData = useCallback(async () => {
+    try {
+      const { data } = await getSqlAgentPRjobsExe()
+
+      if (!data) return
+
+      setIsLoading(false)
+      setJobsExe(data)
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.log(error)
+    }
+  }, [])
 
   useEffect(() => {
     getData()
