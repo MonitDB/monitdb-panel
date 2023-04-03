@@ -6,11 +6,9 @@ import { faChevronDown } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import classNames from 'classnames'
 import { format, parseISO } from 'date-fns'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 
-import Loading from '~/components/loading'
 import Reveal from '~/helpers/reveal'
-import { getBackups } from '~/services/estates'
 import { separeteBackups } from '~/utils/backups'
 import { megaBytesToGigaBytes } from '~/utils/formats'
 import { getIntervalTimeBetweenDates } from '~/utils/global'
@@ -36,10 +34,8 @@ function getIntervalTime(backup_start_date, backup_finish_date) {
   }`
 }
 
-const EnvironmentServersBackups = ({ servers, onSetBackupsModal }) => {
+const EnvironmentServersBackups = ({ servers, onSetBackupsModal, backups }) => {
   const [serverExpandedIndices, setServerExpandedIndices] = useState(new Set())
-  const [isLoading, setIsLoading] = useState(true)
-  const [backups, setBackups] = useState([])
 
   const handleServerExpandedIndices = useCallback(
     (index) => {
@@ -55,24 +51,6 @@ const EnvironmentServersBackups = ({ servers, onSetBackupsModal }) => {
     },
     [serverExpandedIndices]
   )
-
-  const getData = useCallback(async () => {
-    const { data } = await getBackups()
-
-    if (!data) return
-
-    // eslint-disable-next-line no-console
-
-    setBackups(data)
-    setIsLoading(false)
-  }, [])
-
-  useEffect(() => {
-    setIsLoading(true)
-    getData()
-  }, [])
-
-  console.log(backups)
 
   return (
     <div className="p-3 pb-0 space-y-3">
@@ -177,149 +155,145 @@ const EnvironmentServersBackups = ({ servers, onSetBackupsModal }) => {
                   }
                 >
                   <div className="py-4 px-8 bg-white">
-                    {isLoading ? (
-                      <Loading />
-                    ) : (
-                      <table className="m-0">
-                        <thead>
-                          <tr>
-                            {/* <th
+                    <table className="m-0">
+                      <thead>
+                        <tr>
+                          {/* <th
                               rowSpan={2}
                               className="px-4 align-middle border-r border-r-gray-light w-1/5"
                             >
                               Database
                             </th> */}
-                            <th colSpan={3} className="text-center w-[26.666%]">
-                              <span className="w-2.5 h-2.5 bg-gray-dark mr-1 inline-block relative top-[0.5px]" />
-                              Full
-                            </th>
-                            <th colSpan={3} className="text-center w-[26.666%]">
-                              <span className="w-2.5 h-2.5 bg-blue mr-1 inline-block relative top-[0.5px]" />
-                              Differential
-                            </th>
-                            <th colSpan={3} className="text-center w-[26.666%]">
-                              <span className="w-2.5 h-2.5 bg-blue bg-opacity-60 mr-1 inline-block relative top-[0.5px]" />
-                              Log
-                            </th>
-                          </tr>
-                          <tr>
-                            <th className="lowercase first-letter:uppercase text-left !border-r-white">
-                              Start date
-                            </th>
-                            <th className="lowercase first-letter:uppercase text-center !border-r-white">
-                              Duration
-                            </th>
-                            <th className="lowercase first-letter:uppercase text-right">
-                              Size
-                            </th>
-                            <th className="lowercase first-letter:uppercase text-left !border-r-white">
-                              Start date
-                            </th>
-                            <th className="lowercase first-letter:uppercase text-center !border-r-white">
-                              Duration
-                            </th>
-                            <th className="lowercase first-letter:uppercase text-right">
-                              Size
-                            </th>
-                            <th className="lowercase first-letter:uppercase text-left !border-r-white">
-                              Start date
-                            </th>
-                            <th className="lowercase first-letter:uppercase text-center !border-r-white">
-                              Duration
-                            </th>
-                            <th className="lowercase first-letter:uppercase text-right">
-                              Size
-                            </th>
-                          </tr>
-                        </thead>
+                          <th colSpan={3} className="text-center w-[26.666%]">
+                            <span className="w-2.5 h-2.5 bg-gray-dark mr-1 inline-block relative top-[0.5px]" />
+                            Full
+                          </th>
+                          <th colSpan={3} className="text-center w-[26.666%]">
+                            <span className="w-2.5 h-2.5 bg-blue mr-1 inline-block relative top-[0.5px]" />
+                            Differential
+                          </th>
+                          <th colSpan={3} className="text-center w-[26.666%]">
+                            <span className="w-2.5 h-2.5 bg-blue bg-opacity-60 mr-1 inline-block relative top-[0.5px]" />
+                            Log
+                          </th>
+                        </tr>
+                        <tr>
+                          <th className="lowercase first-letter:uppercase text-left !border-r-white">
+                            Start date
+                          </th>
+                          <th className="lowercase first-letter:uppercase text-center !border-r-white">
+                            Duration
+                          </th>
+                          <th className="lowercase first-letter:uppercase text-right">
+                            Size
+                          </th>
+                          <th className="lowercase first-letter:uppercase text-left !border-r-white">
+                            Start date
+                          </th>
+                          <th className="lowercase first-letter:uppercase text-center !border-r-white">
+                            Duration
+                          </th>
+                          <th className="lowercase first-letter:uppercase text-right">
+                            Size
+                          </th>
+                          <th className="lowercase first-letter:uppercase text-left !border-r-white">
+                            Start date
+                          </th>
+                          <th className="lowercase first-letter:uppercase text-center !border-r-white">
+                            Duration
+                          </th>
+                          <th className="lowercase first-letter:uppercase text-right">
+                            Size
+                          </th>
+                        </tr>
+                      </thead>
 
-                        <tbody>
-                          <tr>
-                            <td className="text-left !border-r-white">
-                              {DATA.Full.lastBackup.backup_start_date ? (
-                                <>
-                                  <FontAwesomeIcon
-                                    icon={faClock}
-                                    className="mr-2 text-blue"
-                                  />{' '}
-                                  <span>
-                                    {format(
-                                      parseISO(
-                                        DATA.Full.lastBackup.backup_start_date
-                                      ),
-                                      dateFormat
-                                    )}
-                                  </span>
-                                </>
-                              ) : undefined}
-                            </td>
-                            <td className="text-center !border-r-white">
-                              {DATA.Full.lastBackup.intervalTime}
-                            </td>
-                            <td className="text-right">
-                              {DATA.Full.lastBackup.backup_size
-                                ? `${megaBytesToGigaBytes(
-                                    DATA.Full.lastBackup.backup_size
-                                  )} GB`
-                                : undefined}
-                            </td>
-                            <td className="text-left !border-r-white">
-                              {DATA.Diferential.lastBackup.backup_start_date ? (
-                                <>
-                                  <FontAwesomeIcon
-                                    icon={faClock}
-                                    className="mr-2 text-blue"
-                                  />{' '}
-                                  <span>
-                                    {format(
-                                      parseISO(
-                                        DATA.Diferential.lastBackup
-                                          .backup_start_date
-                                      ),
-                                      dateFormat
-                                    )}
-                                  </span>
-                                </>
-                              ) : undefined}
-                            </td>
-                            <td className="text-center !border-r-white">
-                              {DATA.Diferential.lastBackup.intervalTime}
-                            </td>
-                            <td className="text-right">
-                              {DATA.Diferential.lastBackup.backup_size
-                                ? `${DATA.Diferential.lastBackup.backup_size} GB`
-                                : ''}
-                            </td>
-                            <td className="text-left !border-r-white">
-                              {DATA.Log.lastBackup.backup_start_date ? (
-                                <>
-                                  <FontAwesomeIcon
-                                    icon={faClock}
-                                    className="mr-2 text-blue"
-                                  />{' '}
-                                  <span>
-                                    {format(
-                                      parseISO(
-                                        DATA.Log.lastBackup.backup_start_date
-                                      ),
-                                      dateFormat
-                                    )}
-                                  </span>
-                                </>
-                              ) : undefined}
-                            </td>
-                            <td className="text-center !border-r-white">
-                              {DATA.Log.lastBackup.intervalTime}
-                            </td>
-                            <td className="text-right">
-                              {DATA.Log.lastBackup.backup_size
-                                ? `${DATA.Log.lastBackup.backup_size} GB`
-                                : ''}
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    )}
+                      <tbody>
+                        <tr>
+                          <td className="text-left !border-r-white">
+                            {DATA.Full.lastBackup.backup_start_date ? (
+                              <>
+                                <FontAwesomeIcon
+                                  icon={faClock}
+                                  className="mr-2 text-blue"
+                                />{' '}
+                                <span>
+                                  {format(
+                                    parseISO(
+                                      DATA.Full.lastBackup.backup_start_date
+                                    ),
+                                    dateFormat
+                                  )}
+                                </span>
+                              </>
+                            ) : undefined}
+                          </td>
+                          <td className="text-center !border-r-white">
+                            {DATA.Full.lastBackup.intervalTime}
+                          </td>
+                          <td className="text-right">
+                            {DATA.Full.lastBackup.backup_size
+                              ? `${megaBytesToGigaBytes(
+                                  DATA.Full.lastBackup.backup_size
+                                )} GB`
+                              : undefined}
+                          </td>
+                          <td className="text-left !border-r-white">
+                            {DATA.Diferential.lastBackup.backup_start_date ? (
+                              <>
+                                <FontAwesomeIcon
+                                  icon={faClock}
+                                  className="mr-2 text-blue"
+                                />{' '}
+                                <span>
+                                  {format(
+                                    parseISO(
+                                      DATA.Diferential.lastBackup
+                                        .backup_start_date
+                                    ),
+                                    dateFormat
+                                  )}
+                                </span>
+                              </>
+                            ) : undefined}
+                          </td>
+                          <td className="text-center !border-r-white">
+                            {DATA.Diferential.lastBackup.intervalTime}
+                          </td>
+                          <td className="text-right">
+                            {DATA.Diferential.lastBackup.backup_size
+                              ? `${DATA.Diferential.lastBackup.backup_size} GB`
+                              : ''}
+                          </td>
+                          <td className="text-left !border-r-white">
+                            {DATA.Log.lastBackup.backup_start_date ? (
+                              <>
+                                <FontAwesomeIcon
+                                  icon={faClock}
+                                  className="mr-2 text-blue"
+                                />{' '}
+                                <span>
+                                  {format(
+                                    parseISO(
+                                      DATA.Log.lastBackup.backup_start_date
+                                    ),
+                                    dateFormat
+                                  )}
+                                </span>
+                              </>
+                            ) : undefined}
+                          </td>
+                          <td className="text-center !border-r-white">
+                            {DATA.Log.lastBackup.intervalTime}
+                          </td>
+                          <td className="text-right">
+                            {DATA.Log.lastBackup.backup_size
+                              ? `${DATA.Log.lastBackup.backup_size} GB`
+                              : ''}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
                   </div>
                 </button>
               </div>
