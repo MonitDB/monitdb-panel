@@ -1,7 +1,11 @@
+import { memo } from 'react'
+
 import Chart from '~/components/chart'
 import Grid from '~/components/grid'
 
-const ServerMetrics = () => {
+import PageSplitsSec from './page-splits-sec'
+
+const ServerMetrics = ({ currentServer }) => {
   return (
     <div className="mt-6">
       <h3 className="font-bold mb-6">SQL Server metrics</h3>
@@ -103,29 +107,8 @@ const ServerMetrics = () => {
               }}
             />
           </div>
-          <div className="cols-span-2 md:col-span-4 bg-white pt-5 pr-2">
-            <Chart
-              height="140"
-              title={{
-                text: 'Page splits / sec',
-
-                offsetX: 7,
-                offsetY: -5,
-                floating: true,
-                style: {
-                  fontSize: '11px',
-                  fontWeight: 'normal',
-                },
-              }}
-              legend={{
-                show: false,
-              }}
-              xaxis={{
-                labels: {
-                  show: false,
-                },
-              }}
-            />
+          <div className="cols-span-2 md:col-span-4">
+            <PageSplitsSec currentServer={currentServer} />
           </div>
           <div className="cols-span-2 md:col-span-4 bg-white pt-5 pr-2">
             <Chart
@@ -362,4 +345,4 @@ const ServerMetrics = () => {
   )
 }
 
-export default ServerMetrics
+export default memo(ServerMetrics)

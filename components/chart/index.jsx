@@ -8,7 +8,7 @@ const ApexChart = dynamic(
   { ssr: false }
 )
 
-const Chart = ({ height = '155', serieName, ...options }) => {
+const Chart = ({ height = '155', seriesName, seriesData, ...options }) => {
   const chartOptions = {
     chart: {
       type: 'area',
@@ -22,7 +22,7 @@ const Chart = ({ height = '155', serieName, ...options }) => {
       offsetX: 0,
     },
     legend: {
-      show: !!serieName,
+      show: !!seriesName,
       showForSingleSeries: true,
       fontSize: '11px',
       position: 'top',
@@ -68,8 +68,8 @@ const Chart = ({ height = '155', serieName, ...options }) => {
 
   const series = [
     {
-      name: serieName,
-      data: [
+      name: seriesName,
+      data: seriesData ?? [
         [1_585_898_010_000, 0],
         [1_585_898_020_000, 0.27],
         [1_585_898_030_000, 0.18],

@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { faArrowsRotate, faWarning } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import classNames from 'classnames'
@@ -138,241 +139,239 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
             )}
           </PageSidebar>
           <PageContent hideBreadcrumbs={true}>
-            <div className="min-h-[calc(100vh-64px]">
-              {!currentServer && <Loading />}
-              {currentServer && (
-                <>
-                  <div className="w-full flex flex-col gap-y-6">
-                    <header className="w-full">
-                      <h2 className="heading-lg mb-6">Dashboard - Overview</h2>
-                      <div className="w-full flex items-center gap-4">
-                        <div className="flex items-center justify-center w-16 h-16 rounded-full border border-gray-light">
-                          <DatabaseIcons
-                            name={currentServer.type.typeServerName}
-                            className="w-9 h-9"
-                          />
-                        </div>
-                        <div>
-                          <h4 className="heading-md">
-                            {currentServer.serverName}
-                          </h4>
-                          <p className="text-sm">
-                            4 GB Memory / 2 Intel vCPUs / 50 GB Disk + 25 GB /
-                            NYC1 - Plesk 18.0 on Ubuntu 20.04{' '}
-                          </p>
-                        </div>
-                      </div>
-                    </header>
-
-                    <div className="w-full flex items-center gap-4 py-2 px-4 border border-orange border-opacity-25 bg-orange bg-opacity-10 text-sm">
-                      <div className="flex items-center justify-center w-16 h-16">
-                        <FontAwesomeIcon
-                          icon={faWarning}
-                          className="text-4xl text-orange"
+            {!currentServer && <Loading />}
+            {currentServer && (
+              <>
+                <div className="w-full flex flex-col gap-y-6">
+                  <header className="w-full">
+                    <h2 className="heading-lg mb-6">Dashboard - Overview</h2>
+                    <div className="w-full flex items-center gap-4">
+                      <div className="flex items-center justify-center w-16 h-16 rounded-full border border-gray-light">
+                        <DatabaseIcons
+                          name={currentServer.type.typeServerName}
+                          className="w-9 h-9"
                         />
                       </div>
                       <div>
-                        <h6 className="heading-xs">
-                          SQL Server Reporting Service status (2017+): ssc-db-n1
-                        </h6>
-                        <p>
-                          Raised at Wed, Oct 6 10:47 (Active for more than 427
-                          days)
+                        <h4 className="heading-md">
+                          {currentServer.serverName}
+                        </h4>
+                        <p className="text-sm">
+                          4 GB Memory / 2 Intel vCPUs / 50 GB Disk + 25 GB /
+                          NYC1 - Plesk 18.0 on Ubuntu 20.04{' '}
                         </p>
                       </div>
                     </div>
-                  </div>
+                  </header>
 
-                  <div className="flex items-center border-b-gray-light border-b-4">
-                    {tabItems.map((tab) => (
-                      <button
-                        className={classNames('px-2 h-11 relative', {
-                          'after:content-[""] after:block after:bg-blue after:h-1 after:w-full after:absolute after:-bottom-1 after:left-0':
-                            tab.id === activeTabId,
-                        })}
-                        key={tab.id}
-                        onClick={() => setActiveTabId(tab.id)}
-                      >
-                        {tab.title}
-                      </button>
-                    ))}
-                  </div>
-
-                  {activeTabId === 'history' && (
-                    <div className="w-full flex flex-col gap-y-6 mt-6">
-                      <form
-                        className="w-full flex items-center gap-x-8 p-4 border border-gray-light
-                        bg-white text-sm"
-                        onSubmit={formik.handleSubmit}
-                      >
-                        <label
-                          htmlFor="cpu"
-                          className="flex items-center gap-2 cursor-pointer"
-                        >
-                          <span>CPU</span>
-                          <Checkbox
-                            id="cpu"
-                            name="cpu"
-                            defaultValue={formik.values.cpu}
-                            value={formik.values.cpu}
-                            onChange={(value) =>
-                              formik.setFieldValue('cpu', value)
-                            }
-                          />
-                        </label>
-                        <label
-                          htmlFor="memory"
-                          className="flex items-center gap-2 cursor-pointer"
-                        >
-                          <span>Memória</span>
-                          <Checkbox
-                            id="memory"
-                            name="memory"
-                            defaultValue={formik.values.memory}
-                            value={formik.values.memory}
-                            onChange={(value) =>
-                              formik.setFieldValue('memory', value)
-                            }
-                          />
-                        </label>
-                        <label
-                          htmlFor="disk"
-                          className="flex items-center gap-2 cursor-pointer"
-                        >
-                          <span>Disk I/O</span>
-                          <Checkbox
-                            id="disk"
-                            name="disk"
-                            defaultValue={formik.values.disk}
-                            value={formik.values.disk}
-                            onChange={(value) =>
-                              formik.setFieldValue('disk', value)
-                            }
-                          />
-                        </label>
-                        <div className="flex items-center gap-2">
-                          <span>Frequência</span>
-                          <Select
-                            className="w-40"
-                            name="frequency"
-                            value={formik.values.frequency}
-                            options={frequencyOptions}
-                            onChange={(value) => {
-                              formik.setFieldValue('frequency', value)
-                            }}
-                          />
-                        </div>
-                      </form>
-
-                      <div id="allinstancemetrics">
-                        <Grid>
-                          <div className="col-span-2 bg-white border border-gray-light p-4 lg:col-span-12">
-                            <Textarea
-                              name="description"
-                              className="w-full px-4 h-10 bg-white leading-10 rounded outline-none text-sm"
-                              onChange={(event) => {
-                                const target = event.target
-
-                                setSqlCode(target.value)
-                              }}
-                              value={sqlCode}
-                            />
-                            {sqlCode && (
-                              <Code code={sqlCode} language="javascript" />
-                            )}
-                            <div className="w-full flex">
-                              <button
-                                type="button"
-                                className="btn mt-4 ml-auto"
-                                onClick={() => {
-                                  setSqlCode('')
-                                }}
-                              >
-                                Run
-                              </button>
-                            </div>
-                          </div>
-                          <div className="col-span-2 bg-white lg:col-span-6">
-                            <Chart
-                              colors={['#ff5500']}
-                              title={{
-                                text: 'DTU',
-                                offsetY: 10,
-                                offsetX: 5,
-                              }}
-                              serieName="% Utilization"
-                            />
-                          </div>
-                          <div className="col-span-2 bg-white lg:col-span-6">
-                            <Chart
-                              title={{
-                                text: 'CPU',
-                                offsetY: 10,
-                                offsetX: 5,
-                              }}
-                              serieName="% Utilization"
-                            />
-                          </div>
-                          <div className="col-span-2 bg-white lg:col-span-6">
-                            <Chart
-                              colors={['#4abc4b']}
-                              title={{
-                                text: 'Data I/O',
-                                offsetY: 10,
-                                offsetX: 5,
-                              }}
-                              serieName="% Utilization"
-                            />
-                          </div>
-                          <div className="col-span-2 bg-white lg:col-span-6">
-                            <Chart
-                              colors={['#0e5b10']}
-                              title={{
-                                text: 'Log I/O',
-                                offsetY: 10,
-                                offsetX: 5,
-                              }}
-                              serieName="% Utilization"
-                            />
-                          </div>
-                        </Grid>
-
-                        <Server />
-                        <ServerMetrics />
-                        <Permissions />
-                        <VmwareMetrics />
-                        <TempDB />
-                        <BlockingProcesses />
-                        <SqlUserProcesses />
-                        <ErrorLog />
-                        <Databases />
-                      </div>
-                    </div>
-                  )}
-
-                  {activeTabId === 'current-activity' && (
-                    <div className="w-full min-h-96">
-                      <button className="mt-6 bg-blue text-white px-3 h-11 rounded-[5px] font-medium flex items-center gap-1">
-                        <FontAwesomeIcon
-                          className="font-medium"
-                          icon={faArrowsRotate}
-                        />
-                        Refresh
-                      </button>
-                      <BlockMessage
-                        className="mt-6"
-                        type="error"
-                        message={
-                          <p className="text-xs">
-                            <span>The server is currently inaccessible.</span>
-                          </p>
-                        }
+                  <div className="w-full flex items-center gap-4 py-2 px-4 border border-orange border-opacity-25 bg-orange bg-opacity-10 text-sm">
+                    <div className="flex items-center justify-center w-16 h-16">
+                      <FontAwesomeIcon
+                        icon={faWarning}
+                        className="text-4xl text-orange"
                       />
                     </div>
-                  )}
-                </>
-              )}
-            </div>
+                    <div>
+                      <h6 className="heading-xs">
+                        SQL Server Reporting Service status (2017+): ssc-db-n1
+                      </h6>
+                      <p>
+                        Raised at Wed, Oct 6 10:47 (Active for more than 427
+                        days)
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center border-b-gray-light border-b-4">
+                  {tabItems.map((tab) => (
+                    <button
+                      className={classNames('px-2 h-11 relative', {
+                        'after:content-[""] after:block after:bg-blue after:h-1 after:w-full after:absolute after:-bottom-1 after:left-0':
+                          tab.id === activeTabId,
+                      })}
+                      key={tab.id}
+                      onClick={() => setActiveTabId(tab.id)}
+                    >
+                      {tab.title}
+                    </button>
+                  ))}
+                </div>
+
+                {activeTabId === 'history' && (
+                  <div className="w-full flex flex-col gap-y-6 mt-6">
+                    <form
+                      className="w-full flex items-center gap-x-8 p-4 border border-gray-light
+                        bg-white text-sm"
+                      onSubmit={formik.handleSubmit}
+                    >
+                      <label
+                        htmlFor="cpu"
+                        className="flex items-center gap-2 cursor-pointer"
+                      >
+                        <span>CPU</span>
+                        <Checkbox
+                          id="cpu"
+                          name="cpu"
+                          defaultValue={formik.values.cpu}
+                          value={formik.values.cpu}
+                          onChange={(value) =>
+                            formik.setFieldValue('cpu', value)
+                          }
+                        />
+                      </label>
+                      <label
+                        htmlFor="memory"
+                        className="flex items-center gap-2 cursor-pointer"
+                      >
+                        <span>Memória</span>
+                        <Checkbox
+                          id="memory"
+                          name="memory"
+                          defaultValue={formik.values.memory}
+                          value={formik.values.memory}
+                          onChange={(value) =>
+                            formik.setFieldValue('memory', value)
+                          }
+                        />
+                      </label>
+                      <label
+                        htmlFor="disk"
+                        className="flex items-center gap-2 cursor-pointer"
+                      >
+                        <span>Disk I/O</span>
+                        <Checkbox
+                          id="disk"
+                          name="disk"
+                          defaultValue={formik.values.disk}
+                          value={formik.values.disk}
+                          onChange={(value) =>
+                            formik.setFieldValue('disk', value)
+                          }
+                        />
+                      </label>
+                      <div className="flex items-center gap-2">
+                        <span>Frequência</span>
+                        <Select
+                          className="w-40"
+                          name="frequency"
+                          value={formik.values.frequency}
+                          options={frequencyOptions}
+                          onChange={(value) => {
+                            formik.setFieldValue('frequency', value)
+                          }}
+                        />
+                      </div>
+                    </form>
+
+                    <div id="allinstancemetrics">
+                      <Grid>
+                        <div className="col-span-2 bg-white border border-gray-light p-4 lg:col-span-12">
+                          <Textarea
+                            name="description"
+                            className="w-full px-4 h-10 bg-white leading-10 rounded outline-none text-sm"
+                            onChange={(event) => {
+                              const target = event.target
+
+                              setSqlCode(target.value)
+                            }}
+                            value={sqlCode}
+                          />
+                          {sqlCode && (
+                            <Code code={sqlCode} language="javascript" />
+                          )}
+                          <div className="w-full flex">
+                            <button
+                              type="button"
+                              className="btn mt-4 ml-auto"
+                              onClick={() => {
+                                setSqlCode('')
+                              }}
+                            >
+                              Run
+                            </button>
+                          </div>
+                        </div>
+                        <div className="col-span-2 bg-white lg:col-span-6">
+                          <Chart
+                            colors={['#ff5500']}
+                            title={{
+                              text: 'DTU',
+                              offsetY: 10,
+                              offsetX: 5,
+                            }}
+                            seriesName="% Utilization"
+                          />
+                        </div>
+                        <div className="col-span-2 bg-white lg:col-span-6">
+                          <Chart
+                            title={{
+                              text: 'CPU',
+                              offsetY: 10,
+                              offsetX: 5,
+                            }}
+                            seriesName="% Utilization"
+                          />
+                        </div>
+                        <div className="col-span-2 bg-white lg:col-span-6">
+                          <Chart
+                            colors={['#4abc4b']}
+                            title={{
+                              text: 'Data I/O',
+                              offsetY: 10,
+                              offsetX: 5,
+                            }}
+                            seriesName="% Utilization"
+                          />
+                        </div>
+                        <div className="col-span-2 bg-white lg:col-span-6">
+                          <Chart
+                            colors={['#0e5b10']}
+                            title={{
+                              text: 'Log I/O',
+                              offsetY: 10,
+                              offsetX: 5,
+                            }}
+                            seriesName="% Utilization"
+                          />
+                        </div>
+                      </Grid>
+
+                      <Server />
+                      <ServerMetrics currentServer={currentServer} />
+                      <Permissions />
+                      <VmwareMetrics />
+                      <TempDB />
+                      <BlockingProcesses />
+                      <SqlUserProcesses />
+                      <ErrorLog />
+                      <Databases />
+                    </div>
+                  </div>
+                )}
+
+                {activeTabId === 'current-activity' && (
+                  <div className="w-full min-h-96">
+                    <button className="mt-6 bg-blue text-white px-3 h-11 rounded-[5px] font-medium flex items-center gap-1">
+                      <FontAwesomeIcon
+                        className="font-medium"
+                        icon={faArrowsRotate}
+                      />
+                      Refresh
+                    </button>
+                    <BlockMessage
+                      className="mt-6"
+                      type="error"
+                      message={
+                        <p className="text-xs">
+                          <span>The server is currently inaccessible.</span>
+                        </p>
+                      }
+                    />
+                  </div>
+                )}
+              </>
+            )}
           </PageContent>
         </PageWrapper>
       </Layout>
