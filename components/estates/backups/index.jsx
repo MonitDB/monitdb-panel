@@ -7,7 +7,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { Portal } from 'react-portal'
 
 import EnvironmentServers from '~/components/estates/backups/environment-servers-backups'
-import BackupsModal from '~/components/estates/backups/modal'
+import DatabaseBackupsModal from '~/components/estates/backups/modal'
 import Loading from '~/components/loading'
 import { PageContent } from '~/components/page'
 import useGlobal from '~/hooks/use-global'
@@ -22,7 +22,7 @@ const Backups = ({ tabName }) => {
   const [environmentExpandedIndices, setEnvironmentExpandedIndices] = useState(
     new Set()
   )
-  const [backupsModal, setBackupsModal] = useState({
+  const [databaseBackupsModal, setDatabaseBackupsModal] = useState({
     isOpen: false,
     data: undefined,
   })
@@ -140,7 +140,7 @@ const Backups = ({ tabName }) => {
                           <EnvironmentServers
                             backups={backups}
                             servers={environmentServers}
-                            onSetBackupsModal={setBackupsModal}
+                            onSetBackupsModal={setDatabaseBackupsModal}
                           />
                         </div>
                       </div>
@@ -152,9 +152,9 @@ const Backups = ({ tabName }) => {
         )}
       </PageContent>
       <Portal>
-        <BackupsModal
-          modal={backupsModal}
-          onSetBackupsModal={setBackupsModal}
+        <DatabaseBackupsModal
+          modal={databaseBackupsModal}
+          onSetModalData={setDatabaseBackupsModal}
         />
       </Portal>
     </>

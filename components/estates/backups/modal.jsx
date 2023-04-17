@@ -6,7 +6,7 @@ import React from 'react'
 import { dateFormat } from '~/components/estates/backups/environment-servers-backups'
 import { megaBytesToGigaBytes } from '~/utils/formats'
 
-function BackupsModal({ modal: { isOpen, data }, onSetBackupsModal }) {
+function DatabaseBackupsModal({ modal: { isOpen, data }, onSetModalData }) {
   function getMostAmountOfArrayBackups() {
     let arrayBackupsAmount = 0
     for (let key in data) {
@@ -31,14 +31,14 @@ function BackupsModal({ modal: { isOpen, data }, onSetBackupsModal }) {
       <button
         className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50"
         onClick={() => {
-          onSetBackupsModal({ ...data, isOpen: false })
+          onSetModalData({ ...data, isOpen: false })
         }}
       />
       <div className="relative py-10 w-[90%] bg-white">
         <button
           className="w-4 h-4 absolute top-5 right-5 z-[1]"
           onClick={() => {
-            onSetBackupsModal({ ...data, isOpen: false })
+            onSetModalData({ ...data, isOpen: false })
           }}
         >
           <i className="absolute block w-full h-[2px] rotate-45 bg-black bg-opacity-75" />
@@ -191,4 +191,4 @@ function BackupsModal({ modal: { isOpen, data }, onSetBackupsModal }) {
   )
 }
 
-export default BackupsModal
+export default DatabaseBackupsModal
