@@ -24,7 +24,7 @@ function BackupsModal({ modal: { isOpen, data }, onSetBackupsModal }) {
 
   if (!isOpen) return <></>
 
-  const array = Array.from({ length: getMostAmountOfArrayBackups() })
+  const arraySize = Array.from({ length: getMostAmountOfArrayBackups() })
 
   return (
     <div className="fixed flex items-center justify-center top-0 left-0 w-full min-h-full h-full z-[100]">
@@ -103,7 +103,7 @@ function BackupsModal({ modal: { isOpen, data }, onSetBackupsModal }) {
               </thead>
 
               <tbody>
-                {array.map((_, index) => {
+                {arraySize.map((_, index) => {
                   const FULL = data.Full.allBackups[index] || {}
                   const DIFERENTIAL = data.Diferential.allBackups[index] || {}
                   const LOG = data.Log.allBackups[index] || {}
