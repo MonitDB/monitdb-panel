@@ -2,22 +2,18 @@ import { format } from 'date-fns'
 import React, { memo, useMemo } from 'react'
 
 import Chart from '~/components/chart'
-import { useSingleDashboard } from '~/hooks/index'
-import { usePageSplits } from '~/hooks/index'
+import { useSingleDashboard, useUserConnections } from '~/hooks/index'
 
-function PageSplitsSec() {
+function userConnections() {
   const { currentServer } = useSingleDashboard()
-  const { data, isLoading } = usePageSplits(currentServer.id)
+  const { data, isLoading } = useUserConnections(currentServer.id)
 
   const seriesData = useMemo(() =>
     data?.length > 0
       ? data
           .map((item, index) =>
             index > 0
-              ? [
-                  new Date(item.createdata).getTime(),
-                  Number(Number.parseFloat(item.value / 60).toFixed(2)),
-                ]
+              ? [new Date(item.createdata).getTime(), Number(item.value)]
               : undefined
           )
           .filter(Boolean)
@@ -37,7 +33,7 @@ function PageSplitsSec() {
       <Chart
         height="140"
         title={{
-          text: 'Page splits / sec',
+          text: 'User connections',
           offsetX: 7,
           offsetY: -5,
           floating: true,
@@ -53,10 +49,10 @@ function PageSplitsSec() {
           forceNiceScale: true,
           decimalsInFloat: 2,
           labels: {
-            formatter: (value) => Number.parseFloat(value).toFixed(2),
+            formatter: (value) => value,
           },
         }}
-        seriesName="Page splits / sec"
+        seriesName="User connections"
         xaxis={{
           type: 'datetime',
           tooltip: {
@@ -75,4 +71,4 @@ function PageSplitsSec() {
   )
 }
 
-export default memo(PageSplitsSec)
+export default memo(userConnections)

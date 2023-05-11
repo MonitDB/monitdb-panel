@@ -1,34 +1,23 @@
 import { format } from 'date-fns'
-import React, { memo, useMemo } from 'react'
+import React, { memo, useEffect, useMemo, useState } from 'react'
 
 import Chart from '~/components/chart'
-import { useSingleDashboard } from '~/hooks/index'
-import { usePageSplits } from '~/hooks/index'
+import { useBatchRequests, useSingleDashboard } from '~/hooks/index'
 
-function PageSplitsSec() {
+function BatchRequests() {
   const { currentServer } = useSingleDashboard()
-  const { data, isLoading } = usePageSplits(currentServer.id)
-
-  const seriesData = useMemo(() =>
-    data?.length > 0
-      ? data
-          .map((item, index) =>
-            index > 0
-              ? [
-                  new Date(item.createdata).getTime(),
-                  Number(Number.parseFloat(item.value / 60).toFixed(2)),
-                ]
-              : undefined
-          )
-          .filter(Boolean)
-      : []
+  const { data, isLoading } = useBatchRequests(currentServer.id)
+  const seriesData = useMemo(() => data?.length > 0 ? data
+  .map((item, index) =>
+    index > 0
+      ? [new Date(item.createdata).getTime(), Number(item.value)]
+      : undefined
   )
+  .filter(Boolean) : [])
 
   if (isLoading || seriesData.length === 0) {
     return (
-      <div className="flex items-center justify-center h-full">
-        {isLoading ? 'Loading...' : 'Error'}
-      </div>
+      <div className="flex items-center justify-center h-full">{isLoading ? "Loading..." : "Error"}</div>
     )
   }
 
@@ -37,7 +26,7 @@ function PageSplitsSec() {
       <Chart
         height="140"
         title={{
-          text: 'Page splits / sec',
+          text: 'Batch requests',
           offsetX: 7,
           offsetY: -5,
           floating: true,
@@ -53,10 +42,10 @@ function PageSplitsSec() {
           forceNiceScale: true,
           decimalsInFloat: 2,
           labels: {
-            formatter: (value) => Number.parseFloat(value).toFixed(2),
+            formatter: (value) => value,
           },
         }}
-        seriesName="Page splits / sec"
+        seriesName="Batch requests"
         xaxis={{
           type: 'datetime',
           tooltip: {
@@ -75,4 +64,4 @@ function PageSplitsSec() {
   )
 }
 
-export default memo(PageSplitsSec)
+export default memo(BatchRequests)

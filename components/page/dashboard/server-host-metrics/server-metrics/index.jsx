@@ -3,160 +3,41 @@ import { memo } from 'react'
 import Chart from '~/components/chart'
 import Grid from '~/components/grid'
 
+import BatchRequests from './batch-requests'
+import FullScansSec from './full-scans-sec'
+import PageSplitsBatchRequests from './page-splits-batch-requests'
 import PageSplitsSec from './page-splits-sec'
+import SqlCompilationsBatchRequests from './sql-compilations-batch-requests'
+import SqlCompilationsSec from './sql-compilations-sec'
+import UserConnections from './user-connections'
 
-const ServerMetrics = ({ currentServer }) => {
+const ServerMetrics = () => {
   return (
     <div className="mt-6">
       <h3 className="font-bold mb-6">SQL Server metrics</h3>
       <div>
         <h4 className="mb-6 text-sm">General</h4>
         <Grid>
-          <div className="cols-span-2 md:col-span-4 bg-white pt-5 pr-2">
-            <Chart
-              height="140"
-              title={{
-                text: 'Batch requests',
-                floating: true,
-                offsetX: 7,
-                offsetY: -5,
-                style: {
-                  fontSize: '11px',
-                  fontWeight: 'normal',
-                },
-              }}
-              legend={{
-                show: false,
-              }}
-              xaxis={{
-                labels: {
-                  show: false,
-                },
-              }}
-            />
-          </div>
-          <div className="cols-span-2 md:col-span-4 bg-white pt-5 pr-2">
-            <Chart
-              height="140"
-              title={{
-                text: 'SQL compilations / Batch requests',
-
-                offsetX: 7,
-                offsetY: -5,
-                floating: true,
-                style: {
-                  fontSize: '11px',
-                  fontWeight: 'normal',
-                },
-              }}
-              legend={{
-                show: false,
-              }}
-              xaxis={{
-                labels: {
-                  show: false,
-                },
-              }}
-            />
-          </div>
-          <div className="cols-span-2 md:col-span-4 bg-white pt-5 pr-2">
-            <Chart
-              height="140"
-              title={{
-                text: 'Page splits / Batch requests',
-
-                offsetX: 7,
-                offsetY: -5,
-                floating: true,
-                style: {
-                  fontSize: '11px',
-                  fontWeight: 'normal',
-                },
-              }}
-              legend={{
-                show: false,
-              }}
-              xaxis={{
-                labels: {
-                  show: false,
-                },
-              }}
-            />
-          </div>
-          <div className="cols-span-2 md:col-span-4 bg-white pt-5 pr-2">
-            <Chart
-              height="140"
-              title={{
-                text: 'SQL compilations / sec',
-
-                offsetX: 7,
-                offsetY: -5,
-                floating: true,
-                style: {
-                  fontSize: '11px',
-                  fontWeight: 'normal',
-                },
-              }}
-              legend={{
-                show: false,
-              }}
-              xaxis={{
-                labels: {
-                  show: false,
-                },
-              }}
-            />
+          <div className="cols-span-2 md:col-span-4">
+            <BatchRequests />
           </div>
           <div className="cols-span-2 md:col-span-4">
-            <PageSplitsSec currentServer={currentServer} />
+            <SqlCompilationsBatchRequests />
+          </div>
+          <div className="cols-span-2 md:col-span-4">
+            <PageSplitsBatchRequests />
+          </div>
+          <div className="cols-span-2 md:col-span-4">
+            <SqlCompilationsSec />
+          </div>
+          <div className="cols-span-2 md:col-span-4">
+            <PageSplitsSec />
+          </div>
+          <div className="cols-span-2 md:col-span-4">
+            <FullScansSec />
           </div>
           <div className="cols-span-2 md:col-span-4 bg-white pt-5 pr-2">
-            <Chart
-              height="140"
-              title={{
-                text: 'Full scans / sec',
-
-                offsetX: 7,
-                offsetY: -5,
-                floating: true,
-                style: {
-                  fontSize: '11px',
-                  fontWeight: 'normal',
-                },
-              }}
-              legend={{
-                show: false,
-              }}
-              xaxis={{
-                labels: {
-                  show: false,
-                },
-              }}
-            />
-          </div>
-          <div className="cols-span-2 md:col-span-4 bg-white pt-5 pr-2">
-            <Chart
-              height="140"
-              title={{
-                text: 'User connections',
-
-                offsetX: 7,
-                offsetY: -5,
-                floating: true,
-                style: {
-                  fontSize: '11px',
-                  fontWeight: 'normal',
-                },
-              }}
-              legend={{
-                show: false,
-              }}
-              xaxis={{
-                labels: {
-                  show: false,
-                },
-              }}
-            />
+            <UserConnections />
           </div>
         </Grid>
       </div>

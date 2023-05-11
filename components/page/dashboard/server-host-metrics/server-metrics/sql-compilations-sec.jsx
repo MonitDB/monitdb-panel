@@ -2,12 +2,16 @@ import { format } from 'date-fns'
 import React, { memo, useMemo } from 'react'
 
 import Chart from '~/components/chart'
-import { useSingleDashboard } from '~/hooks/index'
-import { usePageSplits } from '~/hooks/index'
+import {
+  useBatchRequests,
+  useSingleDashboard,
+  useSQLCompilations,
+} from '~/hooks/index'
 
-function PageSplitsSec() {
+function SqlCompilationsBatchRequests() {
   const { currentServer } = useSingleDashboard()
-  const { data, isLoading } = usePageSplits(currentServer.id)
+
+  const { data, isLoading } = useSQLCompilations(currentServer.id)
 
   const seriesData = useMemo(() =>
     data?.length > 0
@@ -37,7 +41,7 @@ function PageSplitsSec() {
       <Chart
         height="140"
         title={{
-          text: 'Page splits / sec',
+          text: 'SQL compilations / sec',
           offsetX: 7,
           offsetY: -5,
           floating: true,
@@ -56,7 +60,7 @@ function PageSplitsSec() {
             formatter: (value) => Number.parseFloat(value).toFixed(2),
           },
         }}
-        seriesName="Page splits / sec"
+        seriesName="SQL compilations / sec"
         xaxis={{
           type: 'datetime',
           tooltip: {
@@ -75,4 +79,4 @@ function PageSplitsSec() {
   )
 }
 
-export default memo(PageSplitsSec)
+export default memo(SqlCompilationsBatchRequests)
