@@ -1,5 +1,5 @@
 import { format } from 'date-fns'
-import React, { memo, useEffect, useMemo, useState } from 'react'
+import React, { memo, useMemo } from 'react'
 
 import Chart from '~/components/chart'
 import { useBatchRequests, useSingleDashboard } from '~/hooks/index'
@@ -7,17 +7,25 @@ import { useBatchRequests, useSingleDashboard } from '~/hooks/index'
 function BatchRequests() {
   const { currentServer } = useSingleDashboard()
   const { data, isLoading } = useBatchRequests(currentServer.id)
-  const seriesData = useMemo(() => data?.length > 0 ? data
-  .map((item, index) =>
-    index > 0
-      ? [new Date(item.createdata).getTime(), Number(item.value)]
-      : undefined
+  const seriesData = useMemo(
+    () =>
+      data?.length > 0
+        ? data
+            .map((item, index) =>
+              index > 0
+                ? [new Date(item.createdata).getTime(), Number(item.value)]
+                : undefined
+            )
+            .filter(Boolean)
+        : [],
+    [data]
   )
-  .filter(Boolean) : [])
 
   if (isLoading || seriesData.length === 0) {
     return (
-      <div className="flex items-center justify-center h-full">{isLoading ? "Loading..." : "Error"}</div>
+      <div className="flex items-center justify-center h-full">
+        {isLoading ? 'Loading...' : 'Error'}
+      </div>
     )
   }
 

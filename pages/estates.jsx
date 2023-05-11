@@ -14,7 +14,9 @@ const tabs = [
   {
     name: 'Installed versions',
     slug: 'installed-versions',
-    component: dynamic(() => import('~/components/page/estates/installed-versions')),
+    component: dynamic(() =>
+      import('~/components/page/estates/installed-versions')
+    ),
   },
   {
     name: 'Disk usage',
@@ -29,7 +31,9 @@ const tabs = [
   {
     name: 'Jobs',
     slug: 'sql-agent-jobs',
-    component: dynamic(() => import('~/components/page/estates/sql-agent-jobs')),
+    component: dynamic(() =>
+      import('~/components/page/estates/sql-agent-jobs')
+    ),
   },
   {
     name: 'SQL Server Licensing',

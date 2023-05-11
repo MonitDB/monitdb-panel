@@ -8,19 +8,21 @@ function FullScansSec() {
   const { currentServer } = useSingleDashboard()
   const { data, isLoading } = useFullScans(currentServer.id)
 
-  const seriesData = useMemo(() =>
-    data?.length > 0
-      ? data
-          .map((item) =>
-            item.value !== null && item.value !== undefined
-              ? [
-                  new Date(item.createdata).getTime(),
-                  Number(item.value / 60).toFixed(),
-                ]
-              : undefined
-          )
-          .filter(Boolean)
-      : []
+  const seriesData = useMemo(
+    () =>
+      data?.length > 0
+        ? data
+            .map((item) =>
+              item.value !== null && item.value !== undefined
+                ? [
+                    new Date(item.createdata).getTime(),
+                    Number(item.value / 60).toFixed(),
+                  ]
+                : undefined
+            )
+            .filter(Boolean)
+        : [],
+    [data]
   )
 
   if (isLoading || seriesData.length === 0) {

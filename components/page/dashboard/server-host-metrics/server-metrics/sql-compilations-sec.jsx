@@ -13,19 +13,21 @@ function SqlCompilationsBatchRequests() {
 
   const { data, isLoading } = useSQLCompilations(currentServer.id)
 
-  const seriesData = useMemo(() =>
-    data?.length > 0
-      ? data
-          .map((item, index) =>
-            index > 0
-              ? [
-                  new Date(item.createdata).getTime(),
-                  Number(Number.parseFloat(item.value / 60).toFixed(2)),
-                ]
-              : undefined
-          )
-          .filter(Boolean)
-      : []
+  const seriesData = useMemo(
+    () =>
+      data?.length > 0
+        ? data
+            .map((item, index) =>
+              index > 0
+                ? [
+                    new Date(item.createdata).getTime(),
+                    Number(Number.parseFloat(item.value / 60).toFixed(2)),
+                  ]
+                : undefined
+            )
+            .filter(Boolean)
+        : [],
+    [data]
   )
 
   if (isLoading || seriesData.length === 0) {

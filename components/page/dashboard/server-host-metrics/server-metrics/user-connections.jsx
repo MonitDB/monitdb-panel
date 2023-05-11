@@ -8,16 +8,18 @@ function userConnections() {
   const { currentServer } = useSingleDashboard()
   const { data, isLoading } = useUserConnections(currentServer.id)
 
-  const seriesData = useMemo(() =>
-    data?.length > 0
-      ? data
-          .map((item, index) =>
-            index > 0
-              ? [new Date(item.createdata).getTime(), Number(item.value)]
-              : undefined
-          )
-          .filter(Boolean)
-      : []
+  const seriesData = useMemo(
+    () =>
+      data?.length > 0
+        ? data
+            .map((item, index) =>
+              index > 0
+                ? [new Date(item.createdata).getTime(), Number(item.value)]
+                : undefined
+            )
+            .filter(Boolean)
+        : [],
+    [data]
   )
 
   if (isLoading || seriesData.length === 0) {
