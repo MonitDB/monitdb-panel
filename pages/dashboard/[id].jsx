@@ -34,6 +34,7 @@ import {
   VmwareMetrics,
 } from '~/components/page/dashboard'
 import LatestAlertsSidebar from '~/components/sidebar/latest-alerts'
+import { SingleDashboardContextProvider } from '~/contexts/single-dashboard'
 import DatabaseIcons from '~/helpers/database-icons'
 import useGlobal from '~/hooks/use-global'
 import Layout from '~/layouts/default'
@@ -67,7 +68,7 @@ const tabItems = [
   },
 ]
 
-const DashboardSingle = () => {
+const SingleDashboard = () => {
   const {
     globalState: { servers, serverTypes },
   } = useGlobal()
@@ -115,7 +116,7 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
   })
 
   return (
-    <>
+    <SingleDashboardContextProvider>
       <NextSeo title="Dashboard - MonitDB" />
       <Layout>
         <PageWrapper>
@@ -338,7 +339,7 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
                       </Grid>
 
                       <Server />
-                      <ServerMetrics currentServer={currentServer} />
+                      <ServerMetrics />
                       <Permissions />
                       <VmwareMetrics />
                       <TempDB />
@@ -375,8 +376,8 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
           </PageContent>
         </PageWrapper>
       </Layout>
-    </>
+    </SingleDashboardContextProvider>
   )
 }
 
-export default DashboardSingle
+export default SingleDashboard

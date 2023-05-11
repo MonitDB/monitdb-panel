@@ -1,7 +1,7 @@
 import React from 'react'
 
-import Jobs from '~/components/estates/sql-agent-jobs/jobs'
-import JobsRundeck from '~/components/estates/sql-agent-jobs/rundeck-jobs'
+import Jobs from '~/components/page/estates/sql-agent-jobs/jobs'
+import JobsRundeck from '~/components/page/estates/sql-agent-jobs/rundeck-jobs'
 import { PageContent } from '~/components/page'
 
 const SqlAgentJobs = () => {

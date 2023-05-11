@@ -6,7 +6,7 @@ import classNames from 'classnames'
 import React, { useEffect, useState } from 'react'
 import { useCallback } from 'react'
 
-import Servers from '~/components/estates/sql-agent-jobs/jobs/environment-servers-jobs'
+import Servers from '~/components/page/estates/sql-agent-jobs/jobs/environment-servers-jobs'
 import Loading from '~/components/loading'
 import useGlobal from '~/hooks/use-global'
 import { getSqlAgentPRjobs } from '~/services/estates'

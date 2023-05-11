@@ -14,28 +14,28 @@ const tabs = [
   {
     name: 'Installed versions',
     slug: 'installed-versions',
-    component: dynamic(() => import('~/components/estates/installed-versions')),
+    component: dynamic(() => import('~/components/page/estates/installed-versions')),
   },
   {
     name: 'Disk usage',
     slug: 'disk-usage',
-    component: dynamic(() => import('~/components/estates/disk-usage')),
+    component: dynamic(() => import('~/components/page/estates/disk-usage')),
   },
   {
     name: 'Backups',
     slug: 'backups',
-    component: dynamic(() => import('~/components/estates/backups')),
+    component: dynamic(() => import('~/components/page/estates/backups')),
   },
   {
     name: 'Jobs',
     slug: 'sql-agent-jobs',
-    component: dynamic(() => import('~/components/estates/sql-agent-jobs')),
+    component: dynamic(() => import('~/components/page/estates/sql-agent-jobs')),
   },
   {
     name: 'SQL Server Licensing',
     slug: 'sql-server-licensing',
     component: dynamic(() =>
-      import('~/components/estates/sql-server-licensing')
+      import('~/components/page/estates/sql-server-licensing')
     ),
   },
 ]

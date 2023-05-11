@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import classNames from 'classnames'
 import React, { useCallback, useEffect, useState } from 'react'
 
-import Servers from '~/components/estates/disk-usage/servers'
+import Servers from '~/components/page/estates/disk-usage/servers'
 import Loading from '~/components/loading'
 import { PageContent } from '~/components/page'
 import useGlobal from '~/hooks/use-global'

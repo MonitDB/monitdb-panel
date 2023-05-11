@@ -11,7 +11,6 @@ import Reveal from '~/helpers/reveal'
 import { getPercentage } from '~/utils/global'
 
 const Servers = ({ environmentServers, diskUsage }) => {
-  console.log('environmentServers', environmentServers, 'diskUsage', diskUsage)
   const [serverExpandedIndices, setServerExpandedIndices] = useState(new Set())
 
   const handleServerExpandedIndices = useCallback(

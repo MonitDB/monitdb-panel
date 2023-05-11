@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { format, parseISO } from 'date-fns'
 import React from 'react'
 
-import { dateFormat } from '~/components/estates/backups/environment-servers-backups'
+import { dateFormat } from '~/components/page/estates/backups/environment-servers-backups'
 import { megaBytesToGigaBytes } from '~/utils/formats'
 
 function DatabaseBackupsModal({ modal: { isOpen, data }, onSetModalData }) {
