@@ -36,7 +36,7 @@ const ServerMetrics = () => {
           <div className="cols-span-2 md:col-span-4">
             <FullScansSec />
           </div>
-          <div className="cols-span-2 md:col-span-4 bg-white pt-5 pr-2">
+          <div className="cols-span-2 md:col-span-4">
             <UserConnections />
           </div>
         </Grid>
