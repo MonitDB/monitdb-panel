@@ -6,10 +6,10 @@ import classNames from 'classnames'
 import React, { useCallback, useEffect, useState } from 'react'
 import { Portal } from 'react-portal'
 
-import EnvironmentServers from '~/components/page/estates/backups/environment-servers-backups'
-import DatabaseBackupsModal from '~/components/page/estates/backups/modal'
 import Loading from '~/components/loading'
 import { PageContent } from '~/components/page'
+import EnvironmentServers from '~/components/page/estates/backups/environment-servers-backups'
+import DatabaseBackupsModal from '~/components/page/estates/backups/modal'
 import useGlobal from '~/hooks/use-global'
 import { getBackups } from '~/services/estates'
 import { filterServersByEnvironmentId, formatServer } from '~/utils/server'
@@ -104,12 +104,14 @@ const Backups = ({ tabName }) => {
                             `w-full py-2 px-4 bg-white border space-x-4
                   rounded-sm font-bold text-left text-sm lg:hover:border-gray`,
                             {
-                              'border-gray': environmentExpandedIndices.has(
-                                environmentIndex
-                              ),
-                              'border-gray-light': !environmentExpandedIndices.has(
-                                environmentIndex
-                              ),
+                              'border-gray':
+                                environmentExpandedIndices.has(
+                                  environmentIndex
+                                ),
+                              'border-gray-light':
+                                !environmentExpandedIndices.has(
+                                  environmentIndex
+                                ),
                             }
                           )}
                           onClick={() =>
@@ -119,21 +121,20 @@ const Backups = ({ tabName }) => {
                           <FontAwesomeIcon
                             icon={faChevronDown}
                             className={classNames('transform', {
-                              'rotate-180': environmentExpandedIndices.has(
-                                environmentIndex
-                              ),
+                              'rotate-180':
+                                environmentExpandedIndices.has(
+                                  environmentIndex
+                                ),
                             })}
                           />
                           <span>{typeServerEnvironmentName}</span>
                         </button>
                         <div
                           className={classNames({
-                            block: environmentExpandedIndices.has(
-                              environmentIndex
-                            ),
-                            hidden: !environmentExpandedIndices.has(
-                              environmentIndex
-                            ),
+                            block:
+                              environmentExpandedIndices.has(environmentIndex),
+                            hidden:
+                              !environmentExpandedIndices.has(environmentIndex),
                           })}
                         >
                           <EnvironmentServers

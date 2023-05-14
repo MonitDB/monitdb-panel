@@ -22,6 +22,7 @@
 		"eslint:recommended",
 		"plugin:jsx-a11y/recommended",
 		"plugin:react/recommended",
+		"plugin:prettier/recommended",
 		"plugin:sonarjs/recommended",
 		"plugin:unicorn/recommended",
 		"plugin:react-hooks/recommended",
@@ -33,6 +34,8 @@
 		"react/prop-types": "off",
 		"simple-import-sort/imports": "error",
 		"unicorn/filename-case": "off",
+		"unicorn/expiring-todo-comments": "off",
+		"react-hooks/rules-of-hooks": "off",
 		"jsx-a11y/anchor-is-valid": [
 			"error",
 			{

@@ -164,7 +164,6 @@ const AnalysisPage = () => {
                       <option
                         value="[Cluster].[Machine].[Processors].[PercentProcessorTime]"
                         title="Machine: processor time"
-                        ismatching="true"
                         className=""
                       >
                         &nbsp;&nbsp;&nbsp;Machine: processor time
@@ -172,21 +171,18 @@ const AnalysisPage = () => {
                       <option
                         value="[Cluster].[Machine].[Processors].[AverageQueueLength]"
                         title="Avg. CPU queue length"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Avg. CPU queue length
                       </option>
                       <option
                         value="[Cluster].[Machine].[Memory].[UsedBytes]"
                         title="Machine: memory used"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Machine: memory used
                       </option>
                       <option
                         value="[Cluster].[Machine].[Memory].[PagesPerSecond]"
                         title="Memory pages/sec"
-                        ismatching="true"
                         className="selected"
                       >
                         &nbsp;&nbsp;&nbsp;Memory pages/sec
@@ -194,70 +190,60 @@ const AnalysisPage = () => {
                       <option
                         value="[Cluster].[Machine].[Network].[PercentUtilization]"
                         title="Network utilization"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Network utilization
                       </option>
                       <option
                         value="[Cluster].[Machine].[LogicalDisk].[Capacity].[UsedBytes]"
                         title="Disk used bytes"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Disk used bytes
                       </option>
                       <option
                         value="[Cluster].[Machine].[LogicalDisk].[Capacity].[UsedPercent]"
                         title="Disk used %"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Disk used %
                       </option>
                       <option
                         value="[Cluster].[Machine].[LogicalDisk].[Capacity].[FreeBytes]"
                         title="Disk free bytes"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Disk free bytes
                       </option>
                       <option
                         value="[Cluster].[Machine].[LogicalDisk].[AverageReadTime]"
                         title="Disk avg. read time"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Disk avg. read time
                       </option>
                       <option
                         value="[Cluster].[Machine].[LogicalDisk].[AverageWriteTime]"
                         title="Disk avg. write time"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Disk avg. write time
                       </option>
                       <option
                         value="[Cluster].[Machine].[LogicalDisk].[ReadBytesPerSecond]"
                         title="Disk read bytes/sec"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Disk read bytes/sec
                       </option>
                       <option
                         value="[Cluster].[Machine].[LogicalDisk].[WriteBytesPerSecond]"
                         title="Disk write bytes/sec"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Disk write bytes/sec
                       </option>
                       <option
                         value="[Cluster].[Machine].[LogicalDisk].[TransfersPerSecond]"
                         title="Disk transfers/sec"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Disk transfers/sec
                       </option>
                       <option
                         value="[Cluster].[Machine].[LogicalDisk].[AverageTransferQueueLength]"
                         title="Avg. disk queue length"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Avg. disk queue length
                       </option>
@@ -270,294 +256,252 @@ const AnalysisPage = () => {
                       <option
                         value="[Cluster].[SqlServer].[GeneralStatistics].[UserConnections]"
                         title="User connections"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;User connections
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[Process].[PercentProcessorTime]"
                         title="SQL Server: processor time"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;SQL Server: processor time
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[MemoryManager].[TotalServerMemoryBytes]"
                         title="SQL Server: total memory"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;SQL Server: total memory
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[MemoryManager].[TargetServerMemoryBytes]"
                         title="SQL Server: target memory"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;SQL Server: target memory
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[MemoryManager].[FreeMemoryBytes]"
                         title="SQL Server: free memory"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;SQL Server: free memory
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[MemoryManager].[DynamicSqlCacheMemoryBytes]"
                         title="SQL Server: dynamic SQL cache memory"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;SQL Server: dynamic SQL cache memory
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[MemoryManager].[ConnectionMemoryBytes]"
                         title="SQL Server: connection memory"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;SQL Server: connection memory
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[MemoryManager].[LockMemoryBytes]"
                         title="SQL Server: lock memory"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;SQL Server: lock memory
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[MemoryManager].[OptimizerMemoryBytes]"
                         title="SQL Server: optimizer memory"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;SQL Server: optimizer memory
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[MemoryManager].[DatabaseCacheMemoryBytes]"
                         title="SQL Server: buffer cache memory"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;SQL Server: buffer cache memory
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[MemoryManager].[WorkspaceMemoryBytes]"
                         title="SQL Server: granted workspace memory"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;SQL Server: granted workspace memory
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[MemoryManager].[LogPoolMemoryBytes]"
                         title="SQL Server: log pool memory"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;SQL Server: log pool memory
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[MemoryManager].[ReservedMemoryBytes]"
                         title="SQL Server: reserved server memory"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;SQL Server: reserved server memory
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[MemoryManager].[MaximumWorkspaceMemoryBytes]"
                         title="SQL Server: maximum workspace memory"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;SQL Server: maximum workspace memory
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[MemoryManager].[StolenServerMemoryBytes]"
                         title="SQL Server: stolen server memory"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;SQL Server: stolen server memory
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[MemoryManager].[MemoryGrantsPending]"
                         title="Memory grants pending"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Memory grants pending
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[PlanCache].[PlanCacheMemoryBytes]"
                         title="SQL Server: plan cache memory"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;SQL Server: plan cache memory
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[SqlStatistics].[BatchRequestsPerSecond]"
                         title="Batch requests/sec"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Batch requests/sec
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[SqlStatistics].[CompilationsPerSecond]"
                         title="Compilations/sec"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Compilations/sec
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[SqlStatistics].[CompilationsPerBatchRequest]"
                         title="Compilations/batch"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Compilations/batch
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[SqlStatistics].[RecompilationsPerSecond]"
                         title="Recompilations/sec"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Recompilations/sec
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[BufferManager].[PageLifeExpectancy]"
                         title="Buffer page life expectancy"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Buffer page life expectancy
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[BufferManager].[FreeListStallsPerSec]"
                         title="Free list stalls/sec"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Free list stalls/sec
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[BufferManager].[PageReadsPerSec]"
                         title="Page reads/sec"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Page reads/sec
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[AccessMethods].[FullScansPerSecond]"
                         title="Full scans/sec"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Full scans/sec
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[AccessMethods].[PageSplitsPerSecond]"
                         title="Page splits/sec"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Page splits/sec
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[AccessMethods].[PageSplitsPerBatchRequest]"
                         title="Page splits/batch request"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Page splits/batch request
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[Latches].[AverageLatchWaitTime]"
                         title="Latch wait time"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Latch wait time
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[Locks].[LockTimeoutsPerSecond]"
                         title="Lock timeouts/sec"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Lock timeouts/sec
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[Locks].[LockWaitsPerSecond]"
                         title="Lock waits/sec"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Lock waits/sec
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[Locks].[AverageLockWaitTime]"
                         title="Avg. lock wait time"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Avg. lock wait time
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[TempDB].[Distribution].[FreeBytes]"
                         title="Tempdb: Free bytes"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Tempdb: Free bytes
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[TempDB].[Distribution].[InternalBytes]"
                         title="Tempdb: Internal object bytes"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Tempdb: Internal object bytes
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[TempDB].[Distribution].[UserObjectBytes]"
                         title="Tempdb: User object bytes"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Tempdb: User object bytes
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[TempDB].[Distribution].[MixedExtentBytes]"
                         title="Tempdb: Mixed extent bytes"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Tempdb: Mixed extent bytes
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[TempDB].[Distribution].[VersionBytes]"
                         title="Tempdb: Version store bytes"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Tempdb: Version store bytes
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[TempDB].[Files].[FreeBytes]"
                         title="Tempdb files: Free bytes"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Tempdb files: Free bytes
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[TempDB].[Files].[InternalBytes]"
                         title="Tempdb files: Internal object bytes"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Tempdb files: Internal object bytes
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[TempDB].[Files].[UserBytes]"
                         title="Tempdb files: User object bytes"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Tempdb files: User object bytes
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[TempDB].[Files].[MixedBytes]"
                         title="Tempdb files: Mixed extent bytes"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Tempdb files: Mixed extent bytes
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[TempDB].[Files].[VersionStoreBytes]"
                         title="Tempdb files: Version store bytes"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Tempdb files: Version store bytes
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[TempDB].[VersionStore].[GenerationRate]"
                         title="Tempdb version store: Generation rate bytes/sec"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Tempdb version store: Generation
                         rate...
@@ -565,14 +509,12 @@ const AnalysisPage = () => {
                       <option
                         value="[Cluster].[SqlServer].[TempDB].[VersionStore].[CleanupRate]"
                         title="Tempdb version store: Cleanup rate bytes/sec"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Tempdb version store: Cleanup rate...
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[TempDB].[VersionStore].[LongestRunningTransactionTime]"
                         title="Tempdb version store: Longest running transaction time"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Tempdb version store: Longest
                         running...
@@ -586,119 +528,102 @@ const AnalysisPage = () => {
                       <option
                         value="[Cluster].[SqlServer].[Database].[Performance].[TransactionsPerSecond]"
                         title="Transactions/sec"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Transactions/sec
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[Database].[Performance].[ActiveTransactions]"
                         title="Active transactions"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Active transactions
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[Database].[Storage].[TotalSizeBytes]"
                         title="Total file size"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Total file size
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[Database].[Storage].[TotalDataSizeBytes]"
                         title="Total data file size"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Total data file size
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[Database].[Storage].[TotalDataUsedBytes]"
                         title="Total data file used"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Total data file used
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[Database].[File].[Size]"
                         title="File size"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;File size
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[Database].[File].[UsedSize]"
                         title="File used"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;File used
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[Database].[Storage].[TotalLogSizeBytes]"
                         title="Total log file size"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Total log file size
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[Database].[Storage].[TotalLogUsedBytes]"
                         title="Total log space used"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Total log space used
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[Database].[Storage].[PercentTotalLogUsed]"
                         title="Log space used %"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Log space used %
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[Database].[Performance].[LogBytesFlushedPerSecond]"
                         title="Log bytes flushed/sec"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Log bytes flushed/sec
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[Database].[Performance].[LogFlushesPerSecond]"
                         title="Log flushes/sec"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Log flushes/sec
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[Database].[Performance].[LogFlushWaitsPerSecond]"
                         title="Log flush waits/sec"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Log flush waits/sec
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[Database].[File].[Performance].[AverageStallPerRead]"
                         title="Stalls per read"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Stalls per read
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[Database].[File].[Performance].[AverageStallPerWrite]"
                         title="Stalls per write"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Stalls per write
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[Database].[File].[Performance].[ReadBytesPerSecond]"
                         title="Read bytes/sec"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Read bytes/sec
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[Database].[File].[Performance].[WriteBytesPerSecond]"
                         title="Write bytes/sec"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Write bytes/sec
                       </option>
@@ -711,210 +636,180 @@ const AnalysisPage = () => {
                       <option
                         value="[AzureSqlServer].[Database].[Resources].[PercentDtu]"
                         title="DTU percent"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;DTU percent
                       </option>
                       <option
                         value="[AzureSqlServer].[Database].[Resources].[PercentCpu]"
                         title="CPU percent"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;CPU percent
                       </option>
                       <option
                         value="[AzureSqlServer].[Database].[Resources].[PercentIo]"
                         title="Data I/O percent"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Data I/O percent
                       </option>
                       <option
                         value="[AzureSqlServer].[Database].[Resources].[PercentLogWrite]"
                         title="Log I/O percent"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Log I/O percent
                       </option>
                       <option
                         value="[AzureSqlServer].[Database].[Resources].[PercentMemoryUsed]"
                         title="Memory used percent"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Memory used percent
                       </option>
                       <option
                         value="[AzureSqlServer].[Database].[GeneralStatistics].[UserConnections]"
                         title="User connections"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;User connections
                       </option>
                       <option
                         value="[AzureSqlServer].[Database].[MemoryManager].[TotalServerMemoryBytes]"
                         title="SQL Server: total memory"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;SQL Server: total memory
                       </option>
                       <option
                         value="[AzureSqlServer].[Database].[MemoryManager].[TargetServerMemoryBytes]"
                         title="SQL Server: target memory"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;SQL Server: target memory
                       </option>
                       <option
                         value="[AzureSqlServer].[Database].[MemoryManager].[FreeMemoryBytes]"
                         title="SQL Server: free memory"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;SQL Server: free memory
                       </option>
                       <option
                         value="[AzureSqlServer].[Database].[PlanCache].[PlanCacheMemoryBytes]"
                         title="SQL Server: plan cache memory"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;SQL Server: plan cache memory
                       </option>
                       <option
                         value="[AzureSqlServer].[Database].[SqlStatistics].[BatchRequestsPerSecond]"
                         title="Batch requests/sec"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Batch requests/sec
                       </option>
                       <option
                         value="[AzureSqlServer].[Database].[SqlStatistics].[CompilationsPerSecond]"
                         title="Compilations/sec"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Compilations/sec
                       </option>
                       <option
                         value="[AzureSqlServer].[Database].[SqlStatistics].[CompilationsPerBatchRequest]"
                         title="Compilations/batch"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Compilations/batch
                       </option>
                       <option
                         value="[AzureSqlServer].[Database].[SqlStatistics].[RecompilationsPerSecond]"
                         title="Recompilations/sec"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Recompilations/sec
                       </option>
                       <option
                         value="[AzureSqlServer].[Database].[BufferManager].[PageLifeExpectancy]"
                         title="Buffer page life expectancy"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Buffer page life expectancy
                       </option>
                       <option
                         value="[AzureSqlServer].[Database].[AccessMethods].[FullScansPerSecond]"
                         title="Full scans/sec"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Full scans/sec
                       </option>
                       <option
                         value="[AzureSqlServer].[Database].[AccessMethods].[PageSplitsPerSecond]"
                         title="Page splits/sec"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Page splits/sec
                       </option>
                       <option
                         value="[AzureSqlServer].[Database].[AccessMethods].[PageSplitsPerBatchRequest]"
                         title="Page splits/batch request"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Page splits/batch request
                       </option>
                       <option
                         value="[AzureSqlServer].[Database].[Latches].[AverageLatchWaitTime]"
                         title="Latch wait time"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Latch wait time
                       </option>
                       <option
                         value="[AzureSqlServer].[Database].[Locks].[LockTimeoutsPerSecond]"
                         title="Lock timeouts/sec"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Lock timeouts/sec
                       </option>
                       <option
                         value="[AzureSqlServer].[Database].[Locks].[LockWaitsPerSecond]"
                         title="Lock waits/sec"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Lock waits/sec
                       </option>
                       <option
                         value="[AzureSqlServer].[Database].[Locks].[AverageLockWaitTime]"
                         title="Avg. lock wait time"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Avg. lock wait time
                       </option>
                       <option
                         value="[AzureSqlServer].[Database].[Performance].[TransactionsPerSecond]"
                         title="Transactions/sec"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Transactions/sec
                       </option>
                       <option
                         value="[AzureSqlServer].[Database].[Performance].[ActiveTransactions]"
                         title="Active transactions"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Active transactions
                       </option>
                       <option
                         value="[AzureSqlServer].[Database].[Performance].[LogBytesFlushedPerSecond]"
                         title="Log bytes flushed/sec"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Log bytes flushed/sec
                       </option>
                       <option
                         value="[AzureSqlServer].[Database].[Performance].[LogFlushesPerSecond]"
                         title="Log flushes/sec"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Log flushes/sec
                       </option>
                       <option
                         value="[AzureSqlServer].[Database].[Performance].[LogFlushWaitsPerSecond]"
                         title="Log flush waits/sec"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Log flush waits/sec
                       </option>
                       <option
                         value="[AzureSqlServer].[Database].[Storage].[DatabaseUsedSizeInBytes]"
                         title="Data size"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Data size
                       </option>
                       <option
                         value="[AzureSqlServer].[Database].[Resources].[MaxWorkerPercent]"
                         title="Worker thread percent"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Worker thread percent
                       </option>
                       <option
                         value="[AzureSqlServer].[Database].[Resources].[MaxSessionPercent]"
                         title="Session percent"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Session percent
                       </option>
@@ -927,42 +822,36 @@ const AnalysisPage = () => {
                       <option
                         value="[AzureSqlServer].[ElasticPool].[Resources].[DtuPercent]"
                         title="DTU percent"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;DTU percent
                       </option>
                       <option
                         value="[AzureSqlServer].[ElasticPool].[Resources].[AvgCpuPercent]"
                         title="CPU percent"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;CPU percent
                       </option>
                       <option
                         value="[AzureSqlServer].[ElasticPool].[Resources].[AvgDataIoPercent]"
                         title="Data I/O percent"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Data I/O percent
                       </option>
                       <option
                         value="[AzureSqlServer].[ElasticPool].[Resources].[AvgLogWritePercent]"
                         title="Log I/O percent"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Log I/O percent
                       </option>
                       <option
                         value="[AzureSqlServer].[ElasticPool].[Resources].[MaxWorkerPercent]"
                         title="Worker thread percent"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Worker thread percent
                       </option>
                       <option
                         value="[AzureSqlServer].[ElasticPool].[Resources].[MaxSessionPercent]"
                         title="Session percent"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Session percent
                       </option>
@@ -975,42 +864,36 @@ const AnalysisPage = () => {
                       <option
                         value="[Cluster].[AvailabilityGroup].[Replica].[Database].[Performance].[LogBytesReceivedPerSecond]"
                         title="Log bytes received/sec"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Log bytes received/sec
                       </option>
                       <option
                         value="[Cluster].[AvailabilityGroup].[Replica].[Database].[Performance].[LogSendQueue]"
                         title="Log send queue"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Log send queue
                       </option>
                       <option
                         value="[Cluster].[AvailabilityGroup].[Replica].[Database].[Performance].[RecoveryQueue]"
                         title="Redo queue"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Redo queue
                       </option>
                       <option
                         value="[Cluster].[AvailabilityGroup].[Replica].[Database].[Performance].[RedoneBytesPerSecond]"
                         title="Redo rate"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Redo rate
                       </option>
                       <option
                         value="[Cluster].[AvailabilityGroup].[Replica].[Database].[Performance].[TransactionDelay]"
                         title="Transaction delay ms/sec"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Transaction delay ms/sec
                       </option>
                       <option
                         value="[Cluster].[AvailabilityGroup].[Replica].[Performance].[FlowControlTime]"
                         title="Flow control time ms/sec"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Flow control time ms/sec
                       </option>
@@ -1023,105 +906,90 @@ const AnalysisPage = () => {
                       <option
                         value="[Cluster].[Machine].[VMware].[PercentCpuUsage]"
                         title="Processor time"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Processor time
                       </option>
                       <option
                         value="[Cluster].[Machine].[VMware].[GuestCpuReady]"
                         title="Guest CPU ready time"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Guest CPU ready time
                       </option>
                       <option
                         value="[Cluster].[Machine].[VMware].[GuestCpuSwapWait]"
                         title="Guest CPU swap wait"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Guest CPU swap wait
                       </option>
                       <option
                         value="[Cluster].[Machine].[VMware].[CpuCostop]"
                         title="CPU Co-Stop"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;CPU Co-Stop
                       </option>
                       <option
                         value="[Cluster].[Machine].[VMware].[MemorySwapInRateBytesPerSecond]"
                         title="Memory swap in rate bytes/sec"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Memory swap in rate bytes/sec
                       </option>
                       <option
                         value="[Cluster].[Machine].[VMware].[MemorySwapOutRateBytesPerSecond]"
                         title="Memory swap out rate bytes/sec"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Memory swap out rate bytes/sec
                       </option>
                       <option
                         value="[Cluster].[Machine].[VMware].[PercentMemoryUsage]"
                         title="Memory usage"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Memory usage
                       </option>
                       <option
                         value="[Cluster].[Machine].[VMware].[PercentGuestMemoryLatency]"
                         title="Guest Memory latency"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Guest Memory latency
                       </option>
                       <option
                         value="[Cluster].[Machine].[VMware].[GuestMemoryBalloonedBytes]"
                         title="Guest Memory ballooned"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Guest Memory ballooned
                       </option>
                       <option
                         value="[Cluster].[Machine].[VMware].[HostMemoryBalloonedBytes]"
                         title="Host Memory ballooned"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Host Memory ballooned
                       </option>
                       <option
                         value="[Cluster].[Machine].[VMware].[DiskLatency]"
                         title="Disk latency"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Disk latency
                       </option>
                       <option
                         value="[Cluster].[Machine].[VMware].[DiskReadBytes]"
                         title="Disk read bytes/sec"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Disk read bytes/sec
                       </option>
                       <option
                         value="[Cluster].[Machine].[VMware].[DiskWriteBytes]"
                         title="Disk write bytes/sec"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Disk write bytes/sec
                       </option>
                       <option
                         value="[Cluster].[Machine].[VMware].[NetworkUsageBytes]"
                         title="Network usage bytes/sec"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Network usage bytes/sec
                       </option>
                       <option
                         value="[Cluster].[Machine].[VMware].[Processor].[EffectiveVmSpeedMhz]"
                         title="Effective VM speed MHz"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Effective VM speed MHz
                       </option>
@@ -1134,28 +1002,24 @@ const AnalysisPage = () => {
                       <option
                         value="[Cluster].[ClusterSharedVolumes].[UsedBytes]"
                         title="Cluster Shared Volume used bytes"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Cluster Shared Volume used bytes
                       </option>
                       <option
                         value="[Cluster].[ClusterSharedVolumes].[UsedPercent]"
                         title="Cluster Shared Volume used %"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Cluster Shared Volume used %
                       </option>
                       <option
                         value="[Cluster].[ClusterSharedVolumes].[FreeBytes]"
                         title="Cluster Shared Volume free bytes"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Cluster Shared Volume free bytes
                       </option>
                       <option
                         value="[Cluster].[ClusterSharedVolumes].[FreePercent]"
                         title="Cluster Shared Volume free %"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Cluster Shared Volume free %
                       </option>
@@ -1168,28 +1032,24 @@ const AnalysisPage = () => {
                       <option
                         value="[Cluster].[SqlServer].[Database].[CustomMetric].[sqlmon-az-bm2.uksouth.cloudapp.azure.com:1]"
                         title="AccessControlChanges"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;AccessControlChanges
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[Database].[CustomMetric].[sqlmon-az-bm2.uksouth.cloudapp.azure.com:2]"
                         title="ConfigurationItemsChanged"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;ConfigurationItemsChanged
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[Database].[CustomMetric].[sqlmon-az-bm2.uksouth.cloudapp.azure.com:3]"
                         title="ObjectsChanged"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;ObjectsChanged
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[Database].[CustomMetric].[sqlmon-az-bm2.uksouth.cloudapp.azure.com:4]"
                         title="SuspiciousErrors"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;SuspiciousErrors
                       </option>
@@ -1202,35 +1062,30 @@ const AnalysisPage = () => {
                       <option
                         value="[Cluster].[SqlServer].[Database].[CustomMetric].[sqlmon-vmw-bm.red-gate.com:1]"
                         title="AccessControlChanges"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;AccessControlChanges
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[Database].[CustomMetric].[sqlmon-vmw-bm.red-gate.com:5]"
                         title="Average I/O stalls"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Average I/O stalls
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[Database].[CustomMetric].[sqlmon-vmw-bm.red-gate.com:2]"
                         title="ConfigurationItemsChanged"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;ConfigurationItemsChanged
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[Database].[CustomMetric].[sqlmon-vmw-bm.red-gate.com:3]"
                         title="ObjectsChanged"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;ObjectsChanged
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[Database].[CustomMetric].[sqlmon-vmw-bm.red-gate.com:4]"
                         title="SuspiciousErrors"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;SuspiciousErrors
                       </option>
@@ -1243,14 +1098,12 @@ const AnalysisPage = () => {
                       <option
                         value="[Cluster].[SqlServer].[Database].[CustomMetric].[SQLMON-EC2-BM2:2]"
                         title="SqlServerCentral: forum posts/hr"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;SqlServerCentral: forum posts/hr
                       </option>
                       <option
                         value="[Cluster].[SqlServer].[Database].[CustomMetric].[SQLMON-EC2-BM2:5]"
                         title="SqlServerCentral: Table size (MB) - wp_posts"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;SqlServerCentral: Table size (MB) -...
                       </option>
@@ -1263,28 +1116,24 @@ const AnalysisPage = () => {
                       <option
                         value="[AzureSqlServer].[Database].[CustomMetric].[sqlmon-az-bm2.uksouth.cloudapp.azure.com:1]"
                         title="AccessControlChanges"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;AccessControlChanges
                       </option>
                       <option
                         value="[AzureSqlServer].[Database].[CustomMetric].[sqlmon-az-bm2.uksouth.cloudapp.azure.com:2]"
                         title="ConfigurationItemsChanged"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;ConfigurationItemsChanged
                       </option>
                       <option
                         value="[AzureSqlServer].[Database].[CustomMetric].[sqlmon-az-bm2.uksouth.cloudapp.azure.com:3]"
                         title="ObjectsChanged"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;ObjectsChanged
                       </option>
                       <option
                         value="[AzureSqlServer].[Database].[CustomMetric].[sqlmon-az-bm2.uksouth.cloudapp.azure.com:4]"
                         title="SuspiciousErrors"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;SuspiciousErrors
                       </option>
@@ -1297,35 +1146,30 @@ const AnalysisPage = () => {
                       <option
                         value="[AzureSqlServer].[Database].[CustomMetric].[sqlmon-vmw-bm.red-gate.com:1]"
                         title="AccessControlChanges"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;AccessControlChanges
                       </option>
                       <option
                         value="[AzureSqlServer].[Database].[CustomMetric].[sqlmon-vmw-bm.red-gate.com:5]"
                         title="Average I/O stalls"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;Average I/O stalls
                       </option>
                       <option
                         value="[AzureSqlServer].[Database].[CustomMetric].[sqlmon-vmw-bm.red-gate.com:2]"
                         title="ConfigurationItemsChanged"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;ConfigurationItemsChanged
                       </option>
                       <option
                         value="[AzureSqlServer].[Database].[CustomMetric].[sqlmon-vmw-bm.red-gate.com:3]"
                         title="ObjectsChanged"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;ObjectsChanged
                       </option>
                       <option
                         value="[AzureSqlServer].[Database].[CustomMetric].[sqlmon-vmw-bm.red-gate.com:4]"
                         title="SuspiciousErrors"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;SuspiciousErrors
                       </option>
@@ -1338,14 +1182,12 @@ const AnalysisPage = () => {
                       <option
                         value="[AzureSqlServer].[Database].[CustomMetric].[SQLMON-EC2-BM2:2]"
                         title="SqlServerCentral: forum posts/hr"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;SqlServerCentral: forum posts/hr
                       </option>
                       <option
                         value="[AzureSqlServer].[Database].[CustomMetric].[SQLMON-EC2-BM2:5]"
                         title="SqlServerCentral: Table size (MB) - wp_posts"
-                        ismatching="true"
                       >
                         &nbsp;&nbsp;&nbsp;SqlServerCentral: Table size (MB) -...
                       </option>

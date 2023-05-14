@@ -5,9 +5,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import classNames from 'classnames'
 import React, { useCallback, useEffect, useState } from 'react'
 
-import Servers from '~/components/page/estates/disk-usage/servers'
 import Loading from '~/components/loading'
 import { PageContent } from '~/components/page'
+import Servers from '~/components/page/estates/disk-usage/servers'
 import useGlobal from '~/hooks/use-global'
 import { getDiskUsage } from '~/services/estates'
 import { filterServersByEnvironmentId, formatServer } from '~/utils/server'
@@ -106,12 +106,14 @@ const DiskUsage = ({ tabName }) => {
                               `w-full py-2 px-4 bg-white border space-x-4
                     rounded-sm font-bold text-left text-sm lg:hover:border-gray`,
                               {
-                                'border-gray': environmentExpandedIndices.has(
-                                  environmentIndex
-                                ),
-                                'border-gray-light': !environmentExpandedIndices.has(
-                                  environmentIndex
-                                ),
+                                'border-gray':
+                                  environmentExpandedIndices.has(
+                                    environmentIndex
+                                  ),
+                                'border-gray-light':
+                                  !environmentExpandedIndices.has(
+                                    environmentIndex
+                                  ),
                               }
                             )}
                             onClick={() =>
@@ -121,21 +123,24 @@ const DiskUsage = ({ tabName }) => {
                             <FontAwesomeIcon
                               icon={faChevronDown}
                               className={classNames('transform', {
-                                'rotate-180': environmentExpandedIndices.has(
-                                  environmentIndex
-                                ),
+                                'rotate-180':
+                                  environmentExpandedIndices.has(
+                                    environmentIndex
+                                  ),
                               })}
                             />
                             <span>{typeServerEnvironmentName}</span>
                           </button>
                           <div
                             className={classNames({
-                              block: environmentExpandedIndices.has(
-                                environmentIndex
-                              ),
-                              hidden: !environmentExpandedIndices.has(
-                                environmentIndex
-                              ),
+                              block:
+                                environmentExpandedIndices.has(
+                                  environmentIndex
+                                ),
+                              hidden:
+                                !environmentExpandedIndices.has(
+                                  environmentIndex
+                                ),
                             })}
                           >
                             <Servers

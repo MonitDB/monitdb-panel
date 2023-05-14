@@ -26,9 +26,10 @@ const Pagination = ({
     onChangePage(currentPage - 1)
   }, [onChangePage, currentPage])
 
-  const lastPage = useMemo(() => paginationRange[paginationRange.length - 1], [
-    paginationRange,
-  ])
+  const lastPage = useMemo(
+    () => paginationRange[paginationRange.length - 1],
+    [paginationRange]
+  )
 
   if (currentPage === 0 || paginationRange.length < 2) {
     return

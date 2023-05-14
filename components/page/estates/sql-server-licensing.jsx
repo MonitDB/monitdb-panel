@@ -80,9 +80,10 @@ const SqlServerLicensing = ({ tabName }) => {
 
                 <tbody>
                   {servers.map(({ id, serverName }) => {
-                    const filteredSqlServerLicensing = sqlServerLicensing.filter(
-                      ({ ServerId }) => ServerId === id
-                    )
+                    const filteredSqlServerLicensing =
+                      sqlServerLicensing.filter(
+                        ({ ServerId }) => ServerId === id
+                      )
 
                     if (filteredSqlServerLicensing.length === 0) {
                       return ''

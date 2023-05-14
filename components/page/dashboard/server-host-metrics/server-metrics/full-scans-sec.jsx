@@ -2,7 +2,7 @@ import { format } from 'date-fns'
 import React, { memo, useMemo } from 'react'
 
 import Chart from '~/components/chart'
-import { useSingleDashboard, useFullScans } from '~/hooks/index'
+import { useFullScans, useSingleDashboard } from '~/hooks/index'
 
 function FullScansSec() {
   const { currentServer } = useSingleDashboard()
@@ -16,7 +16,7 @@ function FullScansSec() {
               item.value !== null && item.value !== undefined
                 ? [
                     new Date(item.createdata).getTime(),
-                    Number(item.value / 60).toFixed(),
+                    Number(item.value / 60).toFixed(0),
                   ]
                 : undefined
             )

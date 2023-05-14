@@ -2,11 +2,7 @@ import { format } from 'date-fns'
 import React, { memo, useMemo } from 'react'
 
 import Chart from '~/components/chart'
-import {
-  useBatchRequests,
-  useSingleDashboard,
-  useSQLCompilations,
-} from '~/hooks/index'
+import { useSingleDashboard, useSQLCompilations } from '~/hooks/index'
 
 function SqlCompilationsBatchRequests() {
   const { currentServer } = useSingleDashboard()
