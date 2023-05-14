@@ -133,12 +133,6 @@ const DashboardPage = () => {
     ])
   }, [serverEnvironments, servers, serverTypes])
 
-  // eslint-disable-next-line no-console
-  console.log(
-    'formattedEnvironmentsformattedEnvironments',
-    formattedEnvironments
-  )
-
   return (
     <>
       <NextSeo title="Dashboard - MonitDB" />

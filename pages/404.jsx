@@ -1,3 +1,4 @@
+/*eslint no-warning-comments: "error"*/
 import Image from 'next/image'
 
 import Grid from '~/components/grid'

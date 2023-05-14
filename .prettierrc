@@ -1,6 +1,6 @@
 {
 	"printWidth": 80,
-  "proseWrap": "always",
+  	"proseWrap": "always",
 	"semi": false,
 	"editor.formatOnSave": true,
 	"trailingComma": "es5",
