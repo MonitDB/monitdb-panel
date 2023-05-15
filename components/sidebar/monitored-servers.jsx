@@ -25,8 +25,10 @@ const MonitoredServers = () => {
   } = useGlobal()
   const router = useRouter()
 
-  const [sidebarEnvironmentActiveIndex, setSidebarEnvironmentActiveIndex] =
-    useState(-1)
+  const [
+    sidebarEnvironmentActiveIndex,
+    setSidebarEnvironmentActiveIndex,
+  ] = useState(-1)
   const [sidebarShowAllServers, setSidebarShowAllServers] = useState(true)
 
   return (
