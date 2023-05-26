@@ -34,7 +34,8 @@
     "react-toastify": "^9.0.8",
     "swr": "^2.1.5",
     "yup": "^0.32.11",
-    "yup-locales": "^1.2.2"
+    "yup-locales": "^1.2.2",
+    "zustand": "^4.3.8"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.18.2",
