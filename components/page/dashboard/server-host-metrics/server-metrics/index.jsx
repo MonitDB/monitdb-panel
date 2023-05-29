@@ -3,8 +3,11 @@ import { memo } from 'react'
 import Chart from '~/components/chart'
 import Grid from '~/components/grid'
 
+import AvgLatchWait from './avg-latch-wait'
 import BatchRequests from './batch-requests'
 import FullScansSec from './full-scans-sec'
+import LockTimeoutsSec from './lock-timeouts-sec'
+import LockWaitsSec from './lock-waits-sec'
 import PageSplitsBatchRequests from './page-splits-batch-requests'
 import PageSplitsSec from './page-splits-sec'
 import SqlCompilationsBatchRequests from './sql-compilations-batch-requests'
@@ -43,77 +46,11 @@ const ServerMetrics = () => {
       </div>
 
       <Grid className="mt-6">
-        <div className="col-span-2 md:col-span-6">
+        <div className="col-span-2 space-y-4 md:col-span-6">
           <h4 className="mb-4 text-sm">Latches and locks</h4>
-          <div className="bg-white pt-5 pr-2 mb-4">
-            <Chart
-              height="140"
-              title={{
-                text: 'Avg. latch wait',
-                offsetX: 7,
-                offsetY: -5,
-                floating: true,
-                style: {
-                  fontSize: '11px',
-                  fontWeight: 'normal',
-                },
-              }}
-              legend={{
-                show: false,
-              }}
-              xaxis={{
-                labels: {
-                  show: false,
-                },
-              }}
-            />
-          </div>
-          <div className="bg-white pt-5 pr-2 mb-4">
-            <Chart
-              height="140"
-              title={{
-                text: 'Lock timeouts / sec',
-                offsetX: 7,
-                offsetY: -5,
-                floating: true,
-                style: {
-                  fontSize: '11px',
-                  fontWeight: 'normal',
-                },
-              }}
-              legend={{
-                show: false,
-              }}
-              xaxis={{
-                labels: {
-                  show: false,
-                },
-              }}
-            />
-          </div>
-          <div className="bg-white pt-5 pr-2">
-            <Chart
-              height="140"
-              title={{
-                text: 'Lock waits / sec',
-                offsetX: 7,
-                offsetY: -5,
-                floating: true,
-                style: {
-                  fontSize: '11px',
-                  fontWeight: 'normal',
-                },
-              }}
-              legend={{
-                show: false,
-              }}
-              xaxis={{
-                labels: {
-                  show: false,
-                },
-              }}
-            />
-          </div>
+          <AvgLatchWait />
+          <LockTimeoutsSec />
+          <LockWaitsSec />
           <h4 className="mt-6 mb-4 text-sm">Buffer cache</h4>
           <div className="bg-white pt-5 pr-2">
             <Chart
