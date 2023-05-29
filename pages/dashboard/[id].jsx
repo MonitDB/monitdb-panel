@@ -39,6 +39,7 @@ import DatabaseIcons from '~/helpers/database-icons'
 import useGlobal from '~/hooks/use-global'
 import Layout from '~/layouts/default'
 import useComponentLogContext from '~/services/state-manager/logs'
+import { dateStringToTime } from '~/utils/formats'
 import { scrollToSection } from '~/utils/global'
 import { formatServer } from '~/utils/server'
 
@@ -323,6 +324,11 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
                               offsetX: 5,
                             }}
                             seriesName="% Utilization"
+                            // ToDo: Verify if is the correct path in the API and optimize the transformation of the data.
+                            seriesData={cpuUsage.map((usage) => [
+                              dateStringToTime(usage.createData),
+                              usage.sqlProcessPerc,
+                            ])}
                           />
                         </div>
                         <div className="col-span-2 bg-white lg:col-span-6">
@@ -345,16 +351,6 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
                               offsetX: 5,
                             }}
                             seriesName="% Utilization"
-                            seriesData={[
-                              [1_585_898_010_000, 0],
-                              [1_585_898_020_000, 0.27],
-                              [1_585_898_030_000, 0.18],
-                              [1_585_898_040_000, 0.18],
-                              [1_585_898_050_000, 0.22],
-                              [1_585_898_060_000, 0.14],
-                              [1_585_898_070_000, 0.24],
-                              [1_585_898_080_000, 0.2],
-                            ]}
                           />
                         </div>
                       </Grid>

@@ -17,3 +17,5 @@ export const megaBytesToGigaBytes = (mb) => {
   if (!mb) return mb
   return Math.ceil(Number.parseInt(mb) / 1024)
 }
+
+export const dateStringToTime = (dateString) => new Date(dateString).getTime();
