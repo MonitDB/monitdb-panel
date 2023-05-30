@@ -2,18 +2,7 @@ import { create } from 'zustand'
 
 import clientApi from '../../utils/client-api'
 
-interface ExecComponentContext {
-  getVersions: () => Promise<any>
-  getBackups: () => Promise<any>
-  getDiskUsage: () => Promise<any>
-  getSqlServerLicensing: () => Promise<any>
-  getSqlAgentRundeckJobs: () => Promise<any>
-  getSqlAgentPRjobs: () => Promise<any>
-  getSqlAgentPRjobsExe: () => Promise<any>
-  getSqlAgentPRjobsSteps: () => Promise<any>
-}
-
-const useExecComponentContext = create<ExecComponentContext>((set, get) => ({
+const useExecComponentContext = create((set, get) => ({
   getVersions: async () => {
     return clientApi().get(`/api/execcomponent/PRVER`)
   },

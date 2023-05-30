@@ -324,7 +324,9 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
                           ) : (
                             <Chart
                               title={{
-                                text: 'CPU',
+                                text: cpuUsage.error
+                                  ? 'Error to load the data'
+                                  : 'CPU',
                                 offsetY: 10,
                                 offsetX: 5,
                               }}

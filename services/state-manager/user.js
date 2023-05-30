@@ -1,19 +1,7 @@
 import clientApi from '../../utils/client-api'
 import { create } from 'zustand'
 
-interface UserContext {
-  postLogin: (data: any) => Promise<any>
-  postTokenValidate: () => Promise<any>
-  getMe: () => Promise<any>
-  create: (data: any) => Promise<any>
-  update: (data: any) => Promise<any>
-  getUserById: (id: string) => Promise<any>
-  list: () => Promise<any>
-  listRoles: () => Promise<any>
-  remove: (id: string) => Promise<any>
-}
-
-const useUserContext = create<UserContext>((set, get) => ({
+const useUserContext = create((set, get) => ({
   postLogin: async (data) => {
     return clientApi().post('/api/user/login', data)
   },

@@ -1,17 +1,8 @@
 import { create } from 'zustand'
+
 import clientApi from '../../utils/client-api'
 
-interface ServerContext {
-  getServers: () => Promise<any>
-  getServerMetrics: (params: { id: string }) => Promise<any>
-  getTypes: () => Promise<any>
-  getEnvironments: () => Promise<any>
-  addServer: (values: any) => Promise<any>
-  updateServer: (values: any) => Promise<any>
-  deleteServer: (id: string) => Promise<any>
-}
-
-const useServerContext = create<ServerContext>((set, get) => ({
+const useServerContext = create((set, get) => ({
   getServers: async () => {
     return clientApi().get(`/api/server`)
   },

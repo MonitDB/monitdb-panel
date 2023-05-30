@@ -3,14 +3,7 @@ import { create } from 'zustand'
 import clientApi from '../../utils/client-api'
 import { formatObjectToQuery } from '../../utils/formats'
 
-interface ComponentContext {
-  getComponents: (parameters?: Record<string, any>) => Promise<any>
-  getComponentById: (componentId: string) => Promise<any>
-  updateComponentById: (values: Record<string, any>) => Promise<any>
-  getComponentTypes: (parameters?: Record<string, any>) => Promise<any>
-}
-
-const useComponentContext = create<ComponentContext>((set, get) => ({
+const useComponentContext = create((set, get) => ({
   getComponents: async (parameters = {}) => {
     return clientApi().get(`/api/component?${formatObjectToQuery(parameters)}`)
   },

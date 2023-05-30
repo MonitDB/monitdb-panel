@@ -1,23 +1,9 @@
 import { create } from 'zustand'
+
 import clientApi from '../../utils/client-api'
 import { formatObjectToQuery } from '../../utils/formats'
 
-interface AlertContext {
-  getAlerts: (parameters?: Record<string, any>) => Promise<any>
-  getAlertsById: (id: string, parameters?: Record<string, any>) => Promise<any>
-  getAlertsParameter: (parameters?: Record<string, any>) => Promise<any>
-  getAlertsParameterByServerId: (serverId: string) => Promise<any>
-  getAlertParameterByServerId: (
-    serverId: string,
-    parameterId: string
-  ) => Promise<any>
-  updateAlertsParameterByServerId: (
-    serverId: string,
-    values: Record<string, any>
-  ) => Promise<any>
-}
-
-const useAlertContext = create<AlertContext>((set, get) => ({
+const useAlertContext = create((set, get) => ({
   getAlerts: async (parameters = {}) => {
     return clientApi().get(`/api/alert?${formatObjectToQuery(parameters)}`)
   },
