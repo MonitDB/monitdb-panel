@@ -3,7 +3,7 @@ import { create } from 'zustand'
 import clientApi from '../../utils/client-api'
 import { formatObjectToQuery } from '../../utils/formats'
 
-const useAlertContext = create((set, get) => ({
+const useAlertContext = create(() => ({
   getAlerts: async (parameters = {}) => {
     return clientApi().get(`/api/alert?${formatObjectToQuery(parameters)}`)
   },

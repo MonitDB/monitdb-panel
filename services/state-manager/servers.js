@@ -2,7 +2,7 @@ import { create } from 'zustand'
 
 import clientApi from '../../utils/client-api'
 
-const useServerContext = create((set, get) => ({
+const useServerContext = create(() => ({
   getServers: async () => {
     return clientApi().get(`/api/server`)
   },

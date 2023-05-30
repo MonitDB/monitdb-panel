@@ -2,7 +2,7 @@ import { create } from 'zustand'
 
 import clientApi from '../../utils/client-api'
 
-const useExecComponentContext = create((set, get) => ({
+const useExecComponentContext = create(() => ({
   getVersions: async () => {
     return clientApi().get(`/api/execcomponent/PRVER`)
   },

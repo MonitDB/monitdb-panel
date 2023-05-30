@@ -2,7 +2,7 @@ import { create } from 'zustand'
 
 import clientApi from '../../utils/client-api'
 
-const useDashboardContext = create((set, get) => ({
+const useDashboardContext = create(() => ({
   getDashboard: async () => {
     return clientApi().get(`/dashboard`)
   },

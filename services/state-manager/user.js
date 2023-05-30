@@ -1,7 +1,8 @@
-import clientApi from '../../utils/client-api'
 import { create } from 'zustand'
 
-const useUserContext = create((set, get) => ({
+import clientApi from '../../utils/client-api'
+
+const useUserContext = create(() => ({
   postLogin: async (data) => {
     return clientApi().post('/api/user/login', data)
   },
