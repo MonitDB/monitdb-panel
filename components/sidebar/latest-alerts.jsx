@@ -51,9 +51,12 @@ const LatestAlerts = () => {
   const [alertGroups, setAlertGroups] = useState([])
 
   const getAlertsData = useCallback(async () => {
-    const responseAlerts = await getAlerts({ PageLength: 100, PageNumber: 1 })
-
-    setAlerts(responseAlerts?.data)
+    try {
+      const responseAlerts = await getAlerts({ PageLength: 100, PageNumber: 1 })
+      setAlerts(responseAlerts?.data)
+    } catch (error) {
+      console.error(error)
+    }
   }, [])
 
   useEffect(() => {
@@ -68,7 +71,11 @@ const LatestAlerts = () => {
   }, [alerts, parameters])
 
   useEffect(() => {
-    getAlertsData()
+    try {
+      getAlertsData()
+    } catch (error) {
+      console.error(error)
+    }
   }, [getAlertsData])
 
   return (

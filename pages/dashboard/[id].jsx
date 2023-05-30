@@ -6,7 +6,7 @@ import faker from 'faker'
 import { useFormik } from 'formik'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 
 import BlockMessage from '~/components/block-message'
 import Chart from '~/components/chart'
@@ -38,6 +38,8 @@ import { SingleDashboardContextProvider } from '~/contexts/single-dashboard'
 import DatabaseIcons from '~/helpers/database-icons'
 import useGlobal from '~/hooks/use-global'
 import Layout from '~/layouts/default'
+import useComponentLogContext from '~/services/state-manager/logs'
+import { dateStringToTime } from '~/utils/formats'
 import { scrollToSection } from '~/utils/global'
 import { formatServer } from '~/utils/server'
 
@@ -104,6 +106,16 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
     ],
     []
   )
+
+  const { getCpuUsage, cpuUsage } = useComponentLogContext()
+
+  useEffect(() => {
+    if (!currentServer) {
+      return
+    }
+
+    getCpuUsage(currentServer.id)
+  }, [currentServer, getCpuUsage])
 
   const formik = useFormik({
     initialValues: {
@@ -305,14 +317,28 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
                           />
                         </div>
                         <div className="col-span-2 bg-white lg:col-span-6">
-                          <Chart
-                            title={{
-                              text: 'CPU',
-                              offsetY: 10,
-                              offsetX: 5,
-                            }}
-                            seriesName="% Utilization"
-                          />
+                          {cpuUsage.loading ? (
+                            <div className="flex justify-center items-center w-full min-h-28">
+                              <Loading />
+                            </div>
+                          ) : (
+                            <Chart
+                              title={{
+                                text: cpuUsage.error
+                                  ? 'Error to load the data'
+                                  : 'CPU',
+                                offsetY: 10,
+                                offsetX: 5,
+                              }}
+                              seriesName="% Utilization"
+                              seriesData={
+                                cpuUsage.data?.map((usage) => [
+                                  dateStringToTime(usage.createData),
+                                  usage.otherProcessPerc,
+                                ]) || []
+                              }
+                            />
+                          )}
                         </div>
                         <div className="col-span-2 bg-white lg:col-span-6">
                           <Chart
