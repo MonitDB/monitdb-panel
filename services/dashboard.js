@@ -39,3 +39,21 @@ export const getLogUserConnectionsCount = async (
     `/api/LogUserConnectionsCount/${serverId}?LastMinutes=${lastMinutes}`
   )
 }
+
+export const getLogLatchWaitsCount = async (serverId, lastMinutes = 60) => {
+  return clientApi().get(
+    `/api/LogLatchWaitsCount/${serverId}?LastMinutes=${lastMinutes}`
+  )
+}
+
+export const getLogLockTimeoutsCount = async (serverId, lastMinutes = 60) => {
+  return clientApi().get(
+    `/api/LogLockTimeoutsCount/${serverId}?LastMinutes=${lastMinutes}`
+  )
+}
+
+export const getLogLockWaitsCount = async (serverId, lastMinutes = 60) => {
+  return clientApi().get(
+    `/api/LogLockWaitsCount/${serverId}?LastMinutes=${lastMinutes}`
+  )
+}
