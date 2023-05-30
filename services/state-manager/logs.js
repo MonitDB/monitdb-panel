@@ -32,12 +32,19 @@ const useComponentLogContext = create((set, get) => ({
     try {
       set({ cpuUsage: { loading: true } });
       const { data } = await clientApi().get(`/api/logcpuusage/${id}`);
-      set({ cpuUsage: { ...cpuUsage, data, loading: false} });
+      set({ cpuUsage: { ...cpuUsage, data, loading: false } });
       return;
     } catch (error) {
-      set({ cpuUsage: { error: true, data: [], loading: false } });
+      set({ cpuUsage: { error: true, data: []} });
       console.error('Error getting cpu usage', error);
-  
+    } finally {
+      set((previousState) => ({
+      cpuUsage: {
+        ...previousState.cpuUsage,
+        loading: false
+      }
+    }));
+    
     }
   },
 
