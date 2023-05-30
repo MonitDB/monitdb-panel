@@ -317,19 +317,26 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
                           />
                         </div>
                         <div className="col-span-2 bg-white lg:col-span-6">
-                          <Chart
-                            title={{
-                              text: 'CPU',
-                              offsetY: 10,
-                              offsetX: 5,
-                            }}
-                            seriesName="% Utilization"
-                            // ToDo: Verify if is the correct path in the API and optimize the transformation of the data.
-                            seriesData={cpuUsage.map((usage) => [
-                              dateStringToTime(usage.createData),
-                              usage.sqlProcessPerc,
-                            ])}
-                          />
+                          {cpuUsage.loading ? (
+                            <div className="flex justify-center items-center w-full min-h-28">
+                              <Loading />
+                            </div>
+                          ) : (
+                            <Chart
+                              title={{
+                                text: 'CPU',
+                                offsetY: 10,
+                                offsetX: 5,
+                              }}
+                              seriesName="% Utilization"
+                              seriesData={
+                                cpuUsage.data?.map((usage) => [
+                                  dateStringToTime(usage.createData),
+                                  usage.otherProcessPerc,
+                                ]) || []
+                              }
+                            />
+                          )}
                         </div>
                         <div className="col-span-2 bg-white lg:col-span-6">
                           <Chart
