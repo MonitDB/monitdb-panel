@@ -1,8 +1,27 @@
-import React from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 
 import Image from '~/components/image'
 
+import useComponentContext from '../../../../services/state-manager/components'
+
+const COMPONENT_CODE = 'LTTPPR'
+
 function SqlUserProcesses() {
+  const [loading, setLoading] = useState(false)
+  const [data, setData] = useState([])
+  const { executeQueryComponent } = useComponentContext()
+
+  useEffect(() => {
+    fetchData()
+  }, [fetchData])
+
+  const fetchData = useCallback(async () => {
+    setLoading(true)
+    const data = await executeQueryComponent(COMPONENT_CODE)
+    setData(data)
+    setLoading(false)
+  }, [executeQueryComponent])
+
   return (
     <div id="sqlprocesses" className="mt-4">
       <div className="grid grid-cols-[26px_auto_1fr] gap-2 items-center my-8">
@@ -35,11 +54,37 @@ function SqlUserProcesses() {
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td colSpan="12">
-                <div>No SQL processes to display.</div>
-              </td>
-            </tr>
+            {loading ? (
+              <loading />
+            ) : // eslint-disable-next-line unicorn/no-nested-ternary
+            data === undefined ? (
+              <tr>
+                <td colSpan="12">
+                  <div>Error to load the data.</div>
+                </td>
+              </tr>
+            ) : // eslint-disable-next-line unicorn/no-nested-ternary
+            data.length === 0 ? (
+              <tr>
+                <td colSpan="12">
+                  <div>No SQL processes to display.</div>
+                </td>
+              </tr>
+            ) : (
+              data.map((row, index) => (
+                <tr key={index} className="hover:bg-gray-lightest">
+                  <td>{row.session_id}</td>
+                  <td>{new Date(row.last_request_start_time).toUTCString()}</td>
+                  <td>{row.loginname}</td>
+                  <td>{row.hostname}</td>
+                  <td>{row.program_name}</td>
+                  <td>{row.query}</td>
+                  <td>{row.status}</td>
+                  <td>{row.dbname}</td>
+                  <td>{row.interval_cpu_percent}</td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>
