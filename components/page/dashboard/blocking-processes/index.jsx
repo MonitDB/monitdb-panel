@@ -1,8 +1,28 @@
-import React from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 
 import Image from '~/components/image'
+import Loading from '~/components/loading/loading'
+
+import useComponentContext from '../../../../services/state-manager/components'
+
+const COMPONENT_CODE = 'LTBLPR'
 
 function BlockingProcesses() {
+  const [loading, setLoading] = useState(false)
+  const [data, setData] = useState([])
+  const { executeQueryComponent } = useComponentContext()
+
+  useEffect(() => {
+    fetchData()
+  }, [fetchData])
+
+  const fetchData = useCallback(async () => {
+    setLoading(true)
+    const data = await executeQueryComponent(COMPONENT_CODE)
+    setData(data)
+    setLoading(false)
+  }, [executeQueryComponent])
+
   return (
     <div id="blocking-processes" className="mt-4">
       <div className="grid grid-cols-[26px_auto_1fr] gap-2 items-center my-8">
@@ -31,11 +51,35 @@ function BlockingProcesses() {
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td colSpan="8">
-                <div>No blocking processes to display.</div>
-              </td>
-            </tr>
+            {loading ? (
+              <Loading />
+            ) : // eslint-disable-next-line unicorn/no-nested-ternary
+            data === undefined ? (
+              <tr>
+                <td colSpan="12">
+                  <div>Error to load the data.</div>
+                </td>
+              </tr>
+            ) : // eslint-disable-next-line unicorn/no-nested-ternary
+            data.length === 0 ? (
+              <tr>
+                <td colSpan="12">
+                  <div>No Blocking processes to display.</div>
+                </td>
+              </tr>
+            ) : (
+              data.map((row, index) => (
+                <tr key={index} className="hover:bg-gray-lightest">
+                  <td>{row.session_id}</td>
+                  <td>{row.login_time}</td>
+                  <td>{row.occurrence_time}</td>
+                  <td>{row.host}</td>
+                  <td>{row.program_name}</td>
+                  <td>{row.status}</td>
+                  <td>{row.database}</td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>

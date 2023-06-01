@@ -14,8 +14,10 @@ const useComponentContext = create((set) => ({
       set({loading: true})
       const { data } = clientApi().get(`/api/component/${componentId}`);
       return data;
+      
     } catch (error) {
       console.log(error)
+      return;
     } finally {
       set({ loading: false})
     }
@@ -30,6 +32,18 @@ const useComponentContext = create((set) => ({
       `/api/typecomponent?${formatObjectToQuery(parameters)}`
     )
   },
+  executeQueryComponent: async (componentId) => {
+      try {
+      set({loading: true})
+      const { data } = await clientApi().get(`/api/execcomponent/${componentId}`);
+      return data;
+    } catch (error) {
+      console.log(error)
+      return;
+    } finally {
+      set({ loading: false})
+    }
+  }
 }))
 
 export default useComponentContext
