@@ -7,7 +7,9 @@ import useComponentContext from '../../../../services/state-manager/components'
 
 const COMPONENT_CODE = 'LTBLPR'
 
-function BlockingProcesses() {
+function BlockingProcesses(properties) {
+  const { currentServer } = properties
+
   const [loading, setLoading] = useState(false)
   const [data, setData] = useState([])
   const { executeQueryComponent } = useComponentContext()
@@ -18,7 +20,10 @@ function BlockingProcesses() {
 
   const fetchData = useCallback(async () => {
     setLoading(true)
-    const data = await executeQueryComponent(COMPONENT_CODE)
+    const data = await executeQueryComponent(
+      COMPONENT_CODE,
+      currentServer?.id || undefined
+    )
     setData(data)
     setLoading(false)
   }, [executeQueryComponent])

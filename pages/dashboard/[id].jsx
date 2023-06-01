@@ -369,9 +369,9 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
                       <Permissions />
                       <VmwareMetrics />
                       <TempDB />
-                      <BlockingProcesses />
-                      <SqlUserProcesses />
-                      <ErrorLog />
+                      <BlockingProcesses currentServer={currentServer} />
+                      <SqlUserProcesses currentServer={currentServer} />
+                      <ErrorLog currentServer={currentServer} />
                       <Databases />
                     </div>
                   </div>

@@ -32,10 +32,10 @@ const useComponentContext = create((set) => ({
       `/api/typecomponent?${formatObjectToQuery(parameters)}`
     )
   },
-  executeQueryComponent: async (componentId) => {
+  executeQueryComponent: async (componentId, serverId) => {
       try {
       set({loading: true})
-      const { data } = await clientApi().get(`/api/execcomponent/${componentId}`);
+      const { data } = await clientApi().get(`/api/execcomponent/${componentId}/${serverId || ''}`);
       return data;
     } catch (error) {
       console.log(error)

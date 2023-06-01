@@ -1,8 +1,32 @@
-import React from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 
 import Image from '~/components/image'
+import Loading from '~/components/loading/loading'
 
-function ErrorLog() {
+import useComponentContext from '../../../../services/state-manager/components'
+
+const COMPONENT_CODE = 'LTELG'
+
+function ErrorLog(properties) {
+  const { currentServer } = properties
+  const [loading, setLoading] = useState(false)
+  const [data, setData] = useState([])
+  const { executeQueryComponent } = useComponentContext()
+
+  useEffect(() => {
+    fetchData()
+  }, [fetchData])
+
+  const fetchData = useCallback(async () => {
+    setLoading(true)
+    const data = await executeQueryComponent(
+      COMPONENT_CODE,
+      currentServer?.id || undefined
+    )
+    setData(data)
+    setLoading(false)
+  }, [executeQueryComponent])
+
   return (
     <div id="error-log" className="mt-4">
       <div className="grid grid-cols-[26px_auto_1fr] gap-2 items-center my-8">
@@ -19,25 +43,48 @@ function ErrorLog() {
           <thead>
             <tr>
               <th>Time</th>
+              <th>Server</th>
               <th>Process</th>
               <th>Error</th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>16 Jan 2023 14:00:08</td>
-              <td>Backup</td>
-              <td>
-                Log was backed up.<a>Show more</a>
-              </td>
-            </tr>
-            <tr>
-              <td>16 Jan 2023 13:00:07</td>
-              <td>Backup</td>
-              <td>
-                Log was backed up.<a>Show more</a>
-              </td>
-            </tr>
+            {loading ? (
+              <div
+                style={{
+                  height: '200px',
+                  width: '600px',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
+                <Loading style={{ margin: 'auto' }} />
+              </div>
+            ) : // eslint-disable-next-line unicorn/no-nested-ternary
+            data === undefined ? (
+              <tr>
+                <td colSpan="12">
+                  <div>Error to load the data.</div>
+                </td>
+              </tr>
+            ) : // eslint-disable-next-line unicorn/no-nested-ternary
+            data.length === 0 ? (
+              <tr>
+                <td colSpan="12">
+                  <div>No Error Log to display.</div>
+                </td>
+              </tr>
+            ) : (
+              data.map((row, index) => (
+                <tr key={index} className="hover:bg-gray-lightest">
+                  <td>{new Date(row.LogDate).toLocaleString()}</td>
+                  <td>{row.ServerId}</td>
+                  <td>{row.ProcessInfo}</td>
+                  <td>{row.Error}</td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>

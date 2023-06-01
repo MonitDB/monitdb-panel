@@ -1,12 +1,14 @@
 import React, { useCallback, useEffect, useState } from 'react'
 
 import Image from '~/components/image'
+import Loading from '~/components/loading/loading'
 
 import useComponentContext from '../../../../services/state-manager/components'
 
 const COMPONENT_CODE = 'LTTPPR'
 
-function SqlUserProcesses() {
+function SqlUserProcesses(properties) {
+  const { currentServer } = properties
   const [loading, setLoading] = useState(false)
   const [data, setData] = useState([])
   const { executeQueryComponent } = useComponentContext()
@@ -17,7 +19,10 @@ function SqlUserProcesses() {
 
   const fetchData = useCallback(async () => {
     setLoading(true)
-    const data = await executeQueryComponent(COMPONENT_CODE)
+    const data = await executeQueryComponent(
+      COMPONENT_CODE,
+      currentServer?.id || undefined
+    )
     setData(data)
     setLoading(false)
   }, [executeQueryComponent])
@@ -55,7 +60,7 @@ function SqlUserProcesses() {
           </thead>
           <tbody>
             {loading ? (
-              <loading />
+              <Loading />
             ) : // eslint-disable-next-line unicorn/no-nested-ternary
             data === undefined ? (
               <tr>
