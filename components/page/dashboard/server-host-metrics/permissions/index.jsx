@@ -115,38 +115,25 @@ const Permissions = (properties) => {
                     <td>{item.activeDiretoryAccountsCount}</td>
                     <td>{item.sqlLoginCount}</td>
                   </tr>
-                  <tr
-                  // className={classNames({
-                  //   'border-b border-b-gray border-opacity-50':
-                  //     // itemIndex < labelsTopQueries.length - 1,
-                  // })}
-                  >
+                  <tr>
                     <td colSpan={9} className="!p-0">
                       <Reveal active={activeTableRowIndex === index}>
                         <div className="p-4 border-t-2 border-t-gray bg-gray-light bg-opacity-25">
-                          <div className="w-full mb-4">
-                            <h4 className="!mb-2 font-bold text-base">
-                              Query details
-                            </h4>
-                            <p className="text-xs">
-                              {/* <strong>Database:</strong> {faker.random.word()} */}
-                              <br />
-                              <strong>Program duration:</strong> 18,582 ms
-                              <br />
-                              <strong>Plan handle:</strong>
-                              {/* {faker.datatype.uuid()} */}
-                              <br />
-                              SQL Monitor has identified 1 issues with this
-                              query. Addressing them could improve performance.
-                              Top query is a fragment of a larger query. Show
-                              full query.
-                            </p>
-                          </div>
-                          <div className="w-full">
-                            <h2 className="!mb-4 text-base font-bold text-gray-dark font-oxygen">
-                              Histórico de execução
-                            </h2>
-                          </div>
+                          {item.data.map((item, index) => {
+                            return (
+                              <div
+                                key={index}
+                                className="flex items-center justify-between mb-2"
+                              >
+                                <div className="truncate">
+                                  <small>{item.MemberPrincipalName}</small>
+                                </div>
+                                <div className="truncate">
+                                  <small>{item.TypeLogin}</small>
+                                </div>
+                              </div>
+                            )
+                          })}
                         </div>
                       </Reveal>
                     </td>
