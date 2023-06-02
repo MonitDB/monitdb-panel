@@ -5,8 +5,8 @@ import React, { useCallback, useEffect, useState } from 'react'
 
 import Chart from '~/components/chart'
 import Grid from '~/components/grid'
-import Image from '~/components/image'
 import Loading from '~/components/loading/loading'
+import Reveal from '~/helpers/reveal'
 import useComponentContext from '~/services/state-manager/components'
 const COMPONENT_CODE = 'LTPERM'
 
@@ -38,6 +38,7 @@ const Permissions = (properties) => {
           sqlLoginCount: 0,
           activeDiretoryAccountsCount: 0,
           data: [],
+          name: item.RolePrincipalName,
         }
       roleName[item.RolePrincipalName].data.push(item)
       roleName[item.RolePrincipalName] = {
@@ -54,8 +55,8 @@ const Permissions = (properties) => {
           roleName[item.RolePrincipalName].activeDiretoryAccountsCount + 1,
       }
     }
-
-    setData(data)
+    console.log(Object.values(roleName))
+    setData(Object.values(roleName))
 
     setLoading(false)
   }, [executeQueryComponent])
@@ -76,7 +77,84 @@ const Permissions = (properties) => {
           <tbody
             className={classNames('transition-all duration-150 ease-in-out')}
           >
-            <tr>
+            {data.map((item, index) => {
+              return (
+                <>
+                  <tr
+                    key={index}
+                    className={classNames(
+                      'hover:bg-gray-lightest',
+                      activeTableRowIndex === index && 'bg-gray-lightest'
+                    )}
+                    onClick={() => {
+                      if (activeTableRowIndex === index)
+                        setActiveTableRowIndex(-1)
+                      else setActiveTableRowIndex(index)
+                    }}
+                  >
+                    <td>
+                      <button
+                        type="button"
+                        className="whitespace-nowrap truncate"
+                      >
+                        <FontAwesomeIcon
+                          width={7}
+                          height={7}
+                          icon={faChevronRight}
+                          className={classNames(
+                            'mr-1 transition-all duration-150 ease-in-out',
+                            {
+                              'rotate-90': activeTableRowIndex === index,
+                            }
+                          )}
+                        />
+                        <span className="truncate ml-2">{item.name}</span>
+                      </button>
+                    </td>
+                    <td>{item.windosLoginCount}</td>
+                    <td>{item.activeDiretoryAccountsCount}</td>
+                    <td>{item.sqlLoginCount}</td>
+                  </tr>
+                  <tr
+                  // className={classNames({
+                  //   'border-b border-b-gray border-opacity-50':
+                  //     // itemIndex < labelsTopQueries.length - 1,
+                  // })}
+                  >
+                    <td colSpan={9} className="!p-0">
+                      <Reveal active={activeTableRowIndex === index}>
+                        <div className="p-4 border-t-2 border-t-gray bg-gray-light bg-opacity-25">
+                          <div className="w-full mb-4">
+                            <h4 className="!mb-2 font-bold text-base">
+                              Query details
+                            </h4>
+                            <p className="text-xs">
+                              {/* <strong>Database:</strong> {faker.random.word()} */}
+                              <br />
+                              <strong>Program duration:</strong> 18,582 ms
+                              <br />
+                              <strong>Plan handle:</strong>
+                              {/* {faker.datatype.uuid()} */}
+                              <br />
+                              SQL Monitor has identified 1 issues with this
+                              query. Addressing them could improve performance.
+                              Top query is a fragment of a larger query. Show
+                              full query.
+                            </p>
+                          </div>
+                          <div className="w-full">
+                            <h2 className="!mb-4 text-base font-bold text-gray-dark font-oxygen">
+                              Histórico de execução
+                            </h2>
+                          </div>
+                        </div>
+                      </Reveal>
+                    </td>
+                  </tr>
+                </>
+              )
+            })}
+            {/* <tr>
               <td>
                 <button type="button" className="whitespace-nowrap truncate">
                   <FontAwesomeIcon width={7} height={7} icon={faChevronRight} />
@@ -86,39 +164,7 @@ const Permissions = (properties) => {
               <td>3</td>
               <td>3</td>
               <td>1</td>
-            </tr>
-            <tr>
-              <td>
-                <button type="button" className="whitespace-nowrap truncate">
-                  <FontAwesomeIcon
-                    width={7}
-                    height={7}
-                    icon={faChevronRight}
-                    className={classNames(
-                      'mr-1 transition-all duration-150 ease-in-out',
-                      {
-                        'rotate-90': activeTableRowIndex === -1,
-                      }
-                    )}
-                  />
-                  <span className="truncate ml-2">serveradmin</span>
-                </button>
-              </td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-            </tr>
-            <tr>
-              <td>
-                <button type="button" className="whitespace-nowrap truncate">
-                  <FontAwesomeIcon width={7} height={7} icon={faChevronRight} />
-                  <span className="truncate ml-2">securityadmin</span>
-                </button>
-              </td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-            </tr>
+            </tr> */}
           </tbody>
         </table>
       </div>
