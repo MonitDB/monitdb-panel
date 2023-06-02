@@ -40,58 +40,77 @@ function SqlUserProcesses(properties) {
         </h3>
         <span className="w-full h-[1px] block bg-gray-light" />
       </div>
-      <div className="prose prose-thead:bg-gray-light max-w-full prose-th:capitalize prose-th:border-b-0 prose-tr:border-gray-light prose-td:text-[11px]">
-        <table>
-          <thead>
-            <tr>
-              <th>Session</th>
-              <th>Login time</th>
-              <th>Login</th>
-              <th>Host</th>
-              <th>Program</th>
-              <th>Command</th>
-              <th>Status</th>
-              <th>Database</th>
-              <th>Interval CPU %</th>
-              <th>Reads/s</th>
-              <th>Writes/s</th>
-              <th>Logical Reads/s</th>
-            </tr>
-          </thead>
-          <tbody>
-            {loading ? (
-              <Loading />
-            ) : // eslint-disable-next-line unicorn/no-nested-ternary
-            data === undefined ? (
+      <div
+        className="prose prose-thead:bg-gray-light max-w-full prose-th:capitalize prose-th:border-b-0 prose-tr:border-gray-light prose-td:text-[11px]"
+        style={{ width: '100%' }}
+      >
+        {loading ? (
+          <div
+            style={{
+              width: '100%',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '100px',
+            }}
+          >
+            <Loading />
+          </div>
+        ) : (
+          <table>
+            <thead>
               <tr>
-                <td colSpan="12">
-                  <div>Error to load the data.</div>
-                </td>
+                <th>Session</th>
+                <th>Login time</th>
+                <th>Login</th>
+                <th>Host</th>
+                <th>Program</th>
+                <th>Command</th>
+                <th>Status</th>
+                <th>Database</th>
+                <th>Interval CPU %</th>
+                <th>Reads/s</th>
+                <th>Writes/s</th>
+                <th>Logical Reads/s</th>
               </tr>
-            ) : // eslint-disable-next-line unicorn/no-nested-ternary
-            data.length === 0 ? (
-              <tr>
-                <td colSpan="12">
-                  <div>No SQL processes to display.</div>
-                </td>
-              </tr>
-            ) : (
-              data.map((row, index) => (
-                <tr key={index} className="hover:bg-gray-lightest">
-                  <td>{row.session_id}</td>
-                  <td>{new Date(row.last_request_start_time).toUTCString()}</td>
-                  <td>{row.loginname}</td>
-                  <td>{row.hostname}</td>
-                  <td>{row.program_name}</td>
-                  <td>{row.query}</td>
-                  <td>{row.status}</td>
-                  <td>{row.dbname}</td>
-                  <td>{row.interval_cpu_percent}</td>
+            </thead>
+            <tbody>
+              {data === undefined ? (
+                <tr>
+                  <td colSpan="12">
+                    <div>Error to load the data.</div>
+                  </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              ) : // eslint-disable-next-line unicorn/no-nested-ternary
+              data.length === 0 ? (
+                <tr>
+                  <td colSpan="12">
+                    <div>No SQL processes to display.</div>
+                  </td>
+                </tr>
+              ) : (
+                data.map((row, index) => (
+                  <tr key={index} className="hover:bg-gray-lightest">
+                    <td>{row.session_id}</td>
+                    <td>
+                      {new Date(row.last_request_start_time).toUTCString()}
+                    </td>
+                    <td>{row.loginname}</td>
+                    <td>{row.hostname}</td>
+                    <td>{row.program_name}</td>
+                    <td>{row.query}</td>
+                    <td>{row.status}</td>
+                    <td>{row.dbname}</td>
+                    <td>{row.cpu}</td>
+                    <td>{row.reads}</td>
+                    <td>{row.writes}</td>
+                    <td>{row.logical_reads}</td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        )}
       </div>
     </div>
   )
