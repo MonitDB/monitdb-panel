@@ -81,7 +81,9 @@ function ErrorLog(properties) {
                   <td>{new Date(row.LogDate).toLocaleString()}</td>
                   <td>{row.ServerId}</td>
                   <td>{row.ProcessInfo}</td>
-                  <td>{row.Error}</td>
+                  <td>
+                    {row.Error} {row.Text}
+                  </td>
                 </tr>
               ))
             )}
