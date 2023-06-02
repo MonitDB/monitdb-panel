@@ -1,14 +1,13 @@
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import classNames from 'classnames'
 import React, { useCallback, useEffect, useState } from 'react'
 
 import Chart from '~/components/chart'
 import Grid from '~/components/grid'
 import Image from '~/components/image'
 import Loading from '~/components/loading/loading'
-
-import useComponentContext from '../../../../../services/state-manager/components'
-
+import useComponentContext from '~/services/state-manager/components'
 const COMPONENT_CODE = 'LTPERM'
 
 const Permissions = (properties) => {
@@ -16,6 +15,7 @@ const Permissions = (properties) => {
 
   const [loading, setLoading] = useState(false)
   const [data, setData] = useState([])
+  const [activeTableRowIndex, setActiveTableRowIndex] = useState(-1)
   const { executeQueryComponent } = useComponentContext()
 
   useEffect(() => {
@@ -28,8 +28,35 @@ const Permissions = (properties) => {
       COMPONENT_CODE,
       currentServer?.id || undefined
     )
+
+    const roleName = {}
+
+    for (const item of data) {
+      if (!roleName[item.RolePrincipalName])
+        roleName[item.RolePrincipalName] = {
+          windosLoginCount: 0,
+          sqlLoginCount: 0,
+          activeDiretoryAccountsCount: 0,
+          data: [],
+        }
+      roleName[item.RolePrincipalName].data.push(item)
+      roleName[item.RolePrincipalName] = {
+        ...roleName[item.RolePrincipalName],
+        windosLoginCount:
+          item.TypeLogin === 'WINDOWS_LOGIN'
+            ? roleName[item.RolePrincipalName].windosLoginCount + 1
+            : roleName[item.RolePrincipalName].windosLoginCount,
+        sqlLoginCount:
+          item.TypeLogin === 'SQL_LOGIN'
+            ? roleName[item.RolePrincipalName].sqlLoginCount + 1
+            : roleName[item.RolePrincipalName].sqlLoginCount,
+        activeDiretoryAccountsCount:
+          roleName[item.RolePrincipalName].activeDiretoryAccountsCount + 1,
+      }
+    }
+
     setData(data)
-    console.log({ data })
+
     setLoading(false)
   }, [executeQueryComponent])
 
@@ -46,7 +73,9 @@ const Permissions = (properties) => {
               <th>SQL logins</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody
+            className={classNames('transition-all duration-150 ease-in-out')}
+          >
             <tr>
               <td>
                 <button type="button" className="whitespace-nowrap truncate">
@@ -61,7 +90,17 @@ const Permissions = (properties) => {
             <tr>
               <td>
                 <button type="button" className="whitespace-nowrap truncate">
-                  <FontAwesomeIcon width={7} height={7} icon={faChevronRight} />
+                  <FontAwesomeIcon
+                    width={7}
+                    height={7}
+                    icon={faChevronRight}
+                    className={classNames(
+                      'mr-1 transition-all duration-150 ease-in-out',
+                      {
+                        'rotate-90': activeTableRowIndex === -1,
+                      }
+                    )}
+                  />
                   <span className="truncate ml-2">serveradmin</span>
                 </button>
               </td>
