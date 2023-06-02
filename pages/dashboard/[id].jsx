@@ -31,7 +31,6 @@ import {
   ServerMetrics,
   SqlUserProcesses,
   TempDB,
-  VmwareMetrics,
 } from '~/components/page/dashboard'
 import LatestAlertsSidebar from '~/components/sidebar/latest-alerts'
 import { SingleDashboardContextProvider } from '~/contexts/single-dashboard'
@@ -366,8 +365,8 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
 
                       <Server />
                       <ServerMetrics />
-                      <Permissions />
-                      <VmwareMetrics />
+                      <Permissions currentServer={currentServer} />
+                      {/* <VmwareMetrics /> */}
                       <TempDB />
                       <BlockingProcesses currentServer={currentServer} />
                       <SqlUserProcesses currentServer={currentServer} />

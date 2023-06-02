@@ -1,11 +1,38 @@
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import React from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 
 import Chart from '~/components/chart'
 import Grid from '~/components/grid'
+import Image from '~/components/image'
+import Loading from '~/components/loading/loading'
 
-const Permissions = () => {
+import useComponentContext from '../../../../../services/state-manager/components'
+
+const COMPONENT_CODE = 'LTPERM'
+
+const Permissions = (properties) => {
+  const { currentServer } = properties
+
+  const [loading, setLoading] = useState(false)
+  const [data, setData] = useState([])
+  const { executeQueryComponent } = useComponentContext()
+
+  useEffect(() => {
+    fetchData()
+  }, [fetchData])
+
+  const fetchData = useCallback(async () => {
+    setLoading(true)
+    const data = await executeQueryComponent(
+      COMPONENT_CODE,
+      currentServer?.id || undefined
+    )
+    setData(data)
+    console.log({ data })
+    setLoading(false)
+  }, [executeQueryComponent])
+
   return (
     <div className="mt-6">
       <h3 className="mb-4 text-sm text-gray-dark font-bold">Permissions</h3>
