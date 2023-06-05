@@ -5,7 +5,6 @@ import React, { useCallback, useEffect, useState } from 'react'
 
 import Chart from '~/components/chart'
 import Grid from '~/components/grid'
-import Loading from '~/components/loading/loading'
 import Reveal from '~/helpers/reveal'
 import useComponentContext from '~/services/state-manager/components'
 const COMPONENT_CODE = 'LTPERM'
@@ -13,7 +12,7 @@ const COMPONENT_CODE = 'LTPERM'
 const Permissions = (properties) => {
   const { currentServer } = properties
 
-  const [loading, setLoading] = useState(false)
+  // const [loading, setLoading] = useState(false)
   const [data, setData] = useState([])
   const [activeTableRowIndex, setActiveTableRowIndex] = useState(-1)
   const { executeQueryComponent } = useComponentContext()
@@ -23,7 +22,6 @@ const Permissions = (properties) => {
   }, [fetchData])
 
   const fetchData = useCallback(async () => {
-    setLoading(true)
     const data = await executeQueryComponent(
       COMPONENT_CODE,
       currentServer?.id || undefined
@@ -55,11 +53,9 @@ const Permissions = (properties) => {
           roleName[item.RolePrincipalName].activeDiretoryAccountsCount + 1,
       }
     }
-    console.log(Object.values(roleName))
     setData(Object.values(roleName))
 
-    setLoading(false)
-  }, [executeQueryComponent])
+  }, [currentServer?.id, executeQueryComponent])
 
   return (
     <div className="mt-6">

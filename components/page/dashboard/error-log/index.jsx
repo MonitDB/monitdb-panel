@@ -25,7 +25,7 @@ function ErrorLog(properties) {
     )
     setData(data)
     setLoading(false)
-  }, [executeQueryComponent])
+  }, [currentServer?.id, executeQueryComponent])
 
   return (
     <div id="error-log" className="mt-4">

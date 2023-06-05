@@ -26,7 +26,7 @@ function BlockingProcesses(properties) {
     )
     setData(data)
     setLoading(false)
-  }, [executeQueryComponent])
+  }, [currentServer?.id, executeQueryComponent])
 
   return (
     <div id="blocking-processes" className="mt-4">

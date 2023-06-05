@@ -25,7 +25,7 @@ function SqlUserProcesses(properties) {
     )
     setData(data)
     setLoading(false)
-  }, [executeQueryComponent])
+  }, [currentServer?.id, executeQueryComponent])
 
   return (
     <div id="sqlprocesses" className="mt-4">
