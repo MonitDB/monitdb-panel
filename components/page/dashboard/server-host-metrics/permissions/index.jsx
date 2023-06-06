@@ -50,11 +50,12 @@ const Permissions = (properties) => {
             ? roleName[item.RolePrincipalName].sqlLoginCount + 1
             : roleName[item.RolePrincipalName].sqlLoginCount,
         activeDiretoryAccountsCount:
-          roleName[item.RolePrincipalName].activeDiretoryAccountsCount + 1,
+          item.TypeLogin === 'WINDOWS_LOGIN'
+            ? roleName[item.RolePrincipalName].activeDiretoryAccountsCount + 1
+            : roleName[item.RolePrincipalName].activeDiretoryAccountsCount,
       }
     }
     setData(Object.values(roleName))
-
   }, [currentServer?.id, executeQueryComponent])
 
   return (
