@@ -35,10 +35,20 @@ const Permissions = (properties) => {
           windosLoginCount: 0,
           sqlLoginCount: 0,
           activeDiretoryAccountsCount: 0,
-          data: [],
+          windowsAndActivityDirectoryLogins: [],
+          sqlLogins: [],
           name: item.RolePrincipalName,
         }
-      roleName[item.RolePrincipalName].data.push(item)
+
+      if (item.TypeLogin === 'WINDOWS_LOGIN') {
+        roleName[item.RolePrincipalName].windowsAndActivityDirectoryLogins.push(
+          item
+        )
+      } else if (item.TypeLogin === 'SQL_LOGIN') {
+        roleName[item.RolePrincipalName].sqlLogins.push(item)
+      }
+
+      // roleName[item.RolePrincipalName].data.push(item)
       roleName[item.RolePrincipalName] = {
         ...roleName[item.RolePrincipalName],
         windosLoginCount:
@@ -112,43 +122,36 @@ const Permissions = (properties) => {
                     <td>{item.activeDiretoryAccountsCount}</td>
                     <td>{item.sqlLoginCount}</td>
                   </tr>
-                  <tr>
-                    <td colSpan={9} className="!p-0">
-                      <Reveal active={activeTableRowIndex === index}>
-                        <div className="p-4 border-t-2 border-t-gray bg-gray-light bg-opacity-25">
-                          {item.data.map((item, index) => {
-                            return (
-                              <div
-                                key={index}
-                                className="flex items-center justify-between mb-2"
-                              >
-                                <div className="truncate">
-                                  <small>{item.MemberPrincipalName}</small>
-                                </div>
-                                <div className="truncate">
-                                  <small>{item.TypeLogin}</small>
-                                </div>
-                              </div>
-                            )
-                          })}
-                        </div>
-                      </Reveal>
-                    </td>
-                  </tr>
+                  {activeTableRowIndex === index && (
+                    <tr key={index}>
+                      <td colSpan={1} />
+                      <td colSpan={2} className="border-r border-gray">
+                        {item.windowsAndActivityDirectoryLogins.map(
+                          (item, index) => (
+                            <>
+                              <span key={index}>
+                                {item.MemberPrincipalName}
+                                <br />
+                              </span>
+                            </>
+                          )
+                        )}
+                      </td>
+                      <td colSpan={1}>
+                        {item.sqlLogins.map((item, index) => (
+                          <>
+                            <span key={index}>
+                              {item.MemberPrincipalName}
+                              <br />
+                            </span>
+                          </>
+                        ))}
+                      </td>
+                    </tr>
+                  )}
                 </>
               )
             })}
-            {/* <tr>
-              <td>
-                <button type="button" className="whitespace-nowrap truncate">
-                  <FontAwesomeIcon width={7} height={7} icon={faChevronRight} />
-                  <span className="truncate ml-2">sysadmin</span>
-                </button>
-              </td>
-              <td>3</td>
-              <td>3</td>
-              <td>1</td>
-            </tr> */}
           </tbody>
         </table>
       </div>

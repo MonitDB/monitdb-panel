@@ -28,7 +28,7 @@ const Chart = ({
       offsetX: 0,
     },
     legend: {
-      show: !!seriesName,
+      // show: !!seriesName,
       showForSingleSeries: true,
       fontSize: '11px',
       position: 'top',

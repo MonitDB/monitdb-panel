@@ -33,7 +33,7 @@ function CpuUsage(properties) {
         }}
         multipleSeries={[
           {
-            name: '% CPU Utilization',
+            name: '% Other process',
             data:
               data?.map((usage) => [
                 dateStringToTime(usage.createData),
@@ -41,7 +41,7 @@ function CpuUsage(properties) {
               ]) || [],
           },
           {
-            name: '% SQL Utilization',
+            name: '% SQL process',
             data:
               data?.map((usage) => [
                 dateStringToTime(usage.createData),
