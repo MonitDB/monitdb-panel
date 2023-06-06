@@ -16,35 +16,22 @@ import { formatObjectToQuery } from '../../utils/formats'
 // }
 
 const useComponentLogContext = create((set, get) => ({
-  cpuUsage: {
-    data: [],
-    loading: false,
-    error: false,
-      
-  },
+  cpuUsage: [],
   getLogs: async (parameters = {}, token = '') => {
     return clientApi(token).get(
       `/api/componentlog?${formatObjectToQuery(parameters)}`
     )
   },
   getCpuUsage: async (id) => {
-    const { cpuUsage } = get();
     try {
-      set({ cpuUsage: { loading: true } });
-      const { data } = await clientApi().get(`/api/logcpuusage/${id}`);
-      set({ cpuUsage: { ...cpuUsage, data, loading: false } });
-      return;
+      set({ cpuUsage: []});
+      const { data } = await clientApi().get(`/api/logcpuusage/${id || ''}`);
+      set({ cpuUsage: data });
+      return data;
     } catch {
-      set({ cpuUsage: { error: true, data: []} });
-    } finally {
-      set((previousState) => ({
-      cpuUsage: {
-        ...previousState.cpuUsage,
-        loading: false
-      }
-    }));
-    
-    }
+      set({ cpuUsage: undefined });
+      return;
+    } 
   },
 
 }))

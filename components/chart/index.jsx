@@ -8,7 +8,13 @@ const ApexChart = dynamic(
   { ssr: false }
 )
 
-const Chart = ({ height = '155', seriesName, seriesData, ...options }) => {
+const Chart = ({
+  height = '155',
+  seriesName,
+  seriesData,
+  multipleSeries,
+  ...options
+}) => {
   const chartOptions = {
     chart: {
       type: 'area',
@@ -253,7 +259,13 @@ const Chart = ({ height = '155', seriesName, seriesData, ...options }) => {
     },
   ]
 
-  return <ApexChart options={chartOptions} series={series} height={height} />
+  return (
+    <ApexChart
+      options={chartOptions}
+      series={multipleSeries || series}
+      height={height}
+    />
+  )
 }
 
 export default Chart

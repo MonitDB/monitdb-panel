@@ -24,6 +24,7 @@ import {
 } from '~/components/page'
 import {
   BlockingProcesses,
+  CpuUsage,
   Databases,
   ErrorLog,
   Permissions,
@@ -105,16 +106,6 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
     ],
     []
   )
-
-  const { getCpuUsage, cpuUsage } = useComponentLogContext()
-
-  useEffect(() => {
-    if (!currentServer) {
-      return
-    }
-
-    getCpuUsage(currentServer.id)
-  }, [currentServer, getCpuUsage])
 
   const formik = useFormik({
     initialValues: {
@@ -315,30 +306,7 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
                             seriesName="% Utilization"
                           />
                         </div>
-                        <div className="col-span-2 bg-white lg:col-span-6">
-                          {cpuUsage.loading ? (
-                            <div className="flex justify-center items-center w-full min-h-28">
-                              <Loading />
-                            </div>
-                          ) : (
-                            <Chart
-                              title={{
-                                text: cpuUsage.error
-                                  ? 'Error to load the data'
-                                  : 'CPU',
-                                offsetY: 10,
-                                offsetX: 5,
-                              }}
-                              seriesName="% Utilization"
-                              seriesData={
-                                cpuUsage.data?.map((usage) => [
-                                  dateStringToTime(usage.createData),
-                                  usage.otherProcessPerc,
-                                ]) || []
-                              }
-                            />
-                          )}
-                        </div>
+                        <CpuUsage currentServer={currentServer} />
                         <div className="col-span-2 bg-white lg:col-span-6">
                           <Chart
                             colors={['#4abc4b']}
