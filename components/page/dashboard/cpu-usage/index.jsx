@@ -7,7 +7,7 @@ import { dateStringToTime } from '~/utils/formats'
 function CpuUsage(properties) {
   const { currentServer } = properties
   const { getCpuUsage } = useComponentLogContext()
-  const [loading, setLoading] = useState(false)
+  //const [loading, setLoading] = useState(false)
   const [data, setData] = useState([])
 
   useEffect(() => {
@@ -15,10 +15,10 @@ function CpuUsage(properties) {
   }, [fetchData])
 
   const fetchData = useCallback(async () => {
-    setLoading(true)
+    //setLoading(true)
     const data = await getCpuUsage(currentServer.id)
     setData(data)
-    setLoading(false)
+    //setLoading(false)
   }, [currentServer.id, getCpuUsage])
 
   return (
