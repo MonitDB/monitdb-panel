@@ -6,7 +6,7 @@ import faker from 'faker'
 import { useFormik } from 'formik'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
-import React, { {/*useEffect*/} useMemo, useState } from 'react'
+import React, { /*useEffect*/ useMemo, useState } from 'react'
 
 import BlockMessage from '~/components/block-message'
 import Chart from '~/components/chart'
@@ -38,7 +38,7 @@ import { SingleDashboardContextProvider } from '~/contexts/single-dashboard'
 import DatabaseIcons from '~/helpers/database-icons'
 import useGlobal from '~/hooks/use-global'
 import Layout from '~/layouts/default'
-{/*import useComponentLogContext from '~/services/state-manager/logs'*/}
+/*import useComponentLogContext from '~/services/state-manager/logs'*/
 import { dateStringToTime } from '~/utils/formats'
 import { scrollToSection } from '~/utils/global'
 import { formatServer } from '~/utils/server'
