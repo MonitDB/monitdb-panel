@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react'
 
 import Chart from '~/components/chart'
+import Loading from '~/components/loading/loading'
 import useComponentLogContext from '~/services/state-manager/logs'
 import { dateStringToTime } from '~/utils/formats'
 
@@ -9,7 +10,7 @@ function CpuUsage(properties) {
 
   const { getCpuUsage } = useComponentLogContext()
 
-  const [/*loading,*/ setLoading] = useState(false)
+  const [loading, setLoading] = useState(false)
   const [data, setData] = useState([])
 
   useEffect(() => {
