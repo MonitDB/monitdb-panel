@@ -6,7 +6,7 @@ import faker from 'faker'
 import { useFormik } from 'formik'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
-import React, { /*useEffect*/ useMemo, useState } from 'react'
+/*import React, { useEffect, useMemo, useState } from 'react'*/
 
 import BlockMessage from '~/components/block-message'
 import Chart from '~/components/chart'
