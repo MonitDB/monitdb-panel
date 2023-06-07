@@ -9,7 +9,7 @@ function CpuUsage(properties) {
 
   const { getCpuUsage } = useComponentLogContext()
 
-  const [loading, setLoading] = useState(false)
+  const [*/loading,*/ setLoading] = useState(false)
   const [data, setData] = useState([])
 
   useEffect(() => {
