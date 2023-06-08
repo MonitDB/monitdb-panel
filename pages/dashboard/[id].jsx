@@ -115,9 +115,14 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
       cpu: true,
       memory: true,
       disk: true,
-      frequency: frequencyOptions[0].value,
+      frequency: router.query.frequency || frequencyOptions[0].value,
     },
-    onSubmit: () => {},
+    onSubmit: () => {
+      const queryParameters = new URLSearchParams(router.query)
+      queryParameters.set('frequency', formik.values.frequency)
+      const newUrl = `${router.pathname}?${queryParameters.toString()}`
+      router.push(newUrl)
+    },
   })
 
   return (
@@ -267,6 +272,17 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
                             formik.setFieldValue('frequency', value)
                           }}
                         />
+                      </div>
+                      <div className="ml-auto flex">
+                        <button
+                          type="button"
+                          className="btn mt-0 ml-auto"
+                          onClick={() => {
+                            formik.submitForm()
+                          }}
+                        >
+                          Reload
+                        </button>
                       </div>
                     </form>
 
