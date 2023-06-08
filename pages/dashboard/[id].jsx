@@ -49,6 +49,9 @@ export const tableDataItems = labels.map(() => ({
   title: `SELECT user_id FROM ${faker.random.word()} WHERE meta_key = '${faker.random.word()}'`,
 }))
 
+const HOUR = 60
+const DAY = 24 * HOUR
+
 const dashboardSections = [
   { name: 'Server/host metrics', slug: 'allinstancemetrics' },
   { name: 'TEMPDB', slug: 'tempdb' },
@@ -98,11 +101,11 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
 
   const frequencyOptions = useMemo(
     () => [
-      { value: '1h', label: '1 hora' },
-      { value: '6h', label: '6 horas' },
-      { value: '24h', label: '24 horas' },
-      { value: '7d', label: '7 dias' },
-      { value: '14d', label: '14 dias' },
+      { value: HOUR, label: '1 hora' },
+      { value: 6 * HOUR, label: '6 horas' },
+      { value: 24 * HOUR, label: '24 horas' },
+      { value: 7 * DAY, label: '7 dias' },
+      { value: 14 * DAY, label: '14 dias' },
     ],
     []
   )
