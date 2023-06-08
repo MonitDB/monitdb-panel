@@ -99,7 +99,7 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
     return formatServer(server, { serverTypes })
   }, [servers, serverTypes, router?.query?.id])
 
-  const frequencyOptions = useMemo(
+  const lastMinutesOptions = useMemo(
     () => [
       { value: HOUR, label: '1 hora' },
       { value: 6 * HOUR, label: '6 horas' },
@@ -115,11 +115,11 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
       cpu: true,
       memory: true,
       disk: true,
-      frequency: router.query.frequency || frequencyOptions[0].value,
+      lastMinutes: router.query.lastMinutes || lastMinutesOptions[0].value,
     },
     onSubmit: () => {
       const queryParameters = new URLSearchParams(router.query)
-      queryParameters.set('frequency', formik.values.frequency)
+      queryParameters.set('lastMinutes', formik.values.lastMinutes)
       const newUrl = `${router.pathname}?${queryParameters.toString()}`
       router.push(newUrl)
     },
@@ -265,24 +265,13 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
                         <span>Frequência</span>
                         <Select
                           className="w-40"
-                          name="frequency"
-                          value={formik.values.frequency}
-                          options={frequencyOptions}
+                          name="lastMinutes"
+                          value={formik.values.lastMinutes}
+                          options={lastMinutesOptions}
                           onChange={(value) => {
-                            formik.setFieldValue('frequency', value)
+                            formik.setFieldValue('lastMinutes', value)
                           }}
                         />
-                      </div>
-                      <div className="ml-auto flex">
-                        <button
-                          type="button"
-                          className="btn mt-0 ml-auto"
-                          onClick={() => {
-                            formik.submitForm()
-                          }}
-                        >
-                          Reload
-                        </button>
                       </div>
                     </form>
 
@@ -325,7 +314,10 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
                             seriesName="% Utilization"
                           />
                         </div>
-                        <CpuUsage currentServer={currentServer} />
+                        <CpuUsage
+                          lastMinutes={formik.values.lastMinutes}
+                          currentServer={currentServer}
+                        />
                         <div className="col-span-2 bg-white lg:col-span-6">
                           <Chart
                             colors={['#4abc4b']}

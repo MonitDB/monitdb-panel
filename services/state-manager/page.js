@@ -6,7 +6,7 @@ import clientApi from '../../utils/client-api'
 const usePageDataContext = create(() => ({
   getPageData: async (parameters) => {
     const { slug, lang } = parameters
-    return clientApi().get(`/wp/v2/pages?slug=${slug}&lang=${lang}`)
+    return clientApi.get(`/wp/v2/pages?slug=${slug}&lang=${lang}`)
   },
 }))
 

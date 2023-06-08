@@ -4,28 +4,28 @@ import clientApi from '../../utils/client-api'
 
 const useExecComponentContext = create(() => ({
   getVersions: async () => {
-    return clientApi().get(`/api/execcomponent/PRVER`)
+    return clientApi.get(`/api/execcomponent/PRVER`)
   },
   getBackups: async () => {
-    return clientApi().get(`/api/execcomponent/prbackup`)
+    return clientApi.get(`/api/execcomponent/prbackup`)
   },
   getDiskUsage: async () => {
-    return clientApi().get(`/api/execcomponent/prdisks`)
+    return clientApi.get(`/api/execcomponent/prdisks`)
   },
   getSqlServerLicensing: async () => {
-    return clientApi().get(`/api/execcomponent/prlcn`)
+    return clientApi.get(`/api/execcomponent/prlcn`)
   },
   getSqlAgentRundeckJobs: async () => {
-    return clientApi().get(`/api/execcomponent/prjobrd`)
+    return clientApi.get(`/api/execcomponent/prjobrd`)
   },
   getSqlAgentPRjobs: async () => {
-    return clientApi().get(`/api/execcomponent/prjob`)
+    return clientApi.get(`/api/execcomponent/prjob`)
   },
   getSqlAgentPRjobsExe: async () => {
-    return clientApi().get(`/api/execcomponent/prjobexe`)
+    return clientApi.get(`/api/execcomponent/prjobexe`)
   },
   getSqlAgentPRjobsSteps: async () => {
-    return clientApi().get(`/api/execcomponent/prjobsteps`)
+    return clientApi.get(`/api/execcomponent/prjobsteps`)
   },
 }))
 

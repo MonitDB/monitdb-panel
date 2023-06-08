@@ -5,7 +5,7 @@ import clientApi from '../../utils/client-api'
 
 const useRepostContext = create(() => ({
   getRepostsByType: async ({ type }) => {
-    return clientApi().get(`/component/${type}`)
+    return clientApi.get(`/component/${type}`)
   },
 }))
 
