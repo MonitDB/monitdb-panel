@@ -1,4 +1,5 @@
 import { format } from 'date-fns'
+import { useRouter } from 'next/router'
 import React, { memo, useMemo } from 'react'
 
 import Chart from '~/components/chart'
@@ -6,8 +7,11 @@ import { useSingleDashboard, useSQLCompilations } from '~/hooks/index'
 
 function SqlCompilationsBatchRequests() {
   const { currentServer } = useSingleDashboard()
-
-  const { data, isLoading } = useSQLCompilations(currentServer.id)
+  const { query } = useRouter()
+  const { data, isLoading } = useSQLCompilations(
+    currentServer.id,
+    query.lastMinutes
+  )
 
   const seriesData = useMemo(
     () =>

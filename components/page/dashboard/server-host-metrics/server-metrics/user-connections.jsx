@@ -1,4 +1,5 @@
 import { format } from 'date-fns'
+import { useRouter } from 'next/router'
 import React, { memo, useMemo } from 'react'
 
 import Chart from '~/components/chart'
@@ -6,7 +7,11 @@ import { useSingleDashboard, useUserConnections } from '~/hooks/index'
 
 function userConnections() {
   const { currentServer } = useSingleDashboard()
-  const { data, isLoading } = useUserConnections(currentServer.id)
+  const { query } = useRouter()
+  const { data, isLoading } = useUserConnections(
+    currentServer.id,
+    query.lastMinutes
+  )
 
   const seriesData = useMemo(
     () =>

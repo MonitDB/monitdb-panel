@@ -1,4 +1,5 @@
 import { format } from 'date-fns'
+import { useRouter } from 'next/router'
 import React, { memo, useMemo } from 'react'
 
 import Chart from '~/components/chart'
@@ -7,8 +8,9 @@ import { usePageSplits } from '~/hooks/index'
 
 function PageSplitsBatchRequests() {
   const { currentServer } = useSingleDashboard()
-  const pageSplits = usePageSplits(currentServer.id)
-  const batchRequests = useBatchRequests(currentServer.id)
+  const { query } = useRouter()
+  const pageSplits = usePageSplits(currentServer.id, query.lastMinutes)
+  const batchRequests = useBatchRequests(currentServer.id, query.lastMinutes)
 
   const seriesData = useMemo(() => {
     const data = []
