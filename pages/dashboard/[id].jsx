@@ -115,9 +115,6 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
       lastMinutes: router.query.lastMinutes,
     },
     onSubmit: () => {},
-    handleChange: (a) => {
-      console.log(a)
-    },
   })
 
   return (
