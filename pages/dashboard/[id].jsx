@@ -6,7 +6,7 @@ import faker from 'faker'
 import { useFormik } from 'formik'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
-import React, { /*useEffect*/ useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 
 import BlockMessage from '~/components/block-message'
 import Chart from '~/components/chart'
@@ -99,29 +99,24 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
     return formatServer(server, { serverTypes })
   }, [servers, serverTypes, router?.query?.id])
 
-  const lastMinutesOptions = useMemo(
-    () => [
-      { value: HOUR, label: '1 hora' },
-      { value: 6 * HOUR, label: '6 horas' },
-      { value: 24 * HOUR, label: '24 horas' },
-      { value: 7 * DAY, label: '7 dias' },
-      { value: 14 * DAY, label: '14 dias' },
-    ],
-    []
-  )
+  const lastMinutesOptions = [
+    { value: HOUR, label: '1 hora' },
+    { value: 6 * HOUR, label: '6 horas' },
+    { value: DAY, label: '24 horas' },
+    { value: 7 * DAY, label: '7 dias' },
+    { value: 14 * DAY, label: '14 dias' },
+  ]
 
   const formik = useFormik({
     initialValues: {
       cpu: true,
       memory: true,
       disk: true,
-      lastMinutes: router.query.lastMinutes || lastMinutesOptions[0].value,
+      lastMinutes: router.query.lastMinutes,
     },
-    onSubmit: () => {
-      const queryParameters = new URLSearchParams(router.query)
-      queryParameters.set('lastMinutes', formik.values.lastMinutes)
-      const newUrl = `${router.pathname}?${queryParameters.toString()}`
-      router.push(newUrl)
+    onSubmit: () => {},
+    handleChange: (a) => {
+      console.log(a)
     },
   })
 
@@ -268,7 +263,16 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
                           name="lastMinutes"
                           value={formik.values.lastMinutes}
                           options={lastMinutesOptions}
+                          defaultValue={router.query.lastMinutes}
                           onChange={(value) => {
+                            const queryParameters = new URLSearchParams(
+                              router.query
+                            )
+                            queryParameters.set('lastMinutes', value)
+                            const newUrl = `${
+                              router.pathname
+                            }?${queryParameters.toString()}`
+                            router.push(newUrl)
                             formik.setFieldValue('lastMinutes', value)
                           }}
                         />
@@ -314,10 +318,7 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
                             seriesName="% Utilization"
                           />
                         </div>
-                        <CpuUsage
-                          lastMinutes={formik.values.lastMinutes}
-                          currentServer={currentServer}
-                        />
+                        <CpuUsage currentServer={currentServer} />
                         <div className="col-span-2 bg-white lg:col-span-6">
                           <Chart
                             colors={['#4abc4b']}

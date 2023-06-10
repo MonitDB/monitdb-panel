@@ -1,4 +1,5 @@
 import { format } from 'date-fns'
+import { useRouter } from 'next/router'
 import React, { memo, useMemo } from 'react'
 
 import Chart from '~/components/chart'
@@ -6,7 +7,11 @@ import { useBatchRequests, useSingleDashboard } from '~/hooks/index'
 
 function BatchRequests() {
   const { currentServer } = useSingleDashboard()
-  const { data, isLoading } = useBatchRequests(currentServer.id)
+  const route = useRouter()
+  const { data, isLoading } = useBatchRequests(
+    currentServer.id,
+    route.query.lastMinutes
+  )
   const seriesData = useMemo(
     () =>
       data?.length > 0
