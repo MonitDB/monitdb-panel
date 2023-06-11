@@ -18,14 +18,14 @@ import { formatObjectToQuery } from '../../utils/formats'
 const useComponentLogContext = create((set) => ({
   cpuUsage: [],
   getLogs: async (parameters = {}, token = '') => {
-    return clientApi(token).get(
+    return clientApi()(token).get(
       `/api/componentlog?${formatObjectToQuery(parameters)}`
     )
   },
   getCpuUsage: async (id, parameters) => {
     try {
       set({ cpuUsage: []});
-      const { data } = await clientApi.get(`/api/logcpuusage/${id || ''}`, {
+      const { data } = await clientApi().get(`/api/logcpuusage/${id || ''}`, {
         params: parameters || undefined,
       });
       set({ cpuUsage: data });

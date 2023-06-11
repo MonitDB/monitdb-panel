@@ -1,25 +1,17 @@
-import axios from 'axios'
+import axios from 'axios';
 
-import { getUserToken } from '~/utils/cookies'
+import { getUserToken } from '~/utils/cookies';
 
-const tokenRequest = getUserToken()
+const instance = axios.create({ baseURL: process.env.apiBaseUrl });
 
+const clientApi = (token) => {
+  const tokenRequest = token || getUserToken();
 
-const clientApi = axios.create({
-  baseURL: process.env.apiBaseUrl,
-  headers: {
-    Authorization: `Bearer ${tokenRequest}`
-  }
-})
+  instance.defaults.headers.common['Authorization'] = tokenRequest
+    ? `Bearer ${tokenRequest}`
+    : '';
 
-// const clientApi = (token) => {
-//   const tokenRequest = token || getUserToken()
+  return instance;
+};
 
-//   instance.defaults.headers.common['Authorization'] = tokenRequest
-//     ? `Bearer ${tokenRequest}`
-//     : ''
-
-//   return instance
-// }
-
-export default clientApi
+export default clientApi;

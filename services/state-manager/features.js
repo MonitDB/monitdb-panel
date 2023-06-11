@@ -5,7 +5,7 @@ import { formatObjectToQuery } from '../../utils/formats'
 
 const useFeatureContext = create(() => ({
   getFeatures: async (parameters = {}) => {
-    return clientApi.get(`/api/feature?${formatObjectToQuery(parameters)}`)
+    return clientApi().get(`/api/feature?${formatObjectToQuery(parameters)}`)
   },
 }))
 
