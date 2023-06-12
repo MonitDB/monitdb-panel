@@ -33,6 +33,7 @@ import {
   SqlUserProcesses,
   TempDB,
 } from '~/components/page/dashboard'
+import CurrentActivity from '~/components/page/dashboard/current-activity'
 import LatestAlertsSidebar from '~/components/sidebar/latest-alerts'
 import { SingleDashboardContextProvider } from '~/contexts/single-dashboard'
 import DatabaseIcons from '~/helpers/database-icons'
@@ -354,24 +355,7 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
                 )}
 
                 {activeTabId === 'current-activity' && (
-                  <div className="w-full min-h-96">
-                    <button className="mt-6 bg-blue text-white px-3 h-11 rounded-[5px] font-medium flex items-center gap-1">
-                      <FontAwesomeIcon
-                        className="font-medium"
-                        icon={faArrowsRotate}
-                      />
-                      Refresh
-                    </button>
-                    <BlockMessage
-                      className="mt-6"
-                      type="error"
-                      message={
-                        <p className="text-xs">
-                          <span>The server is currently inaccessible.</span>
-                        </p>
-                      }
-                    />
-                  </div>
+                  <CurrentActivity currentServer={currentServer} />
                 )}
               </>
             )}
