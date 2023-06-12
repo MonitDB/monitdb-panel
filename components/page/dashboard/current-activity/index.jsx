@@ -30,7 +30,9 @@ function CurrentActivity(properties) {
 
   if (loading)
     return (
-      <div>
+      <div
+        style={{ height: '50vh', display: 'flex', justifyContent: 'center' }}
+      >
         <Loading />
       </div>
     )
