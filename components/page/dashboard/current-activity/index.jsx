@@ -55,7 +55,11 @@ function CurrentActivity(properties) {
   return (
     <div className="w-full min-h-96">
       <button className="mt-6 bg-blue text-white px-3 h-11 rounded-[5px] font-medium flex items-center gap-1">
-        <FontAwesomeIcon className="font-medium" icon={faArrowRotateBack} />
+        <FontAwesomeIcon
+          className="font-medium"
+          icon={faArrowRotateBack}
+          onClick={fetchData}
+        />
         Refresh
       </button>
 
@@ -63,20 +67,24 @@ function CurrentActivity(properties) {
         <table>
           <thead>
             <tr>
+              <th>Session ID</th>
               <th>Host Name</th>
+              <th>Login Name</th>
+              <th>Status</th>
             </tr>
           </thead>
+          <tbody>
+            {data.map((item, index) => (
+              <tr key={index}>
+                <td>{item.sessionId}</td>
+                <td>{item.host_name}</td>
+                <td>{item.login_name}</td>
+                <td>{item.status}</td>
+              </tr>
+            ))}
+          </tbody>
         </table>
       </div>
-      {/* <BlockMessage
-        className="mt-6"
-        type="error"
-        message={
-          <p className="text-xs">
-            <span>The server is currently inaccessible.</span>
-          </p>
-        }
-      /> */}
     </div>
   )
 }
