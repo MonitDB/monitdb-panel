@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { faArrowsRotate, faWarning } from '@fortawesome/free-solid-svg-icons'
+import { faWarning } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import classNames from 'classnames'
 import faker from 'faker'
@@ -8,7 +8,6 @@ import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
 import React, { useMemo, useState } from 'react'
 
-import BlockMessage from '~/components/block-message'
 import Chart from '~/components/chart'
 import Code from '~/components/code'
 import { Textarea } from '~/components/form'

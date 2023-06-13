@@ -40,6 +40,17 @@ function CurrentActivity(properties) {
   if (data.length === 0)
     return (
       <div>
+        <button className="mt-6 bg-blue text-white px-3 h-11 rounded-[5px] font-medium flex items-center gap-1">
+          <FontAwesomeIcon
+            className="font-medium"
+            icon={faArrowRotateBack}
+            onClick={() => {
+              setData([])
+              fetchData()
+            }}
+          />
+          Refresh
+        </button>
         <BlockMessage
           className="mt-6"
           type="information"
