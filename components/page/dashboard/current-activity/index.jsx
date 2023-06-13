@@ -5,7 +5,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import BlockMessage from '~/components/block-message'
 import Loading from '~/components/loading/loading'
 import useComponentContext from '~/services/state-manager/components'
-const COMPONENT_CODE = 'LTBLPR'
+const COMPONENT_CODE = 'LTWISACT'
 
 function CurrentActivity(properties) {
   const { currentServer } = properties
@@ -89,7 +89,7 @@ function CurrentActivity(properties) {
           <tbody>
             {data.map((item, index) => (
               <tr key={index}>
-                <td>{item.sessionId}</td>
+                <td>{item.session_id}</td>
                 <td>{item.host_name}</td>
                 <td>{item.login_name}</td>
                 <td>{item.status}</td>
