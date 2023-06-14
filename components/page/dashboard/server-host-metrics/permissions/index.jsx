@@ -12,7 +12,6 @@ const COMPONENT_CODE = 'LTPERM'
 const Permissions = (properties) => {
   const { currentServer } = properties
 
-  // const [loading, setLoading] = useState(false)
   const [data, setData] = useState([])
   const [activeTableRowIndex, setActiveTableRowIndex] = useState(-1)
   const { executeQueryComponent } = useComponentContext()
