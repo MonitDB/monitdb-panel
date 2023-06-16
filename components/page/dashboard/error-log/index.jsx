@@ -69,16 +69,16 @@ function ErrorLog(properties) {
                 </td>
               </tr>
             ) : // eslint-disable-next-line unicorn/no-nested-ternary
-            data.length === 0 ? (
+            data?.length === 0 ? (
               <tr>
                 <td colSpan="12">
                   <div>No Error Log to display.</div>
                 </td>
               </tr>
             ) : (
-              data.map((row, index) => (
+              data?.map((row, index) => (
                 <tr key={index} className="hover:bg-gray-lightest">
-                  <td>{new Date(row.LogDate).toLocaleString()}</td>
+                  <td>{new Date(row.DATETIME).toLocaleString()}</td>
                   <td>{row.ServerId}</td>
                   <td>{row.ProcessInfo}</td>
                   <td>
