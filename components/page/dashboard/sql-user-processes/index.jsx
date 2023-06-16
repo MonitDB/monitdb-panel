@@ -41,13 +41,12 @@ function SqlUserProcesses(properties) {
         <span className="w-full h-[1px] block bg-gray-light" />
       </div>
       <div
+        style={{ overflowX: 'auto' }}
         className="prose prose-thead:bg-gray-light max-w-full prose-th:capitalize prose-th:border-b-0 prose-tr:border-gray-light prose-td:text-[11px]"
-        style={{ width: '100%' }}
       >
         {loading ? (
           <div
             style={{
-              width: '100%',
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',

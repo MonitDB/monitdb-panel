@@ -157,7 +157,7 @@ const EnvironmentServersBackups = ({ servers, onSetBackupsModal, backups }) => {
                     </thead>
 
                     <tbody>
-                      {DATABASES.map((DATABASE) => {
+                      {DATABASES?.map((DATABASE) => {
                         const fullBackup = DATABASE.Full ? DATABASE.Full[0] : {}
                         const diferentialBackup = DATABASE.Diferencial
                           ? DATABASE.Diferencial[0]
