@@ -68,8 +68,7 @@ const ConfigurationsServersSinglePage = () => {
 
     return formik?.values?.serverType
       ? serverTypes.find(
-          (serverType) =>
-            serverType.idtypeserver.toString() === formik.values.serverType
+          (serverType) => serverType.idtypeserver === formik.values.serverType
         )?.typeservername
       : serverTypes[0]?.typeservername
   }, [formik?.values?.serverType, serverTypes])
@@ -103,7 +102,7 @@ const ConfigurationsServersSinglePage = () => {
     formik.setFieldValue('id', router?.query?.id)
     formik.setFieldValue('name', currentServer.serverName)
     formik.setFieldValue('description', currentServer.serverDescription)
-    formik.setFieldValue('serverType', currentServer.idTypeServer?.toString())
+    formik.setFieldValue('serverType', currentServer.idTypeServer)
     formik.setFieldValue('environment', currentServer.idTypeServerEnvironment)
 
     formik.setFieldValue('connection', currentServer.idTypeServerConnection)
@@ -160,7 +159,7 @@ const ConfigurationsServersSinglePage = () => {
                       name="environment"
                       options={serverEnvironments?.map((environment) => ({
                         label: environment.typeServerEnvironmentName,
-                        value: environment.idTypeServerEnvironment,
+                        value: environment.id,
                       }))}
                       onChange={(value) => {
                         formik.setFieldValue('environment', value)
@@ -178,8 +177,8 @@ const ConfigurationsServersSinglePage = () => {
                         containerClass="bg-white"
                         name="serverType"
                         options={serverTypes?.map((serverType) => ({
-                          label: serverType.typeservername,
-                          value: serverType.idtypeserver,
+                          label: serverType.typeServerName,
+                          value: serverType.id,
                         }))}
                         onChange={(value) => {
                           formik.setFieldValue('serverType', value)

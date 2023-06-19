@@ -57,8 +57,7 @@ const ConfigurationsServersSinglePage = () => {
 
     return formik?.values?.serverType
       ? serverTypes.find(
-          (serverType) =>
-            serverType.idtypeserver.toString() === formik.values.serverType
+          (serverType) => serverType.idtypeserver === formik.values.serverType
         )?.typeservername
       : serverTypes[0]?.typeservername
   }, [formik?.values?.serverType, serverTypes])
@@ -115,7 +114,7 @@ const ConfigurationsServersSinglePage = () => {
                         },
                         ...(serverEnvironments?.map((environment) => ({
                           label: environment.typeServerEnvironmentName,
-                          value: environment.idTypeServerEnvironment,
+                          value: environment.id,
                         })) || []),
                       ]}
                       onChange={(value) => {
@@ -139,8 +138,8 @@ const ConfigurationsServersSinglePage = () => {
                             value: '',
                           },
                           ...(serverTypes?.map((serverType) => ({
-                            label: serverType.typeservername,
-                            value: serverType.idtypeserver,
+                            label: serverType.typeServerName,
+                            value: serverType.id,
                           })) || []),
                         ]}
                         onChange={(value) => {
