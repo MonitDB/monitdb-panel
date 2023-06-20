@@ -4,7 +4,6 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import classNames from 'classnames'
-/*import { set } from 'date-fns'*/
 import React, { useCallback, useEffect, useState } from 'react'
 
 import BlockMessage from '~/components/block-message'
@@ -14,7 +13,7 @@ import useComponentContext from '~/services/state-manager/components'
 
 const componentsOption = [
   { value: 'LTWISACT', label: 'WHO IS ACTIVE' },
-  { value: 'LTWHO2', label: 'WHO IS ACTIVE 2' },
+  { value: 'LTWHO2', label: 'WHO2' },
 ]
 
 const [WHO_IS_ACT, WHO_IS_ACT2] = componentsOption
@@ -287,9 +286,114 @@ function CurrentActivity(properties) {
   if (componentCode === WHO_IS_ACT2.value)
     return (
       <div>
-        {' '}
-        {headerSection}
-        <div>The component has not implemented</div>
+        <div className="w-full min-h-96">
+          {headerSection}
+          <div className="prose baleiaprose-thead:bg-gray-light max-w-full prose-th:capitalize prose-th:border-b-0 prose-tr:border-gray-light prose-td:text-[11px]">
+            <table>
+              <thead>
+                <tr>
+                  <th>SPID</th>
+                  <th>Host Name</th>
+                  <th>Login Name</th>
+                  <th>DB Name</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.map((item, index) => (
+                  <>
+                    <tr
+                      key={index}
+                      className={classNames(
+                        'hover:bg-gray-lightest',
+                        activeTableRowIndex === index && 'bg-gray-lightest'
+                      )}
+                      // eslint-disable-next-line sonarjs/no-identical-functions
+                      onClick={() => {
+                        if (activeTableRowIndex === index)
+                          setActiveTableRowIndex(-1)
+                        else setActiveTableRowIndex(index)
+                      }}
+                    >
+                      <td>
+                        <button
+                          type="button"
+                          className="whitespace-nowrap truncate"
+                        >
+                          <FontAwesomeIcon
+                            width={7}
+                            height={7}
+                            icon={faChevronRight}
+                            className={classNames(
+                              'mr-1 transition-all duration-150 ease-in-out',
+                              {
+                                'rotate-90': activeTableRowIndex === index,
+                              }
+                            )}
+                          />
+                          <span className="truncate ml-2">{item.SPID}</span>
+                        </button>
+                      </td>
+                      <td>{item.HostName}</td>
+                      <td>{item.Login}</td>
+                      <td>{item.DBName}</td>
+                      <td>{item.Status}</td>
+                    </tr>
+
+                    {activeTableRowIndex === index && (
+                      <tr>
+                        <td colSpan={4} className="p-4">
+                          <div className="prose baleiaprose-thead:bg-gray-light max-w-full prose-th:capitalize prose-th:border-b-0 prose-tr:border-gray-light prose-td:text-[11px]">
+                            <table className="table-auto">
+                              <tbody>
+                                <tr>
+                                  <td>
+                                    <b>Command</b>
+                                  </td>
+                                  <td>{item.Command}</td>
+                                </tr>
+                                <tr>
+                                  <td>
+                                    <b>CPU Time</b>
+                                  </td>
+                                  <td>{item.CPUTime}</td>
+                                </tr>
+                                <tr>
+                                  <td>
+                                    <b>DiskIO</b>
+                                  </td>
+                                  <td>{item.DiskIO || '-'}</td>
+                                </tr>
+                                <tr>
+                                  <td>
+                                    <b>Last Batch</b>
+                                  </td>
+                                  <td>{item.LastBatch}</td>
+                                </tr>
+                                <tr>
+                                  <td>
+                                    <b>Program Name</b>
+                                  </td>
+                                  <td>{item.ProgramName}</td>
+                                </tr>
+                                <tr>
+                                  <td>
+                                    <b>Request Id</b>
+                                  </td>
+                                  <td>{item.REQUESTID}</td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                  </>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     )
 }
