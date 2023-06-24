@@ -14,7 +14,9 @@ import SqlCompilationsBatchRequests from './sql-compilations-batch-requests'
 import SqlCompilationsSec from './sql-compilations-sec'
 import UserConnections from './user-connections'
 
-const ServerMetrics = () => {
+const ServerMetrics = (properties) => {
+  const { key } = properties
+
   return (
     <div className="mt-6">
       <h3 className="font-bold mb-6">SQL Server metrics</h3>
@@ -22,25 +24,25 @@ const ServerMetrics = () => {
         <h4 className="mb-6 text-sm">General</h4>
         <Grid>
           <div className="cols-span-2 md:col-span-4">
-            <BatchRequests />
+            <BatchRequests key={key} />
           </div>
           <div className="cols-span-2 md:col-span-4">
-            <SqlCompilationsBatchRequests />
+            <SqlCompilationsBatchRequests key={key} />
           </div>
           <div className="cols-span-2 md:col-span-4">
-            <PageSplitsBatchRequests />
+            <PageSplitsBatchRequests key={key} />
           </div>
           <div className="cols-span-2 md:col-span-4">
-            <SqlCompilationsSec />
+            <SqlCompilationsSec key={key} />
           </div>
           <div className="cols-span-2 md:col-span-4">
-            <PageSplitsSec />
+            <PageSplitsSec key={key} />
           </div>
           <div className="cols-span-2 md:col-span-4">
-            <FullScansSec />
+            <FullScansSec key={key} />
           </div>
           <div className="cols-span-2 md:col-span-4">
-            <UserConnections />
+            <UserConnections key={key} />
           </div>
         </Grid>
       </div>

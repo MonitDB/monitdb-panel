@@ -79,6 +79,7 @@ const SingleDashboard = () => {
   } = useGlobal()
 
   const [activeTabId, setActiveTabId] = useState(tabItems[0]['id'])
+  const [lastFetch, setLastFetch] = useState(Date.now())
 
   const router = useRouter()
 
@@ -141,7 +142,7 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
               </PageSidebarLinksList>
             )}
           </PageSidebar>
-          <PageContent hideBreadcrumbs={true}>
+          <PageContent hideBreadcrumbs={true} key={lastFetch}>
             {!currentServer && <Loading />}
             {currentServer && (
               <>
@@ -274,6 +275,10 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
                           }}
                         />
                       </div>
+                      <button onClick={() => setLastFetch(Date.now())}>
+                        Refresh
+                      </button>
+                      <div>{lastFetch}</div>
                     </form>
 
                     <div id="allinstancemetrics">
@@ -341,7 +346,7 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
                       </Grid>
 
                       <Server />
-                      <ServerMetrics />
+                      <ServerMetrics key={lastFetch} />
                       <Permissions currentServer={currentServer} />
                       {/* <VmwareMetrics /> */}
                       <TempDB />
