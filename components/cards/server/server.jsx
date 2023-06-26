@@ -2,7 +2,7 @@ import { faDatabase } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ArcElement, Chart as ChartJS, Legend, Tooltip } from 'chart.js'
 import classNames from 'classnames'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { Pie } from 'react-chartjs-2'
 
 import Link from '~/components/link'
@@ -38,7 +38,14 @@ const getPieChartData = ({ availablePercent }) => {
 const getDiskTotal = ({ unitType, total }) =>
   unitType === 'MB' ? `${megaBytesToGigaBytes(total)} GB` : `${total} GB`
 
-const ServerCard = ({ id, serverEnable, serverName, type, className = '' }) => {
+const ServerCard = ({
+  id,
+  serverEnable,
+  serverName,
+  type,
+  className = '',
+  interval,
+}) => {
   const windowSize = useWindowSize()
   const elementReference = useRef(null)
   const [tooltipPosition, setTooltipPosition] = useState('left')
@@ -49,7 +56,17 @@ const ServerCard = ({ id, serverEnable, serverName, type, className = '' }) => {
     disks: [],
   })
 
-  const getMetrics = async () => {
+  if (interval) {
+    useEffect(() => {
+      const intervalId = setInterval(() => {
+        getMetrics()
+      }, interval)
+
+      return () => clearInterval(intervalId)
+    }, [getMetrics, interval])
+  }
+
+  const getMetrics = useCallback(async () => {
     try {
       const response = await getServerMetrics({ id })
 
@@ -61,7 +78,7 @@ const ServerCard = ({ id, serverEnable, serverName, type, className = '' }) => {
     } catch (error) {
       console.error(error) // eslint-disable-line no-console
     }
-  }
+  }, [id])
 
   useEffect(() => {
     setTooltipPosition(
