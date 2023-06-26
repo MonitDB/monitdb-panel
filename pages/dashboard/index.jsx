@@ -4,7 +4,12 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import classNames from 'classnames'
-import { HOUR, MINUTE, SECOND } from 'const/time'
+import {
+  HOUR,
+  MINUTE,
+  REFRESH_INTERVAL_LOCAL_STORAGE_KEY,
+  SECOND,
+} from 'const/time'
 import { useFormik } from 'formik'
 import { NextSeo } from 'next-seo'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
@@ -26,6 +31,13 @@ const DashboardPage = () => {
   } = useGlobal()
 
   const [refreshInterval, setRefreshInterval] = useState(HOUR)
+
+  useEffect(() => {
+    const INITIAL_REFRESH_INTERVAL = Number(
+      localStorage.getItem(REFRESH_INTERVAL_LOCAL_STORAGE_KEY) || MINUTE * 15
+    )
+    setRefreshInterval(INITIAL_REFRESH_INTERVAL)
+  }, [])
 
   const [formattedEnvironments, setFormattedEnvironments] = useState([])
 
@@ -225,6 +237,10 @@ const DashboardPage = () => {
                     ]}
                     value={refreshInterval}
                     onChange={(value) => {
+                      localStorage.setItem(
+                        REFRESH_INTERVAL_LOCAL_STORAGE_KEY,
+                        value
+                      )
                       setRefreshInterval(value)
                     }}
                   />

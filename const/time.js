@@ -6,6 +6,8 @@ const WEEK = DAY * 7;
 const MONTH = WEEK * 4;
 const YEAR = WEEK * 12;
 
+const REFRESH_INTERVAL_LOCAL_STORAGE_KEY = "REFRESH_INTERVAL_LOCAL_STORAGE"
+
 export {
     SECOND,
     MINUTE,
@@ -13,5 +15,6 @@ export {
     DAY,
     WEEK,
     MONTH,
-    YEAR
+    YEAR,
+    REFRESH_INTERVAL_LOCAL_STORAGE_KEY
 }
