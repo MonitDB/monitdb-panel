@@ -56,6 +56,8 @@ const ServerCard = ({
     disks: [],
   })
 
+  const [lastUpdated, setLastUpdated] = useState(new Date())
+
   if (interval) {
     useEffect(() => {
       const intervalId = setInterval(() => {
@@ -72,7 +74,7 @@ const ServerCard = ({
 
       if (response?.data) {
         const { cpu, memory, disks, serverStatus } = response.data
-
+        setLastUpdated(new Date())
         setMetrics({ cpu, memory, disks, serverStatus })
       }
     } catch (error) {
@@ -195,6 +197,11 @@ const ServerCard = ({
               </dd>
             </>
           )}
+
+          <>
+            <dt className="block text-gray-dark mt-2">Last Updated</dt>
+            <dd className="mt-1">{lastUpdated.toLocaleString()}</dd>
+          </>
         </dl>
       </Link>
 

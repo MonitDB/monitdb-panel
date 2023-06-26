@@ -4,11 +4,13 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import classNames from 'classnames'
+import { HOUR, MINUTE, SECOND } from 'const/time'
 import { useFormik } from 'formik'
 import { NextSeo } from 'next-seo'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
 import ServerCard from '~/components/cards/server'
+import { Label, Select } from '~/components/form'
 import Selector from '~/components/form/selector'
 import Loading from '~/components/loading'
 import { PageContent, PageSidebar, PageWrapper } from '~/components/page'
@@ -22,6 +24,8 @@ const DashboardPage = () => {
   const {
     globalState: { servers, serverTypes, serverEnvironments },
   } = useGlobal()
+
+  const [refreshInterval, setRefreshInterval] = useState(HOUR)
 
   const [formattedEnvironments, setFormattedEnvironments] = useState([])
 
@@ -203,6 +207,30 @@ const DashboardPage = () => {
                 </form>
               </PageContent>
 
+              <PageContent>
+                <div className="w-full space-y-5">
+                  <Label className="mb-2">Refresh Interval</Label>
+                  <Select
+                    options={[
+                      { value: 5 * SECOND, label: 'Every 5 seconds' },
+                      { value: 15 * SECOND, label: 'Every 15 seconds' },
+                      { value: 30 * SECOND, label: 'Every 30 seconds' },
+                      { value: MINUTE, label: 'Every 1 minute' },
+                      { value: 2 * MINUTE, label: 'Every 2 minutes' },
+                      { value: 5 * MINUTE, label: 'Every 5 minutes' },
+                      { value: 10 * MINUTE, label: 'Every 10 minutes' },
+                      { value: 15 * MINUTE, label: 'Every 15 minutes' },
+                      { value: 30 * MINUTE, label: 'Every 30 minutes' },
+                      { value: HOUR, label: 'Every 1 hour' },
+                    ]}
+                    value={refreshInterval}
+                    onChange={(value) => {
+                      setRefreshInterval(value)
+                    }}
+                  />
+                </div>
+              </PageContent>
+
               <PageContent hideBreadcrumbs={true}>
                 <div className="w-full space-y-5">
                   {formattedEnvironments
@@ -261,7 +289,7 @@ const DashboardPage = () => {
                                   key={`server-production-${index}`}
                                   className="w-full mb-4 md:w-72 md:mr-4"
                                   {...server}
-                                  interval={5000}
+                                  interval={refreshInterval}
                                 />
                               ))}
                             </div>
