@@ -34,7 +34,7 @@ const DashboardPage = () => {
 
   useEffect(() => {
     const INITIAL_REFRESH_INTERVAL = Number(
-      localStorage.getItem(REFRESH_INTERVAL_LOCAL_STORAGE_KEY) || MINUTE * 15
+      localStorage.getItem(REFRESH_INTERVAL_LOCAL_STORAGE_KEY) || 15 * SECOND
     )
     setRefreshInterval(INITIAL_REFRESH_INTERVAL)
   }, [])
