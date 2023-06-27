@@ -75,7 +75,18 @@ const ServerCard = ({
       if (response?.data) {
         const { cpu, memory, disks, serverStatus } = response.data
         setLastUpdated(new Date())
-        setMetrics({ cpu, memory, disks, serverStatus })
+
+        setMetrics({
+          cpu,
+
+          memory: {
+            ...memory,
+            inUsePercent:
+              ((memory.total - memory.available) / memory.total) * 100,
+          },
+          disks,
+          serverStatus,
+        })
       }
     } catch (error) {
       console.error(error) // eslint-disable-line no-console
@@ -180,6 +191,20 @@ const ServerCard = ({
           {metrics.cpu && (
             <>
               <dt className="block text-gray-dark mt-2">CPU</dt>
+              <dd>
+                <span
+                  className={classNames({
+                    'text-blue': metrics.memory.otherProcessPercent <= 85,
+                    'text-orange':
+                      metrics.memory.otherProcessPercent > 85 &&
+                      metrics.memory.otherProcessPercent < 95,
+                    'text-danger': metrics.memory.otherProcessPercent >= 95,
+                  })}
+                >
+                  {metrics.cpu.otherProcessPercent}%
+                </span>
+                <span> - Em uso</span>
+              </dd>
               <dd className="mt-1 w-full h-1 block relative bg-gray-light">
                 <span
                   className="absolute top-0 h-full bg-orange"
