@@ -227,13 +227,8 @@ const DashboardPage = () => {
                       { value: 5 * SECOND, label: 'Every 5 seconds' },
                       { value: 15 * SECOND, label: 'Every 15 seconds' },
                       { value: 30 * SECOND, label: 'Every 30 seconds' },
+                      { value: 15 * SECOND, label: 'Every 45 seconds' },
                       { value: MINUTE, label: 'Every 1 minute' },
-                      { value: 2 * MINUTE, label: 'Every 2 minutes' },
-                      { value: 5 * MINUTE, label: 'Every 5 minutes' },
-                      { value: 10 * MINUTE, label: 'Every 10 minutes' },
-                      { value: 15 * MINUTE, label: 'Every 15 minutes' },
-                      { value: 30 * MINUTE, label: 'Every 30 minutes' },
-                      { value: HOUR, label: 'Every 1 hour' },
                     ]}
                     value={refreshInterval}
                     onChange={(value) => {
