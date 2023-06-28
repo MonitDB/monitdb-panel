@@ -6,12 +6,12 @@ import useLogContext from '~/services/state-manager/logs'
 function Databases() {
   const { getLogDatabase } = useLogContext()
 
-  /*const [data, setData] = useState([])*/
+  const [data, setData] = useState([])
 
   useEffect(() => fetchData(), [fetchData])
 
   const fetchData = useCallback(async () => {
-    const data = await getLogDatabase(1)
+    /*const data = await getLogDatabase(1)*/
     if (data) {
       const groupedData = {}
       for (const current of data) {
