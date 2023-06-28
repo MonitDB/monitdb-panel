@@ -11,7 +11,7 @@ function Databases() {
   useEffect(() => fetchData(), [fetchData])
 
   const fetchData = useCallback(async () => {
-    /*const data = await getLogDatabase(1)*/
+    const data = await getLogDatabase(1)
     if (data) {
       const groupedData = {}
       for (const current of data) {
