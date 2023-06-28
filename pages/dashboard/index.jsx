@@ -15,7 +15,7 @@ import { NextSeo } from 'next-seo'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
 import ServerCard from '~/components/cards/server'
-import { Label, Select } from '~/components/form'
+import { Select } from '~/components/form'
 import Selector from '~/components/form/selector'
 import Loading from '~/components/loading'
 import { PageContent, PageSidebar, PageWrapper } from '~/components/page'

@@ -64,7 +64,10 @@ const ServerCard = ({
         getMetrics()
       }, interval)
 
-      return () => clearInterval(intervalId)
+      return () => {
+        console.log('Cleared Interval')
+        clearInterval(intervalId)
+      }
     }, [getMetrics, interval])
   }
 

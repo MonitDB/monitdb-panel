@@ -15,7 +15,7 @@ import { formatObjectToQuery } from '../../utils/formats'
 //   getCpuUsage: (id: number) => Promise<any>
 // }
 
-const useComponentLogContext = create((set) => ({
+const useLogContext = create((set) => ({
   cpuUsage: [],
   getLogs: async (parameters = {}, token = '') => {
     return clientApi(token).get(
@@ -35,7 +35,28 @@ const useComponentLogContext = create((set) => ({
       return;
     } 
   },
+  
+  getLogDatabase: async (id, parameters) => {
+    try {
+      const { data } = await clientApi().get(`/api/logdatabasestat/${id || ''}`, {
+        params: parameters || undefined,
+      });
+      return data;
+    } catch {
+      return;
+    } 
+  },
+  getLogErrors: async (id, parameters) => {
+    try {
+      const { data } = await clientApi().get(`/api/logerror/${id || ''}`, {
+        params: parameters || undefined,
+      });
+      return data;
+    } catch {
+      return;
+    }
+  }
 
 }))
 
-export default useComponentLogContext
+export default useLogContext

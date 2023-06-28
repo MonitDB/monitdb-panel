@@ -1,8 +1,31 @@
-import React from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 
 import Image from '~/components/image'
+import useLogContext from '~/services/state-manager/logs'
 
 function Databases() {
+  const { getLogDatabase } = useLogContext()
+
+  const [data, setData] = useState([])
+
+  useEffect(() => fetchData(), [fetchData])
+
+  const fetchData = useCallback(async () => {
+    const data = await getLogDatabase(1)
+    if (data) {
+      const groupedData = {}
+      for (const current of data) {
+        if (groupedData[current.dataBase]) {
+          groupedData[current.dataBase].push(current)
+        } else {
+          groupedData[current.dataBase] = [current]
+        }
+      }
+
+      setData(groupedData)
+    }
+  }, [getLogDatabase])
+
   return (
     <div id="databases" className="mt-4">
       <div className="grid grid-cols-[28px_auto_1fr] gap-2 items-center my-8">
