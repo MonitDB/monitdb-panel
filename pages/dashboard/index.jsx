@@ -216,30 +216,27 @@ const DashboardPage = () => {
                   >
                     Clear
                   </button>
+                  <div style={{ width: '400px' }}>
+                    <Select
+                      name="refreshInterval"
+                      options={[
+                        { value: 5 * SECOND, label: 'Every 5 seconds' },
+                        { value: 15 * SECOND, label: 'Every 15 seconds' },
+                        { value: 30 * SECOND, label: 'Every 30 seconds' },
+                        { value: 15 * SECOND, label: 'Every 45 seconds' },
+                        { value: MINUTE, label: 'Every 1 minute' },
+                      ]}
+                      value={refreshInterval}
+                      onChange={(value) => {
+                        localStorage.setItem(
+                          REFRESH_INTERVAL_LOCAL_STORAGE_KEY,
+                          value
+                        )
+                        setRefreshInterval(value)
+                      }}
+                    />
+                  </div>
                 </form>
-              </PageContent>
-
-              <PageContent>
-                <div className="w-full space-y-5">
-                  <Label className="mb-2">Refresh Interval</Label>
-                  <Select
-                    options={[
-                      { value: 5 * SECOND, label: 'Every 5 seconds' },
-                      { value: 15 * SECOND, label: 'Every 15 seconds' },
-                      { value: 30 * SECOND, label: 'Every 30 seconds' },
-                      { value: 15 * SECOND, label: 'Every 45 seconds' },
-                      { value: MINUTE, label: 'Every 1 minute' },
-                    ]}
-                    value={refreshInterval}
-                    onChange={(value) => {
-                      localStorage.setItem(
-                        REFRESH_INTERVAL_LOCAL_STORAGE_KEY,
-                        value
-                      )
-                      setRefreshInterval(value)
-                    }}
-                  />
-                </div>
               </PageContent>
 
               <PageContent hideBreadcrumbs={true}>
