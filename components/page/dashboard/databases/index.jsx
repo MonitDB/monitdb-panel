@@ -6,8 +6,7 @@ import useLogContext from '~/services/state-manager/logs'
 function Databases() {
   const { getLogDatabase } = useLogContext()
 
-  /*const [data, setData] = useState([])*/
-  const setData = useState([])
+  const [data, setData] = useState([])  
 
   useEffect(() => fetchData(), [fetchData])
 
