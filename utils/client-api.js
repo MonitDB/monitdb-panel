@@ -14,4 +14,8 @@ const clientApi = (token) => {
   return instance;
 };
 
+const apiV2 = axios.create({baseURL: process.env.apiV2})
+
 export default clientApi;
+
+export {apiV2}

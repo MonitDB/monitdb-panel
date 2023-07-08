@@ -353,7 +353,7 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
                       <BlockingProcesses currentServer={currentServer} />
                       <SqlUserProcesses currentServer={currentServer} />
                       <ErrorLog currentServer={currentServer} />
-                      <Databases />
+                      <Databases currentServer={currentServer} />
                     </div>
                   </div>
                 )}

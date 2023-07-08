@@ -9,15 +9,19 @@ const ApexChart = dynamic(
 )
 
 const Chart = ({
-  height = '155',
+  height = '50',
   seriesName,
   seriesData,
   multipleSeries,
+  yaxisAbs,
+  disableLabels,
+  type,
   ...options
 }) => {
   const chartOptions = {
     chart: {
-      type: 'area',
+      type: type || 'area',
+
       toolbar: {
         show: false,
         offsetX: '-100%',
@@ -50,10 +54,13 @@ const Chart = ({
       },
     },
     yaxis: {
+      show: !disableLabels,
       forceNiceScale: true,
       decimalsInFloat: 2,
       labels: {
-        formatter: (value) => Number.parseFloat(value).toFixed(2) + '%',
+        formatter: yaxisAbs
+          ? undefined
+          : (value) => Number.parseFloat(value).toFixed(2) + '%',
       },
     },
     stroke: {
@@ -67,6 +74,10 @@ const Chart = ({
       offsetX: 5,
     },
     xaxis: {
+      labels: {
+        show: !disableLabels,
+      },
+      show: false,
       type: 'datetime',
     },
     ...options,

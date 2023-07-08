@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 
-import clientApi from '../../utils/client-api'
+import clientApi, { apiV2 } from '../../utils/client-api'
 import { formatObjectToQuery } from '../../utils/formats'
 
 // interface ComponentLogContext {
@@ -38,7 +38,7 @@ const useLogContext = create((set) => ({
   
   getLogDatabase: async (id, parameters) => {
     try {
-      const { data } = await clientApi().get(`/api/logdatabasestat/${id || ''}`, {
+      const { data } = await apiV2.get(`/log/database-status/${id || ''}`, {
         params: parameters || undefined,
       });
       return data;
