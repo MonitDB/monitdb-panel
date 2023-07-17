@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 
-/*import Chart from '~/components/chart'*/
+import Chart from '~/components/chart'
 import Image from '~/components/image'
 import useLogContext from '~/services/state-manager/logs'
 
