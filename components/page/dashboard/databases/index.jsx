@@ -67,14 +67,28 @@ function Databases(properties) {
                     {' '}
                     <GraphContainer>
                       <Chart
-                        className={'graph-transactions'}
+                        className={'graph'}
                         disableLabels
-                        height="75"
+                        height={75}
                         yaxisAbs
-                        data={data?.logs?.map((log) => [
+                        seriesData={data[index].logs?.map((log) => [
                           log.createDate,
                           log.currentTransaction,
                         ])}
+                      />
+                    </GraphContainer>
+                  </td>
+                  <td>
+                    {' '}
+                    <GraphContainer>
+                      <Chart
+                        className="graph"
+                        disableLabels={true}
+                        height={75}
+                        yaxisAbs={true}
+                        seriesData={data[index].logs?.map((log) => {
+                          return [log.createDate, log.databaseSize]
+                        })}
                       />
                     </GraphContainer>
                   </td>

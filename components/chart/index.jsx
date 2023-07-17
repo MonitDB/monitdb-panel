@@ -88,7 +88,7 @@ const Chart = ({
   const series = [
     {
       name: seriesName,
-      data: seriesData ?? [
+      data: seriesData || [
         [1_585_898_010_000, 0],
         [1_585_898_020_000, 0.27],
         [1_585_898_030_000, 0.18],
