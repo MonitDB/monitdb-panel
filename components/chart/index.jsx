@@ -16,6 +16,8 @@ const Chart = ({
   yaxisAbs,
   disableLabels,
   type,
+  key,
+  className,
   ...options
 }) => {
   const chartOptions = {
@@ -275,6 +277,8 @@ const Chart = ({
       options={chartOptions}
       series={multipleSeries || series}
       height={height}
+      key={key}
+      className={className}
     />
   )
 }

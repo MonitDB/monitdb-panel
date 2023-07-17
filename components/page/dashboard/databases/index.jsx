@@ -4,6 +4,8 @@ import Chart from '~/components/chart'
 import Image from '~/components/image'
 import useLogContext from '~/services/state-manager/logs'
 
+import { GraphContainer } from './styles/chart-styles'
+
 function Databases(properties) {
   const { currentServer } = properties
   const { getLogDatabase } = useLogContext()
@@ -44,16 +46,38 @@ function Databases(properties) {
               return (
                 <tr key={index}>
                   <td>
-                    <div className="flex items-center gap-2">
-                      <Image
-                        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABYAAAAdCAMAAACZrWzKAAAAM1BMVEUAAAChoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGz8IU4AAAAEHRSTlMAECAwQFBgcICPn6+/z9/vIxqCigAAAI9JREFUKM/FkUsOhDAMQ93Gbd0Pbe5/WhYgJGC2aLzLs6LEMgBYaWO5u7uvUXMEAOTpD20ZkP+Q/oE533QzAKndnNmIU4FFkqTCcBA1w0PWBLmvLp6LpPr6Oo6NNx0GIJabMxQBHBVFJklKPEdo1kceq/M4uUZVJsmkOtbn7QS96pkKAGDq24W67v8aebWFHeQVHSKfjqHNAAAAAElFTkSuQmCC"
-                        width="16"
-                        height="16"
-                      />{' '}
-                      <a>{item.name}</a>
+                    <div className="flex items-center">
+                      <div className="flex items-center gap-2">
+                        <Image
+                          src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABYAAAAdCAMAAACZrWzKAAAAM1BMVEUAAAChoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGz8IU4AAAAEHRSTlMAECAwQFBgcICPn6+/z9/vIxqCigAAAI9JREFUKM/FkUsOhDAMQ93Gbd0Pbe5/WhYgJGC2aLzLs6LEMgBYaWO5u7uvUXMEAOTpD20ZkP+Q/oE533QzAKndnNmIU4FFkqTCcBA1w0PWBLmvLp6LpPr6Oo6NNx0GIJabMxQBHBVFJklKPEdo1kceq/M4uUZVJsmkOtbn7QS96pkKAGDq24W67v8aebWFHeQVHSKfjqHNAAAAAElFTkSuQmCC"
+                          width="16"
+                          height="16"
+                        />{' '}
+                        <a>{item.name}</a>
+                      </div>
                     </div>
                   </td>
-                  <td>{item.status}</td>
+                  <td>
+                    {' '}
+                    <div className="flex items-center ">
+                      <p>{item.status}</p>
+                    </div>
+                  </td>
+                  <td>
+                    {' '}
+                    <GraphContainer>
+                      <Chart
+                        className={'graph-transactions'}
+                        disableLabels
+                        height="75"
+                        yaxisAbs
+                        data={data?.logs?.map((log) => [
+                          log.createDate,
+                          log.currentTransaction,
+                        ])}
+                      />
+                    </GraphContainer>
+                  </td>
                 </tr>
               )
             })}
