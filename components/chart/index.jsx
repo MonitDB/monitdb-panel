@@ -9,7 +9,7 @@ const ApexChart = dynamic(
 )
 
 const Chart = ({
-  height = '50',
+  height = '200',
   seriesName,
   seriesData,
   multipleSeries,
