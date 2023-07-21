@@ -62,7 +62,7 @@ const LatestAlerts = () => {
 
   useEffect(() => {
     if (alerts.length === 0 || parameters.length === 0) return
-
+    console.log(alerts, parameter)
     setAlertGroups(
       combineAlertsAndParameters({
         alerts,

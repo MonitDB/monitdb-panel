@@ -33,6 +33,7 @@ import {
   TempDB,
 } from '~/components/page/dashboard'
 import CurrentActivity from '~/components/page/dashboard/current-activity'
+import MemoryUsage from '~/components/page/dashboard/memory-usage'
 import LatestAlertsSidebar from '~/components/sidebar/latest-alerts'
 import { SingleDashboardContextProvider } from '~/contexts/single-dashboard'
 import DatabaseIcons from '~/helpers/database-icons'
@@ -309,17 +310,9 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
                             </button>
                           </div>
                         </div>
-                        <div className="col-span-2 bg-white lg:col-span-6">
-                          <Chart
-                            colors={['#ff5500']}
-                            title={{
-                              text: 'DTU',
-                              offsetY: 10,
-                              offsetX: 5,
-                            }}
-                            seriesName="% Utilization"
-                          />
-                        </div>
+
+                        <MemoryUsage currentServer={currentServer} />
+
                         <CpuUsage currentServer={currentServer} />
                         <div className="col-span-2 bg-white lg:col-span-6">
                           <Chart

@@ -42,10 +42,10 @@ function ErrorLog(properties) {
         <table className="m-0 py-4 prose-tr:last:!border-b">
           <thead>
             <tr>
-              <th>Time</th>
-              <th>Server</th>
-              <th>Process</th>
-              <th>Error</th>
+              <th className="w-10">Time</th>
+              <th className="w-5">Server</th>
+              <th className="w-20">Process</th>
+              <th className="w-20">Error</th>
             </tr>
           </thead>
           <tbody>
@@ -78,11 +78,11 @@ function ErrorLog(properties) {
             ) : (
               data?.map((row, index) => (
                 <tr key={index} className="hover:bg-gray-lightest">
-                  <td>{new Date(row.DATETIME).toLocaleString()}</td>
+                  <td>{new Date(row.DATETIME).toLocaleString('pt-BR')}</td>
                   <td>{row.ServerId}</td>
-                  <td>{row.ProcessInfo}</td>
-                  <td>
-                    {row.Error} {row.Text}
+                  <td>{row.TYPE}</td>
+                  <td className="truncate">
+                    {row.ERROR_CODE} {row.ERROR_MESSAGE}
                   </td>
                 </tr>
               ))

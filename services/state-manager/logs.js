@@ -36,6 +36,17 @@ const useLogContext = create((set) => ({
     } 
   },
   
+  getMemoryUsage: async (id, parameters) => {
+     try {
+      const { data } = await apiV2.get(`/log/memory-usage/${id || ''}`, {
+        params: parameters || undefined,
+      });
+      return data;
+    } catch {
+      return;
+    } 
+  },
+  
   getLogDatabase: async (id, parameters) => {
     try {
       const { data } = await apiV2.get(`/log/database-status/${id || ''}`, {
