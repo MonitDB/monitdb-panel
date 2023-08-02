@@ -12,7 +12,6 @@ import Select from '~/components/form/select'
 import Link from '~/components/link'
 import Loading from '~/components/loading'
 import { PageSidebarTitle } from '~/components/page'
-import useAlerts from '~/hooks/use-alerts'
 import useGlobal from '~/hooks/use-global'
 import useAlertContext from '~/services/state-manager/alerts'
 
@@ -44,13 +43,10 @@ const LatestAlerts = () => {
     globalState: { serverEnvironments },
   } = useGlobal()
 
-  const { getAlerts } = useAlertContext()
-
-  const {
-    stateAlerts: { parameters },
-  } = useAlerts()
+  const { getAlerts, getAlertsParameter } = useAlertContext()
 
   const [alerts, setAlerts] = useState([])
+  const [parameters, setParameters] = useState([])
   const [alertGroups, setAlertGroups] = useState([])
 
   const getAlertsData = useCallback(async () => {
@@ -61,7 +57,20 @@ const LatestAlerts = () => {
     } catch (error) {
       console.error(error)
     }
-  }, [])
+  }, [getAlerts])
+
+  const getParametersData = useCallback(async () => {
+    try {
+      const responseParameters = await getAlertsParameter({
+        PageLength: 100,
+        PageNumber: 1,
+      })
+
+      setParameters(responseParameters)
+    } catch (error) {
+      console.error(error)
+    }
+  }, [getAlertsParameter])
 
   useEffect(() => {
     if (alerts.length === 0 || parameters.length === 0) return
@@ -75,11 +84,12 @@ const LatestAlerts = () => {
 
   useEffect(() => {
     try {
-      getAlertsData()
+      getAlertsParameter()
+      getParametersData()
     } catch (error) {
       console.error(error)
     }
-  }, [getAlertsData])
+  }, [getAlertsParameter, getParametersData])
 
   return (
     <div>

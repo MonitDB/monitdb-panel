@@ -9,20 +9,24 @@ const useAlertContext = create(() => ({
       { params: parameters })
     return data;
   },
-  // getAlertsById: async (id, parameters = {}) => {
-  //   return clientApi().get(
-  //     `/api/alert/${id}?${formatObjectToQuery(parameters)}`
-  //   )
-  // },
-  getAlertsParameter: async (parameters = {}) => {
-     const {data} = await apiV2.get(
-      `/alert/parameter`, {params: parameters}
+  getAlertsById: async (id, parameters = {}) => {
+    const {data} = await apiV2.get(
+      `/alert/${id}`, {params: parameters}
      )
     return data;
   },
-  // getAlertsParameterByServerId: async (serverId) => {
-  //   return clientApi().get(`/api/alertparameter/${serverId}`)
-  // },
+  getAlertsParameter: async (parameters = {}) => {
+     const {data} = await apiV2.get(
+      `/alert/parameter/`, {params: parameters}
+     )
+    return data;
+  },
+  getAlertsParameterByServerId: async (serverId) => {
+      const {data} = await apiV2.get(
+      `/alert/parameter/${serverId}`
+     )
+    return data;
+  },
   // getAlertParameterByServerId: async (serverId, parameterId) => {
   //   return clientApi().get(`/api/alertparameter/${serverId}/${parameterId}`)
   // },
