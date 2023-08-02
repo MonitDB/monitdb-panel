@@ -19,8 +19,6 @@ import useAlertContext from '~/services/state-manager/alerts'
 const combineAlertsAndParameters = ({ alerts, parameters }) => {
   const result = {}
 
-  console.log({ parameters })
-
   for (const alert of alerts) {
     const parameter = parameters.find(
       (parameter) => parameter.id === alert.idAlertParameter
