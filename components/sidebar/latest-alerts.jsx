@@ -14,10 +14,12 @@ import Loading from '~/components/loading'
 import { PageSidebarTitle } from '~/components/page'
 import useAlerts from '~/hooks/use-alerts'
 import useGlobal from '~/hooks/use-global'
-import { getAlerts } from '~/services/alerts'
+import useAlertContext from '~/services/state-manager/alerts'
 
 const combineAlertsAndParameters = ({ alerts, parameters }) => {
   const result = {}
+
+  console.log({ parameters })
 
   for (const alert of alerts) {
     const parameter = parameters.find(
@@ -44,6 +46,8 @@ const LatestAlerts = () => {
     globalState: { serverEnvironments },
   } = useGlobal()
 
+  const { getAlerts } = useAlertContext()
+
   const {
     stateAlerts: { parameters },
   } = useAlerts()
@@ -54,7 +58,8 @@ const LatestAlerts = () => {
   const getAlertsData = useCallback(async () => {
     try {
       const responseAlerts = await getAlerts({ PageLength: 100, PageNumber: 1 })
-      setAlerts(responseAlerts?.data)
+
+      setAlerts(responseAlerts?.alerts)
     } catch (error) {
       console.error(error)
     }
