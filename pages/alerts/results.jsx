@@ -175,7 +175,17 @@ const AlertsDetailsPage = () => {
     } finally {
       setIsLoadingData(false)
     }
-  }, [router?.query, servers, serverTypes, serverEnvironments, currentPage])
+  }, [
+    currentPage,
+    getAlerts,
+    getAlertsById,
+    router?.query?.server,
+    router?.query?.time,
+    router?.query?.types,
+    serverEnvironments,
+    serverTypes,
+    servers,
+  ])
 
   useEffect(() => {
     if (!isDataLoaded) return
