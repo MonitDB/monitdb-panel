@@ -135,7 +135,7 @@ const AlertsDetailsPage = () => {
   }, [router.query]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const getAlertsData = useCallback(async () => {
-    const serverId = router?.query?.id
+    const serverId = router?.query?.server
     const requestQuery = {
       pageLength: 10,
       pageNumber: currentPage,
@@ -162,7 +162,7 @@ const AlertsDetailsPage = () => {
       }
 
       setAlerts(
-        [...(responseAlerts?.data ?? [])].map((alert) =>
+        [...(responseAlerts?.alerts ?? [])].map((alert) =>
           formatAlert(alert, {
             servers,
             serverTypes,
@@ -310,7 +310,7 @@ const AlertsDetailsPage = () => {
                               }}
                             />
                           </td>
-                          <td>{alert.dsMessage}</td>
+                          <td>{alert.message}</td>
                           <td>
                             <div className="flex items-center space-x-4 w-full">
                               <div className="flex items-center space-x-1">
@@ -331,7 +331,7 @@ const AlertsDetailsPage = () => {
                             </div>
                           </td>
                           <td>Enabled</td>
-                          <td>{getFormattedDate(alert.dtAlert)}</td>
+                          <td>{getFormattedDate(alert.alertDate)}</td>
                         </tr>
                       ))}
                     </tbody>

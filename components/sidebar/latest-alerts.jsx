@@ -61,7 +61,7 @@ const LatestAlerts = () => {
     } catch (error) {
       console.error(error)
     }
-  }, [getAlerts])
+  }, [getAlerts, getAlertsById, router?.query?.id])
 
   const getParametersData = useCallback(async () => {
     try {
