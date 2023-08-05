@@ -134,7 +134,7 @@ const LatestAlerts = () => {
           </form>
           <ul>
             {Object.keys(alertGroups).map((parameterId) => {
-              const { nmAlert, totalAlerts } = alertGroups[parameterId]
+              const { alertName, totalAlerts } = alertGroups[parameterId]
 
               return (
                 <li
@@ -162,7 +162,7 @@ const LatestAlerts = () => {
                       <FontAwesomeIcon icon={faWarning} />
                     </span>
                     <div className="w-full">
-                      <p>{nmAlert}</p>
+                      <p>{alertName}</p>
                       <p className="text-xs text-opacity-50 text-white">
                         {totalAlerts} alertas ativo
                       </p>
