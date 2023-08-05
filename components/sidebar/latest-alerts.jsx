@@ -6,6 +6,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import classNames from 'classnames'
+import { useRouter } from 'next/router'
 import React, { useCallback, useEffect, useState } from 'react'
 
 import Select from '~/components/form/select'
@@ -41,15 +42,20 @@ const LatestAlerts = () => {
     globalState: { serverEnvironments },
   } = useGlobal()
 
-  const { getAlerts, getAlertsParameter } = useAlertContext()
+  const { getAlerts, getAlertsParameter, getAlertsById } = useAlertContext()
+  const router = useRouter()
 
   const [alerts, setAlerts] = useState([])
   const [parameters, setParameters] = useState([])
   const [alertGroups, setAlertGroups] = useState([])
 
   const getAlertsData = useCallback(async () => {
+    const serverId = router?.query?.id
+
     try {
-      const responseAlerts = await getAlerts({ pageLength: 100, pageNumber: 1 })
+      const responseAlerts = serverId
+        ? await getAlertsById(serverId, { pageLength: 100, pageNumber: 1 })
+        : await getAlerts({ pageLength: 100, pageNumber: 1 })
 
       setAlerts(responseAlerts?.alerts)
     } catch (error) {

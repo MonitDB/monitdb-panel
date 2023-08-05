@@ -135,7 +135,7 @@ const AlertsDetailsPage = () => {
   }, [router.query]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const getAlertsData = useCallback(async () => {
-    const serverId = router?.query?.server
+    const serverId = router?.query?.id
     const requestQuery = {
       pageLength: 10,
       pageNumber: currentPage,
