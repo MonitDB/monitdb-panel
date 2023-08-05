@@ -3,7 +3,8 @@ import { create } from 'zustand'
 import { apiV2 } from '../../utils/client-api'
 
 
-const useAlertContext = create(() => ({
+const useAlertContext = create((set) => ({
+  parameters: [],
   getAlerts: async (parameters = {}) => {
     const {data} = await apiV2.get(`/alert/`,
       { params: parameters })
@@ -19,6 +20,7 @@ const useAlertContext = create(() => ({
      const {data} = await apiV2.get(
       `/alert/parameter/`, {params: parameters}
      )
+    set({ parameters: data });
     return data;
   },
   getAlertsParameterByServerId: async (serverId) => {

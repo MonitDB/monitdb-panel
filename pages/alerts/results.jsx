@@ -17,7 +17,7 @@ import DatabaseIcons from '~/helpers/database-icons'
 import useAlerts from '~/hooks/use-alerts'
 import useGlobal from '~/hooks/use-global'
 import Layout from '~/layouts/default'
-import { getAlerts, getAlertsById } from '~/services/alerts'
+import useAlertContext from '~/services/state-manager/alerts'
 import { formatAlert } from '~/utils/alert'
 import { scrollToTop } from '~/utils/browser'
 import { getFormattedDate } from '~/utils/formats'
@@ -31,6 +31,8 @@ const AlertsDetailsPage = () => {
   const {
     stateAlerts: { parameters },
   } = useAlerts()
+
+  const { getAlerts, getAlertsById } = useAlertContext()
 
   const router = useRouter()
 
@@ -135,8 +137,8 @@ const AlertsDetailsPage = () => {
   const getAlertsData = useCallback(async () => {
     const serverId = router?.query?.server
     const requestQuery = {
-      PageLength: 10,
-      PageNumber: currentPage,
+      pageLength: 10,
+      pageNumber: currentPage,
       time: router?.query?.time,
       metrics: router?.query?.types,
     }

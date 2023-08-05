@@ -19,9 +19,7 @@ const combineAlertsAndParameters = ({ alerts, parameters }) => {
   const result = {}
 
   for (const alert of alerts) {
-    const parameter = parameters.find(
-      (parameter) => parameter.id === alert.idAlertParameter
-    )
+    const parameter = parameters.find((parameter) => parameter.id === alert.id)
 
     if (!parameter) continue
 
@@ -51,7 +49,7 @@ const LatestAlerts = () => {
 
   const getAlertsData = useCallback(async () => {
     try {
-      const responseAlerts = await getAlerts({ PageLength: 100, PageNumber: 1 })
+      const responseAlerts = await getAlerts({ pageLength: 100, pageNumber: 1 })
 
       setAlerts(responseAlerts?.alerts)
     } catch (error) {
@@ -62,8 +60,8 @@ const LatestAlerts = () => {
   const getParametersData = useCallback(async () => {
     try {
       const responseParameters = await getAlertsParameter({
-        PageLength: 100,
-        PageNumber: 1,
+        pageLength: 100,
+        pageNumber: 1,
       })
 
       setParameters(responseParameters)
@@ -74,6 +72,7 @@ const LatestAlerts = () => {
 
   useEffect(() => {
     if (alerts.length === 0 || parameters.length === 0) return
+
     setAlertGroups(
       combineAlertsAndParameters({
         alerts,
@@ -84,12 +83,12 @@ const LatestAlerts = () => {
 
   useEffect(() => {
     try {
-      getAlertsParameter()
+      getAlertsData()
       getParametersData()
     } catch (error) {
       console.error(error)
     }
-  }, [getAlertsParameter, getParametersData])
+  }, [getAlertsData, getParametersData])
 
   return (
     <div>
