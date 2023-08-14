@@ -10,7 +10,7 @@ const useAlertContext = create((set) => ({
       { params: parameters })
     return data;
   },
-  getAlertsById: async (id, parameters = {}) => {
+  getAlertsById: async (id, parameters) => {
     const {data} = await apiV2.get(
       `/alert/${id}`, {params: parameters}
      )
