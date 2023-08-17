@@ -22,7 +22,7 @@ function CurrentActivity(properties) {
   const { currentServer } = properties
 
   const [loading, setLoading] = useState(false)
-  const [data, setData] = useState([])
+  const [data, setData] = useState({})
   const [componentCode, setComponentCode] = useState(WHO_IS_ACT.value)
   const [activeTableRowIndex, setActiveTableRowIndex] = useState(-1)
   const { executeQueryComponent } = useComponentContext()
@@ -34,13 +34,14 @@ function CurrentActivity(properties) {
   const fetchData = useCallback(async () => {
     setLoading(true)
     setData([])
-    const data = await executeQueryComponent(
+    const result = await executeQueryComponent(
       componentCode,
       currentServer?.id || undefined
     )
+    data[componentCode] = result
     setData(data)
     setLoading(false)
-  }, [componentCode, currentServer?.id, executeQueryComponent])
+  }, [componentCode, currentServer?.id, data, executeQueryComponent])
 
   const headerSection = (
     <div className="flex flex-row justify-between items-center items-center gap-2 w-60 ml-auto">
@@ -49,10 +50,14 @@ function CurrentActivity(properties) {
         name={'component'}
         options={componentsOption}
         onChange={setComponentCode}
+        value={componentCode}
       />
 
       <button
-        onClick={fetchData}
+        onClick={() => {
+          setComponentCode(componentCode)
+          fetchData()
+        }}
         className="mt-6 bg-blue text-white px-3 h-11 rounded-[5px] font-medium flex items-center gap-1 mb-6"
       >
         <FontAwesomeIcon
@@ -76,7 +81,7 @@ function CurrentActivity(properties) {
       </div>
     )
 
-  if (data?.length === 0 || !data)
+  if (data[componentCode]?.length === 0 || !data[componentCode])
     return (
       <div>
         {headerSection}
@@ -85,7 +90,7 @@ function CurrentActivity(properties) {
           type="information"
           message={
             <p className="text-xs">
-              <span>No current activity.</span>
+              <span>No current activity. Refresh to see updates!</span>
             </p>
           }
         />
@@ -108,7 +113,7 @@ function CurrentActivity(properties) {
                 </tr>
               </thead>
               <tbody>
-                {data.map((item, index) => (
+                {data[componentCode].map((item, index) => (
                   <>
                     <tr
                       key={index}
@@ -300,7 +305,7 @@ function CurrentActivity(properties) {
                 </tr>
               </thead>
               <tbody>
-                {data.map((item, index) => (
+                {data[componentCode].map((item, index) => (
                   <>
                     <tr
                       key={index}
@@ -331,7 +336,7 @@ function CurrentActivity(properties) {
                               }
                             )}
                           />
-                          <span className="truncate ml-2">{item.SPID}</span>
+                          <span className="truncate ml-2">{item.SPID[0]}</span>
                         </button>
                       </td>
                       <td>{item.HostName}</td>

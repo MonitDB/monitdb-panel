@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 
-import clientApi from '../../utils/client-api'
+import clientApi, { apiV2 } from '../../utils/client-api'
 import { formatObjectToQuery } from '../../utils/formats'
 
 const useComponentContext = create((set) => ({
@@ -35,7 +35,7 @@ const useComponentContext = create((set) => ({
   executeQueryComponent: async (componentId, serverId) => {
       try {
       set({loading: true})
-      const { data } = await clientApi().get(`/api/execcomponent/${componentId}/${serverId || ''}`);
+      const { data } = await apiV2.get(`/component/execute-component/${componentId}/${serverId || ''}`);
       return data;
     } catch (error) {
       console.log(error)
