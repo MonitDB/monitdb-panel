@@ -27,6 +27,10 @@ const Permissions = (properties) => {
     )
 
     const roleName = {}
+    if (!Array.isArray(data)) {
+      setData([])
+      return
+    }
 
     for (const item of data) {
       if (!roleName[item.RolePrincipalName])

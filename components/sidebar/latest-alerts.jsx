@@ -1,9 +1,5 @@
 /* eslint-disable no-console */
-import {
-  faBell,
-  // faCircleInfo,
-  faWarning,
-} from '@fortawesome/free-solid-svg-icons'
+import { faBell, faWarning } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import classNames from 'classnames'
 import { useRouter } from 'next/router'
@@ -16,38 +12,15 @@ import { PageSidebarTitle } from '~/components/page'
 import useGlobal from '~/hooks/use-global'
 import useAlertContext from '~/services/state-manager/alerts'
 
-const combineAlertsAndParameters = ({ alerts, parameters }) => {
-  const result = {}
-
-  for (const alert of alerts) {
-    const parameter = parameters.find((parameter) => parameter.id === alert.id)
-
-    if (!parameter) continue
-
-    if (!result[parameter.id]) {
-      result[parameter.id] = {
-        ...parameter,
-        totalAlerts: 0,
-      }
-    }
-
-    result[parameter.id].totalAlerts += 1
-  }
-
-  return result
-}
-
 const LatestAlerts = () => {
   const {
     globalState: { serverEnvironments },
   } = useGlobal()
 
-  const { getAlerts, getAlertsParameter, getAlertsById } = useAlertContext()
+  const { getAlerts, getAlertsById } = useAlertContext()
   const router = useRouter()
 
   const [alerts, setAlerts] = useState([])
-  const [parameters, setParameters] = useState([])
-  const [alertGroups, setAlertGroups] = useState([])
 
   const getAlertsData = useCallback(async () => {
     const serverId = router?.query?.id
@@ -57,44 +30,21 @@ const LatestAlerts = () => {
         ? await getAlertsById(serverId, { pageLength: 100, pageNumber: 1 })
         : await getAlerts({ pageLength: 100, pageNumber: 1 })
 
-      setAlerts(responseAlerts?.alerts)
+      console.log(responseAlerts)
+
+      setAlerts(responseAlerts)
     } catch (error) {
       console.error(error)
     }
   }, [getAlerts, getAlertsById, router?.query?.id])
 
-  const getParametersData = useCallback(async () => {
-    try {
-      const responseParameters = await getAlertsParameter({
-        pageLength: 100,
-        pageNumber: 1,
-      })
-
-      setParameters(responseParameters)
-    } catch (error) {
-      console.error(error)
-    }
-  }, [getAlertsParameter])
-
-  useEffect(() => {
-    if (alerts.length === 0 || parameters.length === 0) return
-
-    setAlertGroups(
-      combineAlertsAndParameters({
-        alerts,
-        parameters,
-      })
-    )
-  }, [alerts, parameters])
-
   useEffect(() => {
     try {
       getAlertsData()
-      getParametersData()
     } catch (error) {
       console.error(error)
     }
-  }, [getAlertsData, getParametersData])
+  }, [getAlertsData])
 
   return (
     <div>
@@ -106,20 +56,19 @@ const LatestAlerts = () => {
         <p className="text-sm">Alertas gerados ou atualizados recentemente:</p>
       </header>
 
-      {Object.keys(alertGroups)?.length > 0 ? (
+      {alerts.length > 0 ? (
         <>
           <form className="mb-4 flex items-center space-x-2">
             <Select
               name="hour"
               containerClass="bg-white text-gray-dark"
               options={[
-                { value: '3', label: '3 dias' },
-                { value: '1440', label: '24 horas' },
-                { value: '720', label: '12 horas' },
-                { value: '360', label: '6 horas' },
-                { value: '180', label: '3 horas' },
-                { value: '60', label: '1 hora' },
-                { value: '15', label: '15 minutos' },
+                { value: '1440', label: '24 hours' },
+                { value: '720', label: '12 hours' },
+                { value: '360', label: '6 hours' },
+                { value: '180', label: '3 hour' },
+                { value: '60', label: '1 hour' },
+                { value: '15', label: '15 minutes' },
               ]}
               onChange={() => {}}
             />
@@ -139,50 +88,36 @@ const LatestAlerts = () => {
             />
           </form>
           <ul>
-            {Object.keys(alertGroups).map((parameterId) => {
-              const { alertName, totalAlerts } = alertGroups[parameterId]
+            {alerts.map((alert) => {
+              const { id, alertName } = alert
 
               return (
                 <li
-                  key={`dashboard-group-${parameterId}`}
+                  key={`dashboard-group-${id}`}
                   className="py-2 border-b border-gray-light border-opacity-25"
                 >
                   <Link
-                    href={`/alerts/results/?types=${parameterId}`}
+                    href={`/alerts/results/?types=${id}`}
                     className={classNames(
                       `flex items-center space-x-2 border-l-2 pl-2 text-sm transition-all
-                        duration-150 ease-in-out border-orange lg:hover:border-l-8`,
-                      {
-                        // 'border-orange': alertItem.type === 'warning',
-                        // 'border-blue': alertItem.type === 'info',
-                      }
+                        duration-150 ease-in-out border-orange lg:hover:border-l-8`
                     )}
                   >
                     <span className="w-6 min-w-6 text-lg">
-                      {/* {alertItem?.type === 'info' && (
-                        <FontAwesomeIcon icon={faCircleInfo} />
-                      )} */}
-                      {/* {alertItem.type === 'warning' && (
-                        <FontAwesomeIcon icon={faWarning} />
-                      )} */}
                       <FontAwesomeIcon icon={faWarning} />
                     </span>
                     <div className="w-full">
                       <p>{alertName}</p>
                       <p className="text-xs text-opacity-50 text-white">
-                        {totalAlerts} alertas ativo
+                        {alert.alerts.length} alertas ativo
                       </p>
                     </div>
                     <span
                       className={classNames(
-                        'flex items-center justify-center rounded-full w-6 min-w-6 h-6 ml-auto text-xs bg-orange',
-                        {
-                          // 'bg-blue': alertItem?.type === 'info',
-                          // 'bg-orange': alertItem?.type === 'warning',
-                        }
+                        'flex items-center justify-center rounded-full w-6 min-w-6 h-6 ml-auto text-xs bg-orange'
                       )}
                     >
-                      {totalAlerts}
+                      {alert.alerts.length}
                     </span>
                   </Link>
                 </li>
