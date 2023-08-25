@@ -5,11 +5,13 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
 import Grid from '~/components/grid'
 import Link from '~/components/link'
+import Loading from '~/components/loading/loading'
 import { PageContent, PageWrapper } from '~/components/page'
 import MonitoredServersSidebar from '~/components/sidebar/monitored-servers'
 import DatabaseIcons from '~/helpers/database-icons'
 import useGlobal from '~/hooks/use-global'
 import Layout from '~/layouts/default'
+import useAlertContext from '~/services/state-manager/alerts'
 import { formatServer } from '~/utils/server'
 
 import styles from './alerts.module.css'
@@ -19,8 +21,12 @@ const AlertsPage = () => {
     globalState: { servers, serverTypes },
   } = useGlobal()
 
+  const { getAlertsCount } = useAlertContext()
+
   const [formattedServers, setFormattedServers] = useState([])
   const [search, setSearch] = useState('')
+  const [loadingAlertCount, setLoadingAlertCount] = useState(false)
+  const [serverAlertsCount, setServerAlertsCount] = useState({})
 
   const activeServersCount = useMemo(
     () => formattedServers.filter(({ active }) => active).length,
@@ -39,6 +45,20 @@ const AlertsPage = () => {
 
     setSearch(value)
   }, [])
+
+  const loadAlertsCount = useCallback(async () => {
+    try {
+      setLoadingAlertCount(true)
+      const alertCountByServer = await getAlertsCount()
+      setServerAlertsCount(alertCountByServer)
+    } catch {
+      setServerAlertsCount({})
+    } finally {
+      setLoadingAlertCount(false)
+    }
+  }, [getAlertsCount])
+
+  useEffect(loadAlertsCount, [loadAlertsCount])
 
   useEffect(() => {
     if (servers.length === 0 || serverTypes.length === 0) {
@@ -99,7 +119,7 @@ const AlertsPage = () => {
               )}
             </form>
 
-            {activeServersCount >= 0 ? (
+            {activeServersCount >= 0 && !loadingAlertCount ? (
               <div className="w-full">
                 <h2 className="mb-10 heading-md">Servers</h2>
                 <Grid className={styles.serversList}>
@@ -120,7 +140,7 @@ const AlertsPage = () => {
                             />
                             <span className="truncate">{serverName}</span>
                             <span className="flex items-center justify-center rounded-full w-5 min-w-5 h-5 ml-auto text-xs bg-orange text-white">
-                              2
+                              {serverAlertsCount[id]?.count || 0}
                             </span>
                           </h4>
                           {type?.typeServerName && (
@@ -152,7 +172,7 @@ const AlertsPage = () => {
                 </Grid>
               </div>
             ) : (
-              ''
+              <Loading />
             )}
           </PageContent>
         </PageWrapper>

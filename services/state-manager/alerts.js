@@ -29,6 +29,10 @@ const useAlertContext = create((set) => ({
      )
     return data;
   },
+  getAlertsCount: async () => {
+    const { data } = await apiV2.get('/alert/alerts-count');
+    return data;
+  }
   // getAlertParameterByServerId: async (serverId, parameterId) => {
   //   return clientApi().get(`/api/alertparameter/${serverId}/${parameterId}`)
   // },
