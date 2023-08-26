@@ -2,6 +2,7 @@ import { faDatabase } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { NextSeo } from 'next-seo'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { toast } from 'react-toastify'
 
 import Grid from '~/components/grid'
 import Link from '~/components/link'
@@ -26,6 +27,7 @@ const AlertsPage = () => {
   const [formattedServers, setFormattedServers] = useState([])
   const [search, setSearch] = useState('')
   const [loadingAlertCount, setLoadingAlertCount] = useState(false)
+  const [error, setError] = useState(false)
   const [serverAlertsCount, setServerAlertsCount] = useState({})
 
   const activeServersCount = useMemo(
@@ -48,10 +50,13 @@ const AlertsPage = () => {
 
   const loadAlertsCount = useCallback(async () => {
     try {
+      setError(false)
       setLoadingAlertCount(true)
       const alertCountByServer = await getAlertsCount()
       setServerAlertsCount(alertCountByServer)
     } catch {
+      toast.error('An error occurred while loading the alert count.')
+      setError(true)
       setServerAlertsCount({})
     } finally {
       setLoadingAlertCount(false)
@@ -140,7 +145,9 @@ const AlertsPage = () => {
                             />
                             <span className="truncate">{serverName}</span>
                             <span className="flex items-center justify-center rounded-full w-5 min-w-5 h-5 ml-auto text-xs bg-orange text-white">
-                              {serverAlertsCount[id]?.count || 0}
+                              {error
+                                ? '?'
+                                : serverAlertsCount[id]?.count || '?'}
                             </span>
                           </h4>
                           {type?.typeServerName && (

@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import classNames from 'classnames'
 import { useRouter } from 'next/router'
 import React, { useCallback, useEffect, useState } from 'react'
+import { toast } from 'react-toastify'
 
 import Select from '~/components/form/select'
 import Link from '~/components/link'
@@ -21,30 +22,33 @@ const LatestAlerts = () => {
   const router = useRouter()
 
   const [alerts, setAlerts] = useState([])
+  const [lastMinutes, setLastMinutes] = useState(60 * 24)
+
+  const [loading, setLoading] = useState(false)
 
   const getAlertsData = useCallback(async () => {
     const serverId = router?.query?.id
-
     try {
-      const responseAlerts = serverId
-        ? await getAlertsById(serverId, { pageLength: 100, pageNumber: 1 })
-        : await getAlerts({ pageLength: 100, pageNumber: 1 })
+      setLoading(true)
 
-      console.log(responseAlerts)
+      const responseAlerts = serverId
+        ? await getAlertsById(serverId, {
+            pageLength: 100,
+            pageNumber: 1,
+            lastMinutes,
+          })
+        : await getAlerts({ pageLength: 100, pageNumber: 1, lastMinutes })
 
       setAlerts(responseAlerts)
     } catch (error) {
+      toast.error('Error to get the Alerts')
       console.error(error)
+    } finally {
+      setLoading(false)
     }
-  }, [getAlerts, getAlertsById, router?.query?.id])
+  }, [getAlerts, getAlertsById, lastMinutes, router?.query?.id])
 
-  useEffect(() => {
-    try {
-      getAlertsData()
-    } catch (error) {
-      console.error(error)
-    }
-  }, [getAlertsData])
+  useEffect(getAlertsData, [getAlertsData])
 
   return (
     <div>
@@ -56,22 +60,23 @@ const LatestAlerts = () => {
         <p className="text-sm">Alertas gerados ou atualizados recentemente:</p>
       </header>
 
-      {alerts.length > 0 ? (
-        <>
-          <form className="mb-4 flex items-center space-x-2">
-            <Select
-              name="hour"
-              containerClass="bg-white text-gray-dark"
-              options={[
-                { value: '1440', label: '24 hours' },
-                { value: '720', label: '12 hours' },
-                { value: '360', label: '6 hours' },
-                { value: '180', label: '3 hour' },
-                { value: '60', label: '1 hour' },
-                { value: '15', label: '15 minutes' },
-              ]}
-              onChange={() => {}}
-            />
+      <>
+        <form className="mb-4 flex items-center space-x-2">
+          <Select
+            name="hour"
+            containerClass="bg-white text-gray-dark"
+            options={[
+              { value: '1440', label: '24 hours' },
+              { value: '720', label: '12 hours' },
+              { value: '360', label: '6 hours' },
+              { value: '180', label: '3 hour' },
+              { value: '60', label: '1 hour' },
+              { value: '15', label: '15 minutes' },
+            ]}
+            value={lastMinutes}
+            onChange={setLastMinutes}
+          />
+          {!router?.query?.id && (
             <Select
               name="group"
               containerClass="bg-white text-gray-dark"
@@ -86,9 +91,15 @@ const LatestAlerts = () => {
               ]}
               onChange={() => {}}
             />
-          </form>
-          <ul>
-            {alerts.map((alert) => {
+          )}
+        </form>
+        <ul>
+          {loading ? (
+            <div className="flex justify-center items-center w-full min-h-28">
+              <Loading />
+            </div>
+          ) : (
+            alerts.map((alert) => {
               const { id, alertName } = alert
 
               return (
@@ -122,19 +133,15 @@ const LatestAlerts = () => {
                   </Link>
                 </li>
               )
-            })}
-          </ul>
-          <div className="py-4">
-            <Link href="/alerts/" className="btn btn--small">
-              Ver todos
-            </Link>
-          </div>
-        </>
-      ) : (
-        <div className="flex justify-center items-center w-full min-h-28">
-          <Loading />
+            })
+          )}
+        </ul>
+        <div className="py-4">
+          <Link href="/alerts/" className="btn btn--small">
+            Ver todos
+          </Link>
         </div>
-      )}
+      </>
     </div>
   )
 }

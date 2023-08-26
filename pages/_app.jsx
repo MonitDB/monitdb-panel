@@ -29,7 +29,7 @@ export default function MyApp({ Component, pageProps }) {
       <Main>
         <Component {...pageProps} />
       </Main>
-      <ToastContainer position="bottom-right" />
+      <ToastContainer position="top-right" />
     </>
   )
 }
