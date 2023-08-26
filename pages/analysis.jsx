@@ -17,13 +17,13 @@ const AnalysisPage = () => {
   // } = useGlobal()
   const statusOptions = useMemo(
     () => [
-      { value: '15min', label: '15 minutos' },
-      { value: '1h', label: '1 hora' },
-      { value: '6h', label: '6 horas' },
-      { value: '24h', label: '24 horas' },
-      { value: '7 dias', label: '7 dias' },
-      { value: '14 dias', label: '14 dias' },
-      { value: '28 dias', label: '28 dias' },
+      { value: '15min', label: '15 minutes' },
+      { value: '1h', label: '1 hour' },
+      { value: '6h', label: '6 hours' },
+      { value: '24h', label: '24 hours' },
+      { value: '7 dias', label: '7 days' },
+      { value: '14 dias', label: '14 days' },
+      { value: '28 dias', label: '28 days' },
     ],
     []
   )
@@ -96,12 +96,12 @@ const AnalysisPage = () => {
               >
                 <li>
                   <Link href="/analysis/" className="">
-                    Última hora
+                    Last Hour
                   </Link>
                 </li>
                 <li>
                   <Link href="/analysis/" className="">
-                    Últimas 6hrs
+                    Lasts 6hrs
                   </Link>
                 </li>
                 <li>

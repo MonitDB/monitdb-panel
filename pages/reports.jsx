@@ -81,7 +81,7 @@ const ReportsPage = () => {
 
   const serversOptions = useMemo(
     () => [
-      { value: '', label: 'Todos os servidores' },
+      { value: '', label: 'All servers' },
       ...(servers || []).map((server) => ({
         value: server.id,
         label: server.serverName,
@@ -92,7 +92,7 @@ const ReportsPage = () => {
 
   const groupsOptions = useMemo(
     () => [
-      { value: '', label: 'Todos os ambientes' },
+      { value: '', label: 'All environments' },
       ...serverEnvironments.map(({ id, typeServerEnvironmentName }) => ({
         value: id,
         label: typeServerEnvironmentName,

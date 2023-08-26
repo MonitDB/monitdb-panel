@@ -57,7 +57,7 @@ const DashboardPage = () => {
 
   const statusOptions = useMemo(
     () => [
-      { value: '', label: 'Todos os status' },
+      { value: '', label: 'All status' },
       { value: 1, label: 'Healtly' },
       { value: 2, label: 'Info' },
       { value: 3, label: 'Warning' },
@@ -69,7 +69,7 @@ const DashboardPage = () => {
 
   const environmentsOptions = useMemo(
     () => [
-      { value: '', label: 'Todos os grupos' },
+      { value: '', label: 'All groups' },
       ...formattedEnvironments
         .filter((environment) => environment.servers.length > 0)
         .map(({ id, typeServerEnvironmentName }) => ({
@@ -166,7 +166,7 @@ const DashboardPage = () => {
               >
                 <p className="mr-10 text-center">
                   <strong className="block text-2xl">{totalServers}</strong>{' '}
-                  <span className="text-sm">instâncias</span>
+                  <span className="text-sm">Instances</span>
                 </p>
                 <form
                   className="w-full flex flex-col space-y-4 xl:space-x-4 xl:space-y-0 xl:flex-row"

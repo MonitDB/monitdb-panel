@@ -25,7 +25,7 @@ const getPieChartData = ({ availablePercent }) => {
   }
 
   return {
-    labels: ['Em uso', 'Livre'],
+    labels: ['In use', 'Free'],
     datasets: [
       {
         data: [inUserPercentage, availablePercent],
@@ -155,7 +155,7 @@ const ServerCard = ({
         <dl className="text-xs w-full text-gray">
           {metrics.memory && (
             <>
-              <dt className="block text-gray-dark mt-2">Memória</dt>
+              <dt className="block text-gray-dark mt-2">Memory</dt>
               <dd>
                 <span
                   className={classNames({
@@ -166,7 +166,8 @@ const ServerCard = ({
                     'text-danger': metrics.memory.inUsePercent >= 95,
                   })}
                 >
-                  {metrics.memory.available} {metrics.memory.unitType} - Livre
+                  {metrics.memory.total - metrics.memory.available}{' '}
+                  {metrics.memory.unitType} - In Use
                 </span>{' '}
                 /{' '}
                 <span>
@@ -205,7 +206,7 @@ const ServerCard = ({
                 >
                   {metrics.cpu.otherProcessPercent}%
                 </span>
-                <span> - Em uso</span>
+                <span> - In use</span>
               </dd>
               <dd className="mt-1 w-full h-1 block relative bg-gray-light">
                 <span
@@ -259,7 +260,7 @@ const ServerCard = ({
               }
             )}
           />
-          <p className="mb-2 text-xs">Discos</p>
+          <p className="mb-2 text-xs">Disks</p>
           <div className="w-full grid grid-cols-2 gap-4 lg:grid-cols-4">
             {metrics.disks.map((disk, index) => (
               <div key={`server-${id}-disk-${index}`} className="col-span-1">
@@ -276,7 +277,7 @@ const ServerCard = ({
                   }}
                 />
                 <p className="text-center text-[10px] whitespace-nowrap">
-                  {Number.parseInt(100 - disk.availablePercent)}% em uso
+                  {Number.parseInt(100 - disk.availablePercent)}% in use
                   <br />
                   {getDiskTotal(disk)} total
                 </p>

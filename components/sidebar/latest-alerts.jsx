@@ -87,7 +87,7 @@ const LatestAlerts = () => {
               name="group"
               containerClass="bg-white text-gray-dark"
               options={[
-                { value: -1, label: 'Todos os grupos' },
+                { value: -1, label: 'All groups' },
                 ...serverEnvironments.map(
                   ({ id, typeServerEnvironmentName }) => ({
                     value: id,
@@ -149,7 +149,7 @@ const LatestAlerts = () => {
         </ul>
         <div className="py-4">
           <Link href="/alerts/" className="btn btn--small">
-            Ver todos
+            See all
           </Link>
         </div>
       </>

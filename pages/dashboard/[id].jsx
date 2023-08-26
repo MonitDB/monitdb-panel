@@ -229,7 +229,7 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
                         htmlFor="memory"
                         className="flex items-center gap-2 cursor-pointer"
                       >
-                        <span>Memória</span>
+                        <span>Memory</span>
                         <Checkbox
                           id="memory"
                           name="memory"

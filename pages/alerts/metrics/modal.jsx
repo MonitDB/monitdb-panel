@@ -26,14 +26,14 @@ const MetricsModal = ({ onClose, serverId, parameterId }) => {
 
   const frequencyOptions = useMemo(
     () => [
-      { value: '', label: 'Todos os horários' },
-      { value: 1, label: '1 minuto' },
-      { value: 5, label: '5 minutos' },
-      { value: 20, label: '20 minutos' },
-      { value: 60, label: '1 hora' },
-      { value: 3600, label: '1 dia' },
-      { value: 25_200, label: '1 semana' },
-      { value: 32_000, label: '1 mês' },
+      { value: '', label: 'All times' },
+      { value: 1, label: '1 minutes' },
+      { value: 5, label: '5 minutes' },
+      { value: 20, label: '20 minutes' },
+      { value: 60, label: '1 hour' },
+      { value: 3600, label: '1 day' },
+      { value: 25_200, label: '1 week' },
+      { value: 32_000, label: '1 month' },
     ],
     []
   )
