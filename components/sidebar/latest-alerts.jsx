@@ -1,3 +1,4 @@
+/* eslint-disable unicorn/no-nested-ternary */
 /* eslint-disable no-console */
 import { faBell, faWarning } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -23,6 +24,7 @@ const LatestAlerts = () => {
 
   const [alerts, setAlerts] = useState([])
   const [lastMinutes, setLastMinutes] = useState(60 * 24)
+  const [serverEnvironmentId, setEnvironment] = useState()
 
   const [loading, setLoading] = useState(false)
 
@@ -33,11 +35,9 @@ const LatestAlerts = () => {
 
       const responseAlerts = serverId
         ? await getAlertsById(serverId, {
-            pageLength: 100,
-            pageNumber: 1,
             lastMinutes,
           })
-        : await getAlerts({ pageLength: 100, pageNumber: 1, lastMinutes })
+        : await getAlerts({ lastMinutes, serverEnvironmentId })
 
       setAlerts(responseAlerts)
     } catch (error) {
@@ -46,7 +46,13 @@ const LatestAlerts = () => {
     } finally {
       setLoading(false)
     }
-  }, [getAlerts, getAlertsById, lastMinutes, router?.query?.id])
+  }, [
+    getAlerts,
+    getAlertsById,
+    lastMinutes,
+    router?.query?.id,
+    serverEnvironmentId,
+  ])
 
   useEffect(getAlertsData, [getAlertsData])
 
@@ -57,7 +63,7 @@ const LatestAlerts = () => {
           <FontAwesomeIcon icon={faBell} />
           <span>Latest alerts</span>
         </PageSidebarTitle>
-        <p className="text-sm">Alertas gerados ou atualizados recentemente:</p>
+        <p className="text-sm">Alerts generated or updated recently</p>
       </header>
 
       <>
@@ -81,15 +87,16 @@ const LatestAlerts = () => {
               name="group"
               containerClass="bg-white text-gray-dark"
               options={[
-                { value: '', label: 'Todos os grupos' },
+                { value: -1, label: 'Todos os grupos' },
                 ...serverEnvironments.map(
-                  ({ idTypeServerEnvironment, typeServerEnvironmentName }) => ({
-                    value: idTypeServerEnvironment,
+                  ({ id, typeServerEnvironmentName }) => ({
+                    value: id,
                     label: typeServerEnvironmentName,
                   })
                 ),
               ]}
-              onChange={() => {}}
+              value={serverEnvironmentId}
+              onChange={setEnvironment}
             />
           )}
         </form>
@@ -98,42 +105,46 @@ const LatestAlerts = () => {
             <div className="flex justify-center items-center w-full min-h-28">
               <Loading />
             </div>
-          ) : (
-            alerts.map((alert) => {
-              const { id, alertName } = alert
+          ) : alerts.length > 0 ? (
+            <ul>
+              {alerts.map((alert) => {
+                const { id, alertName } = alert
 
-              return (
-                <li
-                  key={`dashboard-group-${id}`}
-                  className="py-2 border-b border-gray-light border-opacity-25"
-                >
-                  <Link
-                    href={`/alerts/results/?types=${id}`}
-                    className={classNames(
-                      `flex items-center space-x-2 border-l-2 pl-2 text-sm transition-all
-                        duration-150 ease-in-out border-orange lg:hover:border-l-8`
-                    )}
+                return (
+                  <li
+                    key={`dashboard-group-${id}`}
+                    className="py-2 border-b border-gray-light border-opacity-25"
                   >
-                    <span className="w-6 min-w-6 text-lg">
-                      <FontAwesomeIcon icon={faWarning} />
-                    </span>
-                    <div className="w-full">
-                      <p>{alertName}</p>
-                      <p className="text-xs text-opacity-50 text-white">
-                        {alert.alerts.length} alertas ativo
-                      </p>
-                    </div>
-                    <span
+                    <Link
+                      href={`/alerts/results/?types=${id}`}
                       className={classNames(
-                        'flex items-center justify-center rounded-full w-6 min-w-6 h-6 ml-auto text-xs bg-orange'
+                        `flex items-center space-x-2 border-l-2 pl-2 text-sm transition-all
+                  duration-150 ease-in-out border-orange lg:hover:border-l-8`
                       )}
                     >
-                      {alert.alerts.length}
-                    </span>
-                  </Link>
-                </li>
-              )
-            })
+                      <span className="w-6 min-w-6 text-lg">
+                        <FontAwesomeIcon icon={faWarning} />
+                      </span>
+                      <div className="w-full">
+                        <p>{alertName}</p>
+                        <p className="text-xs text-opacity-50 text-white">
+                          {alert.alerts.length} alertas ativos
+                        </p>
+                      </div>
+                      <span
+                        className={classNames(
+                          'flex items-center justify-center rounded-full w-6 min-w-6 h-6 ml-auto text-xs bg-orange'
+                        )}
+                      >
+                        {alert.alerts.length}
+                      </span>
+                    </Link>
+                  </li>
+                )
+              })}
+            </ul>
+          ) : (
+            <h1> No data!</h1>
           )}
         </ul>
         <div className="py-4">
