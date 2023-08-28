@@ -155,7 +155,7 @@ const AlertsDetailsPage = () => {
               <Selector
                 name="types"
                 options={typesOptions}
-                value={JSON.parse(router?.query?.types)}
+                value={JSON.parse(router?.query?.types || '[]')}
                 onChange={(value) => {
                   handleChange('types', JSON.stringify(value))
                 }}
