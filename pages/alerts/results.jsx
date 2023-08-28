@@ -219,7 +219,7 @@ const AlertsDetailsPage = () => {
                         <th className="border-b-2 border-gray-light w-20">
                           Status
                         </th>
-                        <th className="border-b-2 border-gray-light w-40">
+                        <th className="border-b-2 border-gray-light w-60">
                           Last updated
                         </th>
                       </tr>
@@ -264,7 +264,7 @@ const AlertsDetailsPage = () => {
                           <td>
                             {alert?.isActive === 1 ? 'Active' : 'Unactive'}
                           </td>
-                          <td>{getFormattedDate(alert?.dtAlert)}</td>
+                          <td>{new Date(alert?.dtAlert).toLocaleString()}</td>
                         </tr>
                       ))}
                     </tbody>
