@@ -1,12 +1,10 @@
 import { faDatabase, faTag } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import classNames from 'classnames'
-import { useFormik } from 'formik'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
-import Checkbox from '~/components/form/checkbox'
 import Select from '~/components/form/select'
 import Selector from '~/components/form/selector'
 import Loading from '~/components/loading'
@@ -14,18 +12,15 @@ import { PageContent, PageWrapper } from '~/components/page'
 import Pagination from '~/components/pagination'
 import MonitoredServersSidebar from '~/components/sidebar/monitored-servers'
 import DatabaseIcons from '~/helpers/database-icons'
-import useAlerts from '~/hooks/use-alerts'
 import useGlobal from '~/hooks/use-global'
 import Layout from '~/layouts/default'
 import useAlertContext from '~/services/state-manager/alerts'
-import { formatAlert } from '~/utils/alert'
-import { scrollToTop } from '~/utils/browser'
 import { getFormattedDate } from '~/utils/formats'
 import { formatServer } from '~/utils/server'
 
 const AlertsDetailsPage = () => {
   const {
-    globalState: { servers, serverTypes, serverEnvironments },
+    globalState: { servers, serverTypes },
   } = useGlobal()
 
   const { parameters, getAlertsParameter, alertsResult, getAlertsResult } =
@@ -35,12 +30,10 @@ const AlertsDetailsPage = () => {
 
   const [loading, setIsLoading] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
-  const [isLoadingData, setIsLoadingData] = useState(true)
-  const [pagination, setPagination] = useState({})
 
   const typesOptions = useMemo(
     () => [
-      { value: '', label: 'All metrics' },
+      { value: -1, label: 'All metrics' },
       ...parameters.map(({ id, alertName }) => ({
         value: id,
         label: alertName,
@@ -62,7 +55,7 @@ const AlertsDetailsPage = () => {
 
   const timeOptions = useMemo(
     () => [
-      { value: -1, label: 'All time' },
+      { value: '', label: 'All time' },
       { value: 1, label: '1 minute' },
       { value: 5, label: '5 minutes' },
       { value: 20, label: '20 minutes' },
@@ -73,6 +66,11 @@ const AlertsDetailsPage = () => {
     ],
     []
   )
+
+  const handleChange = (path, value) => {
+    router.query[path] = value
+    router.replace({ pathname: router.pathname, query: router.query })
+  }
 
   const currentServer = useMemo(() => {
     const server = servers.find(
@@ -86,14 +84,6 @@ const AlertsDetailsPage = () => {
     return formatServer(server, { serverTypes })
   }, [servers, serverTypes, router?.query?.server])
 
-  const formik = useFormik({
-    initialValues: {
-      types: [],
-      time: '',
-      server: '',
-    },
-  })
-
   const getAlertsData = useCallback(async () => {
     const serverId = router?.query?.server
     const requestQuery = {
@@ -104,9 +94,9 @@ const AlertsDetailsPage = () => {
     }
 
     try {
+      setIsLoading(true)
       if (parameters.length === 0) await getAlertsParameter()
-      const data = await getAlertsResult({ ...requestQuery, serverId })
-      setPagination({ totalResults: data?.result?.length })
+      await getAlertsResult({ ...requestQuery, serverId })
     } catch (error) {
       console.error(error) // eslint-disable-line no-console
     } finally {
@@ -116,7 +106,7 @@ const AlertsDetailsPage = () => {
     currentPage,
     getAlertsParameter,
     getAlertsResult,
-    parameters,
+    parameters.length,
     router?.query?.server,
     router?.query?.time,
     router?.query?.types,
@@ -166,32 +156,41 @@ const AlertsDetailsPage = () => {
               <Selector
                 name="types"
                 options={typesOptions}
-                value={formik.values.types}
-                onChange={() => {}}
-                // onChange={(value) => handleChangeField('types', value)}
+                value={JSON.parse(router?.query?.types)}
+                onChange={(value) => {
+                  handleChange('types', JSON.stringify(value))
+                }}
                 className="w-full md:w-1/3 md:min-w-1/3"
               />
               <Select
                 name="time"
                 containerClass="w-full md:w-1/3 bg-white border-white md:min-w-1/3"
                 options={timeOptions}
-                value={formik.values.time}
-                onChange={() => {}}
+                value={router?.query?.time}
+                onChange={(value) => {
+                  handleChange('time', value)
+                }}
                 // onChange={(value) => handleChangeField('time', value)}
               />
               <Select
-                name="schedule"
+                name="server"
                 containerClass="w-full md:w-1/3 bg-white border-white md:min-w-1/3"
                 options={serversOptions}
-                value={formik.values.server}
-                onChange={() => {}}
-                // onChange={(value) => handleChangeField('server', value)}
+                value={router?.query?.server}
+                onChange={(value) => {
+                  handleChange('server', value)
+                }}
               />
             </form>
           </PageContent>
 
           <PageContent>
-            {!loading && alertsResult?.result.length > 0 ? (
+            {loading && !alertsResult.initialFetch && (
+              <div className="flex justify-center items-center w-full min-h-28">
+                <Loading light />
+              </div>
+            )}
+            {alertsResult?.result.length > 0 && alertsResult.initialFetch ? (
               <>
                 <div className="-mx-4 mb-4 py-4 px-8 bg-white md:-mx-6">
                   <table
@@ -280,14 +279,6 @@ const AlertsDetailsPage = () => {
               </>
             ) : (
               <h1>No data to Display</h1>
-            )}
-
-            {loading && !alertsResult.initialFetch ? (
-              <div className="flex justify-center items-center w-full min-h-28">
-                <Loading light />
-              </div>
-            ) : (
-              <></>
             )}
           </PageContent>
         </PageWrapper>
