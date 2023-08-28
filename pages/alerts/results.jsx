@@ -15,7 +15,6 @@ import DatabaseIcons from '~/helpers/database-icons'
 import useGlobal from '~/hooks/use-global'
 import Layout from '~/layouts/default'
 import useAlertContext from '~/services/state-manager/alerts'
-import { getFormattedDate } from '~/utils/formats'
 import { formatServer } from '~/utils/server'
 
 const AlertsDetailsPage = () => {
