@@ -26,16 +26,21 @@ const Pagination = ({
     onChangePage(currentPage - 1)
   }, [onChangePage, currentPage])
 
-  const lastPage = useMemo(() => paginationRange[paginationRange.length - 1], [
-    paginationRange,
-  ])
+  const lastPage = useMemo(
+    () => paginationRange[paginationRange.length - 1],
+    [paginationRange]
+  )
 
-  if (currentPage === 0 || paginationRange.length < 2) {
-    return
-  }
+  // if (paginationRange.length < 2) {
+  //   return <></>
+  // }
 
   return (
     <div className="flex justify-end space-x-1">
+      <span className="block py-1 px-2 text-xs text-gray-dark">
+        {currentPage} - {lastPage} of {totalResults} items
+      </span>
+
       <button
         type="button"
         className={classNames('mr-1 text-sm', {

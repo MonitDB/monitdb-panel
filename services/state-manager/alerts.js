@@ -5,6 +5,7 @@ import { apiV2 } from '../../utils/client-api'
 
 const useAlertContext = create((set) => ({
   parameters: [],
+  alertsResult:  {count: 0, result: [], initialFetch: false},
   getAlerts: async (parameters = {}) => {
     const {data} = await apiV2.get(`/alert/`,
       { params: parameters })
@@ -32,7 +33,15 @@ const useAlertContext = create((set) => ({
   getAlertsCount: async () => {
     const { data } = await apiV2.get('/alert/alerts-count');
     return data;
+  }, 
+  getAlertsResult: async (parameters) => {
+    const { data } = await apiV2.get('/alert/results', { params: parameters });
+    set({
+      alertsResult: { ...data, initialFetch: true }
+    });
+    return data;
   }
+  
   // getAlertParameterByServerId: async (serverId, parameterId) => {
   //   return clientApi().get(`/api/alertparameter/${serverId}/${parameterId}`)
   // },
