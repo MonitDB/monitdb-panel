@@ -90,6 +90,7 @@ const AlertsDetailsPage = () => {
       page: currentPage,
       lastMinutes: router?.query?.time,
       alertTypesId: router?.query?.types,
+      allAlerts: router?.query?.allAlerts,
     }
 
     try {
@@ -106,6 +107,7 @@ const AlertsDetailsPage = () => {
     getAlertsParameter,
     getAlertsResult,
     parameters.length,
+    router?.query?.allAlerts,
     router?.query?.server,
     router?.query?.time,
     router?.query?.types,
@@ -180,6 +182,24 @@ const AlertsDetailsPage = () => {
                   handleChange('server', value)
                 }}
               />
+              {/* <Checkbox onChange={(value) => handleChange('isActive', value)}>
+                Show only active alerts
+              </Checkbox> */}
+              <div className="flex items-center">
+                <input
+                  id="allAlerts"
+                  type="checkbox"
+                  name="allAlerts"
+                  checked={router?.query?.allAlerts === 'true'}
+                  onChange={(event) =>
+                    handleChange('allAlerts', event.target.checked)
+                  }
+                />
+
+                <label htmlFor="allAlerts" className="ml-2">
+                  <span>All</span>
+                </label>
+              </div>
             </form>
           </PageContent>
 
