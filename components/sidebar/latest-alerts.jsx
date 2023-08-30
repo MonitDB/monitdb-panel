@@ -116,7 +116,7 @@ const LatestAlerts = () => {
                     className="py-2 border-b border-gray-light border-opacity-25"
                   >
                     <Link
-                      href={`/alerts/results/?types=${id}`}
+                      href={`/alerts/results/?types=[${id}]`}
                       className={classNames(
                         `flex items-center space-x-2 border-l-2 pl-2 text-sm transition-all
                   duration-150 ease-in-out border-orange lg:hover:border-l-8`

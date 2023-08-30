@@ -232,6 +232,9 @@ const AlertsDetailsPage = () => {
                         <th className="border-b-2 border-gray-light">
                           Alert type
                         </th>
+                        <th className="border-b-2 border-gray-light">
+                          Alert message
+                        </th>
                         <th className="border-b-2 border-gray-light w-60">
                           Source object
                         </th>
@@ -261,6 +264,7 @@ const AlertsDetailsPage = () => {
                             />
                           </td> */}
                           <td>{alert?.alertName}</td>
+                          <td>{alert?.dsMessage}</td>
                           <td>
                             <div className="flex items-center space-x-4 w-full">
                               <div className="flex items-center space-x-1">
