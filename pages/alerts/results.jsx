@@ -1,4 +1,8 @@
-import { faDatabase, faTag } from '@fortawesome/free-solid-svg-icons'
+import {
+  faChevronRight,
+  faDatabase,
+  faTag,
+} from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import classNames from 'classnames'
 import { useRouter } from 'next/router'
@@ -15,6 +19,7 @@ import DatabaseIcons from '~/helpers/database-icons'
 import useGlobal from '~/hooks/use-global'
 import Layout from '~/layouts/default'
 import useAlertContext from '~/services/state-manager/alerts'
+import { paginateArray } from '~/utils/array'
 import { formatServer } from '~/utils/server'
 
 const AlertsDetailsPage = () => {
@@ -29,6 +34,9 @@ const AlertsDetailsPage = () => {
 
   const [loading, setIsLoading] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
+
+  const [activeTableRowIndex, setActiveTableRowIndex] = useState(-1)
+  const [currentSubPage, setCurrentSubPage] = useState(-1)
 
   const typesOptions = useMemo(
     () => [
@@ -248,11 +256,25 @@ const AlertsDetailsPage = () => {
                     </thead>
                     <tbody>
                       {alertsResult?.result?.map((alert, index) => (
-                        <tr
-                          key={`alert-${index}`}
-                          className="text-sm border-b border-gray-light transition-colors duration-200 ease-in-out lg:hover:bg-gray-light lg:hover:bg-opacity-50"
-                        >
-                          {/* <td>
+                        // <tr
+                        //   key={`alert-${index}`}
+                        //   className="text-sm border-b border-gray-light transition-colors duration-200 ease-in-out lg:hover:bg-gray-light lg:hover:bg-opacity-50"
+                        // >
+                        <>
+                          <tr
+                            key={`alert-${index}`}
+                            className={classNames(
+                              'hover:bg-gray-lightest',
+                              activeTableRowIndex === index &&
+                                'bg-gray-lightest'
+                            )}
+                            onClick={() => {
+                              if (activeTableRowIndex === index)
+                                setActiveTableRowIndex(-1)
+                              else setActiveTableRowIndex(index)
+                            }}
+                          >
+                            {/* <td>
                             <Checkbox
                               className="transform translate-y-1"
                               name="alerts"
@@ -263,32 +285,94 @@ const AlertsDetailsPage = () => {
                               }}
                             />
                           </td> */}
-                          <td>{alert?.alertName}</td>
-                          <td>{alert?.dsMessage}</td>
-                          <td>
-                            <div className="flex items-center space-x-4 w-full">
-                              <div className="flex items-center space-x-1">
-                                <FontAwesomeIcon icon={faDatabase} />
-                                <strong>{alert?.serverName}</strong>
-                              </div>
-                              {alert?.serverEnvironment && (
-                                <span className="flex items-center space-x-1">
-                                  <FontAwesomeIcon icon={faTag} />{' '}
-                                  <span className="rounded py-px px-1 text-xs bg-blue text-white">
+                            <td>
+                              <button
+                                type="button"
+                                className="whitespace-nowrap truncate"
+                              >
+                                <FontAwesomeIcon
+                                  width={7}
+                                  height={7}
+                                  icon={faChevronRight}
+                                  className={classNames(
+                                    'mr-1 transition-all duration-150 ease-in-out',
                                     {
-                                      alert?.serverEnvironment
-                                        ?.typeServerEnvironmentName
+                                      'rotate-90':
+                                        activeTableRowIndex === index,
                                     }
+                                  )}
+                                />
+                              </button>
+                              <span>{alert?.alertName}</span>
+                            </td>
+                            <td>{alert?.dsMessage}</td>
+                            <td>
+                              <div className="flex items-center space-x-4 w-full">
+                                <div className="flex items-center space-x-1">
+                                  <FontAwesomeIcon icon={faDatabase} />
+                                  <strong>{alert?.serverName}</strong>
+                                </div>
+                                {alert?.serverEnvironment && (
+                                  <span className="flex items-center space-x-1">
+                                    <FontAwesomeIcon icon={faTag} />{' '}
+                                    <span className="rounded py-px px-1 text-xs bg-blue text-white">
+                                      {
+                                        alert?.serverEnvironment
+                                          ?.typeServerEnvironmentName
+                                      }
+                                    </span>
                                   </span>
-                                </span>
-                              )}
-                            </div>
-                          </td>
-                          <td>
-                            {alert?.isActive === 1 ? 'Active' : 'Unactive'}
-                          </td>
-                          <td>{new Date(alert?.dtAlert).toLocaleString()}</td>
-                        </tr>
+                                )}
+                              </div>
+                            </td>
+                            <td>
+                              {alert?.isActive === 1 ? 'Active' : 'Unactive'}
+                            </td>
+                            <td>{new Date(alert?.dtAlert).toLocaleString()}</td>
+                          </tr>
+
+                          {activeTableRowIndex === index && (
+                            <tr>
+                              <td colSpan={5}>
+                                <table style={{ marginTop: 0 }}>
+                                  <thead>
+                                    <tr>
+                                      {Object.keys(alert.html[0]).map(
+                                        (element, index) => (
+                                          <th key={index}>{element}</th>
+                                        )
+                                      )}
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {paginateArray(
+                                      alert.html,
+                                      currentSubPage,
+                                      10
+                                    ).map((element, index) => (
+                                      <tr key={index}>
+                                        {Object.values(element).map(
+                                          (value, index) => (
+                                            <td key={index}>{value}</td>
+                                          )
+                                        )}
+                                      </tr>
+                                    ))}
+                                  </tbody>
+                                  {alert.html.length > 10 && (
+                                    <Pagination
+                                      currentPage={currentSubPage}
+                                      totalResults={alert.html.length}
+                                      onChangePage={(page) =>
+                                        setCurrentSubPage(page)
+                                      }
+                                    />
+                                  )}
+                                </table>
+                              </td>
+                            </tr>
+                          )}
+                        </>
                       ))}
                     </tbody>
                   </table>
@@ -301,7 +385,7 @@ const AlertsDetailsPage = () => {
                 />
               </>
             ) : (
-              <h1>No data to Display</h1>
+              !loading && <h1>No data to Display</h1>
             )}
           </PageContent>
         </PageWrapper>
