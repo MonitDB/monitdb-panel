@@ -40,6 +40,11 @@ const useAlertContext = create((set) => ({
       alertsResult: { ...data, initialFetch: true }
     });
     return data;
+  },
+  
+  getAlertHtml: async (id, serverId) => {
+    const { data } = await apiV2.get(`/alert/${id}/html`,{params: {serverId}});
+    return data;
   }
   
   // getAlertParameterByServerId: async (serverId, parameterId) => {

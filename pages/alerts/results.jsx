@@ -15,11 +15,11 @@ import Loading from '~/components/loading'
 import { PageContent, PageWrapper } from '~/components/page'
 import Pagination from '~/components/pagination'
 import MonitoredServersSidebar from '~/components/sidebar/monitored-servers'
+import { AlertHtmlSubTable } from '~/components/table/subTable'
 import DatabaseIcons from '~/helpers/database-icons'
 import useGlobal from '~/hooks/use-global'
 import Layout from '~/layouts/default'
 import useAlertContext from '~/services/state-manager/alerts'
-import { paginateArray } from '~/utils/array'
 import { formatServer } from '~/utils/server'
 
 const AlertsDetailsPage = () => {
@@ -36,7 +36,6 @@ const AlertsDetailsPage = () => {
   const [currentPage, setCurrentPage] = useState(1)
 
   const [activeTableRowIndex, setActiveTableRowIndex] = useState(-1)
-  const [currentSubPage, setCurrentSubPage] = useState(-1)
 
   const typesOptions = useMemo(
     () => [
@@ -332,45 +331,10 @@ const AlertsDetailsPage = () => {
                           </tr>
 
                           {activeTableRowIndex === index && (
-                            <tr>
-                              <td colSpan={5}>
-                                <table style={{ marginTop: 0 }}>
-                                  <thead>
-                                    <tr>
-                                      {Object.keys(alert.html[0]).map(
-                                        (element, index) => (
-                                          <th key={index}>{element}</th>
-                                        )
-                                      )}
-                                    </tr>
-                                  </thead>
-                                  <tbody>
-                                    {paginateArray(
-                                      alert.html,
-                                      currentSubPage,
-                                      10
-                                    ).map((element, index) => (
-                                      <tr key={index}>
-                                        {Object.values(element).map(
-                                          (value, index) => (
-                                            <td key={index}>{value}</td>
-                                          )
-                                        )}
-                                      </tr>
-                                    ))}
-                                  </tbody>
-                                  {alert.html.length > 10 && (
-                                    <Pagination
-                                      currentPage={currentSubPage}
-                                      totalResults={alert.html.length}
-                                      onChangePage={(page) =>
-                                        setCurrentSubPage(page)
-                                      }
-                                    />
-                                  )}
-                                </table>
-                              </td>
-                            </tr>
+                            <AlertHtmlSubTable
+                              serverId={alert.serverId}
+                              idSeq={alert.idSeq}
+                            />
                           )}
                         </>
                       ))}
