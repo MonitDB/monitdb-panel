@@ -8,9 +8,6 @@ import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
 import React, { useMemo, useState } from 'react'
 
-import Chart from '~/components/chart'
-import Code from '~/components/code'
-import { Textarea } from '~/components/form'
 import Checkbox from '~/components/form/checkbox'
 import Select from '~/components/form/select'
 import Grid from '~/components/grid'
@@ -83,11 +80,6 @@ const SingleDashboard = () => {
   const [lastFetch, setLastFetch] = useState(Date.now())
 
   const router = useRouter()
-
-  const [sqlCode, setSqlCode] = useState(
-    `CREATE USER 'user'@'server-ip' IDENTIFIED BY 'password';
-GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
-  )
 
   // const serverId = useMemo(() => router.query.id, [router?.query?.id])
 
@@ -240,7 +232,7 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
                           }
                         />
                       </label>
-                      <label
+                      {/* <label
                         htmlFor="disk"
                         className="flex items-center gap-2 cursor-pointer"
                       >
@@ -254,7 +246,7 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
                             formik.setFieldValue('disk', value)
                           }
                         />
-                      </label>
+                      </label> */}
                       <div className="flex items-center gap-2">
                         <span>Frequência</span>
                         <Select
@@ -284,58 +276,9 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
 
                     <div id="allinstancemetrics">
                       <Grid>
-                        <div className="col-span-2 bg-white border border-gray-light p-4 lg:col-span-12">
-                          <Textarea
-                            name="description"
-                            className="w-full px-4 h-10 bg-white leading-10 rounded outline-none text-sm"
-                            onChange={(event) => {
-                              const target = event.target
-
-                              setSqlCode(target.value)
-                            }}
-                            value={sqlCode}
-                          />
-                          {sqlCode && (
-                            <Code code={sqlCode} language="javascript" />
-                          )}
-                          <div className="w-full flex">
-                            <button
-                              type="button"
-                              className="btn mt-4 ml-auto"
-                              onClick={() => {
-                                setSqlCode('')
-                              }}
-                            >
-                              Run
-                            </button>
-                          </div>
-                        </div>
-
                         <MemoryUsage currentServer={currentServer} />
 
                         <CpuUsage currentServer={currentServer} />
-                        <div className="col-span-2 bg-white lg:col-span-6">
-                          <Chart
-                            colors={['#4abc4b']}
-                            title={{
-                              text: 'Data I/O',
-                              offsetY: 10,
-                              offsetX: 5,
-                            }}
-                            seriesName="% Utilization"
-                          />
-                        </div>
-                        <div className="col-span-2 bg-white lg:col-span-6">
-                          <Chart
-                            colors={['#0e5b10']}
-                            title={{
-                              text: 'Log I/O',
-                              offsetY: 10,
-                              offsetX: 5,
-                            }}
-                            seriesName="% Utilization"
-                          />
-                        </div>
                       </Grid>
 
                       <Server />

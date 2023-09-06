@@ -7,9 +7,12 @@ import classNames from 'classnames'
 import React, { useCallback, useEffect, useState } from 'react'
 
 import BlockMessage from '~/components/block-message'
-import { Select } from '~/components/form'
+import Code from '~/components/code/code'
+import { Select, Textarea } from '~/components/form'
 import Loading from '~/components/loading/loading'
+import Pagination from '~/components/pagination/pagination'
 import useComponentContext from '~/services/state-manager/components'
+import { paginateArray } from '~/utils/array'
 
 const componentsOption = [
   { value: 'LTWISACT', label: 'WHO IS ACTIVE' },
@@ -23,9 +26,15 @@ function CurrentActivity(properties) {
 
   const [loading, setLoading] = useState(false)
   const [data, setData] = useState({})
+  const [page, setPage] = useState(1)
   const [componentCode, setComponentCode] = useState(WHO_IS_ACT.value)
   const [activeTableRowIndex, setActiveTableRowIndex] = useState(-1)
   const { executeQueryComponent } = useComponentContext()
+
+  const [sqlCode, setSqlCode] = useState(
+    `CREATE USER 'user'@'server-ip' IDENTIFIED BY 'password';
+GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
+  )
 
   useEffect(() => {
     fetchData()
@@ -34,6 +43,7 @@ function CurrentActivity(properties) {
   const fetchData = useCallback(async () => {
     setLoading(true)
     setData([])
+    setPage(1)
     const result = await executeQueryComponent(
       componentCode,
       currentServer?.id || undefined
@@ -44,29 +54,55 @@ function CurrentActivity(properties) {
   }, [componentCode, currentServer?.id, data, executeQueryComponent])
 
   const headerSection = (
-    <div className="flex flex-row justify-between items-center items-center gap-2 w-60 ml-auto">
-      <Select
-        className="w-40"
-        name={'component'}
-        options={componentsOption}
-        onChange={setComponentCode}
-        value={componentCode}
-      />
+    <>
+      <div className="col-span-2 bg-white border border-gray-light p-4 lg:col-span-12">
+        <Textarea
+          name="description"
+          className="w-full px-4 h-10 bg-white leading-10 rounded outline-none text-sm"
+          onChange={(event) => {
+            const target = event.target
 
-      <button
-        onClick={() => {
-          setComponentCode(componentCode)
-          fetchData()
-        }}
-        className="mt-6 bg-blue text-white px-3 h-11 rounded-[5px] font-medium flex items-center gap-1 mb-6"
-      >
-        <FontAwesomeIcon
-          className={`font-medium ${loading ? 'fa-spin' : ''}`}
-          icon={faArrowRotateRight}
+            setSqlCode(target.value)
+          }}
+          value={sqlCode}
         />
-        Refresh
-      </button>
-    </div>
+        {sqlCode && <Code code={sqlCode} language="javascript" />}
+        <div className="w-full flex">
+          <button
+            type="button"
+            className="btn mt-4 ml-auto"
+            onClick={() => {
+              setSqlCode('')
+            }}
+          >
+            Run
+          </button>
+        </div>
+      </div>
+      <div className="flex flex-row justify-between items-center items-center gap-2 w-60 ml-auto">
+        <Select
+          className="w-40"
+          name={'component'}
+          options={componentsOption}
+          onChange={setComponentCode}
+          value={componentCode}
+        />
+
+        <button
+          onClick={() => {
+            setComponentCode(componentCode)
+            fetchData()
+          }}
+          className="mt-6 bg-blue text-white px-3 h-11 rounded-[5px] font-medium flex items-center gap-1 mb-6"
+        >
+          <FontAwesomeIcon
+            className={`font-medium ${loading ? 'fa-spin' : ''}`}
+            icon={faArrowRotateRight}
+          />
+          Refresh
+        </button>
+      </div>
+    </>
   )
 
   if (loading)
@@ -113,176 +149,183 @@ function CurrentActivity(properties) {
                 </tr>
               </thead>
               <tbody>
-                {data[componentCode].map((item, index) => (
-                  <>
-                    <tr
-                      key={index}
-                      className={classNames(
-                        'hover:bg-gray-lightest',
-                        activeTableRowIndex === index && 'bg-gray-lightest'
-                      )}
-                      onClick={() => {
-                        if (activeTableRowIndex === index)
-                          setActiveTableRowIndex(-1)
-                        else setActiveTableRowIndex(index)
-                      }}
-                    >
-                      <td>
-                        <button
-                          type="button"
-                          className="whitespace-nowrap truncate"
-                        >
-                          <FontAwesomeIcon
-                            width={7}
-                            height={7}
-                            icon={faChevronRight}
-                            className={classNames(
-                              'mr-1 transition-all duration-150 ease-in-out',
-                              {
-                                'rotate-90': activeTableRowIndex === index,
-                              }
-                            )}
-                          />
-                          <span className="truncate ml-2">
-                            {item.session_id}
-                          </span>
-                        </button>
-                      </td>
-                      <td>{item.host_name}</td>
-                      <td>{item.login_name}</td>
-                      <td>{item.status}</td>
-                    </tr>
-
-                    {activeTableRowIndex === index && (
-                      <tr>
-                        <td colSpan={4} className="p-4">
-                          <div className="prose baleiaprose-thead:bg-gray-light max-w-full prose-th:capitalize prose-th:border-b-0 prose-tr:border-gray-light prose-td:text-[11px]">
-                            <table className="table-auto">
-                              <tbody>
-                                <tr>
-                                  <td>
-                                    <b>CPU</b>
-                                  </td>
-                                  <td>{item.CPU}</td>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    <b>CPU Delta</b>
-                                  </td>
-                                  <td>{item.CPU_delta}</td>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    <b>Blocking Session Id</b>
-                                  </td>
-                                  <td>{item.blocking_session_id || '-'}</td>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    <b>Collection Time</b>
-                                  </td>
-                                  <td>{item.collection_time}</td>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    <b>Database Name</b>
-                                  </td>
-                                  <td>{item.database_name}</td>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    <b>Time</b>
-                                  </td>
-                                  <td>{item['00 00:38:26.080']}</td>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    <b>Host Name</b>
-                                  </td>
-                                  <td>{item.host_name}</td>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    <b>Login Name</b>
-                                  </td>
-                                  <td>{item.login_name}</td>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    <b>Open Transaction Count</b>
-                                  </td>
-                                  <td>{item.open_tran_count}</td>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    <b>Percent Compete</b>
-                                  </td>
-                                  <td>{item.percent_compete}</td>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    <b>Program Name</b>
-                                  </td>
-                                  <td>{item.program_name}</td>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    <b>Query Plan</b>
-                                  </td>
-                                  <td>{item.query_plan}</td>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    <b>Reads</b>
-                                  </td>
-                                  <td>{item.reads}</td>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    <b>Reads Delta</b>
-                                  </td>
-                                  <td>{item.reads_delta}</td>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    <b>SQL Command</b>
-                                  </td>
-                                  <td>{item.sql_command}</td>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    <b>SQL Text</b>
-                                  </td>
-                                  <td>{item.sql_text}</td>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    <b>Status</b>
-                                  </td>
-                                  <td>{item.status}</td>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    <b>Wait Information</b>
-                                  </td>
-                                  <td>{item.wait_info}</td>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    <b>Writes</b>
-                                  </td>
-                                  <td>{item.writes}</td>
-                                </tr>
-                              </tbody>
-                            </table>
-                          </div>
+                {paginateArray(data[componentCode], 1, 10).map(
+                  (item, index) => (
+                    <>
+                      <tr
+                        key={index}
+                        className={classNames(
+                          'hover:bg-gray-lightest',
+                          activeTableRowIndex === index && 'bg-gray-lightest'
+                        )}
+                        onClick={() => {
+                          if (activeTableRowIndex === index)
+                            setActiveTableRowIndex(-1)
+                          else setActiveTableRowIndex(index)
+                        }}
+                      >
+                        <td>
+                          <button
+                            type="button"
+                            className="whitespace-nowrap truncate"
+                          >
+                            <FontAwesomeIcon
+                              width={7}
+                              height={7}
+                              icon={faChevronRight}
+                              className={classNames(
+                                'mr-1 transition-all duration-150 ease-in-out',
+                                {
+                                  'rotate-90': activeTableRowIndex === index,
+                                }
+                              )}
+                            />
+                            <span className="truncate ml-2">
+                              {item.session_id}
+                            </span>
+                          </button>
                         </td>
+                        <td>{item.host_name}</td>
+                        <td>{item.login_name}</td>
+                        <td>{item.status}</td>
                       </tr>
-                    )}
-                  </>
-                ))}
+
+                      {activeTableRowIndex === index && (
+                        <tr>
+                          <td colSpan={4} className="p-4">
+                            <div className="prose baleiaprose-thead:bg-gray-light max-w-full prose-th:capitalize prose-th:border-b-0 prose-tr:border-gray-light prose-td:text-[11px]">
+                              <table className="table-auto">
+                                <tbody>
+                                  <tr>
+                                    <td>
+                                      <b>CPU</b>
+                                    </td>
+                                    <td>{item.CPU}</td>
+                                  </tr>
+                                  <tr>
+                                    <td>
+                                      <b>CPU Delta</b>
+                                    </td>
+                                    <td>{item.CPU_delta}</td>
+                                  </tr>
+                                  <tr>
+                                    <td>
+                                      <b>Blocking Session Id</b>
+                                    </td>
+                                    <td>{item.blocking_session_id || '-'}</td>
+                                  </tr>
+                                  <tr>
+                                    <td>
+                                      <b>Collection Time</b>
+                                    </td>
+                                    <td>{item.collection_time}</td>
+                                  </tr>
+                                  <tr>
+                                    <td>
+                                      <b>Database Name</b>
+                                    </td>
+                                    <td>{item.database_name}</td>
+                                  </tr>
+                                  <tr>
+                                    <td>
+                                      <b>Time</b>
+                                    </td>
+                                    <td>{item['00 00:38:26.080']}</td>
+                                  </tr>
+                                  <tr>
+                                    <td>
+                                      <b>Host Name</b>
+                                    </td>
+                                    <td>{item.host_name}</td>
+                                  </tr>
+                                  <tr>
+                                    <td>
+                                      <b>Login Name</b>
+                                    </td>
+                                    <td>{item.login_name}</td>
+                                  </tr>
+                                  <tr>
+                                    <td>
+                                      <b>Open Transaction Count</b>
+                                    </td>
+                                    <td>{item.open_tran_count}</td>
+                                  </tr>
+                                  <tr>
+                                    <td>
+                                      <b>Percent Compete</b>
+                                    </td>
+                                    <td>{item.percent_compete}</td>
+                                  </tr>
+                                  <tr>
+                                    <td>
+                                      <b>Program Name</b>
+                                    </td>
+                                    <td>{item.program_name}</td>
+                                  </tr>
+                                  <tr>
+                                    <td>
+                                      <b>Query Plan</b>
+                                    </td>
+                                    <td>{item.query_plan}</td>
+                                  </tr>
+                                  <tr>
+                                    <td>
+                                      <b>Reads</b>
+                                    </td>
+                                    <td>{item.reads}</td>
+                                  </tr>
+                                  <tr>
+                                    <td>
+                                      <b>Reads Delta</b>
+                                    </td>
+                                    <td>{item.reads_delta}</td>
+                                  </tr>
+                                  <tr>
+                                    <td>
+                                      <b>SQL Command</b>
+                                    </td>
+                                    <td>{item.sql_command}</td>
+                                  </tr>
+                                  <tr>
+                                    <td>
+                                      <b>SQL Text</b>
+                                    </td>
+                                    <td>{item.sql_text}</td>
+                                  </tr>
+                                  <tr>
+                                    <td>
+                                      <b>Status</b>
+                                    </td>
+                                    <td>{item.status}</td>
+                                  </tr>
+                                  <tr>
+                                    <td>
+                                      <b>Wait Information</b>
+                                    </td>
+                                    <td>{item.wait_info}</td>
+                                  </tr>
+                                  <tr>
+                                    <td>
+                                      <b>Writes</b>
+                                    </td>
+                                    <td>{item.writes}</td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                    </>
+                  )
+                )}
               </tbody>
             </table>
+            <Pagination
+              currentPage={page}
+              totalResults={data[componentCode].length}
+              onChangePage={setPage}
+            />
           </div>
         </div>
       </div>
@@ -305,98 +348,108 @@ function CurrentActivity(properties) {
                 </tr>
               </thead>
               <tbody>
-                {data[componentCode].map((item, index) => (
-                  <>
-                    <tr
-                      key={index}
-                      className={classNames(
-                        'hover:bg-gray-lightest',
-                        activeTableRowIndex === index && 'bg-gray-lightest'
-                      )}
-                      // eslint-disable-next-line sonarjs/no-identical-functions
-                      onClick={() => {
-                        if (activeTableRowIndex === index)
-                          setActiveTableRowIndex(-1)
-                        else setActiveTableRowIndex(index)
-                      }}
-                    >
-                      <td>
-                        <button
-                          type="button"
-                          className="whitespace-nowrap truncate"
-                        >
-                          <FontAwesomeIcon
-                            width={7}
-                            height={7}
-                            icon={faChevronRight}
-                            className={classNames(
-                              'mr-1 transition-all duration-150 ease-in-out',
-                              {
-                                'rotate-90': activeTableRowIndex === index,
-                              }
-                            )}
-                          />
-                          <span className="truncate ml-2">{item.SPID[0]}</span>
-                        </button>
-                      </td>
-                      <td>{item.HostName}</td>
-                      <td>{item.Login}</td>
-                      <td>{item.DBName}</td>
-                      <td>{item.Status}</td>
-                    </tr>
-
-                    {activeTableRowIndex === index && (
-                      <tr>
-                        <td colSpan={4} className="p-4">
-                          <div className="prose baleiaprose-thead:bg-gray-light max-w-full prose-th:capitalize prose-th:border-b-0 prose-tr:border-gray-light prose-td:text-[11px]">
-                            <table className="table-auto">
-                              <tbody>
-                                <tr>
-                                  <td>
-                                    <b>Command</b>
-                                  </td>
-                                  <td>{item.Command}</td>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    <b>CPU Time</b>
-                                  </td>
-                                  <td>{item.CPUTime}</td>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    <b>DiskIO</b>
-                                  </td>
-                                  <td>{item.DiskIO || '-'}</td>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    <b>Last Batch</b>
-                                  </td>
-                                  <td>{item.LastBatch}</td>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    <b>Program Name</b>
-                                  </td>
-                                  <td>{item.ProgramName}</td>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    <b>Request Id</b>
-                                  </td>
-                                  <td>{item.REQUESTID}</td>
-                                </tr>
-                              </tbody>
-                            </table>
-                          </div>
+                {paginateArray(data[componentCode], page, 10).map(
+                  (item, index) => (
+                    <>
+                      <tr
+                        key={index}
+                        className={classNames(
+                          'hover:bg-gray-lightest',
+                          activeTableRowIndex === index && 'bg-gray-lightest'
+                        )}
+                        // eslint-disable-next-line sonarjs/no-identical-functions
+                        onClick={() => {
+                          if (activeTableRowIndex === index)
+                            setActiveTableRowIndex(-1)
+                          else setActiveTableRowIndex(index)
+                        }}
+                      >
+                        <td>
+                          <button
+                            type="button"
+                            className="whitespace-nowrap truncate"
+                          >
+                            <FontAwesomeIcon
+                              width={7}
+                              height={7}
+                              icon={faChevronRight}
+                              className={classNames(
+                                'mr-1 transition-all duration-150 ease-in-out',
+                                {
+                                  'rotate-90': activeTableRowIndex === index,
+                                }
+                              )}
+                            />
+                            <span className="truncate ml-2">
+                              {item.SPID[0]}
+                            </span>
+                          </button>
                         </td>
+                        <td>{item.HostName}</td>
+                        <td>{item.Login}</td>
+                        <td>{item.DBName}</td>
+                        <td>{item.Status}</td>
                       </tr>
-                    )}
-                  </>
-                ))}
+
+                      {activeTableRowIndex === index && (
+                        <tr>
+                          <td colSpan={4} className="p-4">
+                            <div className="prose baleiaprose-thead:bg-gray-light max-w-full prose-th:capitalize prose-th:border-b-0 prose-tr:border-gray-light prose-td:text-[11px]">
+                              <table className="table-auto">
+                                <tbody>
+                                  <tr>
+                                    <td>
+                                      <b>Command</b>
+                                    </td>
+                                    <td>{item.Command}</td>
+                                  </tr>
+                                  <tr>
+                                    <td>
+                                      <b>CPU Time</b>
+                                    </td>
+                                    <td>{item.CPUTime}</td>
+                                  </tr>
+                                  <tr>
+                                    <td>
+                                      <b>DiskIO</b>
+                                    </td>
+                                    <td>{item.DiskIO || '-'}</td>
+                                  </tr>
+                                  <tr>
+                                    <td>
+                                      <b>Last Batch</b>
+                                    </td>
+                                    <td>{item.LastBatch}</td>
+                                  </tr>
+                                  <tr>
+                                    <td>
+                                      <b>Program Name</b>
+                                    </td>
+                                    <td>{item.ProgramName}</td>
+                                  </tr>
+                                  <tr>
+                                    <td>
+                                      <b>Request Id</b>
+                                    </td>
+                                    <td>{item.REQUESTID}</td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                    </>
+                  )
+                )}
               </tbody>
             </table>
+            <Pagination
+              currentPage={page}
+              totalResults={data[componentCode].length}
+              onChangePage={setPage}
+              postsPerPage={10}
+            />
           </div>
         </div>
       </div>
