@@ -55,6 +55,8 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
 
   const headerSection = (
     <>
+      <br />
+      <h3 className="font-bold mb-6">Execute Query</h3>
       <div className="col-span-2 bg-white border border-gray-light p-4 lg:col-span-12">
         <Textarea
           name="description"
@@ -79,6 +81,9 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
           </button>
         </div>
       </div>
+      <br />
+      <br />
+      <h3 className="font-bold mb-6">Current Activity</h3>
       <div className="flex flex-row justify-between items-center items-center gap-2 w-60 ml-auto">
         <Select
           className="w-40"
@@ -321,11 +326,13 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
                 )}
               </tbody>
             </table>
-            <Pagination
-              currentPage={page}
-              totalResults={data[componentCode].length}
-              onChangePage={setPage}
-            />
+            {data[componentCode].length > 10 && (
+              <Pagination
+                currentPage={page}
+                totalResults={data[componentCode].length}
+                onChangePage={setPage}
+              />
+            )}
           </div>
         </div>
       </div>
@@ -444,12 +451,13 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
                 )}
               </tbody>
             </table>
-            <Pagination
-              currentPage={page}
-              totalResults={data[componentCode].length}
-              onChangePage={setPage}
-              postsPerPage={10}
-            />
+            {data[componentCode].length > 10 && (
+              <Pagination
+                currentPage={page}
+                totalResults={data[componentCode].length}
+                onChangePage={setPage}
+              />
+            )}
           </div>
         </div>
       </div>
