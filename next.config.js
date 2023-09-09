@@ -6,6 +6,7 @@ const nextConfig = {
     siteUrl: process.env.SITE_URL,
     apiBaseUrl: process.env.API_BASE_URL,
     apiV2: process.env.API_V2,
+    apiKey: process.env.API_KEY,
     gtmId: process.env.GTM_ID,
   },
   i18n: {

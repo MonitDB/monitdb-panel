@@ -19,7 +19,7 @@ export const AlertHtmlSubTable = (properties) => {
   const getHtml = async () => {
     setLoading(true)
     try {
-      const response = await getAlertHtml(serverId, idSeq)
+      const response = await getAlertHtml(idSeq, serverId)
       setHtml(response)
     } catch {
       toast.error(

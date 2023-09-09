@@ -103,7 +103,8 @@ const AlertsDetailsPage = () => {
     try {
       setIsLoading(true)
       if (parameters.length === 0) await getAlertsParameter()
-      await getAlertsResult({ ...requestQuery, serverId })
+      if (parameters.length > 0)
+        await getAlertsResult({ ...requestQuery, serverId })
     } catch (error) {
       console.error(error) // eslint-disable-line no-console
     } finally {
@@ -121,13 +122,6 @@ const AlertsDetailsPage = () => {
   ])
 
   useEffect(getAlertsData, [getAlertsData])
-
-  // useEffect(() => {
-  //   if (!isDataLoaded) return
-
-  //   getAlertsData()
-  //   scrollToTop()
-  // }, [currentPage]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>
