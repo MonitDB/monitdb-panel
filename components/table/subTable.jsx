@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 
 import useAlertContext from '~/services/state-manager/alerts'
@@ -16,7 +16,7 @@ export const AlertHtmlSubTable = (properties) => {
   const [html, setHtml] = useState([])
   const [loading, setLoading] = useState(false)
 
-  const getHtml = async () => {
+  const getHtml = useCallback(async () => {
     setLoading(true)
     try {
       const response = await getAlertHtml(idSeq, serverId)
@@ -28,9 +28,9 @@ export const AlertHtmlSubTable = (properties) => {
     } finally {
       setLoading(false)
     }
-  }
+  }, [getAlertHtml, idSeq, serverId])
 
-  useState(getHtml, [getHtml])
+  useEffect(getHtml, [getHtml])
 
   if (loading)
     return (

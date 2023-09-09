@@ -161,6 +161,7 @@ const AlertsDetailsPage = () => {
                 value={JSON.parse(router?.query?.types || '[]')}
                 onChange={(value) => {
                   handleChange('types', JSON.stringify(value))
+                  setCurrentPage(1)
                 }}
                 className="w-full md:w-1/3 md:min-w-1/3"
               />
@@ -171,6 +172,7 @@ const AlertsDetailsPage = () => {
                 value={router?.query?.time}
                 onChange={(value) => {
                   handleChange('time', value)
+                  setCurrentPage(1)
                 }}
                 // onChange={(value) => handleChangeField('time', value)}
               />
@@ -181,6 +183,7 @@ const AlertsDetailsPage = () => {
                 value={router?.query?.server}
                 onChange={(value) => {
                   handleChange('server', value)
+                  setCurrentPage(1)
                 }}
               />
               {/* <Checkbox onChange={(value) => handleChange('isActive', value)}>
@@ -192,9 +195,10 @@ const AlertsDetailsPage = () => {
                   type="checkbox"
                   name="allAlerts"
                   checked={router?.query?.allAlerts === 'true'}
-                  onChange={(event) =>
+                  onChange={(event) => {
                     handleChange('allAlerts', event.target.checked)
-                  }
+                    setCurrentPage(1)
+                  }}
                 />
 
                 <label htmlFor="allAlerts" className="ml-2">
