@@ -53,7 +53,7 @@ const ServerMetrics = (properties) => {
           <AvgLatchWait />
           <LockTimeoutsSec />
           <LockWaitsSec />
-          <h4 className="mt-6 mb-4 text-sm">Buffer cache</h4>
+          {/* <h4 className="mt-6 mb-4 text-sm">Buffer cache</h4>
           <div className="bg-white pt-5 pr-2">
             <Chart
               height="140"
@@ -76,7 +76,7 @@ const ServerMetrics = (properties) => {
                 },
               }}
             />
-          </div>
+          </div> */}
         </div>
         <div className="col-span-2 md:col-span-6">
           <h4 className="mb-4 text-sm text-gray-dark">Server properties</h4>

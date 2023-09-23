@@ -7,6 +7,8 @@ import React, { useState } from 'react'
 import Chart from '~/components/chart'
 import Image from '~/components/image'
 
+import { TemporaryDBSummary } from './components/Summary'
+
 const tabDataItems = [
   {
     title: 'Usage summary',
@@ -68,26 +70,7 @@ const Temppdb = () => {
         ))}
       </div>
       <div className="w-full min-h-96">
-        {activeTabId === 'usage-summary' && (
-          <>
-            <h6 className="my-4 text-xs">
-              Summary of tempdb usage by class of object
-            </h6>
-            <div className="bg-white min-h-96">
-              <Chart
-                height="100%"
-                legend={{
-                  show: false,
-                }}
-                xaxis={{
-                  labels: {
-                    show: false,
-                  },
-                }}
-              />
-            </div>
-          </>
-        )}
+        {activeTabId === 'usage-summary' && <TemporaryDBSummary />}
 
         {activeTabId === 'session' && (
           <>
@@ -192,7 +175,6 @@ const Temppdb = () => {
             </div>
           </>
         )}
-
         {activeTabId === 'version-store' && (
           <>
             <h6 className="my-4 text-xs">
@@ -266,7 +248,6 @@ const Temppdb = () => {
             </div>
           </>
         )}
-
         {activeTabId === 'login' && (
           <>
             <p className="my-4 text-xs flex items-center gap-1">
@@ -290,7 +271,6 @@ const Temppdb = () => {
             </div>
           </>
         )}
-
         {activeTabId === 'program' && (
           <>
             <p className="my-4 text-xs flex items-center gap-1">

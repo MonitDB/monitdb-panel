@@ -16,6 +16,7 @@ const Chart = ({
   yaxisAbs,
   disableLabels,
   type,
+  unit = '%',
   key,
   className,
   ...options
@@ -62,7 +63,7 @@ const Chart = ({
       labels: {
         formatter: yaxisAbs
           ? undefined
-          : (value) => Number.parseFloat(value).toFixed(2) + '%',
+          : (value) => Number.parseFloat(value).toFixed(2) + unit,
       },
     },
     stroke: {
@@ -76,9 +77,11 @@ const Chart = ({
       offsetX: 5,
     },
     xaxis: {
-      labels: {
-        show: !disableLabels,
-      },
+      // labels: {
+      //   formatter: (value) => {
+      //     return new Date(value).toLocaleString()
+      //   },
+      // },
       show: false,
       type: 'datetime',
     },
@@ -278,6 +281,7 @@ const Chart = ({
       series={multipleSeries || series}
       height={height}
       key={key}
+      unit={unit || '%'}
       className={className}
     />
   )

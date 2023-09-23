@@ -66,7 +66,19 @@ const useLogContext = create((set) => ({
     } catch {
       return;
     }
+  },
+  
+  getTempDb: async (id, parameters) => {
+       try {
+      const { data } = await apiV2().get(`/log/temp-db/${id}`, {
+        params: parameters || undefined,
+      });
+      return data;
+    } catch {
+      return;
+    }
   }
+  
 
 }))
 
