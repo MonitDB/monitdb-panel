@@ -1,3 +1,4 @@
+/* eslint-disable unicorn/no-nested-ternary */
 import { useState } from 'react'
 
 import { paginateArray } from '~/utils/array'
@@ -31,7 +32,16 @@ export const GenericTable = (properties) => {
                   return (
                     <tr key={index}>
                       {Object?.keys(result ?? []).map((key) => (
-                        <td key={key}>{result[key] ?? 'null'}</td>
+                        <td key={key}>
+                          <div className="scrollable-cell">
+                            {typeof result[key] === 'boolean'
+                              ? // eslint-disable-next-line no-constant-condition
+                                typeof result[key]
+                                ? 'true'
+                                : 'false'
+                              : result[key] ?? 'null'}
+                          </div>
+                        </td>
                       ))}
                     </tr>
                   )
