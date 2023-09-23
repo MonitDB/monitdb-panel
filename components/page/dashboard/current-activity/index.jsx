@@ -11,7 +11,9 @@ import Code from '~/components/code/code'
 import { Select, Textarea } from '~/components/form'
 import Loading from '~/components/loading/loading'
 import Pagination from '~/components/pagination/pagination'
+import { GenericTable } from '~/components/table/genericTable'
 import useComponentContext from '~/services/state-manager/components'
+import { useExecQueryContext } from '~/services/state-manager/execQuery'
 import { paginateArray } from '~/utils/array'
 
 const componentsOption = [
@@ -31,10 +33,7 @@ function CurrentActivity(properties) {
   const [activeTableRowIndex, setActiveTableRowIndex] = useState(-1)
   const { executeQueryComponent } = useComponentContext()
 
-  const [sqlCode, setSqlCode] = useState(
-    `CREATE USER 'user'@'server-ip' IDENTIFIED BY 'password';
-GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
-  )
+  const [sqlCode, setSqlCode] = useState(`SELECT * FROM Solution.Component;`)
 
   useEffect(() => {
     fetchData()
@@ -52,6 +51,8 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
     setData(data)
     setLoading(false)
   }, [componentCode, currentServer?.id, data, executeQueryComponent])
+
+  const { execQuery, loadingExecuteQuery, queryResult } = useExecQueryContext()
 
   const headerSection = (
     <>
@@ -74,12 +75,15 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
             type="button"
             className="btn mt-4 ml-auto"
             onClick={() => {
-              ;('')
+              execQuery(sqlCode, currentServer.id)
             }}
           >
             Run
           </button>
+          <br />
+          <br />
         </div>
+        <GenericTable data={queryResult} loading={loadingExecuteQuery} />
       </div>
       <br />
       <br />
