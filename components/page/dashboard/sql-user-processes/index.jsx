@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react'
 
 import Image from '~/components/image'
-import Loading from '~/components/loading/loading'
+import { GenericTable } from '~/components/table/genericTable'
 
 import useComponentContext from '../../../../services/state-manager/components'
 
@@ -40,7 +40,8 @@ function SqlUserProcesses(properties) {
         </h3>
         <span className="w-full h-[1px] block bg-gray-light" />
       </div>
-      <div
+      <GenericTable data={data} loading={loading} />
+      {/* <div
         style={{ overflowX: 'auto' }}
         className="prose prose-thead:bg-gray-light max-w-full prose-th:capitalize prose-th:border-b-0 prose-tr:border-gray-light prose-td:text-[11px]"
       >
@@ -110,7 +111,7 @@ function SqlUserProcesses(properties) {
             </tbody>
           </table>
         )}
-      </div>
+      </div> */}
     </div>
   )
 }

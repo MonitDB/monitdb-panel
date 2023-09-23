@@ -9,13 +9,14 @@ export const useExecQueryContext = create((set) => ({
     loadingExecuteQuery: false,
     execQuery: async (query, serverId) => {
         try {
-            set({ loadingExecuteQuery: true })
+            set({ loadingExecuteQuery: true, queryResult: [] })
             const { data } = await apiV2().post(`/exec-query/${serverId}`, { query });
             set({ queryResult: data })
             return data
         } catch (error) {
+            set({ queryResult: [{message: "Request Failed"}] })
             toast.error(error)
-            // console.log(error)
+ 
         } finally {
             set({ loadingExecuteQuery: false })
         }

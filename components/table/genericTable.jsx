@@ -18,7 +18,7 @@ export const GenericTable = (properties) => {
         <Loading />
       ) : (
         <>
-          <div className="table-container">
+          <div className="table-container prose prose-thead:bg-gray-light max-w-full prose-th:capitalize prose-th:border-b-0 prose-tr:border-gray-light prose-td:text-[11px]">
             <table>
               <thead>
                 <tr>

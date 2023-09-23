@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react'
 
 import Image from '~/components/image'
-import Loading from '~/components/loading/loading'
+import { GenericTable } from '~/components/table/genericTable'
 
 import useComponentContext from '../../../../services/state-manager/components'
 
@@ -38,7 +38,8 @@ function ErrorLog(properties) {
         <h3 className="text-sm text-gray-dark font-bold">Error log</h3>
         <span className="w-full h-[1px] block bg-gray-light" />
       </div>
-      <div className="prose prose-thead:bg-gray-light max-w-full prose-th:capitalize prose-th:border-b-0 prose-tr:border-gray-light prose-td:text-[11px]">
+      <GenericTable data={data} loading={loading} />
+      {/* <div className="prose prose-thead:bg-gray-light max-w-full prose-th:capitalize prose-th:border-b-0 prose-tr:border-gray-light prose-td:text-[11px]">
         <table className="m-0 py-4 prose-tr:last:!border-b">
           <thead>
             <tr>
@@ -89,7 +90,7 @@ function ErrorLog(properties) {
             )}
           </tbody>
         </table>
-      </div>
+      </div> */}
     </div>
   )
 }
