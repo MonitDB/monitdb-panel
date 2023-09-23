@@ -74,7 +74,7 @@ GRANT ALL PRIVILEGES ON scheme.* TO 'user'@'server-ip' WITH GRANT OPTION;`
             type="button"
             className="btn mt-4 ml-auto"
             onClick={() => {
-              setSqlCode('')
+              ;('')
             }}
           >
             Run
