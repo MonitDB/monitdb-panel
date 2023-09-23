@@ -38,7 +38,7 @@ const useLogContext = create((set) => ({
   
   getMemoryUsage: async (id, parameters) => {
      try {
-      const { data } = await apiV2.get(`/log/memory-usage/${id || ''}`, {
+      const { data } = await apiV2().get(`/log/memory-usage/${id || ''}`, {
         params: parameters || undefined,
       });
       return data;
@@ -49,7 +49,7 @@ const useLogContext = create((set) => ({
   
   getLogDatabase: async (id, parameters) => {
     try {
-      const { data } = await apiV2.get(`/log/database-status/${id || ''}`, {
+      const { data } = await apiV2().get(`/log/database-status/${id || ''}`, {
         params: parameters || undefined,
       });
       return data;

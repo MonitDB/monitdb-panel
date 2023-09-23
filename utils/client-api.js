@@ -14,18 +14,27 @@ const clientApi = (token) => {
   return instance;
 };
 
-
-console.log(process.env.apiKey)
-const apiV2 = axios.create({
+const instance2 = axios.create({
   baseURL: process.env.apiV2,
   headers: {
-    'x-api-key': process.env.apiKey
+    'x-api-key': process.env.apiKey,
   }
+  
 });
 
 
 
-apiV2.defaults.headers.common['Authorization'] = getUserToken() ? `Bearer ${getUserToken()}` : '';
+const apiV2 = (token) => {
+  const tokenRequest = token || getUserToken();
+  
+  instance2.defaults.headers.common['Authorization'] = tokenRequest
+    ? `Bearer ${tokenRequest}`
+    : '';
+
+  return instance2;
+};
+
+
 
 export default clientApi;
 

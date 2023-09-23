@@ -73,9 +73,10 @@ const ServerCard = ({
   const getMetrics = useCallback(async () => {
     try {
       const response = await getServerMetrics({ id })
-
+      console.log({ response })
       if (response?.data) {
         const { cpu, memory, disks, serverStatus } = response.data
+        console.log({ cpu, memory })
         setLastUpdated(new Date())
 
         setMetrics({
@@ -86,8 +87,8 @@ const ServerCard = ({
             inUsePercent:
               ((memory.total - memory.available) / memory.total) * 100,
           },
-          disks,
-          serverStatus,
+          // disks,
+          // serverStatus,
         })
       }
     } catch (error) {
@@ -152,6 +153,7 @@ const ServerCard = ({
             <DatabaseIcons name={type.typeServerName} className="w-10 h-10" />
           </div>
         )}
+        {console.log({ metrics })}
         <dl className="text-xs w-full text-gray">
           {metrics.memory && (
             <>
@@ -197,11 +199,11 @@ const ServerCard = ({
               <dd>
                 <span
                   className={classNames({
-                    'text-blue': metrics.memory.otherProcessPercent <= 85,
+                    'text-blue': metrics.cpu.otherProcessPercent <= 85,
                     'text-orange':
-                      metrics.memory.otherProcessPercent > 85 &&
-                      metrics.memory.otherProcessPercent < 95,
-                    'text-danger': metrics.memory.otherProcessPercent >= 95,
+                      metrics.cpu.otherProcessPercent > 85 &&
+                      metrics.cpu.otherProcessPercent < 95,
+                    'text-danger': metrics.cpu.otherProcessPercent >= 95,
                   })}
                 >
                   {metrics.cpu.otherProcessPercent}%

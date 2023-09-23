@@ -14,6 +14,7 @@ const ProtectedPage = ({ children }) => {
   const validateToken = useCallback(async () => {
     try {
       const response = await postTokenValidate(userState?.token)
+
       const dataResult = response?.data
 
       if (dataResult?.token) {
@@ -24,10 +25,11 @@ const ProtectedPage = ({ children }) => {
       }
     } catch {
       Router.push(loginPath)
+
       setUserState(userInitialState)
       Cookies.reset()
     }
-  }, [setUserState, userState?.token])
+  }, [setUserState, userState])
 
   useEffect(() => {
     if (!userState?.token) {

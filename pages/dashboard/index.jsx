@@ -30,6 +30,8 @@ const DashboardPage = () => {
     globalState: { servers, serverTypes, serverEnvironments },
   } = useGlobal()
 
+  console.log(servers, serverTypes, serverEnvironments)
+
   const [refreshInterval, setRefreshInterval] = useState(HOUR)
 
   useEffect(() => {
@@ -67,6 +69,8 @@ const DashboardPage = () => {
     []
   )
 
+  console.log({ formattedEnvironments })
+
   const environmentsOptions = useMemo(
     () => [
       { value: '', label: 'All groups' },
@@ -83,7 +87,7 @@ const DashboardPage = () => {
   const totalServers = useMemo(
     () =>
       formattedEnvironments
-        .filter(({ isActive }) => isActive)
+        // .filter(({ isActive }) => isActive)
         .reduce(
           (accumulator, formattedEnvironment) =>
             accumulator +

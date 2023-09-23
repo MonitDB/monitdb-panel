@@ -1,19 +1,19 @@
-import clientApi from '~/utils/client-api'
+import clientApi, { apiV2 } from '~/utils/client-api'
 
 export const getServers = async () => {
-  return clientApi().get(`/api/server`)
+  return apiV2().get(`/server`)
 }
 
 export const getServerMetrics = async ({ id }) => {
-  return clientApi().get(`/api/metrics/${id}`)
+  return apiV2().get(`/server/metrics/${id}`)
 }
 
 export const getTypes = async () => {
-  return clientApi().get(`/api/typeserver`)
+  return apiV2().get(`/server/type`)
 }
 
 export const getEnvironments = async () => {
-  return clientApi().get(`/api/typeserverenvironment`)
+  return apiV2().get(`/server/type-environment`)
 }
 
 export const addServer = async (values) => {

@@ -35,7 +35,7 @@ const useComponentContext = create((set) => ({
   executeQueryComponent: async (componentId, serverId) => {
       try {
       set({loading: true})
-      const { data } = await apiV2.get(`/component/execute-component/${componentId}/${serverId || ''}`);
+      const { data } = await apiV2().get(`/component/execute-component/${componentId}/${serverId || ''}`);
       return data;
     } catch (error) {
       console.log(error)

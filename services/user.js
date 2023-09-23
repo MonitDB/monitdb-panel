@@ -1,15 +1,15 @@
-import clientApi from '~/utils/client-api'
+import clientApi, { apiV2 } from '~/utils/client-api'
 
 export const postLogin = async (data) => {
-  return clientApi().post('/api/user/login', data)
+  return apiV2().post('/auth/login', data)
 }
 
-export const postTokenValidate = async () => {
-  return clientApi().post('/api/user/refresh-token')
+export const postTokenValidate = async (token) => {
+  return apiV2(token).post('/auth/refresh-token')
 }
 
 export const getMe = async () => {
-  return clientApi().get('/api/user/me')
+  return apiV2().get('/auth/me')
 }
 
 export const create = async (data) => {
