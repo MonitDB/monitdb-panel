@@ -158,7 +158,7 @@ const Permissions = (properties) => {
           </tbody>
         </table>
       </div>
-      <h3 className="mt-6 mb-4 text-sm text-gray-dark font-bold">
+      {/* <h3 className="mt-6 mb-4 text-sm text-gray-dark font-bold">
         Host machine metrics (sqm-sqlmonitor)
       </h3>
       <Grid className="mt-6">
@@ -207,7 +207,7 @@ const Permissions = (properties) => {
             />
           </div>
         </div>
-      </Grid>
+      </Grid> */}
       <div>
         <h4 className="mb-4 text-sm">OS Properties</h4>
         <div className="w-full mb-4 prose max-w-full prose-p:m-0 prose-td:align-top prose-tr:border-gray-light prose-headings:m-0">

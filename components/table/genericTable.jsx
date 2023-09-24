@@ -18,45 +18,51 @@ export const GenericTable = (properties) => {
         <Loading />
       ) : (
         <>
-          <div className="table-container prose prose-thead:bg-gray-light max-w-full prose-th:capitalize prose-th:border-b-0 prose-tr:border-gray-light prose-td:text-[11px]">
-            <table>
-              <thead>
-                <tr>
-                  {Object?.keys(data[0] ?? []).map((key) => (
-                    <th key={key}>{key}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {paginateArray(data, currentPage, 10)?.map((result, index) => {
-                  return (
-                    <tr key={index}>
-                      {Object?.keys(result ?? []).map((key) => (
-                        <td key={key}>
-                          <div className="scrollable-cell">
-                            {typeof result[key] === 'boolean'
-                              ? // eslint-disable-next-line no-constant-condition
-                                typeof result[key]
-                                ? 'true'
-                                : 'false'
-                              : result[key] ?? 'null'}
-                          </div>
-                        </td>
+          {Array.isArray(data) && (
+            <>
+              <div className="table-container prose prose-thead:bg-gray-light max-w-full prose-th:capitalize prose-th:border-b-0 prose-tr:border-gray-light prose-td:text-[11px]">
+                <table>
+                  <thead>
+                    <tr>
+                      {Object?.keys(data[0] ?? []).map((key) => (
+                        <th key={key}>{key}</th>
                       ))}
                     </tr>
-                  )
-                })}
-              </tbody>
-            </table>
-          </div>
-          <br />
-          <br />
-          {data.length > 10 && (
-            <Pagination
-              currentPage={currentPage}
-              totalResults={data.length}
-              onChangePage={(page) => setCurrentPage(page)}
-            />
+                  </thead>
+                  <tbody>
+                    {paginateArray(data, currentPage, 10)?.map(
+                      (result, index) => {
+                        return (
+                          <tr key={index}>
+                            {Object?.keys(result ?? []).map((key) => (
+                              <td key={key}>
+                                <div className="scrollable-cell">
+                                  {typeof result[key] === 'boolean'
+                                    ? // eslint-disable-next-line no-constant-condition
+                                      typeof result[key]
+                                      ? 'true'
+                                      : 'false'
+                                    : result[key] ?? 'null'}
+                                </div>
+                              </td>
+                            ))}
+                          </tr>
+                        )
+                      }
+                    )}
+                  </tbody>
+                </table>
+              </div>
+              <br />
+              <br />
+              {data.length > 10 && (
+                <Pagination
+                  currentPage={currentPage}
+                  totalResults={data.length}
+                  onChangePage={(page) => setCurrentPage(page)}
+                />
+              )}
+            </>
           )}
         </>
       )}
