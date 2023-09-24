@@ -73,10 +73,10 @@ const ServerCard = ({
   const getMetrics = useCallback(async () => {
     try {
       const response = await getServerMetrics({ id })
-      console.log({ response })
+
       if (response?.data) {
-        const { cpu, memory, disks, serverStatus } = response.data
-        console.log({ cpu, memory })
+        const { cpu, memory } = response.data
+
         setLastUpdated(new Date())
 
         setMetrics({
@@ -153,7 +153,6 @@ const ServerCard = ({
             <DatabaseIcons name={type.typeServerName} className="w-10 h-10" />
           </div>
         )}
-        {console.log({ metrics })}
         <dl className="text-xs w-full text-gray">
           {metrics.memory && (
             <>
