@@ -30,8 +30,6 @@ const DashboardPage = () => {
     globalState: { servers, serverTypes, serverEnvironments },
   } = useGlobal()
 
-  console.log(servers, serverTypes, serverEnvironments)
-
   const [refreshInterval, setRefreshInterval] = useState(HOUR)
 
   useEffect(() => {
@@ -68,8 +66,6 @@ const DashboardPage = () => {
     ],
     []
   )
-
-  console.log({ formattedEnvironments })
 
   const environmentsOptions = useMemo(
     () => [

@@ -26,14 +26,7 @@ function MemoryUsage(properties) {
 
     setLoading(false)
   }, [getMemoryUsage, currentServer?.id, route.query.lastMinutes])
-  console.log({
-    name: '% Percent Usage',
-    data:
-      data?.map((usage) => [
-        dateStringToTime(usage.createDate),
-        usage.percentUsage,
-      ]) || [],
-  })
+
   return loading ? (
     <div className="col-span-2 bg-white lg:col-span-6">
       <Loading />

@@ -7,7 +7,6 @@ export const SERVER_STATUS = {
 }
 
 export const filterServersByEnvironmentId = (environmentId, servers) => {
-  console.log({servers, environmentId})
   return servers.filter(
     (server) => server.idTypeServerEnvironment === environmentId
   )

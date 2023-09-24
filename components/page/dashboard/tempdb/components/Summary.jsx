@@ -1,4 +1,3 @@
-import { useRouter } from 'next/router'
 import { useCallback, useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 
@@ -9,8 +8,6 @@ import useLogContext from '~/services/state-manager/logs'
 import { dateStringToTime } from '~/utils/formats'
 
 export const TemporaryDBSummary = () => {
-  const route = useRouter()
-
   const { currentServer } = useSingleDashboard()
   const { getTempDb } = useLogContext()
 

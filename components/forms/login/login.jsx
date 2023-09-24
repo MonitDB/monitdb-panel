@@ -42,8 +42,7 @@ const SignUp = () => {
 
           router.push('/dashboard')
         }
-      } catch (error) {
-        console.error(error)
+      } catch {
         setError('User ou senha inválidos')
 
         setTimeout(() => {

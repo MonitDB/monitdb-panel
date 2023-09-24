@@ -3,9 +3,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import classNames from 'classnames'
 import React, { useCallback, useEffect, useState } from 'react'
 
-import Chart from '~/components/chart'
-import Grid from '~/components/grid'
-// import Reveal from '~/helpers/reveal'
 import useComponentContext from '~/services/state-manager/components'
 const COMPONENT_CODE = 'LTPERM'
 

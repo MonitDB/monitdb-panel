@@ -6,8 +6,9 @@ import { useSingleDashboard } from '~/hooks/index'
 import useComponentContext from '~/services/state-manager/components'
 
 const componentCode = 'LTINSPRP'
+const loadingText = 'Loading...'
 
-export const ServerProperties = (properties) => {
+export const ServerProperties = () => {
   const { currentServer } = useSingleDashboard()
   const { executeQueryComponent } = useComponentContext()
 
@@ -41,13 +42,13 @@ export const ServerProperties = (properties) => {
           <tbody>
             <tr>
               <td>Collation:</td>
-              <td>{loading ? 'Loading...' : data?.Collation}</td>
+              <td>{loading ? loadingText : data?.Collation}</td>
             </tr>
             <tr>
               <td>Creation date:</td>
               <td>
                 {loading
-                  ? 'Loading...'
+                  ? loadingText
                   : moment(data ? data['Installation Date'] : '').format(
                       'DD/MM/YYYY'
                     )}
@@ -56,11 +57,11 @@ export const ServerProperties = (properties) => {
             {}
             <tr>
               <td>Compatibility level:</td>
-              <td>{loading ? 'Loading...' : data?.Compatibility_level}</td>
+              <td>{loading ? loadingText : data?.Compatibility_level}</td>
             </tr>
             <tr>
               <td>State:</td>
-              <td>{loading ? 'Loading...' : data?.State}</td>
+              <td>{loading ? loadingText : data?.State}</td>
             </tr>
             <tr>
               <td>Page verify:</td>
