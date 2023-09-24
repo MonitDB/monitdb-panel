@@ -31,6 +31,7 @@ import {
 } from '~/components/page/dashboard'
 import CurrentActivity from '~/components/page/dashboard/current-activity'
 import MemoryUsage from '~/components/page/dashboard/memory-usage'
+import { SPBlitz } from '~/components/page/dashboard/sp-blitz'
 import LatestAlertsSidebar from '~/components/sidebar/latest-alerts'
 import { SingleDashboardContextProvider } from '~/contexts/single-dashboard'
 import DatabaseIcons from '~/helpers/database-icons'
@@ -68,6 +69,10 @@ const tabItems = [
   {
     title: 'Current activity',
     id: 'current-activity',
+  },
+  {
+    title: 'SP BLITZ',
+    id: 'sp-blitz',
   },
 ]
 
@@ -296,6 +301,9 @@ const SingleDashboard = () => {
 
                 {activeTabId === 'current-activity' && (
                   <CurrentActivity currentServer={currentServer} />
+                )}
+                {activeTabId === 'sp-blitz' && (
+                  <SPBlitz currentServer={currentServer} />
                 )}
               </>
             )}

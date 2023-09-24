@@ -24,7 +24,10 @@ function AvgLatchWait() {
 
   if (isLoading || seriesData.length === 0) {
     return (
-      <div className="flex items-center justify-center h-full">
+      <div
+        className="flex items-center justify-center h-140"
+        style={{ height: '140px' }}
+      >
         {isLoading ? 'Loading...' : 'Error'}
       </div>
     )

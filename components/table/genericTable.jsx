@@ -7,9 +7,7 @@ import Loading from '../loading/loading'
 import Pagination from '../pagination/pagination'
 import { GenericTableStyles } from './genericTableStyles'
 
-export const GenericTable = (properties) => {
-  const { loading, data } = properties
-
+export const GenericTable = ({ loading, data }) => {
   const [currentPage, setCurrentPage] = useState(1)
 
   return (

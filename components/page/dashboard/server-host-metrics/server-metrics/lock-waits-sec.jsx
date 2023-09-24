@@ -28,7 +28,10 @@ function LockWaitsSec() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-full">
+      <div
+        className="flex items-center justify-center"
+        style={{ height: '140px' }}
+      >
         {isLoading ? 'Loading...' : 'Error'}
       </div>
     )
