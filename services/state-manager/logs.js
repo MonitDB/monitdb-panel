@@ -77,6 +77,17 @@ const useLogContext = create((set) => ({
     } catch {
       return;
     }
+  },
+  
+  getTopQueries: async (id, parameters) => {
+    try {
+      const { data } = await apiV2().get(`/log/top-queries/${id}`, {
+        params: parameters || undefined,
+      });
+      return data;
+    } catch {
+      return;
+    }
   }
   
 

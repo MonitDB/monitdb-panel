@@ -36,6 +36,7 @@ const Chart = ({
     },
     legend: {
       // show: !!seriesName,
+
       showForSingleSeries: true,
       fontSize: '11px',
       position: 'top',
@@ -277,7 +278,7 @@ const Chart = ({
 
   return (
     <ApexChart
-      options={chartOptions}
+      options={{ ...chartOptions, ...options }}
       series={multipleSeries || series}
       height={height}
       key={key}

@@ -26,7 +26,7 @@ function AvgLatchWait() {
     return (
       <div
         className="flex items-center justify-center h-140"
-        style={{ height: '140px' }}
+        style={{ height: '220px' }}
       >
         {isLoading ? 'Loading...' : 'Error'}
       </div>

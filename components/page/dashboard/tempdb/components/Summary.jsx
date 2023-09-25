@@ -13,6 +13,9 @@ export const TemporaryDBSummary = () => {
 
   const [data, setData] = useState()
   const [loading, setLoading] = useState(false)
+  const [showUsage, setShowUsage] = useState(true)
+  const [showAllocatedSpace, setShowAllocatedSpace] = useState(true)
+  const [showAvailableSpace, setShowAvailableSpace] = useState(true)
 
   const fetchData = useCallback(async () => {
     try {
@@ -31,6 +34,37 @@ export const TemporaryDBSummary = () => {
 
   useEffect(fetchData, [fetchData])
 
+  const seriesData =
+    data?.map(
+      ({ dataHora, allocatedSpaceMB, availableSpaceMB, spaceUsedMB }) => ({
+        time: dateStringToTime(dataHora),
+        usage: spaceUsedMB,
+        allocatedSpace: allocatedSpaceMB,
+        availableSpace: availableSpaceMB,
+      })
+    ) || []
+
+  const [usage, allocatedSpace, availableSpace] = [
+    {
+      name: 'Usage (MB)',
+      data: [],
+    },
+    {
+      name: 'Allocated Space (MB)',
+      data: [],
+    },
+    {
+      name: 'Available Space (MB)',
+      data: [],
+    },
+  ]
+
+  for (const item of seriesData) {
+    usage.data.push([item.time, item.usage])
+    allocatedSpace.data.push([item.time, item.allocatedSpace])
+    availableSpace.data.push([item.time, item.availableSpace])
+  }
+
   return (
     <>
       <h6 className="my-4 text-xs">
@@ -38,22 +72,70 @@ export const TemporaryDBSummary = () => {
       </h6>
       <div className="bg-white min-h-96">
         {loading ? (
-          <Loading />
+          <div
+            className="bg-white min-h-96"
+            style={{
+              display: 'flex',
+              height: '100%',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            <Loading />
+          </div>
         ) : (
-          <Chart
-            height="100%"
-            unit={'MB'}
-            multipleSeries={[
-              {
-                name: 'Usage (MB)',
-                data:
-                  data?.map((usage) => [
-                    dateStringToTime(usage.dataHora),
-                    usage.allocatedSpaceMB,
-                  ]) || [],
-              },
-            ]}
-          />
+          <>
+            <Chart
+              height="100%"
+              unit={'MB'}
+              multipleSeries={[usage, allocatedSpace, availableSpace].filter(
+                (element, index) => {
+                  if (index === 0 && !showUsage) return false
+                  if (index === 1 && !showAllocatedSpace) return false
+                  if (index === 2 && !showAvailableSpace) return false
+                  return element.data.length > 0
+                }
+              )}
+            />
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-evenly',
+                padding: '10px',
+              }}
+            >
+              <label>
+                <input
+                  style={{ margin: '0 0 0 5px' }}
+                  type="checkbox"
+                  checked={showUsage}
+                  onChange={() => setShowUsage(!showUsage)}
+                />
+                <span style={{ margin: '0 0 0 5px' }}>Show Usage</span>
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={showAllocatedSpace}
+                  onChange={() => setShowAllocatedSpace(!showAllocatedSpace)}
+                />
+                <span style={{ margin: '0 0 0 5px' }}>
+                  Show Allocated Space
+                </span>
+              </label>
+              <label>
+                <input
+                  style={{ margin: '0 0 0 5px' }}
+                  type="checkbox"
+                  checked={showAvailableSpace}
+                  onChange={() => setShowAvailableSpace(!showAvailableSpace)}
+                />
+                <span style={{ margin: '0 0 0 5px' }}>
+                  Show Available Space
+                </span>
+              </label>
+            </div>
+          </>
         )}
       </div>
     </>

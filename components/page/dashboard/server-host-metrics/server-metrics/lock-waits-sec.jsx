@@ -30,7 +30,7 @@ function LockWaitsSec() {
     return (
       <div
         className="flex items-center justify-center"
-        style={{ height: '140px' }}
+        style={{ height: '220px' }}
       >
         {isLoading ? 'Loading...' : 'Error'}
       </div>

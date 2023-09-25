@@ -37,7 +37,10 @@ export const ServerProperties = () => {
   return (
     <div className="col-span-2 md:col-span-6">
       <h4 className="mb-4 text-sm text-gray-dark">Server properties</h4>
-      <div className="w-full mb-4 prose max-w-full prose-p:m-0 prose-td:align-top prose-tr:border-gray-light prose-headings:m-0">
+      <div
+        style={{ height: '674px' }}
+        className="w-full mb-4 prose max-w-full prose-p:m-0 prose-td:align-top prose-tr:border-gray-light prose-headings:m-0"
+      >
         {loading ? (
           loadingText
         ) : (
@@ -47,7 +50,12 @@ export const ServerProperties = () => {
                 (key, index) =>
                   data[key] && (
                     <tr key={index}>
-                      <td>{key}</td> <td>{data[key]}</td>
+                      <td>{key}</td>{' '}
+                      <td>
+                        {moment(data[key]).isValid()
+                          ? moment(data[key]).format('DD/MM/YYYY HH:mm:ss')
+                          : String(data[key])}
+                      </td>
                     </tr>
                   )
               )}

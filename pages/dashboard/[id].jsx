@@ -71,7 +71,7 @@ const tabItems = [
     id: 'current-activity',
   },
   {
-    title: 'SP BLITZ',
+    title: 'Sp Blitz',
     id: 'sp-blitz',
   },
 ]
