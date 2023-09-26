@@ -78,6 +78,26 @@ const useLogContext = create((set) => ({
       return;
     }
   },
+  getTempDbSession: async (id, parameters) => {
+       try {
+      const { data } = await apiV2().get(`/log/temp-db/${id}/session`, {
+        params: parameters || undefined,
+      });
+      return data;
+    } catch {
+      return;
+    }
+  },
+  
+    getTempDbSessionQuery: async (serverId, id) => {
+       try {
+      const { data } = await apiV2().get(`/log/temp-db/${serverId}/query/${id}`);
+      return data;
+    } catch {
+      return;
+    }
+  },
+  
   
   getTopQueries: async (id, parameters) => {
     try {

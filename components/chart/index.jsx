@@ -21,6 +21,7 @@ const Chart = ({
   className,
   ...options
 }) => {
+  console.log({ type })
   const chartOptions = {
     chart: {
       type: type || 'area',
