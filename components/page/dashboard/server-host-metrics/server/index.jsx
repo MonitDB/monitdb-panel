@@ -11,11 +11,11 @@ import Reveal from '~/helpers/reveal'
 
 import { TopQueries } from './top-queries'
 
-const labelsTopQueries = Array.from({ length: 5 }, (_, index) => `8:${index}`)
+// const labelsTopQueries = Array.from({ length: 5 }, (_, index) => `8:${index}`)
 
-const tableTopQueriesItems = labelsTopQueries.map(() => ({
-  title: `SELECT user_id FROM ${faker.random.word()} WHERE meta_key = '${faker.random.word()}'`,
-}))
+// const tableTopQueriesItems = labelsTopQueries.map(() => ({
+//   title: `SELECT user_id FROM ${faker.random.word()} WHERE meta_key = '${faker.random.word()}'`,
+// }))
 
 const tableTopProceduresItems = [
   {

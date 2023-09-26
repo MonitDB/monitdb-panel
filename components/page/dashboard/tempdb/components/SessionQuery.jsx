@@ -16,7 +16,7 @@ export const SessionQuery = ({ id }) => {
     try {
       setLoading(true)
       const data = await getTempDbSessionQuery(currentServer.id, id)
-      console.log({ data })
+
       setData(data)
     } catch {
       toast.error('Error fetching data')

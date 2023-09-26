@@ -1,5 +1,5 @@
-import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+// import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
+// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import classNames from 'classnames'
 import { useCallback, useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
@@ -13,12 +13,12 @@ export const TopQueries = () => {
   const { getTopQueries } = useLogContext()
 
   const [data, setData] = useState([])
-  const [loading, setLoading] = useState(false)
+  const [, setLoading] = useState(false)
 
-  const [activeTableRowIndex, setActiveTableRowIndex] = useState(-1)
-  const toggleActiveTableRowIndex = useCallback((index) => {
-    setActiveTableRowIndex((oldIndex) => (oldIndex === index ? -1 : index))
-  }, [])
+  const [activeTableRowIndex] = useState(-1)
+  // const toggleActiveTableRowIndex = useCallback((index) => {
+  //   setActiveTableRowIndex((oldIndex) => (oldIndex === index ? -1 : index))
+  // }, [])
 
   const fetchData = useCallback(async () => {
     try {

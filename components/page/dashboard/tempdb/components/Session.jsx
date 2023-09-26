@@ -19,7 +19,7 @@ export const TemporaryDBSession = () => {
 
   const [data, setData] = useState()
   const [activeRowIndex, setActiveRowIndex] = useState(-1)
-  const [loading, setLoading] = useState(false)
+  const [, setLoading] = useState(false)
 
   const fetchData = useCallback(async () => {
     try {
@@ -50,7 +50,7 @@ export const TemporaryDBSession = () => {
         <Chart
           height="100%"
           type="scatter"
-          seriesData={[[21.7, 3]]}
+          // multipleSeries={[{data:  }]}
           legend={{
             show: false,
           }}
