@@ -25,7 +25,7 @@ export const UserContextProvider = ({ children }) => {
     try {
       const response = await getMe()
       const dataResult = response?.data?.result
-
+      console.log(dataResult)
       if (dataResult?.loginname || dataResult?.loginemail) {
         setUserState({
           ...userState,

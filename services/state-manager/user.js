@@ -6,8 +6,8 @@ const useUserContext = create(() => ({
   postLogin: async (data) => {
     return clientApi().post('/api/user/login', data)
   },
-  postTokenValidate: async () => {
-    return clientApi().post('/api/user/refresh-token')
+  postTokenValidate: async (token) => {
+    return clientApi(token).post('/api/user/refresh-token')
   },
   getMe: async () => {
     return clientApi().get('/api/user/me')

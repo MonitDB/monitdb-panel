@@ -9,7 +9,7 @@ export const postTokenValidate = async (token) => {
 }
 
 export const getMe = async () => {
-  return apiV2().get('/auth/me')
+  return clientApi().get('/api/user/me')
 }
 
 export const create = async (data) => {
