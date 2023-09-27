@@ -43,7 +43,7 @@ const SignUp = () => {
           router.push('/dashboard')
         }
       } catch {
-        setError('User ou senha inválidos')
+        setError('Inválid credentials')
 
         setTimeout(() => {
           setError('')
@@ -100,13 +100,13 @@ const SignUp = () => {
           loading={formik.isSubmitting}
           loadingText="Entrando..."
         >
-          Entrar
+          Login
         </Submit>
         <Link
           href="/forgot-password"
           className="text-sm text-gray-dark underline mt-4 md:mt-0 md:ml-auto"
         >
-          Recuperar palavra-passe
+          Recover your password
         </Link>
       </div>
     </form>

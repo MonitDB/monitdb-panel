@@ -52,7 +52,7 @@ const SqlServerLicensing = ({ tabName }) => {
         <div className="w-full prose max-w-full prose-p:m-0 prose-th:border-b-4 prose-headings:m-0 prose-td:align-middle">
           <header className="flex flex-col mb-5 md:flex-row md:justify-between md:items-center">
             <div className="w-full md:w-3/4">
-              <h2 className="heading-md">Informações de licenciamento</h2>
+              <h2 className="heading-md">Licence Info</h2>
             </div>
             <button type="button" className="btn btn--small md:ml-auto">
               <FontAwesomeIcon icon={faFileExport} className="mr-2" />
@@ -67,22 +67,23 @@ const SqlServerLicensing = ({ tabName }) => {
               <table className="m-0">
                 <thead>
                   <tr>
-                    <th>Nome do servidor</th>
-                    <th>Processadores</th>
+                    <th>Server Name</th>
+                    <th>Processors</th>
                     <th>Cores</th>
-                    <th>Processadores lógicos</th>
+                    <th>Logic Processors</th>
                     <th>License req</th>
-                    <th>Sempre ligado</th>
-                    <th>Instância SQL</th>
-                    <th>Versão</th>
+                    <th>Always on</th>
+                    <th>SQL Instance</th>
+                    <th>Version</th>
                   </tr>
                 </thead>
 
                 <tbody>
                   {servers.map(({ id, serverName }) => {
-                    const filteredSqlServerLicensing = sqlServerLicensing.filter(
-                      ({ ServerId }) => ServerId === id
-                    )
+                    const filteredSqlServerLicensing =
+                      sqlServerLicensing.filter(
+                        ({ ServerId }) => ServerId === id
+                      )
 
                     if (filteredSqlServerLicensing.length === 0) {
                       return ''

@@ -39,7 +39,7 @@ const HomePage = () => {
                 className="w-full max-w-[260px] h-auto mx-auto"
               />
               <p>
-                <strong>Preencha os seus dados nos campos abaixo:</strong>
+                <strong>Fill your credentials in the fields below:</strong>
               </p>
             </div>
             <Login />
