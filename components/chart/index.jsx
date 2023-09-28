@@ -1,7 +1,7 @@
 import dynamic from 'next/dynamic'
 import React from 'react'
 
-export const ApexChart = dynamic(
+const ApexChart = dynamic(
   () => {
     return import('react-apexcharts')
   },
@@ -69,7 +69,7 @@ const Chart = ({
       },
     },
     stroke: {
-      width: strokeWidth ?? 1,
+      width: strokeWidth || 1,
       curve: 'straight',
     },
     title: {

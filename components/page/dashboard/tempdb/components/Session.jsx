@@ -4,10 +4,10 @@ import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import moment from 'moment'
 import { useCallback, useEffect, useState } from 'react'
+import ReactApexChart from 'react-apexcharts'
 import { toast } from 'react-toastify'
 
 import Chart from '~/components/chart'
-// import Chart, { ApexChart } from '~/components/chart'
 import Loading from '~/components/loading/loading'
 import Reveal from '~/helpers/reveal'
 import { useSingleDashboard } from '~/hooks/index'
@@ -49,6 +49,13 @@ export const TemporaryDBSession = () => {
     color: colors[index],
   }))
 
+  console.log(
+    data?.map((item) => ({
+      data: [new Date(item.dataHora).getTime(), item.tempdbTotalNet],
+      name: item.sessionId,
+    }))
+  )
+
   if (!data?.length || loading)
     return (
       <div
@@ -74,10 +81,10 @@ export const TemporaryDBSession = () => {
       </p>
       <div className="bg-white min-h-96">
         <Chart
-          type="scatter"
           height="100%"
-          unit="B"
-          seriesData={data?.map((item) => ({
+          unit={'B'}
+          type={'scatter'}
+          multipleSeries={data?.map((item) => ({
             data: [[dateStringToTime(item.dataHora), item.tempdbTotalNet]],
             name: `${item.sessionId}`,
           }))}
