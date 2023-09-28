@@ -4,7 +4,6 @@ import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import moment from 'moment'
 import { useCallback, useEffect, useState } from 'react'
-import ReactApexChart from 'react-apexcharts'
 import { toast } from 'react-toastify'
 
 import Chart from '~/components/chart'
@@ -48,13 +47,6 @@ export const TemporaryDBSession = () => {
     item,
     color: colors[index],
   }))
-
-  console.log(
-    data?.map((item) => ({
-      data: [new Date(item.dataHora).getTime(), item.tempdbTotalNet],
-      name: item.sessionId,
-    }))
-  )
 
   if (!data?.length || loading)
     return (
