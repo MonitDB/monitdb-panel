@@ -7,9 +7,13 @@ import { useCallback, useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 
 import Chart from '~/components/chart'
+// import Chart, { ApexChart } from '~/components/chart'
+import Loading from '~/components/loading/loading'
 import Reveal from '~/helpers/reveal'
 import { useSingleDashboard } from '~/hooks/index'
 import useLogContext from '~/services/state-manager/logs'
+import { colors } from '~/utils/color'
+import { dateStringToTime } from '~/utils/formats'
 
 import { SessionQuery } from './SessionQuery'
 
@@ -19,7 +23,7 @@ export const TemporaryDBSession = () => {
 
   const [data, setData] = useState()
   const [activeRowIndex, setActiveRowIndex] = useState(-1)
-  const [, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   const fetchData = useCallback(async () => {
     try {
@@ -38,6 +42,28 @@ export const TemporaryDBSession = () => {
 
   useEffect(fetchData, [fetchData])
 
+  const dataTransformed = data?.map((item, index) => ({
+    data: [new Date(item.dataHora).getTime(), item.tempdbTotalNet],
+    label: item.sessionId,
+    item,
+    color: colors[index],
+  }))
+
+  if (!data?.length || loading)
+    return (
+      <div
+        className="bg-white min-h-96"
+        style={{
+          display: 'flex',
+          height: '100%',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <Loading />
+      </div>
+    )
+
   return (
     <>
       <p className="my-4 text-xs flex items-center gap-1">
@@ -48,17 +74,14 @@ export const TemporaryDBSession = () => {
       </p>
       <div className="bg-white min-h-96">
         <Chart
-          height="100%"
           type="scatter"
-          // multipleSeries={[{data:  }]}
-          legend={{
-            show: false,
-          }}
-          xaxis={{
-            labels: {
-              show: false,
-            },
-          }}
+          height="100%"
+          unit="B"
+          seriesData={data?.map((item) => ({
+            data: [[dateStringToTime(item.dataHora), item.tempdbTotalNet]],
+            name: `${item.sessionId}`,
+          }))}
+          strokeWidth={10}
         />
       </div>
       <div className="prose prose-thead:bg-gray-light max-w-full prose-th:capitalize prose-th:border-b-0 prose-tr:border-gray-light prose-td:text-[11px] prose-th:whitespace-nowrap prose-td:whitespace-nowrap prose-th:px-2 prose-th:h-[35px] prose-th:text-xs prose-tr:cursor-pointer overflow-x-hidden">
@@ -80,7 +103,7 @@ export const TemporaryDBSession = () => {
             </tr>
           </thead>
           <tbody>
-            {data?.map((item, index) => (
+            {dataTransformed?.map(({ item, color }, index) => (
               <>
                 <tr key={index}>
                   <td>
@@ -95,7 +118,7 @@ export const TemporaryDBSession = () => {
                         <span
                           className="inline-block w-[13px] h-[13px] rounded-full mr-1"
                           style={{
-                            backgroundColor: 'rgb(124, 181, 236)',
+                            backgroundColor: color,
                           }}
                         ></span>
                       </span>

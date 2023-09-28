@@ -1,7 +1,7 @@
 import dynamic from 'next/dynamic'
 import React from 'react'
 
-const ApexChart = dynamic(
+export const ApexChart = dynamic(
   () => {
     return import('react-apexcharts')
   },
@@ -18,6 +18,7 @@ const Chart = ({
   type,
   unit = '%',
   key,
+  strokeWidth,
   className,
   ...options
 }) => {
@@ -68,7 +69,7 @@ const Chart = ({
       },
     },
     stroke: {
-      width: 1,
+      width: strokeWidth ?? 1,
       curve: 'straight',
     },
     title: {
@@ -284,6 +285,7 @@ const Chart = ({
       key={key}
       unit={unit || '%'}
       className={className}
+      strokeWidth={strokeWidth}
     />
   )
 }
