@@ -301,3 +301,8 @@ export const Scatter = dynamic(
   () => import('@ant-design/charts').then(({ Scatter }) => Scatter),
   { ssr: false }
 )
+
+export const Line = dynamic(
+  () => import('@ant-design/charts').then(({ Line }) => Line),
+  { ssr: false }
+)

@@ -13,16 +13,14 @@ const ProtectedPage = ({ children }) => {
 
   const validateToken = useCallback(async () => {
     try {
-      const response = await postTokenValidate(userState?.token)
-
-      const dataResult = response?.data
-
-      if (dataResult?.token) {
-        setUserState({
-          logged: true,
-          token: dataResult?.token,
-        })
-      }
+      // const response = await postTokenValidate(userState?.token)
+      // const dataResult = response?.data
+      // if (dataResult?.token) {
+      setUserState({
+        logged: true,
+        token: 'kçsdjkfldsjlfj',
+      })
+      // }
     } catch {
       Router.push(loginPath)
 

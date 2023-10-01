@@ -19,10 +19,10 @@ const tabDataItems = [
     title: 'Session',
     id: 'session',
   },
-  {
-    title: 'Version store',
-    id: 'version-store',
-  },
+  // {
+  //   title: 'Version store',
+  //   id: 'version-store',
+  // },
   {
     title: 'Login',
     id: 'login',
@@ -35,10 +35,10 @@ const tabDataItems = [
     title: 'Database',
     id: 'database',
   },
-  {
-    title: 'Files',
-    id: 'files',
-  },
+  // {
+  //   title: 'Files',
+  //   id: 'files',
+  // },
 ]
 
 const Temppdb = () => {

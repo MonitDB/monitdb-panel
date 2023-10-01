@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router'
 import { useCallback, useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 
@@ -10,6 +11,8 @@ import { dateStringToTime } from '~/utils/formats'
 export const TemporaryDBSummary = () => {
   const { currentServer } = useSingleDashboard()
   const { getTempDb } = useLogContext()
+  const route = useRouter()
+  const { query } = route
 
   const [data, setData] = useState()
   const [loading, setLoading] = useState(false)
@@ -21,7 +24,7 @@ export const TemporaryDBSummary = () => {
     try {
       setLoading(true)
       const data = await getTempDb(currentServer.id, {
-        lastMinutes: 60,
+        lastMinutes: query.lastMinutes || 60,
       })
 
       setData(data)
@@ -30,7 +33,7 @@ export const TemporaryDBSummary = () => {
     } finally {
       setLoading(false)
     }
-  }, [currentServer.id, getTempDb])
+  }, [currentServer.id, getTempDb, query.lastMinutes])
 
   useEffect(fetchData, [fetchData])
 
