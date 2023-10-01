@@ -1,31 +1,33 @@
 import dynamic from 'next/dynamic'
 import React from 'react'
 
-const ApexChart = dynamic(
+export const ApexChart = dynamic(
   () => {
     return import('react-apexcharts')
   },
   { ssr: false }
 )
 
-const Chart = ({
-  height = '200',
-  seriesName,
-  seriesData,
-  multipleSeries,
-  yaxisAbs,
-  disableLabels,
-  type,
-  unit = '%',
-  key,
-  strokeWidth,
-  className,
-  ...options
-}) => {
+const Chart = (properties) => {
+  const {
+    height = '200',
+    seriesName,
+    seriesData,
+    multipleSeries,
+    yaxisAbs,
+    disableLabels,
+    type,
+    custom,
+    unit = '%',
+    key,
+    strokeWidth,
+    className,
+    ...options
+  } = properties
+
   const chartOptions = {
     chart: {
       type: type || 'area',
-
       toolbar: {
         show: false,
         offsetX: '-100%',
@@ -35,6 +37,7 @@ const Chart = ({
       },
       offsetX: 0,
     },
+
     legend: {
       // show: !!seriesName,
 
@@ -54,6 +57,7 @@ const Chart = ({
         horizontal: 0,
         vertical: 0,
       },
+
       onItemClick: {
         toggleDataSeries: false,
       },
@@ -84,6 +88,7 @@ const Chart = ({
       //     return new Date(value).toLocaleString()
       //   },
       // },
+
       show: false,
       type: 'datetime',
     },
@@ -279,7 +284,7 @@ const Chart = ({
 
   return (
     <ApexChart
-      options={{ ...chartOptions, ...options }}
+      options={!custom && chartOptions}
       series={multipleSeries || series}
       height={height}
       key={key}
@@ -291,3 +296,8 @@ const Chart = ({
 }
 
 export default Chart
+
+export const Scatter = dynamic(
+  () => import('@ant-design/charts').then(({ Scatter }) => Scatter),
+  { ssr: false }
+)
