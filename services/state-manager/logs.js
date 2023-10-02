@@ -89,6 +89,39 @@ const useLogContext = create((set) => ({
     }
   },
   
+   getTempDbLogin: async (id, parameters) => {
+       try {
+      const { data } = await apiV2().get(`/log/temp-db/${id}/login`, {
+        params: parameters || undefined,
+      });
+      return data;
+    } catch {
+      return;
+    }
+  },
+   
+    getTempDbDatabase: async (id, parameters) => {
+       try {
+      const { data } = await apiV2().get(`/log/temp-db/${id}/database`, {
+        params: parameters || undefined,
+      });
+      return data;
+    } catch {
+      return;
+    }
+  },
+    
+    getTempDbProgramName: async (id, parameters) => {
+       try {
+      const { data } = await apiV2().get(`/log/temp-db/${id}/program-name`, {
+        params: parameters || undefined,
+      });
+      return data;
+    } catch {
+      return;
+    }
+  },
+  
     getTempDbSessionQuery: async (serverId, id) => {
        try {
       const { data } = await apiV2().get(`/log/temp-db/${serverId}/query/${id}`);

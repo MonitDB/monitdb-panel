@@ -7,6 +7,9 @@ import React, { useState } from 'react'
 import Chart from '~/components/chart'
 import Image from '~/components/image'
 
+import { TemporaryDBDatabase } from './components/Database'
+import { TemporaryDBLogin } from './components/Login'
+import { TemporaryDBProgram } from './components/Program'
 import { TemporaryDBSession } from './components/Session'
 import { TemporaryDBSummary } from './components/Summary'
 
@@ -146,75 +149,9 @@ const Temppdb = () => {
             </div>
           </>
         )}
-        {activeTabId === 'login' && (
-          <>
-            <p className="my-4 text-xs flex items-center gap-1">
-              Tempdb allocation by SQL login
-              <span className="w-[15px] h-[15px] bg-blue text-white flex items-center justify-center rounded-full cursor-pointer">
-                ?
-              </span>
-            </p>
-            <div className="bg-white min-h-96">
-              <Chart
-                height="100%"
-                legend={{
-                  show: false,
-                }}
-                xaxis={{
-                  labels: {
-                    show: false,
-                  },
-                }}
-              />
-            </div>
-          </>
-        )}
-        {activeTabId === 'program' && (
-          <>
-            <p className="my-4 text-xs flex items-center gap-1">
-              Tempdb allocation by program
-              <span className="w-[15px] h-[15px] bg-blue text-white flex items-center justify-center rounded-full cursor-pointer">
-                ?
-              </span>
-            </p>
-            <div className="bg-white min-h-96">
-              <Chart
-                height="100%"
-                legend={{
-                  show: false,
-                }}
-                xaxis={{
-                  labels: {
-                    show: false,
-                  },
-                }}
-              />
-            </div>
-          </>
-        )}
-        {activeTabId === 'database' && (
-          <>
-            <p className="my-4 text-xs flex items-center gap-1">
-              Tempdb allocation by databse
-              <span className="w-[15px] h-[15px] bg-blue text-white flex items-center justify-center rounded-full cursor-pointer">
-                ?
-              </span>
-            </p>
-            <div className="bg-white min-h-96">
-              <Chart
-                height="100%"
-                legend={{
-                  show: false,
-                }}
-                xaxis={{
-                  labels: {
-                    show: false,
-                  },
-                }}
-              />
-            </div>
-          </>
-        )}
+        {activeTabId === 'login' && <TemporaryDBLogin />}
+        {activeTabId === 'program' && <TemporaryDBProgram />}
+        {activeTabId === 'database' && <TemporaryDBDatabase />}
         {activeTabId === 'files' && (
           <p className="min-h-96 flex items-center justify-center text-xs">
             <strong>No data to display</strong>
