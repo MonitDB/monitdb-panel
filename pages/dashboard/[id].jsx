@@ -24,7 +24,7 @@ import {
   Databases,
   ErrorLog,
   Permissions,
-  Server,
+  // Server,
   ServerMetrics,
   SqlUserProcesses,
   TempDB,
