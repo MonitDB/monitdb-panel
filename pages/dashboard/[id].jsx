@@ -286,7 +286,7 @@ const SingleDashboard = () => {
                         <CpuUsage currentServer={currentServer} />
                       </Grid>
 
-                      <Server />
+                      {/* <Server /> */}
                       <ServerMetrics key={lastFetch} />
                       <Permissions currentServer={currentServer} />
                       {/* <VmwareMetrics /> */}
