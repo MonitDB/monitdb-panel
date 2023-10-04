@@ -8,7 +8,6 @@ import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
 import React, { useMemo, useState } from 'react'
 
-import Checkbox from '~/components/form/checkbox'
 import Select from '~/components/form/select'
 import Grid from '~/components/grid'
 import Loading from '~/components/loading'
