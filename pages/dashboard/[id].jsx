@@ -203,11 +203,11 @@ const SingleDashboard = () => {
                 {activeTabId === 'history' && (
                   <div className="w-full flex flex-col gap-y-6 mt-6">
                     <form
-                      className="w-full flex items-center gap-x-8 p-4 border border-gray-light
+                      className="w-full flex gap-x-8 p-4 border border-gray-light justify-end
                         bg-white text-sm"
                       onSubmit={formik.handleSubmit}
                     >
-                      <label
+                      {/* <label
                         htmlFor="cpu"
                         className="flex items-center gap-2 cursor-pointer"
                       >
@@ -236,7 +236,7 @@ const SingleDashboard = () => {
                             formik.setFieldValue('memory', value)
                           }
                         />
-                      </label>
+                      </label> */}
                       {/* <label
                         htmlFor="disk"
                         className="flex items-center gap-2 cursor-pointer"
@@ -252,8 +252,8 @@ const SingleDashboard = () => {
                           }
                         />
                       </label> */}
-                      <div className="flex items-center gap-2">
-                        <span>Frequência</span>
+
+                      <div className="flex justify-end gap-2 ">
                         <Select
                           className="w-40"
                           name="lastMinutes"
@@ -273,10 +273,12 @@ const SingleDashboard = () => {
                           }}
                         />
                       </div>
-                      <button onClick={() => setLastFetch(Date.now())}>
+                      <button
+                        className="= bg-blue text-white px-3 h-11 rounded-[5px] font-medium flex items-center gap-1"
+                        onClick={() => setLastFetch(Date.now())}
+                      >
                         Refresh
                       </button>
-                      <div>{lastFetch}</div>
                     </form>
 
                     <div id="allinstancemetrics">
