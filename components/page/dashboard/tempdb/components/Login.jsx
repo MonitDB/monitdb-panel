@@ -87,35 +87,6 @@ export const TemporaryDBLogin = () => {
                 }
               })}
             />
-            {/* <Chart
-              multipleSeries={groupBy(data ?? [], 'loginName').map((item) => {
-                return {
-                  name: item.loginName,
-                  data: item.data.map((index) => [
-                    index.dataHora,
-                    index.tempdbTotalNet,
-                  ]),
-                }
-              })}
-            /> */}
-            {/* <Line
-              xField={'dataHora'}
-              yField="tempdbTotalNet"
-              seriesField="loginName"
-              data={data ?? []}
-              xAxis={{
-                showLast: true,
-                type: 'timeCat',
-
-                alias: 'Time',
-                mask: 'DD/MM/YY HH:mm',
-              }}
-              yAxis={{
-                title: { text: 'Usage (MB)' },
-              }}
-              renderer="svg"
-              padding={60}
-            /> */}
           </>
         )}
       </div>

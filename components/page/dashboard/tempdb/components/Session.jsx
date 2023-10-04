@@ -103,18 +103,6 @@ export const TemporaryDBSession = () => {
                 },
               }}
             />
-            {/* <Scatter
-              options={options}
-              data={{
-                labels: dataTransformed?.map((item) => item.sessionId),
-                datasets: [
-                  {
-                    data: dataTransformed?.map((item) => item.tempdbTotalNet),
-                    backgroundColor: dataTransformed?.map((item) => item.color),
-                  },
-                ],
-              }}
-            /> */}
           </div>
           <div className="prose prose-thead:bg-gray-light max-w-full prose-th:capitalize prose-th:border-b-0 prose-tr:border-gray-light prose-td:text-[11px] prose-th:whitespace-nowrap prose-td:whitespace-nowrap prose-th:px-2 prose-th:h-[35px] prose-th:text-xs prose-tr:cursor-pointer overflow-x-hidden">
             <table className="m-0 py-4 prose-tr:last:!border-b overflow-x-hidden">
@@ -148,9 +136,12 @@ export const TemporaryDBSession = () => {
                         >
                           <span className="status-dot">
                             <span
-                              className="inline-block w-[13px] h-[13px] rounded-full mr-1"
+                              className="inline-block w-[13px] h-[13px] rounded-full mr-1 r-90"
                               style={{
                                 backgroundColor: item.color,
+                                transform: `scale(${
+                                  activeRowIndex === index ? 1 : 0.5
+                                })`,
                               }}
                             ></span>
                           </span>
@@ -158,6 +149,11 @@ export const TemporaryDBSession = () => {
                             width={6}
                             height={6}
                             icon={faChevronRight}
+                            style={{
+                              transform: `rotate(${
+                                activeRowIndex === index ? 90 : 0
+                              }deg)`,
+                            }}
                           />
                           <span className="ml-2">{item.sessionId}</span>
                         </div>
