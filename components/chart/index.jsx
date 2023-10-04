@@ -8,6 +8,69 @@ export const ApexChart = dynamic(
   { ssr: false }
 )
 
+export const defaultChartOptions = {
+  chart: {
+    type: 'area',
+    toolbar: {
+      show: false,
+      offsetX: '-100%',
+    },
+    zoom: {
+      enabled: false,
+    },
+    offsetX: 0,
+  },
+
+  legend: {
+    // show: !!seriesName,
+
+    showForSingleSeries: true,
+    fontSize: '11px',
+    position: 'top',
+    horizontalAlign: 'right',
+    floating: true,
+    offsetY: -20,
+    markers: {
+      width: 16,
+      height: 12,
+      radius: 0,
+      offsetY: 1,
+    },
+    itemMargin: {
+      horizontal: 0,
+      vertical: 0,
+    },
+
+    onItemClick: {
+      toggleDataSeries: false,
+    },
+  },
+  yaxis: {
+    show: true,
+    forceNiceScale: true,
+    decimalsInFloat: 2,
+  },
+  stroke: {
+    curve: 'straight',
+  },
+  title: {
+    text: '',
+    floating: true,
+    offsetY: 2,
+    offsetX: 5,
+  },
+  xaxis: {
+    // labels: {
+    //   formatter: (value) => {
+    //     return new Date(value).toLocaleString()
+    //   },
+    // },
+
+    show: false,
+    type: 'datetime',
+  },
+}
+
 const Chart = (properties) => {
   const {
     height = '200',
@@ -297,12 +360,12 @@ const Chart = (properties) => {
 
 export default Chart
 
-export const Scatter = dynamic(
-  () => import('@ant-design/charts').then(({ Scatter }) => Scatter),
-  { ssr: false }
-)
+// export const Scatter = dynamic(
+//   () => import('@ant-design/charts').then(({ Scatter }) => Scatter),
+//   { ssr: false }
+// )
 
-export const Line = dynamic(
-  () => import('@ant-design/charts').then(({ Line }) => Line),
-  { ssr: false }
-)
+// export const Line = dynamic(
+//   () => import('@ant-design/charts').then(({ Line }) => Line),
+//   { ssr: false }
+// )

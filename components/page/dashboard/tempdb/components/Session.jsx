@@ -8,7 +8,7 @@ import { useRouter } from 'next/router'
 import { useCallback, useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 
-import { Scatter } from '~/components/chart'
+import { ApexChart, defaultChartOptions } from '~/components/chart'
 import Loading from '~/components/loading/loading'
 import Reveal from '~/helpers/reveal'
 import { useSingleDashboard } from '~/hooks/index'
@@ -72,36 +72,49 @@ export const TemporaryDBSession = () => {
       ) : (
         <>
           <div className="bg-white min-h-96 p-10">
-            <Scatter
-              xField="time"
-              yField="value"
-              shape="circle"
-              color={(item) => {
-                const { time } = item
-                const data = dataTransformed?.find(
-                  (data) => new Date(data.dataHora).getTime() == time
-                )
-                return data?.color ?? '#000'
-              }}
-              size={7}
-              padding={'auto'}
-              data={dataTransformed?.map((item) => ({
-                time: item.dataHora,
-                value: item.tempdbTotalNet,
-                ['Session']: `${item.sessionId}`,
-                color: item.color,
-              }))}
-              yAxis={{
-                alias: 'Total allocated space',
-              }}
-              xAxis={{
-                showLast: true,
-                type: 'timeCat',
+            <ApexChart
+              type="scatter"
+              series={dataTransformed.map((item) => {
+                return {
+                  name: item.sessionId,
+                  data: [[item.dataHora, item.tempdbTotalNet]],
+                  color: item.color,
+                }
+              })}
+              height={'100%'}
+              options={{
+                chart: {
+                  ...defaultChartOptions.chart,
+                  type: 'scatter',
+                },
 
-                alias: 'Time',
-                mask: 'DD/MM/YY HH:mm',
+                yaxis: {
+                  labels: {
+                    formatter: (value) => `${value} MB`,
+                  },
+                },
+
+                xaxis: {
+                  type: 'datetime',
+                  labels: {
+                    formatter: (value) =>
+                      moment(value).format('DD/MM/YYYY HH:mm'),
+                  },
+                },
               }}
             />
+            {/* <Scatter
+              options={options}
+              data={{
+                labels: dataTransformed?.map((item) => item.sessionId),
+                datasets: [
+                  {
+                    data: dataTransformed?.map((item) => item.tempdbTotalNet),
+                    backgroundColor: dataTransformed?.map((item) => item.color),
+                  },
+                ],
+              }}
+            /> */}
           </div>
           <div className="prose prose-thead:bg-gray-light max-w-full prose-th:capitalize prose-th:border-b-0 prose-tr:border-gray-light prose-td:text-[11px] prose-th:whitespace-nowrap prose-td:whitespace-nowrap prose-th:px-2 prose-th:h-[35px] prose-th:text-xs prose-tr:cursor-pointer overflow-x-hidden">
             <table className="m-0 py-4 prose-tr:last:!border-b overflow-x-hidden">
@@ -238,7 +251,7 @@ export const TemporaryDBSession = () => {
                           maxWidth: '100px',
                         }}
                       >
-                        {item.tempdbTotalNet} B
+                        {item.tempdbTotalNet} MB
                       </td>
                     </tr>
                     <td colSpan={9} className="!p-0">

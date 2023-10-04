@@ -1,9 +1,11 @@
+import moment from 'moment'
 import { useRouter } from 'next/router'
 import { useCallback, useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 
-import { Line } from '~/components/chart'
+import { ApexChart, defaultChartOptions } from '~/components/chart'
 import Loading from '~/components/loading/loading'
+import { groupBy } from '~/helpers/chart-data'
 import { useSingleDashboard } from '~/hooks/index'
 import useLogContext from '~/services/state-manager/logs'
 
@@ -53,23 +55,36 @@ export const TemporaryDBProgram = () => {
           </div>
         ) : (
           <>
-            <Line
-              xField={'dataHora'}
-              yField="tempdbTotalNet"
-              seriesField="programName"
-              data={data ?? []}
-              xAxis={{
-                showLast: true,
-                type: 'timeCat',
-
-                alias: 'Time',
-                mask: 'DD/MM/YY HH:mm',
+            <ApexChart
+              height={'100%'}
+              options={{
+                ...defaultChartOptions,
+                stroke: { width: 1, curve: 'smooth' },
+                xaxis: {
+                  type: 'datetime',
+                  labels: {
+                    formatter: (value) => {
+                      return moment(value).format('DD/MM/YY HH:mm')
+                    },
+                  },
+                },
+                yaxis: {
+                  labels: {
+                    formatter: (value) => {
+                      return `${value} MB`
+                    },
+                  },
+                },
               }}
-              yAxis={{
-                title: { text: 'Usage (MB)' },
-              }}
-              renderer="svg"
-              padding={60}
+              series={groupBy(data ?? [], 'programName').map((item) => {
+                return {
+                  name: item.label,
+                  data: item.data.map((index) => [
+                    index.dataHora,
+                    index.tempdbTotalNet,
+                  ]),
+                }
+              })}
             />
           </>
         )}

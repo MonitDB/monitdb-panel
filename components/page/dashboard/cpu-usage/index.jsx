@@ -1,9 +1,10 @@
 import { useRouter } from 'next/router'
 import React, { useCallback, useEffect, useState } from 'react'
 
-import { Line } from '~/components/chart'
+import Chart from '~/components/chart'
 import Loading from '~/components/loading/loading'
 import useComponentLogContext from '~/services/state-manager/logs'
+import { dateStringToTime } from '~/utils/formats'
 
 function CpuUsage(properties) {
   const { currentServer } = properties
@@ -31,8 +32,7 @@ function CpuUsage(properties) {
     </div>
   ) : (
     <div className="col-span-2 bg-white lg:col-span-6">
-      <Line data={data} yAxis="otherProcessPerc" xAxis="createData" />
-      {/* <Chart
+      <Chart
         title={{
           text: !data ? 'Error to load the data' : 'CPU',
           offsetY: 10,
@@ -56,7 +56,7 @@ function CpuUsage(properties) {
               ]) || [],
           },
         ]}
-      /> */}
+      />
     </div>
   )
 }

@@ -1,9 +1,11 @@
+import moment from 'moment'
 import { useRouter } from 'next/router'
 import { useCallback, useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 
-import { Line } from '~/components/chart'
+import { ApexChart, defaultChartOptions } from '~/components/chart'
 import Loading from '~/components/loading/loading'
+import { groupBy } from '~/helpers/chart-data'
 import { useSingleDashboard } from '~/hooks/index'
 import useLogContext from '~/services/state-manager/logs'
 
@@ -53,7 +55,50 @@ export const TemporaryDBLogin = () => {
           </div>
         ) : (
           <>
-            <Line
+            <ApexChart
+              height={'100%'}
+              options={{
+                ...defaultChartOptions,
+                stroke: { width: 1, curve: 'smooth' },
+                xaxis: {
+                  type: 'datetime',
+                  labels: {
+                    formatter: (value) => {
+                      return moment(value).format('DD/MM/YY HH:mm')
+                    },
+                  },
+                },
+                yaxis: {
+                  labels: {
+                    formatter: (value) => {
+                      return `${value} MB`
+                    },
+                  },
+                },
+              }}
+              series={groupBy(data ?? [], 'loginName').map((item) => {
+                return {
+                  name: item.label,
+                  data: item.data.map((index) => [
+                    index.dataHora,
+                    index.tempdbTotalNet,
+                  ]),
+                  group: item.label,
+                }
+              })}
+            />
+            {/* <Chart
+              multipleSeries={groupBy(data ?? [], 'loginName').map((item) => {
+                return {
+                  name: item.loginName,
+                  data: item.data.map((index) => [
+                    index.dataHora,
+                    index.tempdbTotalNet,
+                  ]),
+                }
+              })}
+            /> */}
+            {/* <Line
               xField={'dataHora'}
               yField="tempdbTotalNet"
               seriesField="loginName"
@@ -70,7 +115,7 @@ export const TemporaryDBLogin = () => {
               }}
               renderer="svg"
               padding={60}
-            />
+            /> */}
           </>
         )}
       </div>

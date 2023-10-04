@@ -1,9 +1,10 @@
 import { useRouter } from 'next/router'
 import React, { useCallback, useEffect, useState } from 'react'
 
-import { Line } from '~/components/chart'
+import Chart from '~/components/chart'
 import Loading from '~/components/loading/loading'
 import useLogContext from '~/services/state-manager/logs'
+import { dateStringToTime } from '~/utils/formats'
 
 function MemoryUsage(properties) {
   const { currentServer } = properties
@@ -32,19 +33,7 @@ function MemoryUsage(properties) {
     </div>
   ) : (
     <div className="col-span-2 bg-white lg:col-span-6">
-      <Line
-        padding={60}
-        data={data}
-        xField="createDate"
-        yField="percentUsage"
-        xAxis={{ type: 'time', tickCount: 5, title: { text: 'Time' } }}
-        yAxis={{
-          title: { text: 'Percent Usage (%)' },
-          alias: 'Usage (%)',
-        }}
-        renderer="svg"
-      />
-      {/* <Chart
+      <Chart
         title={{
           text: !data ? 'Error to load the data' : 'Memory Usage',
           offsetY: 10,
@@ -60,7 +49,7 @@ function MemoryUsage(properties) {
               ]) || [],
           },
         ]}
-      /> */}
+      />
     </div>
   )
 }
