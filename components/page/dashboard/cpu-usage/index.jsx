@@ -20,7 +20,7 @@ function CpuUsage(properties) {
   const fetchData = useCallback(async () => {
     setLoading(true)
     const data = await getCpuUsage(currentServer?.id, {
-      LastMinutes: route.query.lastMinutes,
+      lastMinutes: route.query.lastMinutes,
     })
     setData(data)
     setLoading(false)

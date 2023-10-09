@@ -3,17 +3,6 @@ import { create } from 'zustand'
 import clientApi, { apiV2 } from '../../utils/client-api'
 import { formatObjectToQuery } from '../../utils/formats'
 
-// interface ComponentLogContext {
-//   cpuUsage: {
-//     idServer: number
-//     createData: Date
-//     sqlProcessPerc: number
-//     sysIdlePerc: number
-//     otherProcessPerc: number
-//   }[]
-//   getLogs: (parameters?: Record<string, any>, token?: string) => Promise<any>
-//   getCpuUsage: (id: number) => Promise<any>
-// }
 
 const useLogContext = create((set) => ({
   cpuUsage: [],
@@ -25,7 +14,7 @@ const useLogContext = create((set) => ({
   getCpuUsage: async (id, parameters) => {
     try {
       set({ cpuUsage: []});
-      const { data } = await clientApi().get(`/api/logcpuusage/${id || ''}`, {
+      const { data } = await apiV2().get(`/log/cpu-usage/${id || ''}`, {
         params: parameters || undefined,
       });
       set({ cpuUsage: data });

@@ -6,7 +6,7 @@ import faker from 'faker'
 import { useFormik } from 'formik'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 
 import Select from '~/components/form/select'
 import Grid from '~/components/grid'
@@ -36,6 +36,7 @@ import { SingleDashboardContextProvider } from '~/contexts/single-dashboard'
 import DatabaseIcons from '~/helpers/database-icons'
 import useGlobal from '~/hooks/use-global'
 import Layout from '~/layouts/default'
+import useServerContext from '~/services/state-manager/servers'
 /*import useComponentLogContext from '~/services/state-manager/logs'*/
 /*import { dateStringToTime } from '~/utils/formats'*/
 import { scrollToSection } from '~/utils/global'
@@ -81,11 +82,12 @@ const SingleDashboard = () => {
   } = useGlobal()
 
   const [activeTabId, setActiveTabId] = useState(tabItems[0]['id'])
+  const [serverMetrics, setServerMetrics] = useState()
   const [lastFetch, setLastFetch] = useState(Date.now())
 
-  const router = useRouter()
+  const { getServerMetrics } = useServerContext()
 
-  // const serverId = useMemo(() => router.query.id, [router?.query?.id])
+  const router = useRouter()
 
   const currentServer = useMemo(() => {
     const server = servers.find((server) => server.id === +router?.query?.id)
@@ -96,6 +98,17 @@ const SingleDashboard = () => {
 
     return formatServer(server, { serverTypes })
   }, [servers, serverTypes, router?.query?.id])
+
+  useEffect(() => {
+    if (router?.query?.id) {
+      const fetch = async () => {
+        const { data } = await getServerMetrics({ id: router?.query?.id })
+        setServerMetrics(data)
+        console.log(data)
+      }
+      fetch()
+    }
+  }, [getServerMetrics, router?.query?.id])
 
   const lastMinutesOptions = [
     { value: HOUR, label: '1 hora' },
@@ -158,14 +171,20 @@ const SingleDashboard = () => {
                           {currentServer.serverName}
                         </h4>
                         <p className="text-sm">
-                          4 GB Memory / 2 Intel vCPUs / 50 GB Disk + 25 GB /
-                          NYC1 - Plesk 18.0 on Ubuntu 20.04{' '}
+                          {serverMetrics
+                            ? `${Math.round(
+                                serverMetrics?.osProperties['Memory MB'] / 1024
+                              )}GB Memory / ${
+                                serverMetrics?.osProperties['Logic Processors']
+                              } Intel vCPUs /
+                        ${serverMetrics?.osProperties['OS_Plataform']}`
+                            : 'Loading...'}
                         </p>
                       </div>
                     </div>
                   </header>
 
-                  <div className="w-full flex items-center gap-4 py-2 px-4 border border-orange border-opacity-25 bg-orange bg-opacity-10 text-sm">
+                  {/* <div className="w-full flex items-center gap-4 py-2 px-4 border border-orange border-opacity-25 bg-orange bg-opacity-10 text-sm">
                     <div className="flex items-center justify-center w-16 h-16">
                       <FontAwesomeIcon
                         icon={faWarning}
@@ -181,7 +200,7 @@ const SingleDashboard = () => {
                         days)
                       </p>
                     </div>
-                  </div>
+                  </div> */}
                 </div>
 
                 <div className="flex items-center border-b-gray-light border-b-4">
@@ -283,13 +302,39 @@ const SingleDashboard = () => {
                     <div id="allinstancemetrics">
                       <Grid>
                         <MemoryUsage currentServer={currentServer} />
-
                         <CpuUsage currentServer={currentServer} />
                       </Grid>
 
                       {/* <Server /> */}
                       <ServerMetrics key={lastFetch} />
                       <Permissions currentServer={currentServer} />
+                      <div>
+                        <br />
+                        <h4 className="mb-4 text-sm">OS Properties</h4>
+                        <div className="w-full mb-4 prose max-w-full prose-p:m-0 prose-td:align-top prose-tr:border-gray-light prose-headings:m-0">
+                          <table className="m-0 py-4 prose-tr:last:!border-b">
+                            <tbody>
+                              <tr>
+                                <td>Edition</td>
+                                <td>
+                                  {serverMetrics?.osProperties['OS_Version']}
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>Version</td>
+                                <td>
+                                  {' '}
+                                  {serverMetrics?.osProperties['OS_Release']}
+                                </td>
+                              </tr>
+                              {/* <tr>
+                                <td>Build number</td>
+                                <td>14393</td>
+                              </tr> */}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
                       {/* <VmwareMetrics /> */}
                       <TempDB />
                       <BlockingProcesses currentServer={currentServer} />

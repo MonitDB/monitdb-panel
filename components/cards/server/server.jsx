@@ -8,7 +8,7 @@ import { Pie } from 'react-chartjs-2'
 import Link from '~/components/link'
 import DatabaseIcons from '~/helpers/database-icons'
 import useWindowSize from '~/hooks/use-window-size'
-import { getServerMetrics } from '~/services/servers'
+import useServerContext from '~/services/state-manager/servers'
 import { megaBytesToGigaBytes } from '~/utils/formats'
 import { SERVER_STATUS } from '~/utils/server'
 
@@ -58,6 +58,7 @@ const ServerCard = ({
 
   const [lastUpdated, setLastUpdated] = useState(new Date())
 
+  const { getServerMetrics } = useServerContext()
   if (interval) {
     useEffect(() => {
       const intervalId = setInterval(() => {
@@ -75,7 +76,7 @@ const ServerCard = ({
       const response = await getServerMetrics({ id })
 
       if (response?.data) {
-        const { cpu, memory } = response.data
+        const { cpu, memory, disks } = response.data
 
         setLastUpdated(new Date())
 
@@ -87,7 +88,7 @@ const ServerCard = ({
             inUsePercent:
               ((memory.total - memory.available) / memory.total) * 100,
           },
-          // disks,
+          disks,
           // serverStatus,
         })
       }

@@ -205,27 +205,6 @@ const Permissions = (properties) => {
           </div>
         </div>
       </Grid> */}
-      <div>
-        <h4 className="mb-4 text-sm">OS Properties</h4>
-        <div className="w-full mb-4 prose max-w-full prose-p:m-0 prose-td:align-top prose-tr:border-gray-light prose-headings:m-0">
-          <table className="m-0 py-4 prose-tr:last:!border-b">
-            <tbody>
-              <tr>
-                <td>Edition</td>
-                <td>Microsoft Windows Server 2016 Standard</td>
-              </tr>
-              <tr>
-                <td>Version</td>
-                <td>10.0.14393</td>
-              </tr>
-              <tr>
-                <td>Build number</td>
-                <td>14393</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
     </div>
   )
 }
