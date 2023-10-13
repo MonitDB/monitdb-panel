@@ -8,7 +8,7 @@ const SqlAgentJobs = () => {
   return (
     <PageContent removeSidebarMargin className="pt-16 space-y-10">
       <Jobs />
-      <JobsRundeck />
+      {/* <JobsRundeck /> */}
     </PageContent>
   )
 }

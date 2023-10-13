@@ -159,17 +159,17 @@ function Servers({ environmentServers, serversJobs }) {
                             }}
                           >
                             <td>{jobData['ServerId']}</td>
-                            <td>{jobData['Job Name']}</td>
-                            <td>{jobData['Enabled']}</td>
+                            <td>{jobData['jobName']}</td>
+                            <td>{jobData['enabled']}</td>
                             <td>
-                              {jobData['Job Created Date']
+                              {jobData['createdAt']
                                 ? format(
-                                    parseISO(jobData['Job Created Date']),
+                                    parseISO(jobData['createdAt']),
                                     DATE_FORMAT
                                   )
                                 : undefined}
                             </td>
-                            <td>{jobData['Frequency']}</td>
+                            <td>{jobData['frequency']}</td>
                           </tr>
                         ))}
                       </tbody>
