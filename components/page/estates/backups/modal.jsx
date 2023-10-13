@@ -1,10 +1,12 @@
-import { faClock } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { format, parseISO } from 'date-fns'
+// import { faClock } from '@fortawesome/free-solid-svg-icons'
+// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+// import { format, parseISO } from 'date-fns'
+import moment from 'moment'
 import React from 'react'
 
-import { dateFormat } from '~/components/page/estates/backups/environment-servers-backups'
-import { megaBytesToGigaBytes } from '~/utils/formats'
+import { ApexChart, defaultChartOptions } from '~/components/chart'
+// import { dateFormat } from '~/components/page/estates/backups/environment-servers-backups'
+// import { megaBytesToGigaBytes } from '~/utils/formats'
 
 function DatabaseBackupsModal({ modal: { isOpen, data }, onSetModalData }) {
   function getMostAmountOfArrayBackups() {
@@ -25,6 +27,18 @@ function DatabaseBackupsModal({ modal: { isOpen, data }, onSetModalData }) {
   if (!isOpen) return <></>
 
   const arraySize = Array.from({ length: getMostAmountOfArrayBackups() })
+  const full = []
+  const differential = []
+  const log = []
+  if (arraySize)
+    for (const [index, _] of arraySize.entries()) {
+      const FULL = data.Full.allBackups[index]
+      const DIFERENTIAL = data.Diferential.allBackups[index]
+      const LOG = data.Log.allBackups[index]
+      if (FULL) full.push(FULL)
+      if (DIFERENTIAL) differential.push(DIFERENTIAL)
+      if (LOG) log.push(LOG)
+    }
 
   return (
     <div className="fixed flex items-center justify-center top-0 left-0 w-full min-h-full h-full z-[100]">
@@ -44,7 +58,71 @@ function DatabaseBackupsModal({ modal: { isOpen, data }, onSetModalData }) {
           <i className="absolute block w-full h-[2px] rotate-45 bg-black bg-opacity-75" />
           <i className="absolute block  w-full h-[2px] -rotate-45 bg-black bg-opacity-75" />
         </button>
-        <div className="relative flex items-center justify-center prose max-w-full prose-p:m-0 prose-th:align-middle prose-td:align-middle prose-th:border prose-th:border-l-0 prose-td:border prose-td:border-t-0 prose-td:border-l-0 prose-th:border-gray-light prose-td:border-gray-light prose-thead:mt-0 prose-headings:m-0 prose-ul:m-0 prose-ul:pl-0 prose-li:m-0 prose-li:pl-0 prose-th:px-2.5 prose-td:px-2.5 prose-table:border-l prose-table:border-gray-light prose-table:table-fixed prose-table:border-separate prose-table:border-spacing-0">
+
+        <ApexChart
+          type="scatter"
+          series={[
+            {
+              name: 'FULL',
+              data: full.map((item) => {
+                return [
+                  item.backup_start_date,
+                  item.backup_size,
+                  undefined,
+                  item,
+                ]
+              }),
+            },
+
+            {
+              name: 'LOG',
+              // eslint-disable-next-line sonarjs/no-identical-functions
+              data: log.map((item) => {
+                return [
+                  item.backup_start_date,
+                  item.backup_size,
+                  undefined,
+                  item,
+                ]
+              }),
+            },
+            {
+              name: 'DIFFERENTIAL',
+
+              // eslint-disable-next-line sonarjs/no-identical-functions
+              data: differential.map((item) => {
+                return [
+                  item.backup_start_date,
+                  item.backup_size,
+                  undefined,
+                  item,
+                ]
+              }),
+            },
+          ]}
+          height={'100%'}
+          options={{
+            chart: {
+              ...defaultChartOptions.chart,
+              type: 'scatter',
+            },
+
+            yaxis: {
+              labels: {
+                formatter: (value) => `${Math.round(value / 1024 / 1024)} MB`,
+              },
+            },
+
+            xaxis: {
+              type: 'datetime',
+              labels: {
+                formatter: (value) => moment(value).format('DD/MM/YYYY HH:mm'),
+              },
+            },
+          }}
+        />
+
+        {/* <div className="relative flex items-center justify-center prose max-w-full prose-p:m-0 prose-th:align-middle prose-td:align-middle prose-th:border prose-th:border-l-0 prose-td:border prose-td:border-t-0 prose-td:border-l-0 prose-th:border-gray-light prose-td:border-gray-light prose-thead:mt-0 prose-headings:m-0 prose-ul:m-0 prose-ul:pl-0 prose-li:m-0 prose-li:pl-0 prose-th:px-2.5 prose-td:px-2.5 prose-table:border-l prose-table:border-gray-light prose-table:table-fixed prose-table:border-separate prose-table:border-spacing-0">
           <div className="p-8 bg-white max-h-[80vh] overflow-auto">
             <table className="m-0">
               <thead className="bg-white sticky -top-[32px]">
@@ -185,7 +263,7 @@ function DatabaseBackupsModal({ modal: { isOpen, data }, onSetModalData }) {
               </tbody>
             </table>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   )

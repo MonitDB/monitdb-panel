@@ -1,4 +1,4 @@
-import clientApi from '~/utils/client-api'
+import clientApi, { apiV2 } from '~/utils/client-api'
 
 export const getVersions = async () => {
   return clientApi().get(`/api/execcomponent/PRVER`)
@@ -9,7 +9,7 @@ export const getBackups = async () => {
 }
 
 export const getDiskUsage = async () => {
-  return clientApi().get(`/api/execcomponent/prdisks`)
+  return apiV2().get(`/states/disks`)
 }
 
 export const getSqlServerLicensing = async () => {

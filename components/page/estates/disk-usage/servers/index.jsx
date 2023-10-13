@@ -85,31 +85,38 @@ const Servers = ({ environmentServers, diskUsage }) => {
                   </thead>
 
                   <tbody>
-                    {filteredDiskUsage.map((disk, index) => (
-                      <tr key={`server-production-${index}`}>
-                        <td>
-                          <p>
-                            <Link
-                              href="/estates/?tab=disk-usage"
-                              className="text-blue no-underline"
-                            >
-                              {disk.Drive ? `${disk.Drive}:` : disk.Volume}
-                            </Link>
-                          </p>
-                        </td>
-                        <td>{disk['Usage(MB)']} MB</td>
-                        <td>{disk['Total(MB)']} MB</td>
-                        <td>
-                          {getPercentage(
-                            disk['Usage(MB)'],
-                            disk['Total(MB)']
-                          ).toFixed(2)}
-                          %
-                        </td>
-                        <td>{disk['Free(MB)']} MB</td>
-                        <td>{disk['Free(%)']}%</td>
-                      </tr>
-                    ))}
+                    {filteredDiskUsage.map((disk, index) => {
+                      const usage = disk['Usage(MB)']
+                      const total =
+                        disk['Total(MB)'] ??
+                        disk['Free(MB)'][0] + disk['Free(MB)'][1]
+
+                      const free = disk['Free(MB)']
+                      const usedPercentage = 100 - disk['Free(%)']
+                      const freePercentage = disk['Free(%)']
+                      return (
+                        <tr key={`server-production-${index}`}>
+                          <td>
+                            <p>
+                              <Link
+                                href="/estates/?tab=disk-usage"
+                                className="text-blue no-underline"
+                              >
+                                {disk.Drive ? `${disk.Drive}:` : disk.Volume}
+                              </Link>
+                            </p>
+                          </td>
+                          <td>{usage} MB</td>
+                          <td>
+                            {total}
+                            MB
+                          </td>
+                          <td>{usedPercentage.toFixed(2)}%</td>
+                          <td>{free} MB</td>
+                          <td>{freePercentage}%</td>
+                        </tr>
+                      )
+                    })}
                   </tbody>
                 </table>
               </div>

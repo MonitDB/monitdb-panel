@@ -50,8 +50,7 @@ function Jobs() {
 
   useEffect(() => {
     getData()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [getData])
 
   return (
     <section className="space-y-4">
@@ -99,12 +98,10 @@ function Jobs() {
                           `w-full py-2 px-4 bg-white border space-x-4
                   rounded-sm font-bold text-left text-sm lg:hover:border-gray`,
                           {
-                            'border-gray': environmentExpandedIndices.has(
-                              environmentIndex
-                            ),
-                            'border-gray-light': !environmentExpandedIndices.has(
-                              environmentIndex
-                            ),
+                            'border-gray':
+                              environmentExpandedIndices.has(environmentIndex),
+                            'border-gray-light':
+                              !environmentExpandedIndices.has(environmentIndex),
                           }
                         )}
                         onClick={() =>
@@ -114,21 +111,18 @@ function Jobs() {
                         <FontAwesomeIcon
                           icon={faChevronDown}
                           className={classNames('transform', {
-                            'rotate-180': environmentExpandedIndices.has(
-                              environmentIndex
-                            ),
+                            'rotate-180':
+                              environmentExpandedIndices.has(environmentIndex),
                           })}
                         />
                         <span>{typeServerEnvironmentName}</span>
                       </button>
                       <div
                         className={classNames({
-                          block: environmentExpandedIndices.has(
-                            environmentIndex
-                          ),
-                          hidden: !environmentExpandedIndices.has(
-                            environmentIndex
-                          ),
+                          block:
+                            environmentExpandedIndices.has(environmentIndex),
+                          hidden:
+                            !environmentExpandedIndices.has(environmentIndex),
                         })}
                       >
                         <Servers
