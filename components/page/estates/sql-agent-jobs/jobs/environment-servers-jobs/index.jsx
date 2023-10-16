@@ -52,13 +52,6 @@ function Servers({ environmentServers, serversJobs }) {
     [activeTableRowIndex]
   )
 
-  // eslint-disable-next-line no-console
-  console.log({
-    jobsExe,
-    currentRunsJob,
-    activeTableRowIndex,
-  })
-
   const handleServerExpandedIndices = useCallback(
     (index) => {
       const indices = new Set(serverExpandedIndices)
