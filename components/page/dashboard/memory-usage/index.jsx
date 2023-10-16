@@ -28,7 +28,7 @@ function MemoryUsage(properties) {
   }, [getMemoryUsage, currentServer?.id, route.query.lastMinutes])
 
   return loading ? (
-    <div className="col-span-2 bg-white lg:col-span-6">
+    <div className="col-span-2 bg-white lg:col-span-6 h-200 flex items-center justify-center">
       <Loading />
     </div>
   ) : (

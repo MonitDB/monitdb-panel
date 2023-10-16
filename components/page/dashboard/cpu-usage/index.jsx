@@ -19,15 +19,16 @@ function CpuUsage(properties) {
 
   const fetchData = useCallback(async () => {
     setLoading(true)
+
     const data = await getCpuUsage(currentServer?.id, {
-      lastMinutes: route.query.lastMinutes,
+      lastMinutes: route.query.lastMinutes ?? 60,
     })
     setData(data)
     setLoading(false)
   }, [getCpuUsage, currentServer?.id, route.query.lastMinutes])
 
   return loading ? (
-    <div className="col-span-2 bg-white lg:col-span-6">
+    <div className="col-span-2 bg-white lg:col-span-6 h-200 flex items-center justify-center">
       <Loading />
     </div>
   ) : (
@@ -43,16 +44,16 @@ function CpuUsage(properties) {
             name: '% Other process',
             data:
               data?.map((usage) => [
-                dateStringToTime(usage.createData),
-                usage.otherProcessPerc,
+                dateStringToTime(usage.createDate),
+                usage.otherProcess,
               ]) || [],
           },
           {
             name: '% SQL process',
             data:
               data?.map((usage) => [
-                dateStringToTime(usage.createData),
-                usage.sqlProcessPerc,
+                dateStringToTime(usage.createDate),
+                usage.sqlProcess,
               ]) || [],
           },
         ]}

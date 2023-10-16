@@ -28,6 +28,25 @@ function BlockingProcesses(properties) {
     setLoading(false)
   }, [currentServer?.id, executeQueryComponent])
 
+  if (loading) {
+    return (
+      <div style={{ width: '100%' }}>
+        <div className="grid grid-cols-[26px_auto_1fr] gap-2 items-center my-8">
+          <Image
+            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAATAQMAAAC0i49FAAAABlBMVEUAAAB3d3daxsy0AAAAAXRSTlMAQObYZgAAACdJREFUCNdj/M/AcJDh//8DDkwMQAAmGMFicADhfmBgIKTk/wcMJQBnHBDweU6BeQAAAABJRU5ErkJggg=="
+            width="26"
+            height="18"
+          />
+          <h3 className="text-sm text-gray-dark font-bold">
+            Blocking processes (top 10 by time)
+          </h3>
+          <span className="w-full h-[1px] block bg-gray-light" />
+        </div>
+        <Loading />
+      </div>
+    )
+  }
+
   return (
     <div id="blocking-processes" className="mt-4">
       <div className="grid grid-cols-[26px_auto_1fr] gap-2 items-center my-8">
@@ -57,7 +76,9 @@ function BlockingProcesses(properties) {
           </thead>
           <tbody>
             {loading ? (
-              <Loading />
+              <div className="bg-black" style={{ width: '100%' }}>
+                <Loading />
+              </div>
             ) : // eslint-disable-next-line unicorn/no-nested-ternary
             data === undefined ? (
               <tr>
