@@ -42,8 +42,6 @@ function Jobs() {
   const getData = useCallback(async () => {
     const { data } = await getSqlAgentPRjobs()
 
-    console.log('AgentPRjobs', data)
-
     setSqlAgentPRjobs(data)
     setIsLoading(false)
   }, [])

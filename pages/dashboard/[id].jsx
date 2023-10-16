@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
-import { faWarning } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+// import { faWarning } from '@fortawesome/free-solid-svg-icons'
+// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import classNames from 'classnames'
 import faker from 'faker'
 import { useFormik } from 'formik'

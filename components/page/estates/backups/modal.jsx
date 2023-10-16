@@ -31,7 +31,7 @@ function DatabaseBackupsModal({ modal: { isOpen, data }, onSetModalData }) {
   const differential = []
   const log = []
   if (arraySize)
-    for (const [index, _] of arraySize.entries()) {
+    for (const [index] of arraySize.entries()) {
       const FULL = data.Full.allBackups[index]
       const DIFERENTIAL = data.Diferential.allBackups[index]
       const LOG = data.Log.allBackups[index]

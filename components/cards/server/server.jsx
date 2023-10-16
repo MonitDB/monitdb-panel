@@ -14,7 +14,8 @@ import { SERVER_STATUS } from '~/utils/server'
 
 ChartJS.register(ArcElement, Tooltip, Legend)
 
-const getPieChartData = ({ availablePercent }) => {
+const getPieChartData = (data) => {
+  const availablePercent = data['Free(%)']
   const inUserPercentage = 100 - availablePercent
   let inUseColor = '#5046e5'
 
@@ -29,7 +30,7 @@ const getPieChartData = ({ availablePercent }) => {
     datasets: [
       {
         data: [inUserPercentage, availablePercent],
-        backgroundColor: [inUseColor, '#d3d3d3'],
+        backgroundColor: [inUseColor, '#a56767'],
       },
     ],
   }
@@ -95,7 +96,7 @@ const ServerCard = ({
     } catch (error) {
       console.error(error) // eslint-disable-line no-console
     }
-  }, [id])
+  }, [getServerMetrics, id])
 
   useEffect(() => {
     setTooltipPosition(
@@ -267,7 +268,7 @@ const ServerCard = ({
             {metrics.disks.map((disk, index) => (
               <div key={`server-${id}-disk-${index}`} className="col-span-1">
                 <p className="text-center text-xs">
-                  <strong>{disk.driveName}</strong>
+                  <strong>{disk.Drive}</strong>
                 </p>
                 <Pie
                   data={getPieChartData(disk)}
@@ -279,9 +280,13 @@ const ServerCard = ({
                   }}
                 />
                 <p className="text-center text-[10px] whitespace-nowrap">
-                  {Number.parseInt(100 - disk.availablePercent)}% in use
+                  {Number.parseInt(100 - disk['Usage(%)'])}% in use
                   <br />
-                  {getDiskTotal(disk)} total
+                  {getDiskTotal({
+                    total: disk['Total(MB)'],
+                    unitType: 'MB',
+                  })}{' '}
+                  total
                 </p>
               </div>
             ))}

@@ -31,7 +31,7 @@ function Servers({ environmentServers, serversJobs }) {
             ({ ServerId, Step_Id, Job }) =>
               Step_Id === 0 &&
               ServerId === jobModal.jobData.ServerId &&
-              Job === jobModal.jobData['Job Name']
+              Job === jobModal.jobData['jobName']
           )
         : [],
     [jobModal, jobsExe]

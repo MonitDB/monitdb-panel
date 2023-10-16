@@ -45,6 +45,7 @@ const Servers = ({ environmentServers, diskUsage }) => {
         if (filteredDiskUsage.length === 0) {
           return ''
         }
+
         return (
           <div key={`environment-server-${index}`}>
             <button

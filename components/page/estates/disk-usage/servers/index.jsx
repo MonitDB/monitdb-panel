@@ -8,7 +8,8 @@ import React, { useCallback, useState } from 'react'
 
 import Link from '~/components/link'
 import Reveal from '~/helpers/reveal'
-import { getPercentage } from '~/utils/global'
+import { megaBytesToGigaBytes } from '~/utils/formats'
+// import { getPercentage } from '~/utils/global'
 
 const Servers = ({ environmentServers, diskUsage }) => {
   const [serverExpandedIndices, setServerExpandedIndices] = useState(new Set())
@@ -87,9 +88,7 @@ const Servers = ({ environmentServers, diskUsage }) => {
                   <tbody>
                     {filteredDiskUsage.map((disk, index) => {
                       const usage = disk['Usage(MB)']
-                      const total =
-                        disk['Total(MB)'] ??
-                        disk['Free(MB)'][0] + disk['Free(MB)'][1]
+                      const total = disk['Total(MB)']
 
                       const free = disk['Free(MB)']
                       const usedPercentage = 100 - disk['Free(%)']
@@ -102,17 +101,17 @@ const Servers = ({ environmentServers, diskUsage }) => {
                                 href="/estates/?tab=disk-usage"
                                 className="text-blue no-underline"
                               >
-                                {disk.Drive ? `${disk.Drive}:` : disk.Volume}
+                                {disk.Drive}
                               </Link>
                             </p>
                           </td>
-                          <td>{usage} MB</td>
+                          <td>{megaBytesToGigaBytes(usage)} GB</td>
                           <td>
-                            {total}
-                            MB
+                            {megaBytesToGigaBytes(total)}
+                            GB
                           </td>
-                          <td>{usedPercentage.toFixed(2)}%</td>
-                          <td>{free} MB</td>
+                          <td>{megaBytesToGigaBytes(usedPercentage)}%</td>
+                          <td>{megaBytesToGigaBytes(free)} GB</td>
                           <td>{freePercentage}%</td>
                         </tr>
                       )
