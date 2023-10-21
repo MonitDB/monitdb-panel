@@ -4,10 +4,10 @@ import { saveAs } from 'file-saver'
 import React from 'react'
 import * as XLSX from 'xlsx'
 
-const ExportButton = ({ data, fileName }) => {
+const ExportButton = ({ data, fileName, disabled, className }) => {
   const handleExportClick = () => {
     const wb = XLSX.utils.book_new()
-    const ws = XLSX.utils.json_to_sheet(data)
+    const ws = XLSX.utils.json_to_sheet(data ?? [{}])
 
     XLSX.utils.book_append_sheet(wb, ws, 'Planilha1')
 
@@ -24,8 +24,9 @@ const ExportButton = ({ data, fileName }) => {
 
   return (
     <button
+      disabled={disabled}
       type="button"
-      className="btn btn--small"
+      className={className ?? 'btn btn--small'}
       onClick={handleExportClick}
     >
       <FontAwesomeIcon icon={faFileExport} className="mr-2" />

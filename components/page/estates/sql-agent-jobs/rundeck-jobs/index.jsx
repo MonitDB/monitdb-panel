@@ -1,12 +1,10 @@
 /* eslint-disable no-console */
-import {
-  faArrowUpRightFromSquare,
-  faFileExport,
-} from '@fortawesome/free-solid-svg-icons'
+import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { format, parseISO } from 'date-fns'
 import React, { useCallback, useEffect, useState } from 'react'
 
+import ExportButton from '~/components/export-button'
 import Link from '~/components/link'
 import Loading from '~/components/loading'
 import { getSqlAgentRundeckJobs } from '~/services/estates'
@@ -21,8 +19,6 @@ function RundeckJobs() {
     const { data } = await getSqlAgentRundeckJobs()
 
     if (!data) return
-
-    console.log('Rundeck Jobs', data)
 
     setRundeckJobs(data.executions)
     setIsLoading(false)
@@ -39,14 +35,13 @@ function RundeckJobs() {
         <div className="w-full md:w-3/4">
           <h2 className="heading-md">Jobs Rundeck</h2>
         </div>
-        <button
-          disabled={isLoading}
-          type="button"
+
+        <ExportButton
           className="btn btn--small md:ml-auto"
-        >
-          <FontAwesomeIcon icon={faFileExport} className="mr-2" />
-          Exportar
-        </button>
+          disabled={isLoading}
+          fileName={'RUNDECK_JOBS'}
+          data={rundeckJobs}
+        />
       </header>
 
       {isLoading ? (

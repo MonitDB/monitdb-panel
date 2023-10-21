@@ -1,8 +1,4 @@
-import {
-  faDatabase,
-  faDownload,
-  faFileExport,
-} from '@fortawesome/free-solid-svg-icons'
+import { faDatabase, faDownload } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   ArcElement,
@@ -20,6 +16,7 @@ import { format, parseISO } from 'date-fns'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { getElementAtEvent, Pie } from 'react-chartjs-2'
 
+import ExportButton from '~/components/export-button'
 import Loading from '~/components/loading'
 import { PageContent } from '~/components/page'
 import useGlobal from '~/hooks/use-global'
@@ -194,7 +191,8 @@ const InstalledVersions = ({ tabName }) => {
     <div className="relative">
       <div
         className={classNames({
-          'absolute top-9 left-0 w-full h-full z-10 bg-white bg-opacity-30': isLoading,
+          'absolute top-9 left-0 w-full h-full z-10 bg-white bg-opacity-30':
+            isLoading,
         })}
       />
       <PageContent
@@ -275,10 +273,12 @@ const InstalledVersions = ({ tabName }) => {
 
               <div className="w-full prose max-w-full prose-p:m-0 prose-td:align-top prose-th:border-b-4 prose-headings:m-0">
                 <header className="flex flex-col mb-5 md:flex-row md:justify-between md:items-center">
-                  <button type="button" className="btn btn--small md:ml-auto">
-                    <FontAwesomeIcon icon={faFileExport} className="mr-2" />
-                    Exportar
-                  </button>
+                  <ExportButton
+                    className="btn btn--small md:ml-auto"
+                    data={versions}
+                    fileName={'VERSIONS_'}
+                    disabled={isLoading}
+                  />
                 </header>
 
                 <div className="-mx-4 py-4 px-8 bg-white md:-mx-6">
@@ -299,12 +299,11 @@ const InstalledVersions = ({ tabName }) => {
                             { id, typeServerEnvironmentName },
                             environmentIndex
                           ) => {
-                            const filteredServers = filterServersByEnvironmentId(
-                              id,
-                              servers
-                            ).map((server) =>
-                              formatServer(server, { serverTypes })
-                            )
+                            const filteredServers =
+                              filterServersByEnvironmentId(id, servers).map(
+                                (server) =>
+                                  formatServer(server, { serverTypes })
+                              )
 
                             const filteredVersions = []
 

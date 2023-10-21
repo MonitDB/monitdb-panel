@@ -2,7 +2,6 @@ import {
   faCheck,
   faChevronRight,
   faDownload,
-  faFileExport,
   faXmark,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -22,6 +21,7 @@ import { useState } from 'react'
 import React from 'react'
 import { Line, Pie } from 'react-chartjs-2'
 
+import ExportButton from '~/components/export-button'
 import Reveal from '~/helpers/reveal'
 
 ChartJS.register(
@@ -170,10 +170,7 @@ const InstalledVersions = () => {
 
       <div className="w-full prose max-w-full">
         <header className="flex flex-col mb-5 md:flex-row md:justify-between md:items-center">
-          <button type="button" className="btn btn--small md:ml-auto">
-            <FontAwesomeIcon icon={faFileExport} className="mr-2" />
-            Exportar
-          </button>
+          <ExportButton data={tableDataItems} fileName={'INSTALLED_VERSIONS'} />
         </header>
 
         <table className="m-0">

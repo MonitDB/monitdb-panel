@@ -1,10 +1,10 @@
-import { faFileExport } from '@fortawesome/free-solid-svg-icons'
 /* eslint-disable sonarjs/no-duplicate-string */
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import classNames from 'classnames'
 import React, { useCallback, useEffect, useState } from 'react'
 
+import ExportButton from '~/components/export-button'
 import Loading from '~/components/loading'
 import { PageContent } from '~/components/page'
 import Servers from '~/components/page/estates/disk-usage/servers'
@@ -68,14 +68,11 @@ const DiskUsage = ({ tabName }) => {
       >
         <header className="pt-8 w-full flex flex-col md:flex-row md:justify-between md:items-end">
           <h1 className="heading-lg">{tabName}</h1>
-          <button
-            type="button"
-            className="btn btn--small md:ml-auto"
+          <ExportButton
             disabled={isLoading}
-          >
-            <FontAwesomeIcon icon={faFileExport} className="mr-2" />
-            Exportar
-          </button>
+            data={diskUsage}
+            fileName={'DISK_USAGE'}
+          />
         </header>
       </PageContent>
 
@@ -106,12 +103,14 @@ const DiskUsage = ({ tabName }) => {
                               `w-full py-2 px-4 bg-white border space-x-4
                     rounded-sm font-bold text-left text-sm lg:hover:border-gray`,
                               {
-                                'border-gray': environmentExpandedIndices.has(
-                                  environmentIndex
-                                ),
-                                'border-gray-light': !environmentExpandedIndices.has(
-                                  environmentIndex
-                                ),
+                                'border-gray':
+                                  environmentExpandedIndices.has(
+                                    environmentIndex
+                                  ),
+                                'border-gray-light':
+                                  !environmentExpandedIndices.has(
+                                    environmentIndex
+                                  ),
                               }
                             )}
                             onClick={() =>
@@ -121,21 +120,24 @@ const DiskUsage = ({ tabName }) => {
                             <FontAwesomeIcon
                               icon={faChevronDown}
                               className={classNames('transform', {
-                                'rotate-180': environmentExpandedIndices.has(
-                                  environmentIndex
-                                ),
+                                'rotate-180':
+                                  environmentExpandedIndices.has(
+                                    environmentIndex
+                                  ),
                               })}
                             />
                             <span>{typeServerEnvironmentName}</span>
                           </button>
                           <div
                             className={classNames({
-                              block: environmentExpandedIndices.has(
-                                environmentIndex
-                              ),
-                              hidden: !environmentExpandedIndices.has(
-                                environmentIndex
-                              ),
+                              block:
+                                environmentExpandedIndices.has(
+                                  environmentIndex
+                                ),
+                              hidden:
+                                !environmentExpandedIndices.has(
+                                  environmentIndex
+                                ),
                             })}
                           >
                             <Servers

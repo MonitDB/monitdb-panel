@@ -1,9 +1,10 @@
-import { faArrowRight, faFileExport } from '@fortawesome/free-solid-svg-icons'
+import { faArrowRight } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useFormik } from 'formik'
 import { NextSeo } from 'next-seo'
 import React, { useMemo } from 'react'
 
+import ExportButton from '~/components/export-button'
 import Selector from '~/components/form/selector'
 // import Checkbox from '~/components/form/checkbox'
 import Link from '~/components/link'
@@ -130,10 +131,7 @@ const AnalysisPage = () => {
                   </Link>
                 </li>
               </ul>
-              <button type="button" className="btn btn--small">
-                <FontAwesomeIcon icon={faFileExport} className="mr-2" />
-                Exportar
-              </button>
+              <ExportButton fileName="ANALISYS" />
             </div>
           </PageContent>
 

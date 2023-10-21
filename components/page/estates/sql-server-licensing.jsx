@@ -1,7 +1,6 @@
-import { faFileExport } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { useEffect, useState } from 'react'
 
+import ExportButton from '~/components/export-button'
 import Loading from '~/components/loading'
 import { PageContent } from '~/components/page'
 import useGlobal from '~/hooks/use-global'
@@ -54,10 +53,11 @@ const SqlServerLicensing = ({ tabName }) => {
             <div className="w-full md:w-3/4">
               <h2 className="heading-md">Licence Info</h2>
             </div>
-            <button type="button" className="btn btn--small md:ml-auto">
-              <FontAwesomeIcon icon={faFileExport} className="mr-2" />
-              Exportar
-            </button>
+
+            <ExportButton
+              data={sqlServerLicensing}
+              fileName={'SQL_SERVER_LICENSING'}
+            />
           </header>
 
           <div className="-mx-4 py-4 px-8 bg-white md:-mx-6">
