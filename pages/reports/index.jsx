@@ -20,6 +20,7 @@ import {
   PageSidebarTitle,
   PageWrapper,
 } from '~/components/page'
+import { GenericTable } from '~/components/table/genericTable'
 import useGlobal from '~/hooks/use-global'
 import Layout from '~/layouts/default'
 import { getRepostsByType } from '~/services/reports'
@@ -105,11 +106,9 @@ const ReportsPage = () => {
     setIsLoading(true)
 
     try {
-      const response = await getRepostsByType({ type: typeActive?.slug })
+      const { data } = await getRepostsByType({ type: typeActive?.slug })
 
-      response?.data?.result.length > 0
-        ? setData(filterData(response.data.result, { servers }))
-        : setData([])
+      setData(data)
     } catch (error) {
       console.error(error) // eslint-disable-line no-console
       setData({})
@@ -143,13 +142,13 @@ const ReportsPage = () => {
 
   return (
     <>
-      <NextSeo title="Relatórios - MonitDB" />
+      <NextSeo title="Report - MonitDB" />
       <Layout>
         <PageWrapper className="p-8">
           <PageSidebar>
             <header className="mb-4">
               <PageSidebarTitle>
-                <span>Tipos de relatório</span>
+                <span>Reports types</span>
               </PageSidebarTitle>
             </header>
             <div>
@@ -174,7 +173,7 @@ const ReportsPage = () => {
               className="w-full flex flex-col space-y-4 xl:space-x-4 xl:space-y-0 xl:flex-row"
               onSubmit={formik.handleSubmit}
             >
-              <div className="relative min-w-56">
+              {/* <div className="relative min-w-56">
                 <input
                   type="text"
                   name="name"
@@ -193,7 +192,7 @@ const ReportsPage = () => {
                     className="text-sm text-gray lg:group-hover:text-gray-dark"
                   />
                 </button>
-              </div>
+              </div> */}
               <Selector
                 name="servers"
                 options={serversOptions}
@@ -227,7 +226,7 @@ const ReportsPage = () => {
                 {data?.length > 0 ? (
                   <button type="button" className="btn btn--small">
                     <FontAwesomeIcon icon={faFileExport} className="mr-2" />
-                    Exportar
+                    Export
                   </button>
                 ) : (
                   ''
@@ -242,46 +241,7 @@ const ReportsPage = () => {
             )}
 
             {!isLoading ? (
-              <>
-                {data?.length > 0 ? (
-                  <div className="w-full prose max-w-full">
-                    <table className="m-0">
-                      <thead>
-                        <tr>
-                          {Object.keys(data[0]).map((colName, colNameIndex) => (
-                            <th key={`cols-${typeActive.slug}-${colNameIndex}`}>
-                              {colName}
-                            </th>
-                          ))}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {data.map((item, itemIndex) => (
-                          <tr key={`item-tr-${typeActive.slug}-${itemIndex}`}>
-                            {Object.keys(item).map((colName, colNameIndex) => (
-                              <td
-                                key={`item-td-${typeActive.slug}-${colNameIndex}`}
-                              >
-                                {colName === 'server' && (
-                                  <div className="flex items-center space-x-1">
-                                    <FontAwesomeIcon icon={faDatabase} />
-                                    <span>{item[colName]?.serverName}</span>
-                                  </div>
-                                )}
-                                {colName !== 'server' && item[colName]}
-                              </td>
-                            ))}
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                ) : (
-                  <div>
-                    <p>Nenhum dado encontrado.</p>
-                  </div>
-                )}
-              </>
+              <>{data.length > 0 ? <GenericTable data={data} /> : 'No Data'}</>
             ) : (
               ''
             )}

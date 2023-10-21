@@ -1,5 +1,5 @@
-import clientApi from '~/utils/client-api'
+import { apiV2 } from '~/utils/client-api'
 
 export const getRepostsByType = async ({ type }) => {
-  return clientApi().get(`/component/${type}`)
+  return apiV2().get(`component/execute-component/${type}`)
 }
