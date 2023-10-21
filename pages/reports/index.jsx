@@ -1,11 +1,10 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { faFileExport } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import classNames from 'classnames'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
 import React, { useEffect, useMemo, useState } from 'react'
 
+import ExportButton from '~/components/export-button'
 import { Select } from '~/components/form'
 import Link from '~/components/link'
 import Loading from '~/components/loading'
@@ -152,14 +151,9 @@ const ReportsPage = () => {
             {typeActive?.name && (
               <header className="flex flex-col mb-5 md:flex-row md:justify-between md:items-center">
                 <h3 className="mb-5 heading-md md:mb-0">{typeActive?.name}</h3>
-                {data?.length > 0 ? (
-                  <button type="button" className="btn btn--small">
-                    <FontAwesomeIcon icon={faFileExport} className="mr-2" />
-                    Export
-                  </button>
-                ) : (
-                  ''
-                )}
+                {data?.length > 0
+                  ? !isLoading && <ExportButton data={data} />
+                  : ''}
               </header>
             )}
 
