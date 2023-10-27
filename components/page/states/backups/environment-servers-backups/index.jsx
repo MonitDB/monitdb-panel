@@ -6,7 +6,7 @@ import { faChevronDown } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import classNames from 'classnames'
 import { format, parseISO } from 'date-fns'
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 
 import Reveal from '~/helpers/reveal'
 import { separeteBackups } from '~/utils/backups'
@@ -34,7 +34,12 @@ function getIntervalTime(backup_start_date, backup_finish_date) {
   }`
 }
 
-const EnvironmentServersBackups = ({ servers, onSetBackupsModal, backups }) => {
+const EnvironmentServersBackups = ({
+  servers,
+  onSetBackupsModal,
+  backups,
+  expand,
+}) => {
   const [serverExpandedIndices, setServerExpandedIndices] = useState(new Set())
 
   const handleServerExpandedIndices = useCallback(
@@ -51,6 +56,13 @@ const EnvironmentServersBackups = ({ servers, onSetBackupsModal, backups }) => {
     },
     [serverExpandedIndices]
   )
+
+  useEffect(() => {
+    if (expand) {
+      const allEnvironmentIndices = servers.map((_, index) => index)
+      setServerExpandedIndices(new Set(allEnvironmentIndices))
+    }
+  }, [expand])
 
   return (
     <div className="p-3 pb-0 space-y-3">

@@ -29,6 +29,7 @@ const Backups = ({ tabName }) => {
 
   const [isLoading, setIsLoading] = useState(true)
   const [backups, setBackups] = useState([])
+  const [expand, setExpand] = useState(false)
 
   const handleEnvironmentExpandedIndices = useCallback(
     (index) => {
@@ -73,8 +74,24 @@ const Backups = ({ tabName }) => {
         hideBreadcrumbs={true}
         className="flex flex-wrap items-start justify-between"
       >
-        <header className="pt-8 w-full">
+        <header className="pt-8 w-full flex flex-col md:flex-row md:justify-between md:items-end">
           <h1 className="heading-lg">{tabName}</h1>
+          <button
+            type="button"
+            className={'btn btn--small mr-[10px]'}
+            onClick={() => {
+              const allEnvironmentIndices = serverEnvironments.map(
+                (_, index) => index
+              )
+              setEnvironmentExpandedIndices(new Set(allEnvironmentIndices))
+              setExpand(true)
+              setTimeout(() => {
+                setExpand(false)
+              }, 100)
+            }}
+          >
+            Expand All
+          </button>
         </header>
       </PageContent>
 
@@ -141,6 +158,7 @@ const Backups = ({ tabName }) => {
                             backups={backups}
                             servers={environmentServers}
                             onSetBackupsModal={setDatabaseBackupsModal}
+                            expand={expand}
                           />
                         </div>
                       </div>
