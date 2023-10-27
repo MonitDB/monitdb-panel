@@ -126,7 +126,7 @@ const AlertsPage = () => {
 
             {activeServersCount >= 0 && !loadingAlertCount ? (
               <div className="w-full">
-                <h2 className="mb-10 heading-md">Servers</h2>
+                <h2 className="mb-10 heading-md">Alert Servers</h2>
                 <Grid className={styles.serversList}>
                   {formattedServers.map(({ id, serverName, type, active }) =>
                     active ? (
