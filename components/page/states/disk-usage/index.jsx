@@ -7,9 +7,9 @@ import React, { useCallback, useEffect, useState } from 'react'
 import ExportButton from '~/components/export-button'
 import Loading from '~/components/loading'
 import { PageContent } from '~/components/page'
-import Servers from '~/components/page/estates/disk-usage/servers'
+import Servers from '~/components/page/states/disk-usage/servers'
 import useGlobal from '~/hooks/use-global'
-import { getDiskUsage } from '~/services/estates'
+import { getDiskUsage } from '~/services/states'
 import { filterServersByEnvironmentId, formatServer } from '~/utils/server'
 
 const DiskUsage = ({ tabName }) => {

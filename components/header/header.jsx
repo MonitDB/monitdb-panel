@@ -36,7 +36,7 @@ const navMenuList = [
   },
   {
     title: 'States',
-    href: '/estates/',
+    href: '/states/',
   },
   {
     title: 'Configurations',

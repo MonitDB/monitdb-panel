@@ -15,31 +15,29 @@ const tabs = [
     name: 'Installed versions',
     slug: 'installed-versions',
     component: dynamic(() =>
-      import('~/components/page/estates/installed-versions')
+      import('~/components/page/states/installed-versions')
     ),
   },
   {
     name: 'Disk usage',
     slug: 'disk-usage',
-    component: dynamic(() => import('~/components/page/estates/disk-usage')),
+    component: dynamic(() => import('~/components/page/states/disk-usage')),
   },
   {
     name: 'Backups',
     slug: 'backups',
-    component: dynamic(() => import('~/components/page/estates/backups')),
+    component: dynamic(() => import('~/components/page/states/backups')),
   },
   {
     name: 'Jobs',
     slug: 'sql-agent-jobs',
-    component: dynamic(() =>
-      import('~/components/page/estates/sql-agent-jobs')
-    ),
+    component: dynamic(() => import('~/components/page/states/sql-agent-jobs')),
   },
   {
     name: 'SQL Server Licensing',
     slug: 'sql-server-licensing',
     component: dynamic(() =>
-      import('~/components/page/estates/sql-server-licensing')
+      import('~/components/page/states/sql-server-licensing')
     ),
   },
 ]
@@ -65,7 +63,7 @@ const EstatePage = () => {
               {tabs.map((type, typeIndex) => (
                 <li key={`sidebar-tab-${type.slug}-${typeIndex}`}>
                   <Link
-                    href={`/estates/?tab=${type.slug}`}
+                    href={`/states/?tab=${type.slug}`}
                     className={classNames(
                       'py-2 px-5 block text-white text-sm lg:hover:bg-blue-light',
                       {

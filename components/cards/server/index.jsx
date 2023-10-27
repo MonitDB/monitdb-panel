@@ -91,7 +91,7 @@ const Servers = ({ environmentServers, diskUsage }) => {
                         <td>
                           <p>
                             <Link
-                              href="/estates/?tab=disk-usage"
+                              href="/states/?tab=disk-usage"
                               className="text-blue no-underline"
                             >
                               {disk.Drive ? `${disk.Drive}:` : disk.Volume}

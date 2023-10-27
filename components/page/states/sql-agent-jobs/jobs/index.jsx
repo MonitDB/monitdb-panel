@@ -7,9 +7,9 @@ import React, { useEffect, useState } from 'react'
 import { useCallback } from 'react'
 
 import Loading from '~/components/loading'
-import Servers from '~/components/page/estates/sql-agent-jobs/jobs/environment-servers-jobs'
+import Servers from '~/components/page/states/sql-agent-jobs/jobs/environment-servers-jobs'
 import useGlobal from '~/hooks/use-global'
-import { getSqlAgentPRjobs } from '~/services/estates'
+import { getSqlAgentPRjobs } from '~/services/states'
 import { filterServersByEnvironmentId, formatServer } from '~/utils/server'
 
 function Jobs() {

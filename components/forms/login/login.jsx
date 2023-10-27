@@ -98,7 +98,7 @@ const SignUp = () => {
         <Submit
           disabled={formik.isSubmitting}
           loading={formik.isSubmitting}
-          loadingText="Entrando..."
+          loadingText="Logging in..."
         >
           Login
         </Submit>

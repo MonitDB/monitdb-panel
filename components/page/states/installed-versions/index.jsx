@@ -20,7 +20,7 @@ import ExportButton from '~/components/export-button'
 import Loading from '~/components/loading'
 import { PageContent } from '~/components/page'
 import useGlobal from '~/hooks/use-global'
-import { getVersions } from '~/services/estates'
+import { getVersions } from '~/services/states'
 import { filterServersByEnvironmentId, formatServer } from '~/utils/server'
 
 ChartJS.register(

@@ -10,7 +10,7 @@ import { useCallback } from 'react'
 
 import Loading from '~/components/loading'
 import Reveal from '~/helpers/reveal'
-import { getSqlAgentPRjobsExe } from '~/services/estates'
+import { getSqlAgentPRjobsExe } from '~/services/states'
 
 const DATE_FORMAT = "dd MMM yyyy kk':'mm"
 

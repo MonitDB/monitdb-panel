@@ -5,7 +5,7 @@ import moment from 'moment'
 import React from 'react'
 
 import { ApexChart, defaultChartOptions } from '~/components/chart'
-// import { dateFormat } from '~/components/page/estates/backups/environment-servers-backups'
+// import { dateFormat } from '~/components/page/states/backups/environment-servers-backups'
 // import { megaBytesToGigaBytes } from '~/utils/formats'
 
 function DatabaseBackupsModal({ modal: { isOpen, data }, onSetModalData }) {

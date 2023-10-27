@@ -152,7 +152,7 @@ const InstalledVersions = () => {
                   </td>
                   <td>
                     <a
-                      href="/estates/"
+                      href="/states/"
                       className="inline-flex items-center space-x-2 text-blue no-underline"
                       target="_blank"
                     >

@@ -4,7 +4,7 @@ import ExportButton from '~/components/export-button'
 import Loading from '~/components/loading'
 import { PageContent } from '~/components/page'
 import useGlobal from '~/hooks/use-global'
-import { getSqlServerLicensing } from '~/services/estates'
+import { getSqlServerLicensing } from '~/services/states'
 
 const SqlServerLicensing = ({ tabName }) => {
   const [isLoading, setIsLoading] = useState(true)
