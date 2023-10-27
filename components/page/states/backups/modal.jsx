@@ -106,6 +106,31 @@ function DatabaseBackupsModal({ modal: { isOpen, data }, onSetModalData }) {
               ...defaultChartOptions.chart,
               type: 'scatter',
             },
+            title: { text: 'Backup history' },
+            legend: {
+              showForSingleSeries: false,
+              fontSize: '11px',
+              position: 'top',
+              horizontalAlign: 'right',
+              floating: true,
+              offsetY: -20,
+              markers: {
+                width: 16,
+                height: 12,
+                radius: 0,
+                offsetY: 1,
+              },
+              itemMargin: {
+                horizontal: 5,
+                vertical: 0,
+              },
+              onItemHover: {
+                highlightDataSeries: true,
+              },
+              onItemClick: {
+                toggleDataSeries: false,
+              },
+            },
 
             yaxis: {
               labels: {

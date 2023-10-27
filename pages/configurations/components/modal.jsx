@@ -5,6 +5,7 @@ import { useFormik } from 'formik'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { toast } from 'react-toastify'
 
+import { Textarea } from '~/components/form'
 import Select from '~/components/form/select'
 import Grid from '~/components/grid'
 import Loading from '~/components/loading'
@@ -201,11 +202,9 @@ const MetricsModal = ({ onClose, componentId }) => {
                 >
                   Query or URL
                 </label>
-                <textarea
-                  type="text"
-                  name="componentQuery"
-                  className="w-full h-24 p-2 border border-gray-light leading-6
-                    rounded outline-none text-sm lg:w-2/3"
+                <Textarea
+                  name="description"
+                  className="w-full px-4 h-10 bg-white leading-10 rounded outline-none text-sm"
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   value={formik.values.componentQuery}

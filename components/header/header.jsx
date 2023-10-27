@@ -117,7 +117,7 @@ const Header = () => {
                     <i className="block w-5 h-5">
                       <FontAwesomeIcon icon={faUserPen} />
                     </i>
-                    <span>Dados pessoais</span>
+                    <span>Profile settings</span>
                   </Link>
                 </li>
                 <li>
@@ -129,7 +129,7 @@ const Header = () => {
                     <i className="block w-5 h-5">
                       <FontAwesomeIcon icon={faGear} />
                     </i>
-                    <span>Preferências</span>
+                    <span>Account Settings</span>
                   </Link>
                 </li>
                 <li>

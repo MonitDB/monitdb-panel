@@ -117,7 +117,7 @@ const Chart = (properties) => {
         offsetY: 1,
       },
       itemMargin: {
-        horizontal: 0,
+        horizontal: 5,
         vertical: 0,
       },
 

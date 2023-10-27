@@ -43,7 +43,7 @@ const MyAccount = () => {
       onSubmit={formik.handleSubmit}
     >
       <div className="col-span-2 mb-5 space-y-4 md:col-span-12">
-        <h2 className="text-2xl font-bold">Seus dados</h2>
+        <h2 className="text-2xl font-bold">Your data</h2>
         <p className="w-full text-sm md:w-2/3">
           Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quod atque
           nulla quis quia dolor ipsum, quas magni quibusdam temporibus quo?
@@ -59,7 +59,7 @@ const MyAccount = () => {
           id="name"
           name="name"
           type="text"
-          placeholder="Nome"
+          placeholder="Name"
           onChange={formik.handleChange}
           value={formik.values.name}
           hasError={!!(formik.errors.name && formik.touched.name)}
@@ -85,9 +85,9 @@ const MyAccount = () => {
         <Submit
           disabled={formik.isSubmitting}
           loading={formik.isSubmitting}
-          loadingText="Salvando..."
+          loadingText="Loading..."
         >
-          Salvar
+          Save
         </Submit>
       </div>
       {error && (

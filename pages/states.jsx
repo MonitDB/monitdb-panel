@@ -54,7 +54,7 @@ const EstatePage = () => {
 
   return (
     <>
-      <NextSeo title="Propriedades - MonitDB" />
+      <NextSeo title="States - MonitDB" />
 
       <Layout>
         <PageWrapper className="p-8">
