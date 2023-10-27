@@ -176,20 +176,20 @@ const InstalledVersions = () => {
         <table className="m-0">
           <thead>
             <tr>
-              <th>Nome do servidor</th>
-              <th>Categoria de trabalho</th>
-              <th>Execuções</th>
+              <th>Server Name</th>
+              <th>Category</th>
+              <th>Executions</th>
               <th>
-                Sucesso
+                Success
                 <FontAwesomeIcon icon={faCheck} className="ml-1 text-success" />
               </th>
               <th>
-                Falha{' '}
+                Fail{' '}
                 <FontAwesomeIcon icon={faXmark} className="ml-1 text-danger" />
               </th>
-              <th>Última corrida</th>
-              <th>Próxima corrida</th>
-              <th>Última duração</th>
+              <th>Last Run</th>
+              <th>Next Run</th>
+              <th>Last Time</th>
             </tr>
           </thead>
           {tableDataItems.map((item, itemIndex) => (
@@ -217,9 +217,7 @@ const InstalledVersions = () => {
                   </button>
                 </td>
                 <td>
-                  <span className="block text-xs">
-                    Manutenção do banco de dados
-                  </span>
+                  <span className="block text-xs">Database maintance</span>
                   DBA - {item.dbName}
                 </td>
                 <td>{item.jobs.success + item.jobs.fail}</td>
@@ -247,7 +245,7 @@ const InstalledVersions = () => {
                   <Reveal active={isExpandedIndex === itemIndex}>
                     <div className="px-4 pb-4">
                       <h2 className="mt-0 mb-2 text-base font-bold text-gray font-oxygen">
-                        Histórico de execução
+                        Execution Historic
                       </h2>
                       <Line options={options} data={chartData} height={50} />
                     </div>

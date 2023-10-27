@@ -4,6 +4,7 @@ import { useFormik } from 'formik'
 import { NextSeo } from 'next-seo'
 import React, { useMemo } from 'react'
 
+import Chart from '~/components/chart'
 import ExportButton from '~/components/export-button'
 import Selector from '~/components/form/selector'
 // import Checkbox from '~/components/form/checkbox'
@@ -42,7 +43,7 @@ const AnalysisPage = () => {
 
   return (
     <>
-      <NextSeo title="Análises - MonitDB" />
+      <NextSeo title="Analysis - MonitDB" />
       <Layout>
         <PageWrapper className="p-8">
           <PageContent
@@ -55,7 +56,7 @@ const AnalysisPage = () => {
             >
               <div className="flex items-center">
                 <strong className="block mr-2 whitespace-nowrap text-sm">
-                  Intervalo de tempo
+                  Interval
                 </strong>
                 <Selector
                   name="status"
@@ -87,7 +88,7 @@ const AnalysisPage = () => {
                 />
               </div>
               <button type="submit" className="btn">
-                Comparar
+                Compare
               </button>
             </form>
             <div className="flex items-center">
@@ -107,27 +108,27 @@ const AnalysisPage = () => {
                 </li>
                 <li>
                   <Link href="/analysis/" className="">
-                    Últimas 24hrs
+                    Last 24hrs
                   </Link>
                 </li>
                 <li>
                   <Link href="/analysis/" className="">
-                    Últimos 7 dias
+                    Lasts 7 days
                   </Link>
                 </li>
                 <li>
                   <Link href="/analysis/" className="">
-                    Últimos 14 dias
+                    Lasts 14 days
                   </Link>
                 </li>
                 <li>
                   <Link href="/analysis/" className="">
-                    Hoje
+                    Today
                   </Link>
                 </li>
                 <li>
                   <Link href="/analysis/" className="">
-                    Esta semana
+                    This week
                   </Link>
                 </li>
               </ul>
@@ -139,14 +140,16 @@ const AnalysisPage = () => {
             removeSidebarMargin={true}
             className="border-b border-gray-light"
           >
-            <div className="w-4/5 h-[300px] mb-10 bg-gray-light" />
+            <div className="w-4/5 mb-10 bg-white">
+              <Chart />
+            </div>
             <div className="w-full flex flex-col md:flex-row">
               <div className="flex flex-col md:flex-row md:space-x-4 md:w-4/5">
                 <div className="w-60">
                   <input
                     type="text"
                     name="metrics"
-                    placeholder="Procure por métricas"
+                    placeholder="Search by metrics"
                     className="w-full px-4 h-10 mb-2 bg-white leading-10 rounded outline-none text-sm"
                   />
                   <select
@@ -1196,7 +1199,7 @@ const AnalysisPage = () => {
                   <input
                     type="text"
                     name="cluster"
-                    placeholder="Procurar por cluster"
+                    placeholder="Search by cluster"
                     className="w-full px-4 h-10 mb-2 bg-white leading-10 rounded outline-none text-sm"
                   />
                   <select
