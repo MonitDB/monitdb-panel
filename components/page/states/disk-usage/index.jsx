@@ -26,7 +26,6 @@ const DiskUsage = ({ tabName }) => {
   const handleEnvironmentExpandedIndices = useCallback(
     (index) => {
       const indices = new Set(environmentExpandedIndices)
-
       if (indices.has(index)) {
         indices.delete(index)
       } else {
@@ -68,6 +67,9 @@ const DiskUsage = ({ tabName }) => {
       >
         <header className="pt-8 w-full flex flex-col md:flex-row md:justify-between md:items-end">
           <h1 className="heading-lg">{tabName}</h1>
+          {/* <button type="button" className={'btn btn--small'} onClick={() => {}}>
+            Expand All
+          </button> */}
           <ExportButton
             disabled={isLoading}
             data={diskUsage}
