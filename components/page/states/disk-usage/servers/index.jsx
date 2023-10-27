@@ -4,14 +4,14 @@
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import classNames from 'classnames'
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 
 import Link from '~/components/link'
 import Reveal from '~/helpers/reveal'
 import { megaBytesToGigaBytes } from '~/utils/formats'
 // import { getPercentage } from '~/utils/global'
 
-const Servers = ({ environmentServers, diskUsage }) => {
+const Servers = ({ environmentServers, diskUsage, expand }) => {
   const [serverExpandedIndices, setServerExpandedIndices] = useState(new Set())
 
   const handleServerExpandedIndices = useCallback(
@@ -28,6 +28,13 @@ const Servers = ({ environmentServers, diskUsage }) => {
     },
     [serverExpandedIndices]
   )
+
+  useEffect(() => {
+    if (expand) {
+      const allEnvironmentIndices = environmentServers.map((_, index) => index)
+      setServerExpandedIndices(new Set(allEnvironmentIndices))
+    }
+  }, [expand])
 
   return (
     <div className="p-3 pb-0 space-y-3">

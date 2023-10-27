@@ -18,6 +18,7 @@ const DiskUsage = ({ tabName }) => {
   const [environmentExpandedIndices, setEnvironmentExpandedIndices] = useState(
     new Set()
   )
+  const [expand, setExpand] = useState(false)
 
   const {
     globalState: { servers, serverTypes, serverEnvironments },
@@ -67,14 +68,29 @@ const DiskUsage = ({ tabName }) => {
       >
         <header className="pt-8 w-full flex flex-col md:flex-row md:justify-between md:items-end">
           <h1 className="heading-lg">{tabName}</h1>
-          {/* <button type="button" className={'btn btn--small'} onClick={() => {}}>
-            Expand All
-          </button> */}
-          <ExportButton
-            disabled={isLoading}
-            data={diskUsage}
-            fileName={'DISK_USAGE'}
-          />
+          <div>
+            <button
+              type="button"
+              className={'btn btn--small mr-[10px]'}
+              onClick={() => {
+                const allEnvironmentIndices = serverEnvironments.map(
+                  (_, index) => index
+                )
+                setEnvironmentExpandedIndices(new Set(allEnvironmentIndices))
+                setExpand(true)
+                setTimeout(() => {
+                  setExpand(false)
+                }, 100)
+              }}
+            >
+              Expand All
+            </button>
+            <ExportButton
+              disabled={isLoading}
+              data={diskUsage}
+              fileName={'DISK_USAGE'}
+            />
+          </div>
         </header>
       </PageContent>
 
@@ -145,6 +161,7 @@ const DiskUsage = ({ tabName }) => {
                             <Servers
                               environmentServers={environmentServers}
                               diskUsage={diskUsage}
+                              expand={expand}
                             />
                           </div>
                         </div>
