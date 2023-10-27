@@ -18,6 +18,7 @@ function Jobs() {
   const [environmentExpandedIndices, setEnvironmentExpandedIndices] = useState(
     new Set()
   )
+  const [expand, setExpand] = useState(false)
   //   const [modalRundeckJobs, setModalRundeckJobs] = useState({})
 
   const {
@@ -53,8 +54,24 @@ function Jobs() {
   return (
     <section className="space-y-4">
       <header className="flex flex-col mb-5 md:flex-row md:justify-between md:items-center">
-        <div className="w-full md:w-3/4">
+        <div className="w-full  pt-8 flex flex-col md:flex-row md:justify-between md:items-end">
           <h2 className="heading-md">Jobs</h2>
+          <button
+            type="button"
+            className={'btn btn--small mr-[10px]'}
+            onClick={() => {
+              const allEnvironmentIndices = serverEnvironments.map(
+                (_, index) => index
+              )
+              setEnvironmentExpandedIndices(new Set(allEnvironmentIndices))
+              setExpand(true)
+              setTimeout(() => {
+                setExpand(false)
+              }, 100)
+            }}
+          >
+            Expand All
+          </button>
         </div>
       </header>
       {isLoading ? (
@@ -126,6 +143,7 @@ function Jobs() {
                         <Servers
                           environmentServers={filteredServers}
                           serversJobs={filteredJobs}
+                          expand={expand}
                         />
                       </div>
                     </div>

@@ -14,7 +14,7 @@ import { getSqlAgentPRjobsExe } from '~/services/states'
 
 const DATE_FORMAT = "dd MMM yyyy kk':'mm"
 
-function Servers({ environmentServers, serversJobs }) {
+function Servers({ environmentServers, serversJobs, expand }) {
   const [serverExpandedIndices, setServerExpandedIndices] = useState(new Set())
   const [jobModal, setJobModal] = useState({
     isOpen: false,
@@ -84,6 +84,13 @@ function Servers({ environmentServers, serversJobs }) {
   useEffect(() => {
     getData()
   }, [])
+
+  useEffect(() => {
+    if (expand) {
+      const allEnvironmentIndices = environmentServers.map((_, index) => index)
+      setServerExpandedIndices(new Set(allEnvironmentIndices))
+    }
+  }, [expand])
 
   return (
     <>
