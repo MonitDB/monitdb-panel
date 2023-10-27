@@ -223,8 +223,8 @@ const InstalledVersions = ({ tabName }) => {
                   <table className="prose w-full max-w-full">
                     <thead>
                       <tr>
-                        <th>Versões</th>
-                        <th>Última atualização</th>
+                        <th>Versions</th>
+                        <th>Last Update</th>
                         {/* <th>Data de lançamento</th> */}
                       </tr>
                     </thead>
@@ -285,11 +285,11 @@ const InstalledVersions = ({ tabName }) => {
                   <table className="m-0">
                     <thead>
                       <tr>
-                        <th>Nome</th>
-                        <th>Versões</th>
+                        <th>Name</th>
+                        <th>Versions</th>
                         {/* <th>Status | Nº da versão</th> */}
-                        <th>Última atualização disponível</th>
-                        <th>Fim do suporte principal</th>
+                        <th>Last update available</th>
+                        <th>Main suport expires at</th>
                       </tr>
                     </thead>
 

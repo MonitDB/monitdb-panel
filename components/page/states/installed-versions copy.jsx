@@ -128,9 +128,9 @@ const InstalledVersions = () => {
           <table className="prose w-full max-w-full">
             <thead>
               <tr>
-                <th>Versões</th>
-                <th>Última atualização</th>
-                <th>Data de lançamento</th>
+                <th>Versions</th>
+                <th>Last Update</th>
+                <th>Release Date</th>
               </tr>
             </thead>
             <tbody className="text-sm">
