@@ -130,6 +130,16 @@ const useLogContext = create((set) => ({
     } catch {
       return;
     }
+  },
+  getSQLServerMetrics: async (id, parameters) => {
+    try {
+      const { data } = await apiV2().get(`/log/sql-server-metrics/${id}`, {
+        params: parameters || undefined,
+      });
+      return data;
+    } catch {
+      return;
+    }
   }
   
 

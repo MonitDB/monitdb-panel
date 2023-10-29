@@ -1,34 +1,10 @@
 import { format } from 'date-fns'
-import { useRouter } from 'next/router'
-import React, { memo, useMemo } from 'react'
+import React, { memo } from 'react'
 
 import Chart from '~/components/chart'
-import { useSingleDashboard } from '~/hooks/index'
-import { usePageSplits } from '~/hooks/index'
 
-function PageSplitsSec() {
-  const { currentServer } = useSingleDashboard()
-  const { query } = useRouter()
-  const { data, isLoading } = usePageSplits(currentServer.id, query.lastMinutes)
-
-  const seriesData = useMemo(
-    () =>
-      data?.length > 0
-        ? data
-            .map((item, index) =>
-              index > 0
-                ? [
-                    new Date(item.createdata).getTime(),
-                    Number(Number.parseFloat(item.value / 60).toFixed(2)),
-                  ]
-                : undefined
-            )
-            .filter(Boolean)
-        : [],
-    [data]
-  )
-
-  if (isLoading || seriesData.length === 0) {
+function PageSplitsSec({ isLoading, seriesData }) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center h-full">
         {isLoading ? 'Loading...' : 'Error'}
@@ -41,7 +17,7 @@ function PageSplitsSec() {
       <Chart
         height="140"
         title={{
-          text: 'Page splits / sec',
+          text: 'Page Splits',
           offsetX: 7,
           offsetY: -5,
           floating: true,
@@ -57,10 +33,10 @@ function PageSplitsSec() {
           forceNiceScale: true,
           decimalsInFloat: 2,
           labels: {
-            formatter: (value) => Number.parseFloat(value).toFixed(2),
+            formatter: (value) => value,
           },
         }}
-        seriesName="Page splits / sec"
+        seriesName="Page Splits"
         xaxis={{
           type: 'datetime',
           tooltip: {

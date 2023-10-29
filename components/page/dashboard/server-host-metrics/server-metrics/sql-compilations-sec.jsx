@@ -1,36 +1,10 @@
 import { format } from 'date-fns'
-import { useRouter } from 'next/router'
-import React, { memo, useMemo } from 'react'
+import React, { memo } from 'react'
 
 import Chart from '~/components/chart'
-import { useSingleDashboard, useSQLCompilations } from '~/hooks/index'
 
-function SqlCompilationsBatchRequests() {
-  const { currentServer } = useSingleDashboard()
-  const { query } = useRouter()
-  const { data, isLoading } = useSQLCompilations(
-    currentServer.id,
-    query.lastMinutes
-  )
-
-  const seriesData = useMemo(
-    () =>
-      data?.length > 0
-        ? data
-            .map((item, index) =>
-              index > 0
-                ? [
-                    new Date(item.createdata).getTime(),
-                    Number(Number.parseFloat(item.value / 60).toFixed(2)),
-                  ]
-                : undefined
-            )
-            .filter(Boolean)
-        : [],
-    [data]
-  )
-
-  if (isLoading || seriesData.length === 0) {
+function SqlCompilationsBatchRequests({ isLoading, seriesData }) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center h-full">
         {isLoading ? 'Loading...' : 'Error'}
@@ -43,7 +17,7 @@ function SqlCompilationsBatchRequests() {
       <Chart
         height="140"
         title={{
-          text: 'SQL compilations / sec',
+          text: 'SQL Compilations',
           offsetX: 7,
           offsetY: -5,
           floating: true,
@@ -59,10 +33,10 @@ function SqlCompilationsBatchRequests() {
           forceNiceScale: true,
           decimalsInFloat: 2,
           labels: {
-            formatter: (value) => Number.parseFloat(value).toFixed(2),
+            formatter: (value) => value,
           },
         }}
-        seriesName="SQL compilations / sec"
+        seriesName="SQL Compilations"
         xaxis={{
           type: 'datetime',
           tooltip: {

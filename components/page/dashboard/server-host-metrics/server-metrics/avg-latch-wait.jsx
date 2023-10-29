@@ -1,33 +1,12 @@
 import { format } from 'date-fns'
-import React, { memo, useMemo } from 'react'
+import React, { memo } from 'react'
 
 import Chart from '~/components/chart'
-import { useLatchWaits, useSingleDashboard } from '~/hooks/index'
 
-function AvgLatchWait() {
-  const { currentServer } = useSingleDashboard()
-  const { data, isLoading } = useLatchWaits(currentServer.id)
-
-  const seriesData = useMemo(
-    () =>
-      data?.length > 0
-        ? data
-            .map((item) =>
-              item.value !== null && item.value !== undefined
-                ? [new Date(item.createdata).getTime(), item.value]
-                : undefined
-            )
-            .filter(Boolean)
-        : [],
-    [data]
-  )
-
-  if (isLoading || seriesData.length === 0) {
+function AvgLatchWait({ isLoading, seriesData }) {
+  if (isLoading) {
     return (
-      <div
-        className="flex items-center justify-center h-140"
-        style={{ height: '220px' }}
-      >
+      <div className="flex items-center justify-center h-full">
         {isLoading ? 'Loading...' : 'Error'}
       </div>
     )
@@ -38,7 +17,7 @@ function AvgLatchWait() {
       <Chart
         height="140"
         title={{
-          text: 'Avg. latch wait',
+          text: 'Avg Latch Wait',
           offsetX: 7,
           offsetY: -5,
           floating: true,
@@ -57,7 +36,7 @@ function AvgLatchWait() {
             formatter: (value) => value,
           },
         }}
-        seriesName="Avg. latch wait"
+        seriesName="Avg Latch Wait"
         xaxis={{
           type: 'datetime',
           tooltip: {

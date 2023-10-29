@@ -1,33 +1,10 @@
 import { format } from 'date-fns'
-import { useRouter } from 'next/router'
-import React, { memo, useMemo } from 'react'
+import React, { memo } from 'react'
 
 import Chart from '~/components/chart'
-import { useSingleDashboard, useUserConnections } from '~/hooks/index'
 
-function userConnections() {
-  const { currentServer } = useSingleDashboard()
-  const { query } = useRouter()
-  const { data, isLoading } = useUserConnections(
-    currentServer.id,
-    query.lastMinutes
-  )
-
-  const seriesData = useMemo(
-    () =>
-      data?.length > 0
-        ? data
-            .map((item, index) =>
-              index > 0
-                ? [new Date(item.createdata).getTime(), Number(item.value)]
-                : undefined
-            )
-            .filter(Boolean)
-        : [],
-    [data]
-  )
-
-  if (isLoading || seriesData.length === 0) {
+function userConnections({ isLoading, seriesData }) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center h-full">
         {isLoading ? 'Loading...' : 'Error'}
@@ -40,7 +17,7 @@ function userConnections() {
       <Chart
         height="140"
         title={{
-          text: 'User connections',
+          text: 'User Connections',
           offsetX: 7,
           offsetY: -5,
           floating: true,
@@ -59,7 +36,7 @@ function userConnections() {
             formatter: (value) => value,
           },
         }}
-        seriesName="User connections"
+        seriesName="User Connections"
         xaxis={{
           type: 'datetime',
           tooltip: {

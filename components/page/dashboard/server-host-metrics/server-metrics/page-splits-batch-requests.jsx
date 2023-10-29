@@ -1,47 +1,13 @@
 import { format } from 'date-fns'
-import { useRouter } from 'next/router'
-import React, { memo, useMemo } from 'react'
+import React, { memo } from 'react'
 
 import Chart from '~/components/chart'
-import { useBatchRequests, useSingleDashboard } from '~/hooks/index'
-import { usePageSplits } from '~/hooks/index'
 
-function PageSplitsBatchRequests() {
-  const { currentServer } = useSingleDashboard()
-  const { query } = useRouter()
-  const pageSplits = usePageSplits(currentServer.id, query.lastMinutes)
-  const batchRequests = useBatchRequests(currentServer.id, query.lastMinutes)
-
-  const seriesData = useMemo(() => {
-    const data = []
-
-    if (!pageSplits.data?.length || !batchRequests.data?.length) return data
-
-    for (let pageSplit of pageSplits.data) {
-      if (!pageSplit.value) continue
-
-      const batchRequest = batchRequests.data.find(
-        (batch) => batch.createdata === pageSplit.createdata
-      )
-      if (batchRequest) {
-        data.push([
-          new Date(pageSplit.createdata).getTime(),
-          Number(
-            Number.parseFloat(pageSplit.value / batchRequest.value).toFixed(2)
-          ),
-        ])
-      }
-    }
-
-    return data
-  }, [pageSplits, batchRequests])
-
-  const loading = pageSplits.isLoading || batchRequests.isLoading
-
-  if (loading || seriesData.length === 0) {
+function PageSplitsBatchRequests({ seriesData, isLoading }) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center h-full">
-        {loading ? 'Loading...' : 'Error'}
+        {isLoading ? 'Loading...' : 'Error'}
       </div>
     )
   }
@@ -51,7 +17,7 @@ function PageSplitsBatchRequests() {
       <Chart
         height="140"
         title={{
-          text: 'Page splits / Batch requests',
+          text: 'Page Splits/Batch Requests',
           offsetX: 7,
           offsetY: -5,
           floating: true,
@@ -66,11 +32,12 @@ function PageSplitsBatchRequests() {
         yaxis={{
           forceNiceScale: true,
           decimalsInFloat: 2,
+
           labels: {
-            formatter: (value) => Number.parseFloat(value).toFixed(2),
+            formatter: (value) => value,
           },
         }}
-        seriesName="Page splits / Batch requests"
+        seriesName="Page Splits/Batch Requests"
         xaxis={{
           type: 'datetime',
           tooltip: {

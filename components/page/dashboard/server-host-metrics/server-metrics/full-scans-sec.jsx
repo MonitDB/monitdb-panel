@@ -1,33 +1,10 @@
 import { format } from 'date-fns'
-import { useRouter } from 'next/router'
-import React, { memo, useMemo } from 'react'
+import React, { memo } from 'react'
 
 import Chart from '~/components/chart'
-import { useFullScans, useSingleDashboard } from '~/hooks/index'
 
-function FullScansSec() {
-  const { currentServer } = useSingleDashboard()
-  const { query } = useRouter()
-  const { data, isLoading } = useFullScans(currentServer.id, query.lastMinutes)
-
-  const seriesData = useMemo(
-    () =>
-      data?.length > 0
-        ? data
-            .map((item) =>
-              item.value !== null && item.value !== undefined
-                ? [
-                    new Date(item.createdata).getTime(),
-                    Number(item.value / 60).toFixed(0),
-                  ]
-                : undefined
-            )
-            .filter(Boolean)
-        : [],
-    [data]
-  )
-
-  if (isLoading || seriesData.length === 0) {
+function FullScansSec({ isLoading, seriesData }) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center h-full">
         {isLoading ? 'Loading...' : 'Error'}
@@ -40,7 +17,7 @@ function FullScansSec() {
       <Chart
         height="140"
         title={{
-          text: 'Full scans / sec',
+          text: 'Full Scans',
           offsetX: 7,
           offsetY: -5,
           floating: true,
@@ -59,7 +36,7 @@ function FullScansSec() {
             formatter: (value) => value,
           },
         }}
-        seriesName="Full scans / sec"
+        seriesName="Full Scans"
         xaxis={{
           type: 'datetime',
           tooltip: {

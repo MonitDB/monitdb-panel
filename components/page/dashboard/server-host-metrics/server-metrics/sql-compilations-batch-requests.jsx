@@ -1,56 +1,13 @@
 import { format } from 'date-fns'
-import { useRouter } from 'next/router'
-import React, { memo, useMemo } from 'react'
+import React, { memo } from 'react'
 
 import Chart from '~/components/chart'
-import {
-  useBatchRequests,
-  useSingleDashboard,
-  useSQLCompilations,
-} from '~/hooks/index'
 
-function SqlCompilationsBatchRequests() {
-  const { currentServer } = useSingleDashboard()
-  const { query } = useRouter()
-  const SQLCompilations = useSQLCompilations(
-    currentServer.id,
-    query.lastMinutes
-  )
-  const batchRequests = useBatchRequests(currentServer.id, query.lastMinutes)
-
-  const seriesData = useMemo(() => {
-    const data = []
-
-    if (!SQLCompilations.data?.length || !batchRequests.data?.length)
-      return data
-
-    for (let SQLCompilation of SQLCompilations.data) {
-      if (!SQLCompilation.value) continue
-
-      const batchRequest = batchRequests.data.find(
-        (batch) => batch.createdata === SQLCompilation.createdata
-      )
-      if (batchRequest) {
-        data.push([
-          new Date(SQLCompilation.createdata).getTime(),
-          Number(
-            Number.parseFloat(
-              SQLCompilation.value / batchRequest.value
-            ).toFixed(2)
-          ),
-        ])
-      }
-    }
-
-    return data
-  }, [SQLCompilations, batchRequests])
-
-  const loading = batchRequests.isLoading || SQLCompilations.isLoading
-
-  if (loading || seriesData.length === 0) {
+function SqlCompilationsBatchRequests({ isLoading, seriesData }) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center h-full">
-        {loading ? 'Loading...' : 'Error'}
+        {isLoading ? 'Loading...' : 'Error'}
       </div>
     )
   }
@@ -60,7 +17,7 @@ function SqlCompilationsBatchRequests() {
       <Chart
         height="140"
         title={{
-          text: 'SQL compilations / Batch requests',
+          text: 'SQL Compilations/Batch Requests',
           offsetX: 7,
           offsetY: -5,
           floating: true,
@@ -75,11 +32,12 @@ function SqlCompilationsBatchRequests() {
         yaxis={{
           forceNiceScale: true,
           decimalsInFloat: 2,
+
           labels: {
-            formatter: (value) => Number.parseFloat(value).toFixed(2),
+            formatter: (value) => value.toFixed(2),
           },
         }}
-        seriesName="SQL compilations / Batch requests"
+        seriesName="SQL Compilations/Batch Requests"
         xaxis={{
           type: 'datetime',
           tooltip: {

@@ -1,34 +1,10 @@
 import { format } from 'date-fns'
-import { useRouter } from 'next/router'
-import React, { memo, useEffect, useMemo } from 'react'
+import React, { memo } from 'react'
 
 import Chart from '~/components/chart'
-import { useBatchRequests, useSingleDashboard } from '~/hooks/index'
 
-function BatchRequests() {
-  const { currentServer } = useSingleDashboard()
-  const route = useRouter()
-  const { data, isLoading, mutate } = useBatchRequests(
-    currentServer.id,
-    route.query.lastMinutes
-  )
-  const seriesData = useMemo(
-    () =>
-      data?.length > 0
-        ? data
-            .map((item, index) =>
-              index > 0
-                ? [new Date(item.createdata).getTime(), Number(item.value)]
-                : undefined
-            )
-            .filter(Boolean)
-        : [],
-    [data]
-  )
-
-  useEffect(mutate, [mutate, route.query.lastMinutes])
-
-  if (isLoading || seriesData.length === 0) {
+function BatchRequests({ isLoading, seriesData }) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center h-full">
         {isLoading ? 'Loading...' : 'Error'}

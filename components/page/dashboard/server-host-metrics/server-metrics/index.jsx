@@ -1,6 +1,10 @@
-import { memo } from 'react'
+import { useRouter } from 'next/router'
+import { memo, useCallback, useEffect, useState } from 'react'
+import { toast } from 'react-toastify'
 
 import Grid from '~/components/grid'
+import { useSingleDashboard } from '~/hooks/index'
+import useLogContext from '~/services/state-manager/logs'
 
 import AvgLatchWait from './avg-latch-wait'
 import BatchRequests from './batch-requests'
@@ -14,8 +18,44 @@ import SqlCompilationsBatchRequests from './sql-compilations-batch-requests'
 import SqlCompilationsSec from './sql-compilations-sec'
 import UserConnections from './user-connections'
 
-const ServerMetrics = (properties) => {
-  const { key } = properties
+const formatData = (item) => [new Date(item?.createDate).getTime(), item?.count]
+
+const ServerMetrics = ({ key }) => {
+  const { currentServer } = useSingleDashboard()
+  const { getSQLServerMetrics } = useLogContext()
+  const route = useRouter()
+
+  const lastMinutes = route.query.lastMinutes
+
+  const [data, setData] = useState({})
+  const [isLoading, setIsloading] = useState(false)
+
+  const fetchData = useCallback(async () => {
+    try {
+      setIsloading(true)
+      const response = await getSQLServerMetrics(currentServer.id, lastMinutes)
+      setData(response)
+    } catch {
+      toast.error('Error to load the Server Metrics')
+    } finally {
+      setIsloading(false)
+    }
+  }, [currentServer.id, getSQLServerMetrics, lastMinutes])
+
+  useEffect(fetchData, [fetchData])
+
+  const {
+    batchRequest,
+    sqlCompilations,
+    pageSplits,
+    fullScans,
+    userConnections,
+    sqlCompilationsPerBatchRequests,
+    pageSplitsDataPerBatchRequests,
+    averageLatchWaitTime,
+    lockTimeout,
+    lockWaits,
+  } = data
 
   return (
     <div className="mt-6">
@@ -24,25 +64,53 @@ const ServerMetrics = (properties) => {
         <h4 className="mb-6 text-sm">General</h4>
         <Grid>
           <div className="cols-span-2 md:col-span-4">
-            <BatchRequests key={key} />
+            <BatchRequests
+              key={key}
+              isLoading={isLoading}
+              seriesData={batchRequest?.map(formatData)}
+            />
           </div>
           <div className="cols-span-2 md:col-span-4">
-            <SqlCompilationsBatchRequests key={key} />
+            <SqlCompilationsBatchRequests
+              key={key}
+              isLoading={isLoading}
+              seriesData={sqlCompilationsPerBatchRequests?.map(formatData)}
+            />
           </div>
           <div className="cols-span-2 md:col-span-4">
-            <PageSplitsBatchRequests key={key} />
+            <PageSplitsBatchRequests
+              key={key}
+              isLoading={isLoading}
+              seriesData={pageSplitsDataPerBatchRequests?.map(formatData)}
+            />
           </div>
           <div className="cols-span-2 md:col-span-4">
-            <SqlCompilationsSec key={key} />
+            <SqlCompilationsSec
+              key={key}
+              isLoading={isLoading}
+              seriesData={sqlCompilations?.map(formatData)}
+            />
           </div>
           <div className="cols-span-2 md:col-span-4">
-            <PageSplitsSec key={key} />
+            <PageSplitsSec
+              key={key}
+              isLoading={isLoading}
+              seriesData={pageSplits?.map(formatData)}
+            />
           </div>
           <div className="cols-span-2 md:col-span-4">
-            <FullScansSec key={key} />
+            <FullScansSec
+              key={key}
+              isLoading={isLoading}
+              seriesData={fullScans?.map(formatData)}
+            />
           </div>
           <div className="cols-span-2 md:col-span-4">
-            <UserConnections key={key} />
+            <UserConnections
+              key={key}
+              isLoading={isLoading}
+              seriesData={userConnections?.map(formatData)}
+            />
           </div>
         </Grid>
       </div>
@@ -50,9 +118,21 @@ const ServerMetrics = (properties) => {
       <Grid className="mt-6">
         <div className="col-span-2 space-y-4 md:col-span-6">
           <h4 className="mb-4 text-sm">Latches and locks</h4>
-          <AvgLatchWait />
-          <LockTimeoutsSec />
-          <LockWaitsSec />
+          <AvgLatchWait
+            key={key}
+            isLoading={isLoading}
+            seriesData={averageLatchWaitTime?.map(formatData)}
+          />
+          <LockTimeoutsSec
+            key={key}
+            isLoading={isLoading}
+            seriesData={lockTimeout?.map(formatData)}
+          />
+          <LockWaitsSec
+            key={key}
+            isLoading={isLoading}
+            seriesData={lockWaits?.map(formatData)}
+          />
         </div>
         <ServerProperties />
       </Grid>
