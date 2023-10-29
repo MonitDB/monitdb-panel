@@ -12,23 +12,24 @@ function MemoryUsage(properties) {
   const [loading, setLoading] = useState(false)
   const [data, setData] = useState([])
   const route = useRouter()
+  const lastMinutes = route.query.lastMinutes
+
+  const fetchData = useCallback(async () => {
+    setLoading(true)
+    const data = await getMemoryUsage(currentServer?.id, {
+      lastMinutes: lastMinutes ?? 60,
+    })
+    setData(data)
+
+    setLoading(false)
+  }, [getMemoryUsage, currentServer?.id, lastMinutes])
 
   useEffect(() => {
     fetchData()
   }, [fetchData])
 
-  const fetchData = useCallback(async () => {
-    setLoading(true)
-    const data = await getMemoryUsage(currentServer?.id, {
-      lastMinutes: route.query.lastMinutes,
-    })
-    setData(data)
-
-    setLoading(false)
-  }, [getMemoryUsage, currentServer?.id, route.query.lastMinutes])
-
   return loading ? (
-    <div className="col-span-2 bg-white lg:col-span-6 h-200 flex items-center justify-center">
+    <div className="col-span-2 bg-white lg:col-span-6 h-200 flex items-center justify-center h-[215px]">
       <Loading />
     </div>
   ) : (

@@ -33,7 +33,9 @@ const ServerMetrics = ({ key }) => {
   const fetchData = useCallback(async () => {
     try {
       setIsloading(true)
-      const response = await getSQLServerMetrics(currentServer.id, lastMinutes)
+      const response = await getSQLServerMetrics(currentServer.id, {
+        lastMinutes,
+      })
       setData(response)
     } catch {
       toast.error('Error to load the Server Metrics')
@@ -43,19 +45,6 @@ const ServerMetrics = ({ key }) => {
   }, [currentServer.id, getSQLServerMetrics, lastMinutes])
 
   useEffect(fetchData, [fetchData])
-
-  const {
-    batchRequest,
-    sqlCompilations,
-    pageSplits,
-    fullScans,
-    userConnections,
-    sqlCompilationsPerBatchRequests,
-    pageSplitsDataPerBatchRequests,
-    averageLatchWaitTime,
-    lockTimeout,
-    lockWaits,
-  } = data
 
   return (
     <div className="mt-6">
@@ -67,49 +56,53 @@ const ServerMetrics = ({ key }) => {
             <BatchRequests
               key={key}
               isLoading={isLoading}
-              seriesData={batchRequest?.map(formatData)}
+              seriesData={data?.batchRequest?.map(formatData) ?? []}
             />
           </div>
           <div className="cols-span-2 md:col-span-4">
             <SqlCompilationsBatchRequests
               key={key}
               isLoading={isLoading}
-              seriesData={sqlCompilationsPerBatchRequests?.map(formatData)}
+              seriesData={data?.sqlCompilationsPerBatchRequests?.map(
+                formatData
+              )}
             />
           </div>
           <div className="cols-span-2 md:col-span-4">
             <PageSplitsBatchRequests
               key={key}
               isLoading={isLoading}
-              seriesData={pageSplitsDataPerBatchRequests?.map(formatData)}
+              seriesData={
+                data?.pageSplitsDataPerBatchRequests?.map(formatData) ?? []
+              }
             />
           </div>
           <div className="cols-span-2 md:col-span-4">
             <SqlCompilationsSec
               key={key}
               isLoading={isLoading}
-              seriesData={sqlCompilations?.map(formatData)}
+              seriesData={data?.sqlCompilations?.map(formatData) ?? []}
             />
           </div>
           <div className="cols-span-2 md:col-span-4">
             <PageSplitsSec
               key={key}
               isLoading={isLoading}
-              seriesData={pageSplits?.map(formatData)}
+              seriesData={data?.pageSplits?.map(formatData) ?? []}
             />
           </div>
           <div className="cols-span-2 md:col-span-4">
             <FullScansSec
               key={key}
               isLoading={isLoading}
-              seriesData={fullScans?.map(formatData)}
+              seriesData={data?.fullScans?.map(formatData) ?? []}
             />
           </div>
           <div className="cols-span-2 md:col-span-4">
             <UserConnections
               key={key}
               isLoading={isLoading}
-              seriesData={userConnections?.map(formatData)}
+              seriesData={data?.userConnections?.map(formatData) ?? []}
             />
           </div>
         </Grid>
@@ -121,17 +114,17 @@ const ServerMetrics = ({ key }) => {
           <AvgLatchWait
             key={key}
             isLoading={isLoading}
-            seriesData={averageLatchWaitTime?.map(formatData)}
+            seriesData={data?.averageLatchWaitTime?.map(formatData) ?? []}
           />
           <LockTimeoutsSec
             key={key}
             isLoading={isLoading}
-            seriesData={lockTimeout?.map(formatData)}
+            seriesData={data?.lockTimeout?.map(formatData) ?? []}
           />
           <LockWaitsSec
             key={key}
             isLoading={isLoading}
-            seriesData={lockWaits?.map(formatData)}
+            seriesData={data?.lockWaits?.map(formatData) ?? []}
           />
         </div>
         <ServerProperties />

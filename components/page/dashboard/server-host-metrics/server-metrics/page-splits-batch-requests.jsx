@@ -2,12 +2,13 @@ import { format } from 'date-fns'
 import React, { memo } from 'react'
 
 import Chart from '~/components/chart'
+import Loading from '~/components/loading/loading'
 
 function PageSplitsBatchRequests({ seriesData, isLoading }) {
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-full">
-        {isLoading ? 'Loading...' : 'Error'}
+      <div className="col-span-2 bg-white lg:col-span-6 h-200 flex items-center justify-center h-[140px]">
+        <Loading />
       </div>
     )
   }
@@ -17,7 +18,7 @@ function PageSplitsBatchRequests({ seriesData, isLoading }) {
       <Chart
         height="140"
         title={{
-          text: 'Page Splits/Batch Requests',
+          text: 'Page Splits / Batch Requests',
           offsetX: 7,
           offsetY: -5,
           floating: true,
@@ -32,9 +33,8 @@ function PageSplitsBatchRequests({ seriesData, isLoading }) {
         yaxis={{
           forceNiceScale: true,
           decimalsInFloat: 2,
-
           labels: {
-            formatter: (value) => value,
+            formatter: (value) => value.toFixed(2),
           },
         }}
         seriesName="Page Splits/Batch Requests"

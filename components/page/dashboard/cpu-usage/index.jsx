@@ -12,23 +12,24 @@ function CpuUsage(properties) {
   const [loading, setLoading] = useState(false)
   const [data, setData] = useState([])
   const route = useRouter()
-
-  useEffect(() => {
-    fetchData()
-  }, [fetchData])
+  const lastMinutes = route.query.lastMinutes
 
   const fetchData = useCallback(async () => {
     setLoading(true)
 
     const data = await getCpuUsage(currentServer?.id, {
-      lastMinutes: route.query.lastMinutes ?? 60,
+      lastMinutes: lastMinutes ?? 60,
     })
     setData(data)
     setLoading(false)
-  }, [getCpuUsage, currentServer?.id, route.query.lastMinutes])
+  }, [getCpuUsage, currentServer?.id, lastMinutes])
+
+  useEffect(() => {
+    fetchData()
+  }, [fetchData])
 
   return loading ? (
-    <div className="col-span-2 bg-white lg:col-span-6 h-200 flex items-center justify-center">
+    <div className="col-span-2 bg-white lg:col-span-6 h-200 flex items-center justify-center h-[215px]">
       <Loading />
     </div>
   ) : (
