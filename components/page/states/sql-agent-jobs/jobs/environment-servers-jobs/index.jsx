@@ -5,10 +5,12 @@ import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import classNames from 'classnames'
 import { format, parseISO } from 'date-fns'
-import React, { useEffect, useMemo, useState } from 'react'
+import moment from 'moment'
+import React, { useEffect, useState } from 'react'
 import { useCallback } from 'react'
 
 import Loading from '~/components/loading'
+import Pagination from '~/components/pagination/pagination'
 import Reveal from '~/helpers/reveal'
 import { getSqlAgentPRjobsExe } from '~/services/states'
 
@@ -23,34 +25,35 @@ function Servers({ environmentServers, serversJobs, expand }) {
   const [jobsExe, setJobsExe] = useState()
   const [activeTableRowIndex, toggleActiveTableRowIndex] = useState()
   const [isLoading, setIsLoading] = useState(true)
+  const [currentPage, setCurrentPage] = useState(1)
 
-  const currentRunsJob = useMemo(
-    () =>
-      jobModal.isOpen && jobModal.jobData?.ServerId && jobsExe?.length > 0
-        ? jobsExe.filter(
-            ({ ServerId, Step_Id, Job }) =>
-              Step_Id === 0 &&
-              ServerId === jobModal.jobData.ServerId &&
-              Job === jobModal.jobData['jobName']
-          )
-        : [],
-    [jobModal, jobsExe]
-  )
+  // const currentRunsJob = useMemo(
+  //   () =>
+  //     jobModal.isOpen && jobModal.jobData?.ServerId && jobsExe?.length > 0
+  //       ? jobsExe.filter(
+  //           ({ ServerId, Step_Id, Job }) =>
+  //             Step_Id === 0 &&
+  //             ServerId === jobModal.jobData.ServerId &&
+  //             Job === jobModal.jobData['jobName']
+  //         )
+  //       : [],
+  //   [jobModal, jobsExe]
+  // )
 
-  const selectedRunsJob = useMemo(
-    () =>
-      jobModal.isOpen && jobModal.jobData?.ServerId && jobsExe?.length > 0
-        ? jobsExe.filter(
-            ({ Step_Id, ServerId, Job, RunDateTime }) =>
-              Step_Id !== 0 &&
-              ServerId === jobModal.jobData.ServerId &&
-              Job === jobModal.jobData['Job Name'] &&
-              currentRunsJob[activeTableRowIndex] &&
-              RunDateTime === currentRunsJob[activeTableRowIndex]['RunDateTime']
-          )
-        : [],
-    [activeTableRowIndex]
-  )
+  // const selectedRunsJob = useMemo(
+  //   () =>
+  //     jobModal.isOpen && jobModal.jobData?.ServerId && jobsExe?.length > 0
+  //       ? jobsExe.filter(
+  //           ({ Step_Id, ServerId, Job, RunDateTime }) =>
+  //             Step_Id !== 0 &&
+  //             ServerId === jobModal.jobData.ServerId &&
+  //             Job === jobModal.jobData['Job Name'] &&
+  //             currentRunsJob[activeTableRowIndex] &&
+  //             RunDateTime === currentRunsJob[activeTableRowIndex]['RunDateTime']
+  //         )
+  //       : [],
+  //   [activeTableRowIndex]
+  // )
 
   const handleServerExpandedIndices = useCallback(
     (index) => {
@@ -69,21 +72,29 @@ function Servers({ environmentServers, serversJobs, expand }) {
 
   const getData = useCallback(async () => {
     try {
-      const { data } = await getSqlAgentPRjobsExe()
+      const serverId = jobModal.jobData?.ServerId
+      const jobName = jobModal.jobData?.jobName
 
-      if (!data) return
+      if (serverId) {
+        setIsLoading(true)
+        const { data } = await getSqlAgentPRjobsExe(serverId, {
+          jobName,
+          page: currentPage,
+        })
+        if (!data) return
+        setJobsExe(data)
+      }
 
       setIsLoading(false)
-      setJobsExe(data)
     } catch (error) {
       // eslint-disable-next-line no-console
       console.log(error)
     }
-  }, [])
+  }, [jobModal.jobData?.jobName])
 
   useEffect(() => {
     getData()
-  }, [])
+  }, [jobModal.jobData?.jobName, currentPage])
 
   useEffect(() => {
     if (expand) {
@@ -181,6 +192,7 @@ function Servers({ environmentServers, serversJobs, expand }) {
           )
         })}
       </div>
+
       {jobModal.isOpen ? (
         <div className="fixed flex items-center top-0 left-0 w-full min-h-full z-[100]">
           <button
@@ -223,10 +235,14 @@ function Servers({ environmentServers, serversJobs, expand }) {
                   </thead>
                   <tbody>
                     <tr key={`job-item-${jobModal.jobData?.ServerId}`}>
-                      <td>{jobModal.jobData['Job Name']}</td>
-                      <td>{jobModal.jobData['Enabled']}</td>
-                      <td>{jobModal.jobData['Job Created Date']}</td>
-                      <td>{jobModal.jobData['Frequency']}</td>
+                      <td>{jobModal.jobData['jobName']}</td>
+                      <td>{jobModal.jobData['enabled']}</td>
+                      <td>
+                        {moment(jobModal.jobData['createdAt']).format(
+                          'DD/MM/YYYY HH:ss'
+                        )}
+                      </td>
+                      <td>{jobModal.jobData['frequency']}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -268,9 +284,9 @@ function Servers({ environmentServers, serversJobs, expand }) {
                       </tr>
                     </thead>
 
-                    {currentRunsJob.length > 0 ? (
+                    {jobsExe?.data?.length > 0 ? (
                       <tbody>
-                        {currentRunsJob.map(
+                        {jobsExe?.data?.map(
                           (
                             {
                               ServerId,
@@ -348,9 +364,9 @@ function Servers({ environmentServers, serversJobs, expand }) {
                                             </tr>
                                           </thead>
 
-                                          {selectedRunsJob.length > 0 ? (
+                                          {jobsExe?.data?.length > 0 ? (
                                             <tbody>
-                                              {selectedRunsJob.map(
+                                              {jobsExe?.data?.map(
                                                 (
                                                   {
                                                     ServerId,
@@ -388,6 +404,11 @@ function Servers({ environmentServers, serversJobs, expand }) {
                       </tbody>
                     ) : undefined}
                   </table>
+                  <Pagination
+                    currentPage={currentPage}
+                    totalResults={jobsExe?.count}
+                    onChangePage={setCurrentPage}
+                  />
                 </div>
               )}
             </div>

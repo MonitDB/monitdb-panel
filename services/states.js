@@ -24,8 +24,8 @@ export const getSqlAgentPRjobs = async () => {
   return clientApi().get(`/api/execcomponent/prjob`)
 }
 
-export const getSqlAgentPRjobsExe = async () => {
-  return clientApi().get(`/api/execcomponent/prjobexe`)
+export const getSqlAgentPRjobsExe = async (serverId, parameters) => {
+  return apiV2().get(`/states/jobs-execution/${serverId}`, { params: parameters})
 }
 
 export const getSqlAgentPRjobsSteps = async () => {

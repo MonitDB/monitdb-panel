@@ -43,9 +43,6 @@ const DiskUsage = ({ tabName }) => {
 
     if (!data) return
 
-    // eslint-disable-next-line no-console
-    console.log('disk usage', data)
-
     setDiskUsage(data)
     setIsLoading(false)
   }

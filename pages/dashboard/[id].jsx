@@ -104,18 +104,17 @@ const SingleDashboard = () => {
       const fetch = async () => {
         const { data } = await getServerMetrics({ id: router?.query?.id })
         setServerMetrics(data)
-        console.log(data)
       }
       fetch()
     }
   }, [getServerMetrics, router?.query?.id])
 
   const lastMinutesOptions = [
-    { value: HOUR, label: '1 hora' },
-    { value: 6 * HOUR, label: '6 horas' },
-    { value: DAY, label: '24 horas' },
-    { value: 7 * DAY, label: '7 dias' },
-    { value: 14 * DAY, label: '14 dias' },
+    { value: HOUR, label: '1 hour' },
+    { value: 6 * HOUR, label: '6 hours' },
+    { value: DAY, label: '24 hours' },
+    { value: 7 * DAY, label: '7 days' },
+    { value: 14 * DAY, label: '14 days' },
   ]
 
   const formik = useFormik({
