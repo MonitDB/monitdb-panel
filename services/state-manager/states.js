@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 
-import clientApi from '../../utils/client-api'
+import clientApi, { apiV2 } from '../../utils/client-api'
 
 const useExecComponentContext = create(() => ({
   getVersions: async () => {
@@ -13,7 +13,7 @@ const useExecComponentContext = create(() => ({
     return clientApi().get(`/api/execcomponent/prdisks`)
   },
   getSqlServerLicensing: async () => {
-    return clientApi().get(`/api/execcomponent/prlcn`)
+    return apiV2().get(`/component/execute-component/prlcn`)
   },
   getSqlAgentRundeckJobs: async () => {
     return clientApi().get(`/api/execcomponent/prjobrd`)

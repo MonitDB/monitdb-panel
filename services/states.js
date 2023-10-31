@@ -1,11 +1,11 @@
 import clientApi, { apiV2 } from '~/utils/client-api'
 
 export const getVersions = async () => {
-  return clientApi().get(`/api/execcomponent/PRVER`)
+  return apiV2().get(`/component/execute-component/PRVER`)
 }
 
 export const getBackups = async () => {
-  return clientApi().get(`/api/execcomponent/prbackup`)
+  return apiV2().get(`/component/execute-component/prbackup`)
 }
 
 export const getDiskUsage = async () => {
@@ -13,15 +13,15 @@ export const getDiskUsage = async () => {
 }
 
 export const getSqlServerLicensing = async () => {
-  return clientApi().get(`/api/execcomponent/prlcn`)
+  return apiV2().get(`/component/execute-component/prlcn`)
 }
 
 export const getSqlAgentRundeckJobs = async () => {
-  return clientApi().get(`/api/execcomponent/prjobrd`)
+  return apiV2().get(`/component/execute-component/prjobrd`)
 }
 
 export const getSqlAgentPRjobs = async () => {
-  return clientApi().get(`/api/execcomponent/prjob`)
+  return apiV2().get(`/component/execute-component/prjob`)
 }
 
 export const getSqlAgentPRjobsExe = async (serverId, parameters) => {
@@ -29,5 +29,5 @@ export const getSqlAgentPRjobsExe = async (serverId, parameters) => {
 }
 
 export const getSqlAgentPRjobsSteps = async () => {
-  return clientApi().get(`/api/execcomponent/prjobsteps`)
+  return apiV2().get(`/component/execute-component/prjobsteps`)
 }

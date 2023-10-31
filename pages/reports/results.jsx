@@ -18,7 +18,7 @@ import {
 import { GenericTable } from '~/components/table/genericTable'
 import useGlobal from '~/hooks/use-global'
 import Layout from '~/layouts/default'
-import { getRepostsByType } from '~/services/reports'
+import { getReportsByType } from '~/services/reports'
 
 const reportTypes = [
   { name: 'SQL Server Availability Time', slug: 'rltime' },
@@ -77,7 +77,7 @@ const ResultReportsPage = () => {
     setIsLoading(true)
 
     try {
-      const { data } = await getRepostsByType({
+      const { data } = await getReportsByType({
         type: typeActive?.slug,
         params: { serverId: router?.query?.server },
       })

@@ -27,34 +27,6 @@ function Servers({ environmentServers, serversJobs, expand }) {
   const [isLoading, setIsLoading] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
 
-  // const currentRunsJob = useMemo(
-  //   () =>
-  //     jobModal.isOpen && jobModal.jobData?.ServerId && jobsExe?.length > 0
-  //       ? jobsExe.filter(
-  //           ({ ServerId, Step_Id, Job }) =>
-  //             Step_Id === 0 &&
-  //             ServerId === jobModal.jobData.ServerId &&
-  //             Job === jobModal.jobData['jobName']
-  //         )
-  //       : [],
-  //   [jobModal, jobsExe]
-  // )
-
-  // const selectedRunsJob = useMemo(
-  //   () =>
-  //     jobModal.isOpen && jobModal.jobData?.ServerId && jobsExe?.length > 0
-  //       ? jobsExe.filter(
-  //           ({ Step_Id, ServerId, Job, RunDateTime }) =>
-  //             Step_Id !== 0 &&
-  //             ServerId === jobModal.jobData.ServerId &&
-  //             Job === jobModal.jobData['Job Name'] &&
-  //             currentRunsJob[activeTableRowIndex] &&
-  //             RunDateTime === currentRunsJob[activeTableRowIndex]['RunDateTime']
-  //         )
-  //       : [],
-  //   [activeTableRowIndex]
-  // )
-
   const handleServerExpandedIndices = useCallback(
     (index) => {
       const indices = new Set(serverExpandedIndices)
@@ -77,6 +49,7 @@ function Servers({ environmentServers, serversJobs, expand }) {
 
       if (serverId) {
         setIsLoading(true)
+        toggleActiveTableRowIndex(-1)
         const { data } = await getSqlAgentPRjobsExe(serverId, {
           jobName,
           page: currentPage,
