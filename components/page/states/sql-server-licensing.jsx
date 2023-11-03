@@ -55,6 +55,7 @@ const SqlServerLicensing = ({ tabName }) => {
             </div>
 
             <ExportButton
+              disabled={isLoading}
               data={sqlServerLicensing}
               fileName={'SQL_SERVER_LICENSING'}
             />

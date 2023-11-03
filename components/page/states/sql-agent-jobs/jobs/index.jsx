@@ -7,12 +7,13 @@ import React, { useEffect, useState } from 'react'
 import { useCallback } from 'react'
 
 import Loading from '~/components/loading'
+import PageContent from '~/components/page/content/content'
 import Servers from '~/components/page/states/sql-agent-jobs/jobs/environment-servers-jobs'
 import useGlobal from '~/hooks/use-global'
 import { getSqlAgentPRjobs } from '~/services/states'
 import { filterServersByEnvironmentId, formatServer } from '~/utils/server'
 
-function Jobs() {
+function Jobs(properties) {
   const [isLoading, setIsLoading] = useState(true)
   const [sqlAgentPRjobs, setSqlAgentPRjobs] = useState([])
   const [environmentExpandedIndices, setEnvironmentExpandedIndices] = useState(
@@ -53,12 +54,17 @@ function Jobs() {
 
   return (
     <section className="space-y-4">
-      <header className="flex flex-col mb-5 md:flex-row md:justify-between md:items-center">
-        <div className="w-full  pt-8 flex flex-col md:flex-row md:justify-between md:items-end">
-          <h2 className="heading-md">Jobs</h2>
+      <PageContent
+        removeSidebarMargin={true}
+        hideBreadcrumbs={true}
+        className="flex flex-wrap items-start justify-between"
+      >
+        <header className="pt-8 w-full flex flex-col md:flex-row md:justify-between md:items-end">
+          <h1 className="heading-lg">Jobs</h1>
           <button
             type="button"
             className={'btn btn--small mr-[10px]'}
+            disabled={isLoading}
             onClick={() => {
               const allEnvironmentIndices = serverEnvironments.map(
                 (_, index) => index
@@ -72,8 +78,8 @@ function Jobs() {
           >
             Expand All
           </button>
-        </div>
-      </header>
+        </header>
+      </PageContent>
       {isLoading ? (
         <Loading />
       ) : (

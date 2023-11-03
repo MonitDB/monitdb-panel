@@ -79,6 +79,7 @@ const Backups = ({ tabName }) => {
           <button
             type="button"
             className={'btn btn--small mr-[10px]'}
+            disabled={isLoading}
             onClick={() => {
               const allEnvironmentIndices = serverEnvironments.map(
                 (_, index) => index
