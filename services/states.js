@@ -1,4 +1,4 @@
-import clientApi, { apiV2 } from '~/utils/client-api'
+import  { apiV2 } from '~/utils/client-api'
 
 export const getVersions = async () => {
   return apiV2().get(`/component/execute-component/PRVER`)
@@ -26,6 +26,10 @@ export const getSqlAgentPRjobs = async () => {
 
 export const getSqlAgentPRjobsExe = async (serverId, parameters) => {
   return apiV2().get(`/states/jobs-execution/${serverId}`, { params: parameters})
+}
+
+export const getSqlAgentPRjobsExecutions = async (serverId, parameters) => {
+  return apiV2().get(`/states/jobs-executions/${serverId}`, { params: parameters})
 }
 
 export const getSqlAgentPRjobsSteps = async () => {

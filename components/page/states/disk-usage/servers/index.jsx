@@ -98,8 +98,9 @@ const Servers = ({ environmentServers, diskUsage, expand }) => {
                       const total = disk['Total(MB)']
 
                       const free = disk['Free(MB)']
-                      const usedPercentage = 100 - disk['Free(%)']
                       const freePercentage = disk['Free(%)']
+                      const usedPercentage = disk['Usage(%)']
+
                       return (
                         <tr key={`server-production-${index}`}>
                           <td>
@@ -117,7 +118,7 @@ const Servers = ({ environmentServers, diskUsage, expand }) => {
                             {megaBytesToGigaBytes(total)}
                             GB
                           </td>
-                          <td>{megaBytesToGigaBytes(usedPercentage)}%</td>
+                          <td>{usedPercentage}%</td>
                           <td>{megaBytesToGigaBytes(free)} GB</td>
                           <td>{freePercentage}%</td>
                         </tr>

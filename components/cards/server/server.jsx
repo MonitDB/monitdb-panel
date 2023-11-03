@@ -19,7 +19,7 @@ const getPieChartData = (data) => {
   const inUserPercentage = 100 - availablePercent
   let inUseColor = '#5046e5'
 
-  if (inUserPercentage > 85 && inUserPercentage < 95) {
+  if (inUserPercentage > 80 && inUserPercentage < 95) {
     inUseColor = '#fc9003'
   } else if (inUserPercentage >= 95) {
     inUseColor = '#ff4e4e'
@@ -30,7 +30,7 @@ const getPieChartData = (data) => {
     datasets: [
       {
         data: [inUserPercentage, availablePercent],
-        backgroundColor: [inUseColor, '#a56767'],
+        backgroundColor: [inUseColor, '#d8d8d8'],
       },
     ],
   }
@@ -280,7 +280,7 @@ const ServerCard = ({
                   }}
                 />
                 <p className="text-center text-[10px] whitespace-nowrap">
-                  {Number.parseInt(100 - disk['Usage(%)'])}% in use
+                  {Number.parseInt(disk['Usage(%)'])}% in use
                   <br />
                   {getDiskTotal({
                     total: disk['Total(MB)'],

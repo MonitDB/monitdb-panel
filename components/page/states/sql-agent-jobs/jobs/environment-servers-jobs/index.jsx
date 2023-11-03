@@ -12,7 +12,10 @@ import { useCallback } from 'react'
 import Loading from '~/components/loading'
 import Pagination from '~/components/pagination/pagination'
 import Reveal from '~/helpers/reveal'
-import { getSqlAgentPRjobsExe } from '~/services/states'
+import {
+  getSqlAgentPRjobsExe,
+  getSqlAgentPRjobsExecutions,
+} from '~/services/states'
 
 const DATE_FORMAT = "dd MMM yyyy kk':'mm"
 
@@ -25,6 +28,8 @@ function Servers({ environmentServers, serversJobs, expand }) {
   const [jobsExe, setJobsExe] = useState()
   const [activeTableRowIndex, toggleActiveTableRowIndex] = useState()
   const [isLoading, setIsLoading] = useState(true)
+  const [jobsExecutions, setJobsExecutions] = useState()
+  const [isLoadingExecutions, setIsLoadingExecutions] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
 
   const handleServerExpandedIndices = useCallback(
@@ -64,6 +69,34 @@ function Servers({ environmentServers, serversJobs, expand }) {
       console.log(error)
     }
   }, [jobModal.jobData?.jobName])
+
+  const getExecutions = useCallback(
+    async (runDateTime, rowIndex) => {
+      try {
+        const serverId = jobModal.jobData?.ServerId
+        const jobName = jobModal.jobData?.jobName
+        toggleActiveTableRowIndex(-1)
+        if (serverId) {
+          setJobsExecutions([])
+          setIsLoadingExecutions(true)
+          toggleActiveTableRowIndex(rowIndex)
+          const { data } = await getSqlAgentPRjobsExecutions(serverId, {
+            jobName,
+            runDateTime,
+          })
+          if (!data) return
+
+          setJobsExecutions(data)
+        }
+
+        setIsLoadingExecutions(false)
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.log(error)
+      }
+    },
+    [jobModal.jobData?.jobName]
+  )
 
   useEffect(() => {
     getData()
@@ -279,13 +312,23 @@ function Servers({ environmentServers, serversJobs, expand }) {
                                     //   activeTableRowIndex === exeIndex,
                                   })}
                                   key={`exec-item-${ServerId}-${exeIndex}`}
-                                  onClick={() =>
+                                  onClick={() => {
                                     toggleActiveTableRowIndex(
                                       activeTableRowIndex === exeIndex
                                         ? undefined
                                         : exeIndex
                                     )
-                                  }
+                                    const job =
+                                      activeTableRowIndex === exeIndex
+                                        ? undefined
+                                        : jobsExe?.data[exeIndex]
+
+                                    if (job)
+                                      getExecutions(
+                                        job['RunDateTime'],
+                                        exeIndex
+                                      )
+                                  }}
                                 >
                                   <td>
                                     <button
@@ -305,7 +348,6 @@ function Servers({ environmentServers, serversJobs, expand }) {
                                     </button>
                                   </td>
                                   <td>
-                                    {' '}
                                     {format(parseISO(RunDateTime), DATE_FORMAT)}
                                   </td>
                                   <td>{Job}</td>
@@ -319,53 +361,56 @@ function Servers({ environmentServers, serversJobs, expand }) {
                                       active={activeTableRowIndex === exeIndex}
                                     >
                                       <div className="py-3 px-5 bg-gray-light bg-opacity-25">
-                                        <table className="m-0">
-                                          <thead className="border-0 z-[2]">
-                                            <tr>
-                                              <th className="relative pb-3.5 !border-0 w-[15%]">
-                                                Step Id
-                                                <span className="absolute bottom-0 left-0 block h-1 w-full bg-[#9da5b1]" />
-                                              </th>
-                                              <th className="relative pb-3.5 !border-0 w-[15%]">
-                                                Status
-                                                <span className="absolute bottom-0 left-0 block h-1 w-full bg-[#9da5b1]" />
-                                              </th>
-                                              <th className="relative pb-3.5 !border-0">
-                                                Message
-                                                <span className="absolute bottom-0 left-0 block h-1 w-full bg-[#9da5b1]" />
-                                              </th>
-                                            </tr>
-                                          </thead>
-
-                                          {jobsExe?.data?.length > 0 ? (
-                                            <tbody>
-                                              {jobsExe?.data?.map(
-                                                (
-                                                  {
-                                                    ServerId,
-                                                    Status,
-                                                    Step_Id,
-                                                    Message,
-                                                  },
-                                                  exeIndex
-                                                ) => {
-                                                  return (
-                                                    <tr
-                                                      className="cursor-pointer"
-                                                      key={`exec-item-${ServerId}-${exeIndex}`}
-                                                    >
-                                                      <td>{Step_Id}</td>
-                                                      <td>{Status}</td>
-                                                      <td className="leading-[23px] line-clamp-3 !whitespace-normal">
-                                                        {Message}
-                                                      </td>
-                                                    </tr>
-                                                  )
-                                                }
-                                              )}
-                                            </tbody>
-                                          ) : undefined}
-                                        </table>
+                                        {isLoadingExecutions ? (
+                                          <Loading />
+                                        ) : (
+                                          <table className="m-0">
+                                            <thead className="border-0 z-[2]">
+                                              <tr>
+                                                <th className="relative pb-3.5 !border-0 w-[15%]">
+                                                  Step Id
+                                                  <span className="absolute bottom-0 left-0 block h-1 w-full bg-[#9da5b1]" />
+                                                </th>
+                                                <th className="relative pb-3.5 !border-0 w-[15%]">
+                                                  Status
+                                                  <span className="absolute bottom-0 left-0 block h-1 w-full bg-[#9da5b1]" />
+                                                </th>
+                                                <th className="relative pb-3.5 !border-0">
+                                                  Message
+                                                  <span className="absolute bottom-0 left-0 block h-1 w-full bg-[#9da5b1]" />
+                                                </th>
+                                              </tr>
+                                            </thead>
+                                            {jobsExecutions?.length > 0 ? (
+                                              <tbody>
+                                                {jobsExecutions?.map(
+                                                  (
+                                                    {
+                                                      ServerId,
+                                                      Status,
+                                                      Step_Id,
+                                                      Message,
+                                                    },
+                                                    exeIndex
+                                                  ) => {
+                                                    return (
+                                                      <tr
+                                                        className="cursor-pointer"
+                                                        key={`exec-item-${ServerId}-${exeIndex}`}
+                                                      >
+                                                        <td>{Step_Id}</td>
+                                                        <td>{Status}</td>
+                                                        <td className="leading-[23px] line-clamp-3 !whitespace-normal">
+                                                          {Message}
+                                                        </td>
+                                                      </tr>
+                                                    )
+                                                  }
+                                                )}
+                                              </tbody>
+                                            ) : undefined}
+                                          </table>
+                                        )}
                                       </div>
                                     </Reveal>
                                   </td>

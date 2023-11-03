@@ -15,7 +15,7 @@ export const formatObjectToQuery = (object) => {
 
 export const megaBytesToGigaBytes = (mb) => {
   if (!mb) return mb
-  return Math.ceil(Number.parseInt(mb) / 1024)
+  return (Number.parseInt(mb) / 1024).toFixed(2)
 }
 
 export const dateStringToTime = (dateString) => new Date(dateString).getTime();
