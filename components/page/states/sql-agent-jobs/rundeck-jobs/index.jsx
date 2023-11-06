@@ -31,10 +31,8 @@ function RundeckJobs() {
 
   return (
     <section className="w-full prose max-w-full prose-p:m-0 prose-th:text-center prose-td:text-center prose-td:align-top prose-th:border-b-4 prose-headings:m-0 prose-td:whitespace-nowrap prose-td:text-ellipsis prose-td:overflow-hidden prose-table:table-fixed">
-      <header className="flex flex-col mb-5 md:flex-row md:justify-between md:items-center">
-        <div className="w-full md:w-3/4">
-          <h2 className="heading-md">Jobs Rundeck</h2>
-        </div>
+      <header className="pt-8 w-full flex flex-col md:flex-row md:justify-between md:items-end">
+        <h2 className="heading-lg">Jobs Rundeck</h2>
 
         <ExportButton
           className="btn btn--small md:ml-auto"

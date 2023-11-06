@@ -13,7 +13,7 @@ import useGlobal from '~/hooks/use-global'
 import { getSqlAgentPRjobs } from '~/services/states'
 import { filterServersByEnvironmentId, formatServer } from '~/utils/server'
 
-function Jobs(properties) {
+function Jobs() {
   const [isLoading, setIsLoading] = useState(true)
   const [sqlAgentPRjobs, setSqlAgentPRjobs] = useState([])
   const [environmentExpandedIndices, setEnvironmentExpandedIndices] = useState(

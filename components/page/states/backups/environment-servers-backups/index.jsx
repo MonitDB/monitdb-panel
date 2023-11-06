@@ -10,7 +10,6 @@ import React, { useCallback, useEffect, useState } from 'react'
 
 import Reveal from '~/helpers/reveal'
 import { separeteBackups } from '~/utils/backups'
-import { megaBytesToGigaBytes } from '~/utils/formats'
 import { getIntervalTimeBetweenDates } from '~/utils/global'
 
 export const dateFormat = "dd MMM yyyy kk':'mm"
