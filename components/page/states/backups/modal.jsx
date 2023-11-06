@@ -166,7 +166,9 @@ function DatabaseBackupsModal({ modal: { isOpen, data }, onSetModalData }) {
                   backup_finish_date,
                 } = data
                 // const serverName = data['Server Name']
-                const backupSizeMB = (backup_size / 1024 / 1024).toFixed(2)
+                const backupSizeMB = (backup_size / 1024 / 1024 / 1024).toFixed(
+                  2
+                )
                 const duration =
                   new Date(backup_finish_date).getTime() -
                   new Date(backup_start_date).getTime()
@@ -177,7 +179,7 @@ function DatabaseBackupsModal({ modal: { isOpen, data }, onSetModalData }) {
             <strong>Backup Type:</strong> ${backup_type}
           </div>
           <div style="margin-bottom: 5px;">
-            <strong>Size:</strong> ${backupSizeMB} MB
+            <strong>Size:</strong> ${backupSizeMB} GB
           </div>
           <div style="margin-bottom: 5px;">
             <strong>Date:</strong> ${moment(backup_start_date).format(

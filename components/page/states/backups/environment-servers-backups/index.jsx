@@ -260,9 +260,12 @@ const EnvironmentServersBackups = ({
                             </td>
                             <td className="text-right">
                               {DATA.Full.lastBackup.backup_size
-                                ? `${megaBytesToGigaBytes(
-                                    DATA.Full.lastBackup.backup_size
-                                  )} GB`
+                                ? `${(
+                                    DATA.Full.lastBackup.backup_size /
+                                    1024 /
+                                    1024 /
+                                    1024
+                                  ).toFixed(2)} GB`
                                 : undefined}
                             </td>
                             <td className="text-left !border-r-white">
@@ -289,7 +292,12 @@ const EnvironmentServersBackups = ({
                             </td>
                             <td className="text-right">
                               {DATA.Diferential.lastBackup.backup_size
-                                ? `${DATA.Diferential.lastBackup.backup_size} GB`
+                                ? `${(
+                                    DATA.Diferential.lastBackup.backup_size /
+                                    1024 /
+                                    1024 /
+                                    1024
+                                  ).toFixed(2)} GB`
                                 : ''}
                             </td>
                             <td className="text-left !border-r-white">
@@ -315,7 +323,12 @@ const EnvironmentServersBackups = ({
                             </td>
                             <td className="text-right">
                               {DATA.Log.lastBackup.backup_size
-                                ? `${DATA.Log.lastBackup.backup_size} GB`
+                                ? `${(
+                                    DATA.Log.lastBackup.backup_size /
+                                    1024 /
+                                    1024 /
+                                    1024
+                                  ).toFixed(2)} GB`
                                 : ''}
                             </td>
                           </tr>
