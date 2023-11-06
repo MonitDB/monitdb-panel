@@ -1,12 +1,7 @@
-// import { faClock } from '@fortawesome/free-solid-svg-icons'
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-// import { format, parseISO } from 'date-fns'
 import moment from 'moment'
 import React from 'react'
 
 import { ApexChart, defaultChartOptions } from '~/components/chart'
-// import { dateFormat } from '~/components/page/states/backups/environment-servers-backups'
-// import { megaBytesToGigaBytes } from '~/utils/formats'
 
 function DatabaseBackupsModal({ modal: { isOpen, data }, onSetModalData }) {
   function getMostAmountOfArrayBackups() {
@@ -40,6 +35,9 @@ function DatabaseBackupsModal({ modal: { isOpen, data }, onSetModalData }) {
       if (LOG) log.push(LOG)
     }
 
+  const model = differential[0] ?? log[0] ?? full[0]
+  const serverName = model['Server Name']
+  const databaseName = model['database_name']
   return (
     <div className="fixed flex items-center justify-center top-0 left-0 w-full min-h-full h-full z-[100]">
       <button
@@ -64,6 +62,7 @@ function DatabaseBackupsModal({ modal: { isOpen, data }, onSetModalData }) {
           series={[
             {
               name: 'FULL',
+              color: '#5046E5',
               data: full.map((item) => {
                 return [
                   item.backup_start_date,
@@ -75,6 +74,7 @@ function DatabaseBackupsModal({ modal: { isOpen, data }, onSetModalData }) {
             },
 
             {
+              color: '#5046E599',
               name: 'LOG',
               // eslint-disable-next-line sonarjs/no-identical-functions
               data: log.map((item) => {
@@ -88,7 +88,7 @@ function DatabaseBackupsModal({ modal: { isOpen, data }, onSetModalData }) {
             },
             {
               name: 'DIFFERENTIAL',
-
+              color: '#161B22',
               // eslint-disable-next-line sonarjs/no-identical-functions
               data: differential.map((item) => {
                 return [
@@ -106,7 +106,15 @@ function DatabaseBackupsModal({ modal: { isOpen, data }, onSetModalData }) {
               ...defaultChartOptions.chart,
               type: 'scatter',
             },
-            title: { text: 'Backup history' },
+            title: {
+              text: `${serverName} - ${databaseName} Backup History`,
+              style: {
+                fontFamily: 'Arial, sans-serif',
+                color: '#333',
+                fontWeight: 'bold',
+              },
+            },
+
             legend: {
               showForSingleSeries: false,
               fontSize: '11px',
@@ -144,151 +152,54 @@ function DatabaseBackupsModal({ modal: { isOpen, data }, onSetModalData }) {
                 formatter: (value) => moment(value).format('DD/MM/YYYY HH:mm'),
               },
             },
+            tooltip: {
+              custom: function ({ seriesIndex, dataPointIndex, w }) {
+                const serie = w?.config.series[seriesIndex]
+                const data = serie.data[dataPointIndex][3]
+                const {
+                  backup_type,
+                  // backupset_name,
+                  // database_name,
+                  backup_size,
+                  physical_device_name,
+                  backup_start_date,
+                  backup_finish_date,
+                } = data
+                // const serverName = data['Server Name']
+                const backupSizeMB = (backup_size / 1024 / 1024).toFixed(2)
+                const duration =
+                  new Date(backup_finish_date).getTime() -
+                  new Date(backup_start_date).getTime()
+                return `
+      <div style="background-color: rgba(255, 255, 255, 0.9); border: 1px solid #ccc; border-radius: 5px; padding: 10px;">
+        <div style="font-family: Helvetica, Arial, sans-serif; font-size: 14px; color: #333; text-align: left;">
+          <div style="margin-bottom: 5px;">
+            <strong>Backup Type:</strong> ${backup_type}
+          </div>
+          <div style="margin-bottom: 5px;">
+            <strong>Size:</strong> ${backupSizeMB} MB
+          </div>
+          <div style="margin-bottom: 5px;">
+            <strong>Date:</strong> ${moment(backup_start_date).format(
+              'DD/MM/YYYY'
+            )}
+          </div>
+          <div style="margin-bottom: 5px;">
+            <strong>Duration:</strong> ${duration} ms
+          </div>
+          <div>
+            <strong>Path:</strong> ${physical_device_name}
+          </div>
+        </div>
+      </div>
+    `
+              },
+              // custom: () => {
+              //   return <>OPA</>
+              // },
+            },
           }}
         />
-
-        {/* <div className="relative flex items-center justify-center prose max-w-full prose-p:m-0 prose-th:align-middle prose-td:align-middle prose-th:border prose-th:border-l-0 prose-td:border prose-td:border-t-0 prose-td:border-l-0 prose-th:border-gray-light prose-td:border-gray-light prose-thead:mt-0 prose-headings:m-0 prose-ul:m-0 prose-ul:pl-0 prose-li:m-0 prose-li:pl-0 prose-th:px-2.5 prose-td:px-2.5 prose-table:border-l prose-table:border-gray-light prose-table:table-fixed prose-table:border-separate prose-table:border-spacing-0">
-          <div className="p-8 bg-white max-h-[80vh] overflow-auto">
-            <table className="m-0">
-              <thead className="bg-white sticky -top-[32px]">
-                <tr>
-                  <th
-                    colSpan={3}
-                    className="text-center w-[26.666%] !border-b-0"
-                  >
-                    <span className="w-2.5 h-2.5 bg-gray-dark mr-1 inline-block relative top-[0.5px]" />
-                    Full
-                  </th>
-                  <th
-                    colSpan={3}
-                    className="text-center w-[26.666%] !border-b-0"
-                  >
-                    <span className="w-2.5 h-2.5 bg-blue mr-1 inline-block relative top-[0.5px]" />
-                    Differential
-                  </th>
-                  <th
-                    colSpan={3}
-                    className="text-center w-[26.666%] !border-b-0"
-                  >
-                    <span className="w-2.5 h-2.5 bg-blue bg-opacity-60 mr-1 inline-block relative top-[0.5px]" />
-                    Log
-                  </th>
-                </tr>
-                <tr>
-                  <th className="lowercase first-letter:uppercase text-left !border-r-white">
-                    Start date
-                  </th>
-                  <th className="lowercase first-letter:uppercase text-center !border-r-white">
-                    Duration
-                  </th>
-                  <th className="lowercase first-letter:uppercase text-right">
-                    Size
-                  </th>
-                  <th className="lowercase first-letter:uppercase text-left !border-r-white">
-                    Start date
-                  </th>
-                  <th className="lowercase first-letter:uppercase text-center !border-r-white">
-                    Duration
-                  </th>
-                  <th className="lowercase first-letter:uppercase text-right">
-                    Size
-                  </th>
-                  <th className="lowercase first-letter:uppercase text-left !border-r-white">
-                    Start date
-                  </th>
-                  <th className="lowercase first-letter:uppercase text-center !border-r-white">
-                    Duration
-                  </th>
-                  <th className="lowercase first-letter:uppercase text-right">
-                    Size
-                  </th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {arraySize.map((_, index) => {
-                  const FULL = data.Full.allBackups[index] || {}
-                  const DIFERENTIAL = data.Diferential.allBackups[index] || {}
-                  const LOG = data.Log.allBackups[index] || {}
-                  return (
-                    <tr key={`backups-modal-${index}`}>
-                      <td className="text-left !border-r-white">
-                        {FULL.backup_start_date ? (
-                          <>
-                            <FontAwesomeIcon
-                              icon={faClock}
-                              className="mr-2 text-blue"
-                            />{' '}
-                            <span>
-                              {format(
-                                parseISO(FULL.backup_start_date),
-                                dateFormat
-                              )}
-                            </span>
-                          </>
-                        ) : undefined}
-                      </td>
-                      <td className="text-center !border-r-white">
-                        {FULL.intervalTime}
-                      </td>
-                      <td className="text-right">
-                        {FULL.backup_size
-                          ? `${megaBytesToGigaBytes(FULL.backup_size)} GB`
-                          : undefined}
-                      </td>
-                      <td className="text-left !border-r-white">
-                        {DIFERENTIAL.backup_start_date ? (
-                          <>
-                            <FontAwesomeIcon
-                              icon={faClock}
-                              className="mr-2 text-blue"
-                            />{' '}
-                            <span>
-                              {format(
-                                parseISO(DIFERENTIAL.backup_start_date),
-                                dateFormat
-                              )}
-                            </span>
-                          </>
-                        ) : undefined}
-                      </td>
-                      <td className="text-center !border-r-white">
-                        {DIFERENTIAL.intervalTime}
-                      </td>
-                      <td className="text-right">
-                        {DIFERENTIAL.backup_size
-                          ? `${DIFERENTIAL.backup_size} GB`
-                          : ''}
-                      </td>
-                      <td className="text-left !border-r-white">
-                        {LOG.backup_start_date ? (
-                          <>
-                            <FontAwesomeIcon
-                              icon={faClock}
-                              className="mr-2 text-blue"
-                            />{' '}
-                            <span>
-                              {format(
-                                parseISO(LOG.backup_start_date),
-                                dateFormat
-                              )}
-                            </span>
-                          </>
-                        ) : undefined}
-                      </td>
-                      <td className="text-center !border-r-white">
-                        {LOG.intervalTime}
-                      </td>
-                      <td className="text-right">
-                        {LOG.backup_size ? `${LOG.backup_size} GB` : ''}
-                      </td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
-          </div>
-        </div> */}
       </div>
     </div>
   )
