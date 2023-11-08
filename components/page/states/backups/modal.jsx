@@ -47,6 +47,14 @@ function DatabaseBackupsModal({ modal: { isOpen, data }, onSetModalData }) {
         }}
       />
       <div className="relative py-10 w-[90%] bg-white">
+        <div className="ml-4 z-[1]">
+          <p>
+            {serverName} - {databaseName}
+          </p>
+          <p>
+            <strong>Backup History</strong>
+          </p>
+        </div>
         <button
           className="w-4 h-4 absolute top-5 right-5 z-[1]"
           onClick={() => {
@@ -107,7 +115,7 @@ function DatabaseBackupsModal({ modal: { isOpen, data }, onSetModalData }) {
               type: 'scatter',
             },
             title: {
-              text: `${serverName} - ${databaseName} Backup History`,
+              // text: `y`,
               style: {
                 fontFamily: 'Arial, sans-serif',
                 color: '#333',

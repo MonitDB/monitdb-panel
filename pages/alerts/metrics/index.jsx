@@ -178,11 +178,11 @@ const MetricsPage = () => {
                                 setParameterIdActive(parameter.id)
                               }}
                             >
-                              <td>{parameter.nmAlert}</td>
-                              <td>{parameter.nmProcedure}</td>
-                              <td>{parameter.dsProfileEmail}</td>
+                              <td>{parameter.alertName}</td>
+                              <td>{parameter.procedureName}</td>
+                              <td>{parameter.profileEmailDescription}</td>
                               <td>{parameter.frequencyMinutes}</td>
-                              <td>{parameter.dsEmail}</td>
+                              <td>{parameter.emailDescription}</td>
                             </tr>
                           ))}
                       </tbody>

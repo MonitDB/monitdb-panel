@@ -112,9 +112,9 @@ const SingleDashboard = () => {
   const lastMinutesOptions = [
     { value: HOUR, label: '1 hour' },
     { value: 6 * HOUR, label: '6 hours' },
-    { value: DAY, label: '24 hours' },
-    { value: 7 * DAY, label: '7 days' },
-    { value: 14 * DAY, label: '14 days' },
+    { value: 12 * HOUR, label: '12 hours' },
+    { value: 1 * DAY, label: '24 hours' },
+    { value: 2 * DAY, label: '2 days' },
   ]
 
   const formik = useFormik({

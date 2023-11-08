@@ -26,7 +26,7 @@ const MetricsModal = ({ onClose, serverId, parameterId }) => {
 
   const frequencyOptions = useMemo(
     () => [
-      { value: '', label: 'All times' },
+      { value: '', label: 'Unactive' },
       { value: 1, label: '1 minutes' },
       { value: 5, label: '5 minutes' },
       { value: 20, label: '20 minutes' },
@@ -46,19 +46,25 @@ const MetricsModal = ({ onClose, serverId, parameterId }) => {
       const parameterData = response?.data
 
       formik.setFieldValue('id', parameterData?.id)
-      formik.setFieldValue('nmAlert', parameterData?.nmAlert)
-      formik.setFieldValue('nmProcedure', parameterData?.nmProcedure)
+      formik.setFieldValue('alertName', parameterData?.alertName)
+      formik.setFieldValue('procedureName', parameterData?.procedureName)
       formik.setFieldValue('frequencyMinutes', parameterData?.frequencyMinutes)
       formik.setFieldValue(
         'hourStartExecution',
         parameterData?.hourStartExecution
       )
       formik.setFieldValue('hourEndExecution', parameterData?.hourEndExecution)
-      formik.setFieldValue('flClear', parameterData?.flClear)
-      formik.setFieldValue('vlParameter', parameterData?.vlParameter)
-      formik.setFieldValue('dsMetric', parameterData?.dsMetric)
-      formik.setFieldValue('vlParameter2', parameterData?.vlParameter2)
-      formik.setFieldValue('dsMetric2', parameterData?.dsMetric2)
+      formik.setFieldValue('clearFlag', parameterData?.clearFlag)
+      formik.setFieldValue('parameterValue', parameterData?.parameterValue)
+      formik.setFieldValue(
+        'metricDescription',
+        parameterData?.metricDescription
+      )
+      formik.setFieldValue('parameterValue2', parameterData?.parameterValue2)
+      formik.setFieldValue(
+        'metricDescription2',
+        parameterData?.metricDescription2
+      )
     } catch (error) {
       console.error(error) // eslint-disable-line no-console
     } finally {
@@ -69,16 +75,16 @@ const MetricsModal = ({ onClose, serverId, parameterId }) => {
   const formik = useFormik({
     initialValues: {
       id: -1,
-      nmAlert: '',
-      nmProcedure: '',
+      alertName: '',
+      procedureName: '',
       frequencyMinutes: 0,
       hourStartExecution: 0,
       hourEndExecution: 0,
-      flClear: false,
-      vlParameter: 0,
-      dsMetric: '',
-      vlParameter2: 0,
-      dsMetric2: '',
+      clearFlag: false,
+      parameterValue: 0,
+      metricDescription: '',
+      parameterValue2: 0,
+      metricDescription2: '',
     },
     onSubmit: async (values) => {
       setIsSending(true)
@@ -128,34 +134,37 @@ const MetricsModal = ({ onClose, serverId, parameterId }) => {
               })}
             >
               <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
-                <label className="w-full font-bold lg:w-1/3" htmlFor="nmAlert">
-                  nmAlert
+                <label
+                  className="w-full font-bold lg:w-1/3"
+                  htmlFor="alertName"
+                >
+                  Alert Name
                 </label>
                 <input
                   type="text"
-                  name="nmAlert"
+                  name="alertName"
                   className="w-full px-4 h-10 border border-gray-light leading-10 rounded outline-none text-sm lg:w-2/3"
-                  placeholder="nmAlert"
+                  placeholder="alertName"
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  value={formik.values.nmAlert}
+                  value={formik.values.alertName}
                 />
               </div>
               <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
                 <label
                   className="w-full font-bold lg:w-1/3"
-                  htmlFor="nmProcedure"
+                  htmlFor="procedureName"
                 >
-                  nmProcedure
+                  Procedure Name
                 </label>
                 <input
                   type="text"
-                  name="nmProcedure"
+                  name="procedureName"
                   className="w-full px-4 h-10 border border-gray-light bg-white leading-10 rounded outline-none text-sm lg:w-2/3"
-                  placeholder="nmProcedure"
+                  placeholder="Procedure Name"
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  value={formik.values.nmProcedure}
+                  value={formik.values.procedureName}
                 />
               </div>
               <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
@@ -163,7 +172,7 @@ const MetricsModal = ({ onClose, serverId, parameterId }) => {
                   className="w-full font-bold lg:w-1/3"
                   htmlFor="frequencyMinutes"
                 >
-                  frequencyMinutes
+                  Frequency (MIN)
                 </label>
                 <Select
                   name="frequencyMinutes"
@@ -181,7 +190,7 @@ const MetricsModal = ({ onClose, serverId, parameterId }) => {
                   className="w-full font-bold"
                   htmlFor="hourStartExecution"
                 >
-                  hourStartExecution
+                  Start Hour Execution
                 </label>
                 <input
                   type="number"
@@ -195,7 +204,7 @@ const MetricsModal = ({ onClose, serverId, parameterId }) => {
               </div>
               <div className="col-span-2 flex flex-col space-y-2 md:col-span-6">
                 <label className="w-full font-bold" htmlFor="hourEndExecution">
-                  hourEndExecution
+                  End Hour Execution
                 </label>
                 <input
                   type="number"
@@ -209,14 +218,17 @@ const MetricsModal = ({ onClose, serverId, parameterId }) => {
               </div>
 
               <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
-                <label className="w-full font-bold lg:w-1/3" htmlFor="flClear">
-                  flClear
+                <label
+                  className="w-full font-bold lg:w-1/3"
+                  htmlFor="clearFlag"
+                >
+                  Clear Flag
                 </label>
                 <Checkbox
-                  name="flClear"
+                  name="clearFlag"
                   value="1"
                   onChange={(value) => {
-                    formik.setFieldValue('flClear', value)
+                    formik.setFieldValue('clearFlag', value)
                   }}
                 />
               </div>
@@ -224,69 +236,72 @@ const MetricsModal = ({ onClose, serverId, parameterId }) => {
               <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
                 <label
                   className="w-full font-bold lg:w-1/3"
-                  htmlFor="vlParameter"
+                  htmlFor="parameterValue"
                 >
-                  vlParameter
+                  Parameter Value
                 </label>
                 <input
                   type="number"
-                  name="vlParameter"
+                  name="parameterValue"
                   className="w-full px-4 h-10 border border-gray-light bg-white leading-10 rounded outline-none text-sm lg:w-2/3"
-                  placeholder="vlParameter"
+                  placeholder="parameterValue"
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  value={formik.values.vlParameter}
-                />
-              </div>
-
-              <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
-                <label className="w-full font-bold lg:w-1/3" htmlFor="dsMetric">
-                  dsMetric
-                </label>
-                <input
-                  type="text"
-                  name="dsMetric"
-                  className="w-full px-4 h-10 border border-gray-light bg-white leading-10 rounded outline-none text-sm lg:w-2/3"
-                  placeholder="dsMetric"
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  value={formik.values.dsMetric}
+                  value={formik.values.parameterValue}
                 />
               </div>
 
               <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
                 <label
                   className="w-full font-bold lg:w-1/3"
-                  htmlFor="vlParameter2"
+                  htmlFor="metricDescription"
                 >
-                  vlParameter2
+                  Metric Description
                 </label>
                 <input
-                  type="number"
-                  name="vlParameter2"
+                  type="text"
+                  name="metricDescription"
                   className="w-full px-4 h-10 border border-gray-light bg-white leading-10 rounded outline-none text-sm lg:w-2/3"
-                  placeholder="vlParameter2"
+                  placeholder="metricDescription"
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  value={formik.values.vlParameter2}
+                  value={formik.values.metricDescription}
                 />
               </div>
 
               <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
                 <label
                   className="w-full font-bold lg:w-1/3"
-                  htmlFor="dsMetric2"
+                  htmlFor="parameterValue2"
                 >
-                  dsMetric2
+                  Parameter Value 2
+                </label>
+                <input
+                  type="number"
+                  name="parameterValue2"
+                  className="w-full px-4 h-10 border border-gray-light bg-white leading-10 rounded outline-none text-sm lg:w-2/3"
+                  placeholder="parameterValue2"
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.parameterValue2}
+                />
+              </div>
+
+              <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
+                <label
+                  className="w-full font-bold lg:w-1/3"
+                  htmlFor="metricDescription2"
+                >
+                  Metric Description 2
                 </label>
                 <input
                   type="text"
-                  name="dsMetric2"
+                  name="metricDescription2"
                   className="w-full px-4 h-10 border border-gray-light bg-white leading-10 rounded outline-none text-sm lg:w-2/3"
-                  placeholder="dsMetric2"
+                  placeholder="metricDescription2"
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  value={formik.values.dsMetric2}
+                  value={formik.values.metricDescription2}
                 />
               </div>
 
