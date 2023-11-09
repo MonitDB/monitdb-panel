@@ -127,11 +127,8 @@ const Chart = (properties) => {
     },
     yaxis: {
       show: !disableLabels,
-      forceNiceScale: false,
+      forceNiceScale: true,
       decimalsInFloat: 2,
-      min: 0,
-      max: 100,
-      tickAmount: 5,
 
       labels: {
         formatter: yaxisAbs

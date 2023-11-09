@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router'
 import React, { useCallback, useEffect, useState } from 'react'
 
-import Chart from '~/components/chart'
+import { ApexChart, defaultChartOptions } from '~/components/chart'
 import Loading from '~/components/loading/loading'
 import useLogContext from '~/services/state-manager/logs'
 import { dateStringToTime } from '~/utils/formats'
@@ -34,13 +34,32 @@ function MemoryUsage(properties) {
     </div>
   ) : (
     <div className="col-span-2 bg-white lg:col-span-6">
-      <Chart
-        title={{
-          text: !data ? 'Error to load the data' : 'Memory Usage',
-          offsetY: 10,
-          offsetX: 5,
+      <ApexChart
+        height={'100%'}
+        options={{
+          ...defaultChartOptions,
+          title: {
+            text: !data ? 'Error to load the data' : 'Memory Usage',
+            offsetY: 10,
+            offsetX: 5,
+          },
+          stroke: { width: 1, curve: 'smooth' },
+          xaxis: {
+            ...defaultChartOptions.xaxis,
+          },
+          yaxis: {
+            ...defaultChartOptions.yaxis,
+            forceNiceScale: false,
+            min: 0,
+            max: 100,
+            tickAmount: 5,
+          },
+          legend: {
+            ...defaultChartOptions.legend,
+            itemMargin: '10px',
+          },
         }}
-        multipleSeries={[
+        series={[
           {
             name: '% Percent Usage',
             data:

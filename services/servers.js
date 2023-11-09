@@ -17,18 +17,13 @@ export const getEnvironments = async () => {
 }
 
 export const addServer = async (values) => {
-  return clientApi().post(`/api/server`, {
-    idtypeserver: values.serverType,
-    idtypeserverconnection: values.connection,
-    idtypeserverenvironment: values.environment,
-    servername: values.name,
-    serverdescription: values.description,
-    serverhost: values.host,
-    serveruser: values.user,
-    serverpassword: values.password,
-    serverport: values.port,
-    // serverenable: values.status,
-  })
+  return apiV2().post(`/server`, {
+ ...values  })
+}
+
+export const testServer = async (values) => {
+  return apiV2().post(`/server/test-connection`, {
+ ...values  })
 }
 
 export const updateServer = async (values) => {
