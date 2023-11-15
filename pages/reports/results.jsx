@@ -19,6 +19,7 @@ import { GenericTable } from '~/components/table/genericTable'
 import useGlobal from '~/hooks/use-global'
 import Layout from '~/layouts/default'
 import { getReportsByType } from '~/services/reports'
+import { scrollToSection } from '~/utils/global'
 
 const reportTypes = [
   { name: 'SQL Server Availability Time', slug: 'rltime' },
@@ -53,9 +54,10 @@ const ResultReportsPage = () => {
     globalState: { servers },
   } = useGlobal()
   const router = useRouter()
-  const [data, setData] = useState()
+  // const [data, setData] = useState()
   const [isLoading, setIsLoading] = useState(true)
   const [typeActive, setTypeActive] = useState()
+  const [reports, setReports] = useState({})
 
   const serversOptions = useMemo(
     () => [
@@ -77,15 +79,21 @@ const ResultReportsPage = () => {
     setIsLoading(true)
 
     try {
-      const { data } = await getReportsByType({
-        type: typeActive?.slug,
-        params: { serverId: router?.query?.server },
-      })
-
-      setData(data)
+      await Promise.allSettled(
+        reportTypes.map(async (reportType) => {
+          const { data } = await getReportsByType({
+            type: reportType.slug,
+            params: { serverId: router?.query?.server },
+          })
+          setReports((previousReports) => ({
+            ...previousReports,
+            [reportType.slug]: { data, name: reportType.name },
+          }))
+        })
+      )
     } catch (error) {
       console.error(error) // eslint-disable-line no-console
-      setData({})
+      // setData({})
     }
 
     setIsLoading(false)
@@ -119,9 +127,7 @@ const ResultReportsPage = () => {
                 {reportTypes.map((type, typeIndex) => (
                   <li key={`sidebar-type-${type.slug}-${typeIndex}`}>
                     <Link
-                      onClick={() => {
-                        handleChange('type', type.slug)
-                      }}
+                      onClick={() => scrollToSection(`#${type.slug}`)}
                       className={classNames({
                         active: typeActive?.slug === type.slug,
                       })}
@@ -148,26 +154,38 @@ const ResultReportsPage = () => {
           </PageContent>
 
           <PageContent>
-            {typeActive?.name && (
-              <header className="flex flex-col mb-5 md:flex-row md:justify-between md:items-center">
-                <h3 className="mb-5 heading-md md:mb-0">{typeActive?.name}</h3>
-                {data?.length > 0
-                  ? !isLoading && <ExportButton data={data} />
-                  : ''}
-              </header>
-            )}
-
             {isLoading && (
               <div className="flex justify-center items-center w-full min-h-28">
                 <Loading />
               </div>
             )}
 
-            {!isLoading ? (
-              <>{data.length > 0 ? <GenericTable data={data} /> : 'No Data'}</>
-            ) : (
-              ''
-            )}
+            {!isLoading &&
+              Object.keys(reports).map((key) => {
+                const data = reports[key].data
+                const name = reports[key].name
+                return (
+                  <>
+                    <header
+                      id={key}
+                      className="flex flex-col mb-5 md:flex-row md:justify-between md:items-center"
+                    >
+                      <h3 className="mb-5 heading-md md:mb-0">{name}</h3>
+                      {data?.length > 0
+                        ? !isLoading && <ExportButton data={data} />
+                        : ''}
+                    </header>
+                    <>
+                      {data.length > 0 ? (
+                        <GenericTable data={data} />
+                      ) : (
+                        'No Data'
+                      )}
+                    </>
+                    <br />
+                  </>
+                )
+              })}
           </PageContent>
         </PageWrapper>
       </Layout>

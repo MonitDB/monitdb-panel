@@ -35,6 +35,9 @@ function DatabaseBackupsModal({ modal, onSetModalData }) {
           ).reverse()
         )
       } catch {
+        setData([])
+        setAvailableDate([])
+        onSetModalData({ ...data, isOpen: false })
         toast.error('Error fetching data')
       } finally {
         setLoading(false)
@@ -75,7 +78,7 @@ function DatabaseBackupsModal({ modal, onSetModalData }) {
   const serverName = modal?.serverName
   const databaseName = modal?.databaseName
   return (
-    <div className="fixed flex items-center justify-center top-0 left-0 w-full min-h-full h-full z-[100]">
+    <div className="fixed flex items-center justify-center top-0 left-0 w-full min-h-full h-250 z-[100]">
       <button
         className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50"
         onClick={() => {
@@ -104,7 +107,7 @@ function DatabaseBackupsModal({ modal, onSetModalData }) {
         {loading && (
           <div
             style={{
-              height: '200px',
+              height: '230px',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
@@ -133,7 +136,7 @@ function DatabaseBackupsModal({ modal, onSetModalData }) {
               differential.length === 0 && (
                 <div
                   style={{
-                    height: '200px',
+                    height: '220px',
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
