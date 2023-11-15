@@ -5,7 +5,7 @@ export const getVersions = async () => {
 }
 
 export const getBackups = async () => {
-  return apiV2().get(`/component/execute-component/prbackup`)
+  return apiV2().get(`/states/backups`)
 }
 
 export const getDiskUsage = async () => {
