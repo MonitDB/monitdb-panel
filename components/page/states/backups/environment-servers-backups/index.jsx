@@ -232,6 +232,9 @@ const EnvironmentServersBackups = ({
                               onSetBackupsModal({
                                 isOpen: true,
                                 data: DATA,
+                                id,
+                                serverName,
+                                databaseName: DATABASE.database_name,
                               })
                             }
                           >
