@@ -101,9 +101,6 @@ const Backups = ({ tabName }) => {
                 )
                 setEnvironmentExpandedIndices(new Set(allEnvironmentIndices))
                 setExpand(true)
-                // setTimeout(() => {
-                //   setExpand(false)
-                // }, 100)
               }}
             >
               Expand All
