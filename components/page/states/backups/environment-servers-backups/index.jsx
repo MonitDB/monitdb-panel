@@ -60,7 +60,7 @@ const EnvironmentServersBackups = ({
     if (expand) {
       const allEnvironmentIndices = servers.map((_, index) => index)
       setServerExpandedIndices(new Set(allEnvironmentIndices))
-    }
+    } else setServerExpandedIndices(new Set())
   }, [expand])
 
   return (
