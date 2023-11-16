@@ -1,4 +1,4 @@
-import clientApi, { apiV2 } from '~/utils/client-api'
+import  { apiV2 } from '~/utils/client-api'
 
 export const getServers = async () => {
   return apiV2().get(`/server`)
@@ -27,21 +27,11 @@ export const testServer = async (values) => {
 }
 
 export const updateServer = async (values) => {
-  return clientApi().put(`/api/server`, {
-    id: values.id,
-    idtypeserver: values.serverType,
-    idtypeserverconnection: values.connection,
-    idtypeserverenvironment: values.environment,
-    servername: values.name,
-    serverdescription: values.description,
-    serverhost: values.host,
-    serveruser: values.user,
-    serverpassword: values.password,
-    serverport: values.port,
-    serverenable: values.status,
+  return apiV2().put(`/server`, {
+  ...values
   })
 }
 
 export const deleteServer = async (id) => {
-  return clientApi().delete(`/api/server/${id}`)
+  return apiV2().delete(`/server/${id}`)
 }

@@ -66,23 +66,36 @@ const DiskUsage = ({ tabName }) => {
         <header className="pt-8 w-full flex flex-col md:flex-row md:justify-between md:items-end">
           <h1 className="heading-lg">{tabName}</h1>
           <div>
-            <button
-              type="button"
-              className={'btn btn--small mr-[10px]'}
-              disabled={isLoading}
-              onClick={() => {
-                const allEnvironmentIndices = serverEnvironments.map(
-                  (_, index) => index
-                )
-                setEnvironmentExpandedIndices(new Set(allEnvironmentIndices))
-                setExpand(true)
-                setTimeout(() => {
-                  setExpand(false)
-                }, 100)
-              }}
-            >
-              Expand All
-            </button>
+            <div>
+              <button
+                type="button"
+                className={'btn btn--small mr-[10px]'}
+                disabled={isLoading}
+                onClick={() => {
+                  setEnvironmentExpandedIndices(new Set())
+
+                  setTimeout(() => {
+                    setExpand(false)
+                  }, 100)
+                }}
+              >
+                Collapse All
+              </button>
+              <button
+                type="button"
+                className={'btn btn--small mr-[10px]'}
+                disabled={isLoading}
+                onClick={() => {
+                  const allEnvironmentIndices = serverEnvironments.map(
+                    (_, index) => index
+                  )
+                  setEnvironmentExpandedIndices(new Set(allEnvironmentIndices))
+                  setExpand(true)
+                }}
+              >
+                Expand All
+              </button>
+            </div>
             <ExportButton
               disabled={isLoading}
               data={diskUsage}

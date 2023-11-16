@@ -107,7 +107,7 @@ function Servers({ environmentServers, serversJobs, expand }) {
     if (expand) {
       const allEnvironmentIndices = environmentServers.map((_, index) => index)
       setServerExpandedIndices(new Set(allEnvironmentIndices))
-    }
+    } else setServerExpandedIndices(new Set())
   }, [expand])
 
   return (

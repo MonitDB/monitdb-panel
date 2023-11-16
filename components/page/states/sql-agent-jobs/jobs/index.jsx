@@ -61,104 +61,132 @@ function Jobs() {
       >
         <header className="pt-8 w-full flex flex-col md:flex-row md:justify-between md:items-end">
           <h1 className="heading-lg">Jobs</h1>
-          <button
-            type="button"
-            className={'btn btn--small mr-[10px]'}
-            disabled={isLoading}
-            onClick={() => {
-              const allEnvironmentIndices = serverEnvironments.map(
-                (_, index) => index
-              )
-              setEnvironmentExpandedIndices(new Set(allEnvironmentIndices))
-              setExpand(true)
-              setTimeout(() => {
-                setExpand(false)
-              }, 100)
-            }}
-          >
-            Expand All
-          </button>
+          <div>
+            <button
+              type="button"
+              className={'btn btn--small mr-[10px]'}
+              disabled={isLoading}
+              onClick={() => {
+                setEnvironmentExpandedIndices(new Set())
+
+                setTimeout(() => {
+                  setExpand(false)
+                }, 100)
+              }}
+            >
+              Collapse All
+            </button>
+            <button
+              type="button"
+              className={'btn btn--small mr-[10px]'}
+              disabled={isLoading}
+              onClick={() => {
+                const allEnvironmentIndices = serverEnvironments.map(
+                  (_, index) => index
+                )
+                setEnvironmentExpandedIndices(new Set(allEnvironmentIndices))
+                setExpand(true)
+              }}
+            >
+              Expand All
+            </button>
+          </div>
         </header>
       </PageContent>
-      {isLoading ? (
-        <Loading />
-      ) : (
-        <div className="space-y-3">
-          {servers?.length
-            ? serverEnvironments.map(
-                ({ id, typeServerEnvironmentName }, environmentIndex) => {
-                  const filteredServers = filterServersByEnvironmentId(
-                    id,
-                    servers
-                  ).map((server) => formatServer(server, { serverTypes }))
 
-                  const filteredJobs = []
+      <PageContent removeSidebarMargin={true}>
+        <div className="w-full prose max-w-full prose-p:m-0 prose-td:align-top prose-th:border-b-4 prose-headings:m-0">
+          {isLoading ? (
+            <Loading />
+          ) : (
+            <div className="space-y-3">
+              {servers?.length
+                ? serverEnvironments.map(
+                    ({ id, typeServerEnvironmentName }, environmentIndex) => {
+                      const filteredServers = filterServersByEnvironmentId(
+                        id,
+                        servers
+                      ).map((server) => formatServer(server, { serverTypes }))
 
-                  for (let job of sqlAgentPRjobs) {
-                    const server = filteredServers.find(
-                      ({ id }) => id === job.ServerId
-                    )
+                      const filteredJobs = []
 
-                    if (!server) continue
+                      for (let job of sqlAgentPRjobs) {
+                        const server = filteredServers.find(
+                          ({ id }) => id === job.ServerId
+                        )
 
-                    filteredJobs.push(job)
-                  }
+                        if (!server) continue
 
-                  if (filteredJobs.length === 0) {
-                    return ''
-                  }
+                        filteredJobs.push(job)
+                      }
 
-                  return (
-                    <div
-                      key={`environment-${id}-${environmentIndex}-`}
-                      className="w-full"
-                    >
-                      <button
-                        type="button"
-                        className={classNames(
-                          `w-full py-2 px-4 bg-white border space-x-4
+                      if (filteredJobs.length === 0) {
+                        return ''
+                      }
+
+                      return (
+                        <div
+                          key={`environment-${id}-${environmentIndex}-`}
+                          className="w-full"
+                        >
+                          <button
+                            type="button"
+                            className={classNames(
+                              `w-full py-2 px-4 bg-white border space-x-4
                   rounded-sm font-bold text-left text-sm lg:hover:border-gray`,
-                          {
-                            'border-gray':
-                              environmentExpandedIndices.has(environmentIndex),
-                            'border-gray-light':
-                              !environmentExpandedIndices.has(environmentIndex),
-                          }
-                        )}
-                        onClick={() =>
-                          handleEnvironmentExpandedIndices(environmentIndex)
-                        }
-                      >
-                        <FontAwesomeIcon
-                          icon={faChevronDown}
-                          className={classNames('transform', {
-                            'rotate-180':
-                              environmentExpandedIndices.has(environmentIndex),
-                          })}
-                        />
-                        <span>{typeServerEnvironmentName}</span>
-                      </button>
-                      <div
-                        className={classNames({
-                          block:
-                            environmentExpandedIndices.has(environmentIndex),
-                          hidden:
-                            !environmentExpandedIndices.has(environmentIndex),
-                        })}
-                      >
-                        <Servers
-                          environmentServers={filteredServers}
-                          serversJobs={filteredJobs}
-                          expand={expand}
-                        />
-                      </div>
-                    </div>
+                              {
+                                'border-gray':
+                                  environmentExpandedIndices.has(
+                                    environmentIndex
+                                  ),
+                                'border-gray-light':
+                                  !environmentExpandedIndices.has(
+                                    environmentIndex
+                                  ),
+                              }
+                            )}
+                            onClick={() =>
+                              handleEnvironmentExpandedIndices(environmentIndex)
+                            }
+                          >
+                            <FontAwesomeIcon
+                              icon={faChevronDown}
+                              className={classNames('transform', {
+                                'rotate-180':
+                                  environmentExpandedIndices.has(
+                                    environmentIndex
+                                  ),
+                              })}
+                            />
+                            <span>{typeServerEnvironmentName}</span>
+                          </button>
+                          <div
+                            className={classNames({
+                              block:
+                                environmentExpandedIndices.has(
+                                  environmentIndex
+                                ),
+                              hidden:
+                                !environmentExpandedIndices.has(
+                                  environmentIndex
+                                ),
+                            })}
+                          >
+                            <Servers
+                              environmentServers={filteredServers}
+                              serversJobs={filteredJobs}
+                              expand={expand}
+                            />
+                          </div>
+                        </div>
+                      )
+                    }
                   )
-                }
-              )
-            : undefined}
+                : undefined}
+            </div>
+          )}
         </div>
-      )}
+      </PageContent>
     </section>
   )
 }

@@ -69,6 +69,22 @@ function CurrentActivity(properties) {
           }}
           value={sqlCode}
         />
+        {/* 
+        <Codemirror.Controlled
+          onChange={(event) => {
+            const target = event.target
+
+            setSqlCode(target.value)
+          }}
+          value={sqlCode}
+          className="codemirrorRaper"
+          options={{
+            lineWrapping: true,
+            lint: true,
+            mode: 'sql',
+            lineNumbers: true,
+          }}
+        /> */}
         {sqlCode && <Code code={sqlCode} language="javascript" />}
         <div className="w-full flex">
           <button
