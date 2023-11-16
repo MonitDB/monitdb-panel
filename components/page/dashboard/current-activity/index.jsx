@@ -1,3 +1,7 @@
+// import 'ace-builds/src-noconflict/mode-java'
+// import 'ace-builds/src-noconflict/theme-github'
+// import 'ace-builds/src-noconflict/ext-language_tools'
+
 import {
   faArrowRotateRight,
   faChevronRight,
@@ -6,6 +10,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import classNames from 'classnames'
 import React, { useCallback, useEffect, useState } from 'react'
 
+// export const AceEditor = dynamic(
+//   () => {
+//     return import('react-ace')
+//   },
+//   { ssr: false }
+// )
+// import dynamic from 'next/dynamic'
 import BlockMessage from '~/components/block-message'
 import Code from '~/components/code/code'
 import { Select, Textarea } from '~/components/form'
@@ -15,7 +26,6 @@ import { GenericTable } from '~/components/table/genericTable'
 import useComponentContext from '~/services/state-manager/components'
 import { useExecQueryContext } from '~/services/state-manager/execQuery'
 import { paginateArray } from '~/utils/array'
-
 const componentsOption = [
   { value: 'LTWISACT', label: 'WHO IS ACTIVE' },
   { value: 'LTWHO2', label: 'WHO2' },
@@ -33,7 +43,9 @@ function CurrentActivity(properties) {
   const [activeTableRowIndex, setActiveTableRowIndex] = useState(-1)
   const { executeQueryComponent } = useComponentContext()
 
-  const [sqlCode, setSqlCode] = useState(`SELECT * FROM Solution.Component;`)
+  const [sqlCode, setSqlCode] = useState(
+    `SELECT * FROM Historic.Historic_Parameter;`
+  )
 
   useEffect(() => {
     fetchData()
@@ -70,21 +82,17 @@ function CurrentActivity(properties) {
           value={sqlCode}
         />
         {/* 
-        <Codemirror.Controlled
-          onChange={(event) => {
-            const target = event.target
-
-            setSqlCode(target.value)
+        <AceEditor
+          onChange={(value) => {
+            setSqlCode(value)
           }}
+          mode={'sql'}
+          enableBasicAutocompletion
           value={sqlCode}
-          className="codemirrorRaper"
-          options={{
-            lineWrapping: true,
-            lint: true,
-            mode: 'sql',
-            lineNumbers: true,
-          }}
+          editorProps={{ $blockScrolling: true }}
+          minLines={5}
         /> */}
+
         {sqlCode && <Code code={sqlCode} language="javascript" />}
         <div className="w-full flex">
           <button
