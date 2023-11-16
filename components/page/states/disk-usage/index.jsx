@@ -95,12 +95,12 @@ const DiskUsage = ({ tabName }) => {
               >
                 Expand All
               </button>
+              <ExportButton
+                disabled={isLoading}
+                data={diskUsage}
+                fileName={'DISK_USAGE'}
+              />
             </div>
-            <ExportButton
-              disabled={isLoading}
-              data={diskUsage}
-              fileName={'DISK_USAGE'}
-            />
           </div>
         </header>
       </PageContent>
