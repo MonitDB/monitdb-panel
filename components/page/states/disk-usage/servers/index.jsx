@@ -1,3 +1,4 @@
+/* eslint-disable unicorn/no-nested-ternary */
 /* eslint-disable no-console */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable sonarjs/cognitive-complexity */
@@ -5,7 +6,9 @@ import { faChevronDown } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import classNames from 'classnames'
 import React, { useCallback, useEffect, useState } from 'react'
+import { Pie } from 'react-chartjs-2'
 
+import { getPieChartData } from '~/components/cards/server/server'
 import Link from '~/components/link'
 import Reveal from '~/helpers/reveal'
 import { megaBytesToGigaBytes } from '~/utils/formats'
@@ -67,17 +70,75 @@ const Servers = ({ environmentServers, diskUsage, expand }) => {
               )}
               onClick={() => handleServerExpandedIndices(index)}
             >
-              <FontAwesomeIcon
-                icon={faChevronDown}
-                className={classNames(
-                  'transition-all duration-300 ease-in-out transform',
-                  {
-                    'rotate-180': serverExpandedIndices.has(index),
-                  }
-                )}
-              />
-              <span>{serverName}</span>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+              >
+                <FontAwesomeIcon
+                  icon={faChevronDown}
+                  style={{ marginRight: '10px' }}
+                  className={classNames(
+                    'transition-all duration-300 ease-in-out transform',
+                    {
+                      'rotate-180': serverExpandedIndices.has(index),
+                    }
+                  )}
+                />
+                <div
+                  style={{
+                    display: 'inline',
+                    marginRight: '10px',
+                  }}
+                >
+                  {serverName}
+                </div>
+                <div style={{ transform: 'translateY(-6px)' }}>
+                  {filteredDiskUsage.map((disk, index) => {
+                    return (
+                      <>
+                        <div
+                          style={{
+                            display: 'inline',
+                          }}
+                        >
+                          <div
+                            style={{
+                              display: 'inline',
+                              marginRight: '5px',
+                            }}
+                            key={index}
+                          >
+                            {disk.Drive}
+                          </div>
+                          <div
+                            style={{
+                              width: '30px',
+                              height: '30px',
+                              display: 'inline-block',
+                              marginRight: '25px',
+                              transform: 'translateY(10px)',
+                            }}
+                          >
+                            <Pie
+                              data={getPieChartData(disk)}
+                              options={{
+                                plugins: {
+                                  tooltip: { enabled: false },
+                                  legend: { display: false },
+                                },
+                              }}
+                            />
+                          </div>
+                        </div>
+                      </>
+                    )
+                  })}
+                </div>
+              </div>
             </button>
+
             <Reveal active={serverExpandedIndices.has(index)}>
               <div className="w-full mt-3 prose max-w-full prose-p:m-0 prose-th:text-center prose-td:text-center prose-td:align-top prose-th:whitespace-nowrap prose-th:border-b-4 prose-headings:m-0 prose-td:whitespace-nowrap prose-td:text-ellipsis prose-td:overflow-hidden bg-white p-4 space-y-2">
                 <table className="m-0">

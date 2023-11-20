@@ -14,7 +14,7 @@ import { SERVER_STATUS } from '~/utils/server'
 
 ChartJS.register(ArcElement, Tooltip, Legend)
 
-const getPieChartData = (data) => {
+export const getPieChartData = (data) => {
   const availablePercent = data['Free(%)']
   const inUserPercentage = 100 - availablePercent
   let inUseColor = '#5046e5'

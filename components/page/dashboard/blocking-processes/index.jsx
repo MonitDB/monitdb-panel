@@ -94,7 +94,7 @@ function BlockingProcesses(properties) {
                 </td>
               </tr>
             ) : (
-              data.map((row, index) => (
+              data?.map((row, index) => (
                 <tr key={index} className="hover:bg-gray-lightest">
                   <td>{row.session_id}</td>
                   <td>{row.login_time}</td>
