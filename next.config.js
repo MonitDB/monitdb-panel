@@ -1,6 +1,6 @@
 const withSvgr = require('next-plugin-svgr')
-
-const nextConfig = {
+const removeImports = require("next-remove-imports")();
+const nextConfig = removeImports({
   reactStrictMode: true,
   env: {
     siteUrl: process.env.SITE_URL,
@@ -19,6 +19,7 @@ const nextConfig = {
     domains: ['example.com', 'picsum.photos'],
   },
   experimental: {
+    esmExternals: true,
     images: {
       layoutRaw: true,
     },
@@ -27,6 +28,6 @@ const nextConfig = {
     titleProp: true,
     icon: true,
   },
-}
+})
 
 module.exports = withSvgr(nextConfig)

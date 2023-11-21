@@ -1,6 +1,7 @@
-// import 'ace-builds/src-noconflict/mode-java'
-// import 'ace-builds/src-noconflict/theme-github'
-// import 'ace-builds/src-noconflict/ext-language_tools'
+import 'ace-builds/src-min-noconflict/ext-language_tools'
+import 'ace-builds/src-min-noconflict/mode-mysql'
+import 'ace-builds/src-noconflict/theme-github'
+import '@uiw/react-textarea-code-editor/dist.css'
 
 import {
   faArrowRotateRight,
@@ -8,15 +9,14 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import classNames from 'classnames'
+import dynamic from 'next/dynamic'
 import React, { useCallback, useEffect, useState } from 'react'
 
-// export const AceEditor = dynamic(
-//   () => {
-//     return import('react-ace')
-//   },
-//   { ssr: false }
-// )
-// import dynamic from 'next/dynamic'
+const AceEditor = dynamic(
+  () => import('react-ace').then((module_) => module_.default),
+  { ssr: false }
+)
+
 import BlockMessage from '~/components/block-message'
 import Code from '~/components/code/code'
 import { Select, Textarea } from '~/components/form'
@@ -71,29 +71,31 @@ function CurrentActivity(properties) {
       <br />
       <h3 className="font-bold mb-6">Execute Query</h3>
       <div className="col-span-2 bg-white border border-gray-light p-4 lg:col-span-12">
-        <Textarea
-          name="description"
-          className="w-full px-4 h-10 bg-white leading-10 rounded outline-none text-sm"
-          onChange={(event) => {
-            const target = event.target
-
-            setSqlCode(target.value)
-          }}
-          value={sqlCode}
-        />
-        {/* 
         <AceEditor
-          onChange={(value) => {
-            setSqlCode(value)
-          }}
-          mode={'sql'}
-          enableBasicAutocompletion
-          value={sqlCode}
+          id="editor"
+          aria-label="editor"
+          mode="mysql"
+          theme="github"
+          name="editor"
+          fontSize={16}
+          minLines={15}
+          maxLines={10}
+          width="100%"
+          showPrintMargin={false}
+          showGutter
+          placeholder="Write your Query here..."
           editorProps={{ $blockScrolling: true }}
-          minLines={5}
-        /> */}
+          setOptions={{
+            enableBasicAutocompletion: true,
+            enableLiveAutocompletion: true,
+            enableSnippets: true,
+          }}
+          value={sqlCode}
+          onChange={setSqlCode}
+          showLineNumbers
+        />
 
-        {sqlCode && <Code code={sqlCode} language="javascript" />}
+        {/* {sqlCode && <Code code={sqlCode} language="javascript" />} */}
         <div className="w-full flex">
           <button
             type="button"

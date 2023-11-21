@@ -34,6 +34,7 @@ import MemoryUsage from '~/components/page/dashboard/memory-usage'
 import { SPBlitz } from '~/components/page/dashboard/sp-blitz'
 import RdpButton from '~/components/rdpButton'
 import LatestAlertsSidebar from '~/components/sidebar/latest-alerts'
+import SshButon from '~/components/sshButton'
 import { SingleDashboardContextProvider } from '~/contexts/single-dashboard'
 import DatabaseIcons from '~/helpers/database-icons'
 import useGlobal from '~/hooks/use-global'
@@ -226,6 +227,14 @@ const SingleDashboard = () => {
                         {serverMetrics?.osProperties['host_platform'] ===
                           'Windows' && (
                           <RdpButton
+                            serverName={currentServer.serverName}
+                            address={currentServer.serverHost}
+                          />
+                        )}
+
+                        {serverMetrics?.osProperties['host_platform'] ===
+                          'Linux' && (
+                          <SshButon
                             serverName={currentServer.serverName}
                             address={currentServer.serverHost}
                           />
