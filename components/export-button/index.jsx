@@ -13,7 +13,6 @@ const ExportButton = ({ data, fileName, disabled, className }) => {
 
     const blob = XLSX.write(wb, { bookType: 'xlsx', type: 'buffer' })
 
-    // Use a função saveAs para salvar o arquivo no navegador
     saveAs(
       new Blob([blob], {
         type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',

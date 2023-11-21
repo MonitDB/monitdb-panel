@@ -4,6 +4,7 @@
 import classNames from 'classnames'
 import faker from 'faker'
 import { useFormik } from 'formik'
+import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
 import React, { useEffect, useMemo, useState } from 'react'
@@ -31,6 +32,7 @@ import {
 import CurrentActivity from '~/components/page/dashboard/current-activity'
 import MemoryUsage from '~/components/page/dashboard/memory-usage'
 import { SPBlitz } from '~/components/page/dashboard/sp-blitz'
+import RdpButton from '~/components/rdpButton'
 import LatestAlertsSidebar from '~/components/sidebar/latest-alerts'
 import { SingleDashboardContextProvider } from '~/contexts/single-dashboard'
 import DatabaseIcons from '~/helpers/database-icons'
@@ -219,58 +221,18 @@ const SingleDashboard = () => {
 
                 {activeTabId === 'history' && (
                   <div className="w-full flex flex-col gap-y-6 mt-6">
-                    <form
-                      className="w-full flex gap-x-8 p-4 border border-gray-light justify-end
-                        bg-white text-sm"
-                      onSubmit={formik.handleSubmit}
-                    >
-                      {/* <label
-                        htmlFor="cpu"
-                        className="flex items-center gap-2 cursor-pointer"
-                      >
-                        <span>CPU</span>
-                        <Checkbox
-                          id="cpu"
-                          name="cpu"
-                          defaultValue={formik.values.cpu}
-                          value={formik.values.cpu}
-                          onChange={(value) =>
-                            formik.setFieldValue('cpu', value)
-                          }
-                        />
-                      </label>
-                      <label
-                        htmlFor="memory"
-                        className="flex items-center gap-2 cursor-pointer"
-                      >
-                        <span>Memory</span>
-                        <Checkbox
-                          id="memory"
-                          name="memory"
-                          defaultValue={formik.values.memory}
-                          value={formik.values.memory}
-                          onChange={(value) =>
-                            formik.setFieldValue('memory', value)
-                          }
-                        />
-                      </label> */}
-                      {/* <label
-                        htmlFor="disk"
-                        className="flex items-center gap-2 cursor-pointer"
-                      >
-                        <span>Disk I/O</span>
-                        <Checkbox
-                          id="disk"
-                          name="disk"
-                          defaultValue={formik.values.disk}
-                          value={formik.values.disk}
-                          onChange={(value) =>
-                            formik.setFieldValue('disk', value)
-                          }
-                        />
-                      </label> */}
+                    <div className="w-full flex gap-x-8 p-4 border border-gray-light bg-white text-sm">
+                      <div className="flex gap-2 mr-auto">
+                        {serverMetrics?.osProperties['host_platform'] ===
+                          'Windows' && (
+                          <RdpButton
+                            serverName={currentServer.serverName}
+                            address={currentServer.serverHost}
+                          />
+                        )}
+                      </div>
 
-                      <div className="flex justify-end gap-2 ">
+                      <div className="flex gap-2 ml-auto">
                         <Select
                           className="w-40"
                           name="lastMinutes"
@@ -289,14 +251,14 @@ const SingleDashboard = () => {
                             formik.setFieldValue('lastMinutes', value)
                           }}
                         />
+                        <button
+                          className="bg-blue text-white px-3 h-11 rounded-[5px] font-medium flex items-center gap-1"
+                          onClick={() => setLastFetch(Date.now())}
+                        >
+                          Refresh
+                        </button>
                       </div>
-                      <button
-                        className="= bg-blue text-white px-3 h-11 rounded-[5px] font-medium flex items-center gap-1"
-                        onClick={() => setLastFetch(Date.now())}
-                      >
-                        Refresh
-                      </button>
-                    </form>
+                    </div>
 
                     <div id="allinstancemetrics">
                       <Grid>
