@@ -18,8 +18,7 @@ const AceEditor = dynamic(
 )
 
 import BlockMessage from '~/components/block-message'
-import Code from '~/components/code/code'
-import { Select, Textarea } from '~/components/form'
+import { Select } from '~/components/form'
 import Loading from '~/components/loading/loading'
 import Pagination from '~/components/pagination/pagination'
 import { GenericTable } from '~/components/table/genericTable'

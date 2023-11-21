@@ -1,11 +1,21 @@
+import 'ace-builds/src-min-noconflict/ext-language_tools'
+import 'ace-builds/src-min-noconflict/mode-mysql'
+import 'ace-builds/src-noconflict/theme-github'
+import '@uiw/react-textarea-code-editor/dist.css'
+
 import { faClose } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import classNames from 'classnames'
 import { useFormik } from 'formik'
+import dynamic from 'next/dynamic'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { toast } from 'react-toastify'
 
-import { Textarea } from '~/components/form'
+const AceEditor = dynamic(
+  () => import('react-ace').then((module_) => module_.default),
+  { ssr: false }
+)
+
 import Select from '~/components/form/select'
 import Grid from '~/components/grid'
 import Loading from '~/components/loading'
@@ -107,7 +117,7 @@ const MetricsModal = ({ onClose, componentId }) => {
 
   return (
     <div className="fixed top-0 left-0 w-full h-full bg-white z-50 overflow-y-auto md:bg-transparent md:overflow-hidden md:flex md:items-center md:justify-center md:bg-black md:bg-opacity-75">
-      <div className="p-4 md:bg-white md:w-[600px] md:h-4/5 md:overflow-y-auto md:p-8 lg:h-auto lg:max-h-[80%]">
+      <div className="p-4 md:bg-white w-[800px] md:h-4/5 md:overflow-y-auto md:p-8 lg:h-auto lg:max-h-[80%]">
         <header className="flex items-start mb-10">
           <h2 className="heading-md">Edit component</h2>
           <button type="button" className="ml-auto mt-1" onClick={onClose}>
@@ -202,12 +212,29 @@ const MetricsModal = ({ onClose, componentId }) => {
                 >
                   Query or URL
                 </label>
-                <Textarea
-                  name="description"
-                  className="w-full px-4 h-10 bg-white leading-10 rounded outline-none text-sm"
+
+                <AceEditor
+                  id="editor"
+                  aria-label="editor"
+                  mode="mysql"
+                  theme="github"
+                  name="editor"
+                  fontSize={16}
+                  minLines={15}
+                  maxLines={10}
+                  width="100%"
+                  showPrintMargin={false}
+                  showGutter
+                  placeholder="Write your Query here..."
+                  editorProps={{ $blockScrolling: true }}
+                  setOptions={{
+                    enableBasicAutocompletion: true,
+                    enableLiveAutocompletion: true,
+                    enableSnippets: true,
+                  }}
                   onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
                   value={formik.values.componentQuery}
+                  showLineNumbers
                 />
               </div>
 
