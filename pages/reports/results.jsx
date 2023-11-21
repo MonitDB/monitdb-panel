@@ -100,10 +100,6 @@ const ResultReportsPage = () => {
   }
 
   useEffect(() => {
-    typeActive?.name && servers && getData()
-  }, [typeActive?.name, servers, router?.query?.server]) // eslint-disable-line react-hooks/exhaustive-deps
-
-  useEffect(() => {
     const filteredType = reportTypes.find(
       (type) => type.slug === router?.query?.type
     )
@@ -127,7 +123,10 @@ const ResultReportsPage = () => {
                 {reportTypes.map((type, typeIndex) => (
                   <li key={`sidebar-type-${type.slug}-${typeIndex}`}>
                     <Link
-                      onClick={() => scrollToSection(`#${type.slug}`)}
+                      onClick={() => {
+                        setTypeActive(type.slug)
+                        scrollToSection(`#${type.slug}`)
+                      }}
                       className={classNames({
                         active: typeActive?.slug === type.slug,
                       })}
@@ -161,7 +160,7 @@ const ResultReportsPage = () => {
             )}
 
             {!isLoading &&
-              Object.keys(reports).map((key) => {
+              reportTypes.map(({ slug: key }) => {
                 const data = reports[key].data
                 const name = reports[key].name
                 return (
