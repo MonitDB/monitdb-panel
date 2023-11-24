@@ -1,6 +1,7 @@
 // import 'ace-builds/src-min-noconflict/ext-language_tools'
 // import 'ace-builds/src-min-noconflict/mode-mysql'
-import 'ace-builds/src-noconflict/theme-github'
+// import 'ace-builds/src-noconflict/ace'
+// import 'ace-builds/src-noconflict/theme-github'
 import '@uiw/react-textarea-code-editor/dist.css'
 
 import {
