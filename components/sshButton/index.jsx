@@ -1,10 +1,9 @@
-import { saveAs } from 'file-saver'
 import { default as Image } from 'next/image'
 import { styled } from 'styled-components'
 
 import sshImage from '~/icons/ssh.png'
 
-const SshButon = ({ address, port, serverName }) => {
+const SshButon = () => {
   const StyledButton = styled.button`
     border: 1px solid #0000001f;
     padding: 8px;

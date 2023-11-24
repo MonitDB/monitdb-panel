@@ -2,7 +2,7 @@
 import classNames from 'classnames'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
 import ExportButton from '~/components/export-button'
 import { Select } from '~/components/form'
@@ -75,7 +75,7 @@ const ResultReportsPage = () => {
     router.replace({ pathname: router.pathname, query: router.query })
   }
 
-  const getData = async () => {
+  const getData = useCallback(async () => {
     setIsLoading(true)
 
     try {
@@ -97,7 +97,11 @@ const ResultReportsPage = () => {
     }
 
     setIsLoading(false)
-  }
+  }, [router?.query?.server])
+
+  useEffect(() => {
+    getData()
+  }, [getData])
 
   useEffect(() => {
     const filteredType = reportTypes.find(
