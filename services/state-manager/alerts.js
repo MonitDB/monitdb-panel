@@ -45,6 +45,11 @@ const useAlertContext = create((set) => ({
   getAlertHtml: async (id, serverId) => {
     const { data } = await apiV2().get(`/alert/${id}/html`,{params: {serverId}});
     return data;
+  },
+  
+  clearAlert: async (id, serverId) => {
+    const { data } = await apiV2().put(`/alert/clear/${serverId}/${id}/`);
+    return data;
   }
   
   // getAlertParameterByServerId: async (serverId, parameterId) => {

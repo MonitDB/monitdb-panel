@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import {
   faChevronRight,
   faDatabase,
@@ -8,6 +10,7 @@ import classNames from 'classnames'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { toast } from 'react-toastify'
 
 import Select from '~/components/form/select'
 import Selector from '~/components/form/selector'
@@ -27,8 +30,13 @@ const AlertsDetailsPage = () => {
     globalState: { servers, serverTypes },
   } = useGlobal()
 
-  const { parameters, getAlertsParameter, alertsResult, getAlertsResult } =
-    useAlertContext()
+  const {
+    parameters,
+    getAlertsParameter,
+    alertsResult,
+    getAlertsResult,
+    clearAlert,
+  } = useAlertContext()
 
   const router = useRouter()
 
@@ -36,6 +44,8 @@ const AlertsDetailsPage = () => {
   const [currentPage, setCurrentPage] = useState(1)
 
   const [activeTableRowIndex, setActiveTableRowIndex] = useState(-1)
+
+  const [cleaningAlert, setCleaningAlert] = useState(-1)
 
   const typesOptions = useMemo(
     () => [
@@ -89,6 +99,20 @@ const AlertsDetailsPage = () => {
 
     return formatServer(server, { serverTypes })
   }, [servers, serverTypes, router?.query?.server])
+
+  const handleClearAlert = async (alertId, serverId) => {
+    setCleaningAlert(alertId * serverId)
+    try {
+      await clearAlert(alertId, serverId)
+      toast.success('Alert cleared successfully')
+      getAlertsData()
+    } catch (error) {
+      console.error(error)
+      toast.error('Error to clear the alert')
+    } finally {
+      setCleaningAlert(-1)
+    }
+  }
 
   const getAlertsData = useCallback(async () => {
     const serverId = router?.query?.server
@@ -326,6 +350,24 @@ const AlertsDetailsPage = () => {
                               {alert?.isActive === 1 ? 'Active' : 'Unactive'}
                             </td>
                             <td>{new Date(alert?.dtAlert).toLocaleString()}</td>
+                            <td width={'100px'}>
+                              {cleaningAlert === alert.id * alert.serverId ? (
+                                <span>Cleaning...</span>
+                              ) : (
+                                <a
+                                  aria-disabled={cleaningAlert != -1}
+                                  href=""
+                                  onClick={(event) => {
+                                    event.stopPropagation()
+                                    event.preventDefault()
+
+                                    handleClearAlert(alert?.id, alert?.serverId)
+                                  }}
+                                >
+                                  Clear
+                                </a>
+                              )}
+                            </td>
                           </tr>
 
                           {activeTableRowIndex === index && (
