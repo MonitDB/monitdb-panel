@@ -1,5 +1,3 @@
-import Image from 'next/image'
-
 import Grid from '~/components/grid'
 import Layout from '~/layouts/default'
 
