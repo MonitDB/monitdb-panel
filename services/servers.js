@@ -35,3 +35,8 @@ export const updateServer = async (values) => {
 export const deleteServer = async (id) => {
   return apiV2().delete(`/server/${id}`)
 }
+
+export const updateServerNewVersion = async (id, formData) => { 
+
+  return apiV2().post(`/server/update-new-version/${id}`, formData)
+}

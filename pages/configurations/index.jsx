@@ -99,6 +99,29 @@ const ConfigurationsPage = () => {
                     <li className="opacity-25">
                       <Link href="/configurations/" className="group block">
                         <strong className="block group-hover:text-blue">
+                          Installation Wizard
+                        </strong>
+                        <span className="group-hover:opacity-75">
+                          Setup and install new severs.
+                        </span>
+                      </Link>
+                    </li>
+                    <li className="">
+                      <Link
+                        href="/configurations/update-new-version"
+                        className="group block"
+                      >
+                        <strong className="block group-hover:text-blue">
+                          Update new versions
+                        </strong>
+                        <span className="group-hover:opacity-75">
+                          Upload SQL file with the lastests updates.
+                        </span>
+                      </Link>
+                    </li>
+                    <li className="opacity-25">
+                      <Link href="/configurations/" className="group block">
+                        <strong className="block group-hover:text-blue">
                           Authentication settings
                         </strong>
                         <span className="group-hover:opacity-75">
