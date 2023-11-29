@@ -13,6 +13,10 @@ import Layout from '~/layouts/default'
 import { updateServerNewVersion } from '~/services/servers'
 import { formatServer } from '~/utils/server'
 
+const uploadFileToServer = async (serverId, formData) => {
+  return updateServerNewVersion(serverId, formData)
+}
+
 export default function UpdateNewVersion() {
   const {
     globalState: { servers, serverTypes },
@@ -20,9 +24,9 @@ export default function UpdateNewVersion() {
   const [formattedServers, setFormattedServers] = useState([])
 
   const [selectedServers, setSelectedServers] = useState([])
-  const [initialUpload, setInitialUpload] = useState(false)
+
   const [serverUploadResult, setServerUploadResult] = useState({})
-  const [file, setFile] = useState(null)
+  const [file, setFile] = useState()
   const [terminalOutput, setTerminalOutput] = useState([])
 
   useEffect(() => {
@@ -38,9 +42,6 @@ export default function UpdateNewVersion() {
     )
   }, [servers, serverTypes])
 
-  const uploadFileToServer = async (serverId, formData) => {
-    return updateServerNewVersion(serverId, formData)
-  }
   const handleServerClick = (id) => {
     setSelectedServers((previousSelectedServers) => {
       const index = previousSelectedServers.indexOf(id)
@@ -80,7 +81,6 @@ export default function UpdateNewVersion() {
 
     reader.addEventListener('load', async (event) => {
       const file = event.target.result
-      console.log({ file })
 
       const formData = new FormData()
       formData.append('file', new Blob([file]))
@@ -103,8 +103,6 @@ export default function UpdateNewVersion() {
             ...previousResults,
             [serverId]: { status: 'loading' },
           }))
-
-          setInitialUpload(true)
 
           const { data: result } = await uploadFileToServer(serverId, formData)
 
@@ -165,9 +163,17 @@ export default function UpdateNewVersion() {
 
   return (
     <>
-      <NextSeo title="Components - Configurations - MonitDB" />
+      <NextSeo title="Update New Version - Configurations - MonitDB" />
       <Layout>
         <PageContent className="lg:pt-20">
+          <div className="mb-10">
+            <h2>
+              <strong className="">Choose the servers to Run</strong>
+            </h2>
+            <span className="opacity-75">
+              Upload a file and select the servers to update.
+            </span>
+          </div>
           <form
             onSubmit={handleSubmit}
             className="relative w-full mx-auto mb-10 lg:w-2/3 lg:mb-20"
@@ -190,7 +196,7 @@ export default function UpdateNewVersion() {
               </div>
             ) : (
               <div className="flex justify-between">
-                <div className="">
+                <div className="bg-white w-[50%] p-2 rounded">
                   <span className="mr-2">{file.name}</span>
                 </div>
                 <div>
@@ -213,7 +219,6 @@ export default function UpdateNewVersion() {
           </form>
 
           <div className="w-full">
-            <h2 className="mb-10 heading-md">Choose the servers to Run</h2>
             {servers.length === 0 && <Loading />}
             <Grid>
               {formattedServers.map(({ id, serverName, active }) =>
