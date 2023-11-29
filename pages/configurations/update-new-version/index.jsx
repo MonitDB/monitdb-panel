@@ -7,6 +7,7 @@ import React, { useEffect, useState } from 'react'
 import Grid from '~/components/grid/grid'
 import Loading from '~/components/loading/loading'
 import { PageContent } from '~/components/page'
+import TerminalWindow from '~/components/terminal'
 import { useGlobal } from '~/hooks/index'
 import Layout from '~/layouts/default'
 import { updateServerNewVersion } from '~/services/servers'
@@ -20,9 +21,9 @@ export default function UpdateNewVersion() {
 
   const [selectedServers, setSelectedServers] = useState([])
   const [initialUpload, setInitialUpload] = useState(false)
-  const [, setLoadingServers] = useState({})
   const [serverUploadResult, setServerUploadResult] = useState({})
   const [file, setFile] = useState(null)
+  const [terminalOutput, setTerminalOutput] = useState([])
 
   useEffect(() => {
     if (servers.length === 0 || serverTypes.length === 0) {
@@ -56,10 +57,18 @@ export default function UpdateNewVersion() {
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0]
 
-    if (selectedFile && selectedFile.name.endsWith('.sql')) {
+    if (selectedFile && selectedFile.type === 'application/sql') {
+      setTerminalOutput((state) => [
+        ...state,
+        `File "${selectedFile.name}" added!`,
+        `Size ${selectedFile.size} B`,
+      ])
       setFile(selectedFile)
     } else {
-      // Reset the file state if an invalid file is selected
+      setTerminalOutput((state) => [
+        ...state,
+        `The file "${selectedFile.name}" is not supported!`,
+      ])
       setFile()
     }
   }
@@ -71,39 +80,64 @@ export default function UpdateNewVersion() {
 
     reader.addEventListener('load', async (event) => {
       const file = event.target.result
+      console.log({ file })
 
       const formData = new FormData()
       formData.append('file', new Blob([file]))
 
       for (const serverId of selectedServers) {
+        setServerUploadResult((previousResults) => ({
+          ...previousResults,
+          [serverId]: { status: 'waiting' },
+        }))
+      }
+
+      for (const serverId of selectedServers) {
         try {
-          setInitialUpload(true)
-          setLoadingServers((previousLoadingServers) => [
-            ...previousLoadingServers,
-            serverId,
+          const server = formattedServers.find((s) => s.id === serverId)
+          setTerminalOutput((state) => [
+            ...state,
+            `Uploading File to ${server.serverName}...`,
           ])
+          setServerUploadResult((previousResults) => ({
+            ...previousResults,
+            [serverId]: { status: 'loading' },
+          }))
+
+          setInitialUpload(true)
 
           const { data: result } = await uploadFileToServer(serverId, formData)
 
-          if (result.error)
+          if (result.error) {
+            setTerminalOutput((state) => [
+              ...state,
+              `Failed to upload file to ${server.serverName}. Error: ${result.error}`,
+            ])
             setServerUploadResult((previousResults) => ({
               ...previousResults,
-              [serverId]: { success: false, loaded: true },
+              [serverId]: { status: 'error' },
             }))
-          else
+          } else {
+            setTerminalOutput((state) => [
+              ...state,
+              `File uploaded to ${
+                server.serverName
+              }. Query runned in ${Math.floor(result.time)} ms`,
+            ])
             setServerUploadResult((previousResults) => ({
               ...previousResults,
-              [serverId]: { success: true, loaded: true },
+              [serverId]: { status: 'success' },
             }))
-        } catch {
+          }
+        } catch (error) {
+          setTerminalOutput((state) => [
+            ...state,
+            `Error uploading file to server ${serverId}. Details: ${error.message}`,
+          ])
           setServerUploadResult((previousResults) => ({
             ...previousResults,
-            [serverId]: { success: false, loaded: true },
+            [serverId]: { status: 'error' },
           }))
-        } finally {
-          setLoadingServers((previousLoadingServers) =>
-            previousLoadingServers.filter((id) => id !== serverId)
-          )
         }
       }
     })
@@ -111,16 +145,21 @@ export default function UpdateNewVersion() {
   const handleSubmit = async (event) => {
     event.preventDefault()
 
-    if (selectedServers.length === 0 || !file) {
-      alert('Please select at least one server and choose a valid .sql file.')
+    if (selectedServers.length === 0) {
+      setTerminalOutput((state) => [
+        ...state,
+        'Please select at least one server and choose a valid .sql file.',
+      ])
+
       return
     }
 
-    setLoadingServers(selectedServers)
     setServerUploadResult({})
     await uploadSequentially()
   }
   const handleRemoveFile = () => {
+    setTerminalOutput((state) => [...state, 'File removed!'])
+
     setFile()
   }
 
@@ -150,8 +189,10 @@ export default function UpdateNewVersion() {
                 </label>
               </div>
             ) : (
-              <div className="flex items-center w-full space-between">
-                <span className="mr-2">{file.name}</span>
+              <div className="flex justify-between">
+                <div className="">
+                  <span className="mr-2">{file.name}</span>
+                </div>
                 <div>
                   <button
                     type="button"
@@ -162,7 +203,6 @@ export default function UpdateNewVersion() {
                   </button>
                   <button
                     type="submit"
-                    disabled={selectedServers.length === 0 || !file}
                     className="bg-blue text-white px-4 py-2 rounded cursor-pointer"
                   >
                     Submit
@@ -188,26 +228,20 @@ export default function UpdateNewVersion() {
                     } cursor-pointer rounded p-4`}
                   >
                     <div className="w-full mb-4">
-                      <p>{serverName}</p>
+                      <h4 className="!mb-2 font-bold text-base">
+                        {serverName}
+                      </h4>
                       {selectedServers.includes(id) ? (
-                        // Se o servidor está selecionado
-                        initialUpload && serverUploadResult[id]?.loaded ? (
-                          <>
-                            <h4 className="!mb-2 font-bold text-base">
-                              {serverUploadResult[id]?.success &&
-                              serverUploadResult[id]?.loaded
-                                ? 'Upload Successful'
-                                : 'Upload Failed'}
-                            </h4>
-                            {serverUploadResult[id]?.success ? (
-                              <p>Upload to server {id} was successful!</p>
-                            ) : (
-                              <p>Error to Run</p>
-                            )}
-                          </>
-                        ) : (
-                          <p>Waiting...</p>
-                        )
+                        <p>
+                          {serverUploadResult[id]?.status === 'waiting' &&
+                            'Waiting...'}
+                          {serverUploadResult[id]?.status === 'loading' &&
+                            'Uploading...'}
+                          {serverUploadResult[id]?.status === 'success' &&
+                            'The Database was successfull updated!'}
+                          {serverUploadResult[id]?.status === 'error' &&
+                            'Error updating the Database!'}
+                        </p>
                       ) : (
                         <></>
                       )}
@@ -220,14 +254,24 @@ export default function UpdateNewVersion() {
             </Grid>
           </div>
 
-          {formattedServers.length > 0 && initialUpload > 0 && (
-            <div className="w-full" style={{ marginTop: '20px' }}>
-              {/* <div className="p-4 border-t-2 border-t-gray bg-gray-light bg-opacity-25  ">
-                <div className="w-full mb-4">
-                  <h4 className="!mb-2 font-bold text-base">Log results</h4>
-                  <pre className=" whitespace-pre-wrap ">aa</pre>
-                </div>
-              </div>{' '} */}
+          {formattedServers.length > 0 > 0 && (
+            <div className="mt-10">
+              <TerminalWindow
+                height={'400px'}
+                width={'100%'}
+                buttons={[
+                  {
+                    onClick: () => {
+                      setTerminalOutput([])
+                    },
+                    tooltip: 'Limpar terminal',
+                  },
+                ]}
+              >
+                {terminalOutput.map((value, index) => (
+                  <p key={index}>{value}</p>
+                ))}
+              </TerminalWindow>
             </div>
           )}
         </PageContent>
