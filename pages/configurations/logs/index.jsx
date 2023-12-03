@@ -97,7 +97,7 @@ const LogsPage = ({ data, pagination }) => {
               breadcrumbs={[
                 {
                   title: 'Configurations',
-                  href: '/Configurations/',
+                  href: '/configurations/',
                 },
                 {
                   title: 'Logs',
@@ -207,7 +207,7 @@ const LogsPage = ({ data, pagination }) => {
                           </td>
                           <td className="whitespace-nowrap">
                             {format(
-                              parseISO(log.dataCreate),
+                              parseISO(log.componentLogDataCreate),
                               "dd MMM yyyy kk':'mm"
                             )}
                           </td>
@@ -226,7 +226,7 @@ const LogsPage = ({ data, pagination }) => {
                                     Log results
                                   </h4>
                                   <pre className=" whitespace-pre-wrap ">
-                                    {log.logResult}
+                                    {log.componentLogResult}
                                   </pre>
                                 </div>
                               </div>
@@ -258,21 +258,18 @@ const LogsPage = ({ data, pagination }) => {
 export async function getServerSideProps({ query, req }) {
   const response = await getLogs(
     {
-      PageNumber: Number.parseInt(query.PageNumber, 10) || 1,
-      PageLength: MAX_POSTS_PER_PAGE,
-      ServerName: query.ServerName,
+      page: Number.parseInt(query.PageNumber, 10) || 1,
+      pageSize: MAX_POSTS_PER_PAGE,
+      serverName: query.ServerName,
     },
     req?.cookies?.user_token
   )
 
   return {
     props: {
-      data: response?.data || [],
+      data: response?.data?.logs || [],
       pagination: {
-        totalResults: Number.parseInt(
-          response?.headers?.['x-paging-totalrecordcount'],
-          10
-        ),
+        totalResults: response?.data?.totalResults || 0,
       },
     },
   }

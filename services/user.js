@@ -1,39 +1,38 @@
-import clientApi, {  } from '~/utils/client-api'
+import  { apiV2 } from '~/utils/client-api'
 
 export const postLogin = async (data) => {
-  // return apiV2().post('/auth/login', data)
-  return clientApi().post('/api/user/login', data)
+   return apiV2().post('/user/login', data)
 }
 
 export const postTokenValidate = async (token) => {
-  return clientApi(token).post('/api/user/refresh-token')
+  return apiV2(token).post('/user/refresh-token')
 }
 
  
 export const getMe = async () => {
-  return clientApi().get('/api/user/me')
+  return apiV2().get('/user/me')
 }
 
 export const create = async (data) => {
-  return clientApi().post('/api/user', data)
+  return apiV2().post('/user', data)
 }
 
 export const update = async (data) => {
-  return clientApi().put('/api/user', data)
+  return apiV2().put('/user', data)
 }
 
 export const getUserById = async (id) => {
-  return clientApi().get(`/api/user/${id}`)
+  return apiV2().get(`/user/${id}`)
 }
 
 export const list = async () => {
-  return clientApi().get('/api/user')
+  return apiV2().get('/user')
 }
 
 export const listRoles = async () => {
-  return clientApi().get('/api/role')
+  return apiV2().get('/user/roles')
 }
 
 export const remove = async (id) => {
-  return clientApi().delete(`/api/user/${id}`)
+  return apiV2().delete(`/user/${id}`)
 }

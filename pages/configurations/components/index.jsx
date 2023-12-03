@@ -27,7 +27,6 @@ const ComponentsPage = () => {
     try {
       const componentsResponse = await getComponents()
       const featuresResponse = await getFeatures()
-
       setData(componentsResponse?.data)
       setFeatures(featuresResponse?.data)
     } catch (error) {
@@ -40,7 +39,7 @@ const ComponentsPage = () => {
 
   const getFeatureNameById = useCallback(
     (featureId) => {
-      const feature = features.find((feature) => feature.id === featureId)
+      const feature = features?.find((feature) => feature?.id === featureId)
 
       return feature?.featureName
     },

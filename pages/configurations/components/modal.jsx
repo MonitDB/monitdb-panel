@@ -73,7 +73,7 @@ const MetricsModal = ({ onClose, componentId }) => {
       setIsSending(true)
 
       try {
-        const response = await updateComponentById({
+        const response = await updateComponentById(componentId, {
           ...values,
         })
 
