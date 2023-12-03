@@ -1,5 +1,4 @@
 import MarkdownIt from 'markdown-it'
-import Image from 'next/image'
 import { useCallback, useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 
@@ -11,7 +10,7 @@ import Loading from '../loading/loading'
 import Modal from '../modal/modal'
 import Pagination from '../pagination/pagination'
 import SuggestionButton from '../suggestionButton'
-import TerminalWindow from '../terminal'
+
 const md = new MarkdownIt()
 
 export const AlertHtmlSubTable = (properties) => {
