@@ -1,41 +1,68 @@
-import React from 'react'
+import React, { useState } from 'react'
+import styled from 'styled-components'
 
-import useGlobal from '~/hooks/use-global'
+const ModalContainer = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 50;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`
 
-const Modal = () => {
-  const { globalState, setGlobalState } = useGlobal()
+const ModalContent = styled.div`
+  position: relative;
+  padding: 20px;
+  background: #fff;
+  border-radius: 8px;
+  width: ${(properties) => properties.width || 'auto'};
+  height: ${(properties) => properties.height || 'auto'};
+`
+
+const CloseButton = styled.button`
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  border: 1px solid #000;
+  padding: 5px;
+  background: transparent;
+  cursor: pointer;
+
+  &:hover {
+    background: #000;
+    color: #fff;
+  }
+`
+
+const Modal = ({ onClose, visible, width, height, children }) => {
+  const [isModalActive, setIsModalActive] = useState(false)
 
   const closeModal = () => {
-    setGlobalState({ ...globalState, isModalActive: false })
+    setIsModalActive(false)
+    if (onClose) {
+      onClose()
+    }
   }
 
-  if (!globalState.isModalActive) {
-    return ''
+  if (!visible && !isModalActive) {
+    return <></>
   }
 
   return (
-    <div
-      className="fixed top-0 left-0 w-full h-full z-50 bg-black bg-opacity-80
-        md:flex md:items-center md:justify-center"
-    >
-      <div className="relative rounded-md p-10 bg-white m-auto max-w-[600px]">
-        <button
-          type="button"
-          className="ml-auto block mb-5 border border-black px-2 py-1 uppercase text-xs bg-transparent text-black
-          lg:hover:bg-black lg:hover:text-white"
-          onClick={closeModal}
-        >
-          x
-        </button>
-        <p>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Expedita
-          quibusdam quaerat magnam. Enim cum quisquam at architecto rem modi,
-          veritatis sint nisi, asperiores repellat libero ratione doloribus
-          possimus impedit culpa quam. Repellendus qui repellat perspiciatis
-          quod provident doloremque soluta dolorem.
-        </p>
-      </div>
-    </div>
+    <ModalContainer onClick={closeModal}>
+      <ModalContent
+        width={width}
+        height={height}
+        onClick={(event) => event.stopPropagation()}
+      >
+        <CloseButton onClick={closeModal}>x</CloseButton>
+        {children}
+      </ModalContent>
+    </ModalContainer>
   )
 }
 
