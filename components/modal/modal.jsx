@@ -1,68 +1,100 @@
-import React, { useState } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 
-const ModalContainer = styled.div`
+const StyledModal = styled.div`
+  display: ${(properties) => (properties.visible ? 'flex' : 'none')};
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 50;
-  background: rgba(0, 0, 0, 0.8);
-  display: flex;
+  background: rgba(0, 0, 0, 0.5);
   align-items: center;
   justify-content: center;
-`
+  z-index: 100;
 
-const ModalContent = styled.div`
-  position: relative;
-  padding: 20px;
-  background: #fff;
-  border-radius: 8px;
-  width: ${(properties) => properties.width || 'auto'};
-  height: ${(properties) => properties.height || 'auto'};
-`
+  .modal-content {
+    position: relative;
+    padding: 20px;
+    width: ${(properties) => (properties.width ? properties.width : '80%')};
+    height: ${(properties) => (properties.height ? properties.height : '80vh')};
+    background: #fff;
+    border-radius: 8px;
+    transition: transform 0.3s ease-in-out;
+  }
 
-const CloseButton = styled.button`
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  border: 1px solid #000;
-  padding: 5px;
-  background: transparent;
-  cursor: pointer;
+  .modal-body {
+    height: 80%;
+    overflow-y: auto;
+  }
 
-  &:hover {
-    background: #000;
-    color: #fff;
+  .title {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  .footer {
+    margin-top: 20px;
+    text-align: right;
+  }
+
+  .flex-container {
+    display: flex;
+    justify-content: flex-end;
+    padding: 0 10px;
+  }
+
+  .close-button {
+    font-size: 24px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    color: #000000;
+    transition: color 0.3s ease-in-out;
+  }
+
+  .close-button:hover {
+    color: #ff4500; /* Cor de destaque ao passar o mouse */
+  }
+
+  code[class*='language-'],
+  pre[class*='language-'] {
+    color: 'white';
   }
 `
 
-const Modal = ({ onClose, visible, width, height, children }) => {
-  const [isModalActive, setIsModalActive] = useState(false)
-
+const Modal = ({
+  onClose,
+  visible,
+  width,
+  height,
+  title,
+  footer,
+  closable = true,
+  children,
+}) => {
   const closeModal = () => {
-    setIsModalActive(false)
     if (onClose) {
       onClose()
     }
   }
 
-  if (!visible && !isModalActive) {
-    return <></>
-  }
-
   return (
-    <ModalContainer onClick={closeModal}>
-      <ModalContent
-        width={width}
-        height={height}
-        onClick={(event) => event.stopPropagation()}
-      >
-        <CloseButton onClick={closeModal}>x</CloseButton>
-        {children}
-      </ModalContent>
-    </ModalContainer>
+    <StyledModal visible={visible} width={width} height={height}>
+      <div className="modal-content">
+        {closable && (
+          <div className="flex-container">
+            <button className="close-button" onClick={closeModal}>
+              &times;
+            </button>
+          </div>
+        )}
+        {title && <div className="title">{title}</div>}
+        <div className="modal-body">{children}</div>
+        {footer && <div className="footer">{footer}</div>}
+      </div>
+    </StyledModal>
   )
 }
 

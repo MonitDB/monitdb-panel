@@ -50,6 +50,7 @@ const Content = styled.div`
   position: relative;
   height: calc(100% - 30px);
   overflow-y: auto;
+  white-space: pre-line;
 
   /* Personalização da barra de rolagem */
   ::-webkit-scrollbar {
@@ -100,7 +101,13 @@ const lightenDarkenColor = (color, amount) => {
   return (usePound ? '#' : '') + (g | (b << 8) | (r << 16)).toString(16)
 }
 
-const TerminalWindow = ({ children, width, height, buttons }) => {
+const TerminalWindow = ({
+  children,
+  width,
+  height,
+  buttons,
+  showCursor = true,
+}) => {
   const [cursorVisible, setCursorVisible] = useState(true)
   const contentReference = useRef(null)
 
@@ -137,9 +144,11 @@ const TerminalWindow = ({ children, width, height, buttons }) => {
       </TitleBar>
       <Content ref={contentReference}>
         {children}
-        <Cursor style={{ visibility: cursorVisible ? 'visible' : 'hidden' }}>
-          &#9646;
-        </Cursor>
+        {showCursor && (
+          <Cursor style={{ visibility: cursorVisible ? 'visible' : 'hidden' }}>
+            &#9646;
+          </Cursor>
+        )}
       </Content>
     </WindowContainer>
   )

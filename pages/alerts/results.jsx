@@ -198,7 +198,6 @@ const AlertsDetailsPage = () => {
                   handleChange('time', value)
                   setCurrentPage(1)
                 }}
-                // onChange={(value) => handleChangeField('time', value)}
               />
               <Select
                 name="server"
@@ -210,9 +209,7 @@ const AlertsDetailsPage = () => {
                   setCurrentPage(1)
                 }}
               />
-              {/* <Checkbox onChange={(value) => handleChange('isActive', value)}>
-                Show only active alerts
-              </Checkbox> */}
+
               <div className="flex items-center">
                 <input
                   id="allAlerts"

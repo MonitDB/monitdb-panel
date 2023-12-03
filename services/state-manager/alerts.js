@@ -50,6 +50,11 @@ const useAlertContext = create((set) => ({
   clearAlert: async (id, serverId) => {
     const { data } = await apiV2().put(`/alert/clear/${serverId}/${id}/`);
     return data;
+  },
+  
+    getSuggestion: async (serverId,id, htmlRow) => {
+    const { data } = await apiV2().get(`/alert/ai-sugestion/${serverId}/${id}/${htmlRow}`);
+    return data;
   }
   
   // getAlertParameterByServerId: async (serverId, parameterId) => {
