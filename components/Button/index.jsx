@@ -4,78 +4,87 @@ import styled, { css } from 'styled-components'
 const buttonStyles = css`
   text-align: center;
   cursor: pointer;
-  transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+  transition: background-color 0.3s, border-color 0.3s;
 
-  &:hover {
-    @apply bg-opacity-80;
-  }
+  font-size: 12px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 16px;
+  padding-right: 16px;
 
-  &:active {
-    @apply bg-opacity-100;
-  }
+  color: #fff;
+  border-radius: 4px;
 
   &:disabled {
-    @apply cursor-not-allowed opacity-60;
+    cursor: not-allowed;
+    opacity: 0.6;
   }
 `
 
-const Button = styled.button`
-  @apply ${buttonStyles};
-
+const CustomButton = styled.button`
+  ${buttonStyles}
   ${({ type }) =>
     type === 'primary' &&
     css`
-      @apply bg-blue-500 text-white border-blue-500;
+      background-color: #5046e5;
+      color: white;
+      border: 1px solid #5046e5;
 
       &:hover {
-        @apply border-blue-600;
+        background-color: 1px solid #362f92;
       }
 
       &:active {
-        @apply border-blue-700;
+        background-color: #2c2799;
       }
     `}
 
   ${({ type }) =>
     type === 'secondary' &&
     css`
-      @apply bg-indigo-500 text-white border-indigo-500;
+      color: #363636;
+      border: 1px solid #5046e5;
 
       &:hover {
-        @apply border-indigo-600;
+        color: #2b2b2b;
+        border: 1px solid #362f92;
       }
 
       &:active {
-        @apply border-indigo-700;
+        color: #000000;
+        border-color: #2c2799;
       }
     `}
 
   ${({ type }) =>
     type === 'ghost' &&
     css`
-      @apply bg-transparent text-indigo-500 border-indigo-500;
+      background-color: transparent;
+      color: #6867ef;
+      border: 1px solid #6867ef;
 
       &:hover {
-        @apply bg-indigo-500 text-white;
+        background-color: #6867ef;
+        color: white;
       }
 
       &:active {
-        @apply bg-indigo-600;
+        background-color: darken(#6867ef, 10%);
       }
     `}
 `
 
-const CustomButton = ({ type, loading, onClick, children, ...properties }) => {
+const Button = ({ type, loading, onClick, children, ...properties }) => {
   return (
-    <Button
+    <CustomButton
       type={type}
       onClick={loading ? undefined : onClick}
       disabled={loading}
       {...properties}
     >
       {loading ? <span>Loading...</span> : children}
-    </Button>
+    </CustomButton>
   )
 }
 
-export default CustomButton
+export default Button
