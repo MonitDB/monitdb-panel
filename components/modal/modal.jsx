@@ -58,8 +58,7 @@ const StyledModal = styled.div`
     color: #ff4500; /* Cor de destaque ao passar o mouse */
   }
 
-  code[class*='language-'],
-  pre[class*='language-'] {
+  code {
     color: 'white';
   }
 `
