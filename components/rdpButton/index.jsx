@@ -45,7 +45,7 @@ disable menu anims:i:1
 disable themes:i:0
 disable cursor setting:i:0
 bitmapcachepersistenable:i:1
-full address:s:${address}:${3389}
+full address:s:${address}:${port ?? 3389}
 audiomode:i:0
 redirectprinters:i:1
 redirectcomports:i:0
