@@ -58,20 +58,12 @@ export default function UpdateNewVersion() {
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0]
 
-    if (selectedFile && selectedFile.type === 'application/sql') {
-      setTerminalOutput((state) => [
-        ...state,
-        `File "${selectedFile.name}" added!`,
-        `Size ${selectedFile.size} B`,
-      ])
-      setFile(selectedFile)
-    } else {
-      setTerminalOutput((state) => [
-        ...state,
-        `The file "${selectedFile.name}" is not supported!`,
-      ])
-      setFile()
-    }
+    setTerminalOutput((state) => [
+      ...state,
+      `File "${selectedFile.name}" added!`,
+      `Size ${selectedFile.size} B`,
+    ])
+    setFile(selectedFile)
   }
 
   const uploadSequentially = async () => {
