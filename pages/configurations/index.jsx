@@ -96,6 +96,19 @@ const ConfigurationsPage = () => {
                 <div className="w-full">
                   <h3 className="mb-5 heading-md">Application options</h3>
                   <ul className="space-y-4 text-sm">
+                    <li>
+                      <Link
+                        href="/configurations/profiles"
+                        className="group block"
+                      >
+                        <strong className="block group-hover:text-blue">
+                          Manage profiles
+                        </strong>
+                        <span className="group-hover:opacity-75">
+                          Configure the permissions of each profile
+                        </span>
+                      </Link>
+                    </li>
                     <li className="opacity-25">
                       <Link href="/configurations/" className="group block">
                         <strong className="block group-hover:text-blue">

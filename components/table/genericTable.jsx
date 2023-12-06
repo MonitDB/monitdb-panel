@@ -1,3 +1,4 @@
+/* eslint-disable no-constant-condition */
 /* eslint-disable unicorn/no-nested-ternary */
 import { useState } from 'react'
 
@@ -7,8 +8,14 @@ import Loading from '../loading/loading'
 import Pagination from '../pagination/pagination'
 import { GenericTableStyles } from './genericTableStyles'
 
-export const GenericTable = ({ loading, data }) => {
+export const GenericTable = ({ loading, data, onRowClick }) => {
   const [currentPage, setCurrentPage] = useState(1)
+
+  const handleRowClick = (rowData) => {
+    if (onRowClick) {
+      onRowClick(rowData)
+    }
+  }
 
   return (
     <GenericTableStyles>
@@ -31,13 +38,16 @@ export const GenericTable = ({ loading, data }) => {
                     {paginateArray(data, currentPage, 10)?.map(
                       (result, index) => {
                         return (
-                          <tr key={index}>
+                          <tr
+                            key={index}
+                            onClick={() => handleRowClick(result)}
+                            className={onRowClick ? 'pointer-cursor' : ''}
+                          >
                             {Object?.keys(result ?? []).map((key) => (
                               <td key={key}>
                                 <div className="scrollable-cell">
                                   {typeof result[key] === 'boolean'
-                                    ? // eslint-disable-next-line no-constant-condition
-                                      typeof result[key]
+                                    ? typeof result[key]
                                       ? 'true'
                                       : 'false'
                                     : result[key] ?? 'null'}

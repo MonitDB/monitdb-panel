@@ -19,9 +19,17 @@ export const GenericTableStyles = styled.div`
 
   .scrollable-cell {
     height: 40px;
-    max-height: 40px; /* Defina a altura máxima para ativar a rolagem vertical */
+    max-height: 40px;
     overflow-y: auto;
     overflow-x: hidden;
     width: auto;
+  }
+
+  .pointer-cursor {
+    cursor: pointer;
+  }
+
+  .pointer-cursor:hover {
+    background-color: #f0f0f0;
   }
 `

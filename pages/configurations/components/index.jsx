@@ -71,7 +71,7 @@ const ComponentsPage = () => {
               breadcrumbs={[
                 {
                   title: 'Configurations',
-                  href: '/Configurations/',
+                  href: '/configurations/',
                 },
                 {
                   title: 'Components',
