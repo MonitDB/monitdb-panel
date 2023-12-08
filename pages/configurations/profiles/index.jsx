@@ -86,19 +86,19 @@ const ProfilePage = () => {
                           <tbody>
                             {profiles.map((profile, index) => (
                               <tr
-                                key={`profile-${profile.id}-${index}`}
+                                key={`profile-${profile.idRole}-${index}`}
                                 className="text-sm border-b border-gray-light transition-colors duration-200 ease-in-out
                           lg:hover:bg-gray-light lg:hover:bg-opacity-50"
                               >
-                                <td>{profile.typeGrantName}</td>
-                                <td>{profile.typeGrantDescription}</td>
+                                <td>{profile.roleName}</td>
+                                <td>{profile.roleDescription}</td>
 
-                                <td>{profile.typeGrantDateCreate}</td>
+                                <td>{profile.roleDataCreate}</td>
                                 <td>
                                   <ul className="flex items-center space-x-2 list-none w-full p-0 m-0">
                                     <li>
                                       <Link
-                                        href={`/configurations/profiles/${profile.id}`}
+                                        href={`/configurations/profiles/${profile.idRole}`}
                                         className="text-blue"
                                       >
                                         Edit

@@ -13,6 +13,10 @@ export const getProfileById = async (id) => {
   return apiV2().get(`/permission/profile/${id}`)
 }
 
+export const getPermissions= async (id) => {
+  return apiV2().get(`/permission`)
+}
+
 export const listProfiles = async () => {
   return apiV2().get('/permission/profile')
 }
