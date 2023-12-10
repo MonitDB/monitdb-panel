@@ -9,6 +9,7 @@ export const userInitialState = {
   email: '',
   roleId: -1,
   token: '',
+  permissions: [],
 }
 
 const UserContext = createContext(userInitialState)
@@ -37,6 +38,12 @@ export const UserContextProvider = ({ children }) => {
     }
   }
 
+  const hasPermission = (permissions) => {
+    return userState?.permissions?.some((permission) =>
+      permissions.includes(permission)
+    )
+  }
+
   const handleChangeUserState = useCallback((newUserState) => {
     if (newUserState?.logged && newUserState?.token) {
       Cookies.setUserToken(newUserState.token)
@@ -60,6 +67,7 @@ export const UserContextProvider = ({ children }) => {
         userState,
         setUserState: handleChangeUserState,
         unsetUserState,
+        hasPermission,
       }}
     >
       {children}
