@@ -17,6 +17,7 @@ const ProtectedPage = ({ children }) => {
       const dataResult = response?.data
       if (dataResult?.token) {
         setUserState({
+          ...userState,
           logged: true,
           token: dataResult?.token,
         })

@@ -36,11 +36,10 @@ import LatestAlertsSidebar from '~/components/sidebar/latest-alerts'
 import SshButon from '~/components/sshButton'
 import { SingleDashboardContextProvider } from '~/contexts/single-dashboard'
 import DatabaseIcons from '~/helpers/database-icons'
+import { useUser } from '~/hooks/index'
 import useGlobal from '~/hooks/use-global'
 import Layout from '~/layouts/default'
 import useServerContext from '~/services/state-manager/servers'
-/*import useComponentLogContext from '~/services/state-manager/logs'*/
-/*import { dateStringToTime } from '~/utils/formats'*/
 import { scrollToSection } from '~/utils/global'
 import { formatServer } from '~/utils/server'
 

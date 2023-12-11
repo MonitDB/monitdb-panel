@@ -4,6 +4,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import classNames from 'classnames'
+import { permission } from 'const/permissions'
 import {
   HOUR,
   MINUTE,
@@ -12,7 +13,13 @@ import {
 } from 'const/time'
 import { useFormik } from 'formik'
 import { NextSeo } from 'next-seo'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 
 import ServerCard from '~/components/cards/server'
 import { Select } from '~/components/form'
@@ -270,7 +277,9 @@ const DashboardPage = () => {
                                   !formattedEnvironment.isDropdownActive,
                               }
                             )}
-                            onClick={() => toggleIndexActive(environmentIndex)}
+                            onClick={() => {
+                              toggleIndexActive(environmentIndex)
+                            }}
                           >
                             <FontAwesomeIcon
                               icon={faChevronDown}

@@ -10,6 +10,7 @@ export const userInitialState = {
   roleId: -1,
   token: '',
   permissions: [],
+  hasPermissions: (permissions) => false,
 }
 
 const UserContext = createContext(userInitialState)
@@ -25,23 +26,24 @@ export const UserContextProvider = ({ children }) => {
   const getUserData = async () => {
     try {
       const response = await getMe()
-      const dataResult = response?.data?.result
-      if (dataResult?.loginname || dataResult?.loginemail) {
+      const dataResult = response?.data
+
+      if (dataResult?.loginName || dataResult?.loginEmail) {
         setUserState({
           ...userState,
           name: dataResult?.loginname,
           email: dataResult?.loginemail,
+          ...dataResult,
+          hasPermissions: (permissions) => {
+            return dataResult?.permissions?.some((permission) =>
+              permissions?.includes(permission)
+            )
+          },
         })
       }
     } catch {
       unsetUserState()
     }
-  }
-
-  const hasPermission = (permissions) => {
-    return userState?.permissions?.some((permission) =>
-      permissions.includes(permission)
-    )
   }
 
   const handleChangeUserState = useCallback((newUserState) => {
@@ -67,7 +69,7 @@ export const UserContextProvider = ({ children }) => {
         userState,
         setUserState: handleChangeUserState,
         unsetUserState,
-        hasPermission,
+        hasPermissions: userState.hasPermissions,
       }}
     >
       {children}

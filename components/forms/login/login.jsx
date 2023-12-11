@@ -34,10 +34,11 @@ const SignUp = () => {
         if (dataResult?.token) {
           setUserState({
             logged: true,
-            name: dataResult?.loginname,
-            email: dataResult?.loginemail,
-            roleId: dataResult?.idrole,
+            name: dataResult?.loginName,
+            email: dataResult?.loginEmail,
+            roleId: dataResult?.roleId,
             token: dataResult?.token,
+            permissions: dataResult?.permissions,
           })
 
           router.push('/dashboard')

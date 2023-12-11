@@ -6,47 +6,58 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import classNames from 'classnames'
+import { permission } from 'const/permissions'
 import { useRouter } from 'next/router'
 import React from 'react'
 
 import Image from '~/components/image'
 import Link from '~/components/link'
+import { useUser } from '~/hooks/index'
 // import DatabasesSvg from '~/icons/databases.svg'
 
 const buttonClasses =
   'block h-16 leading-[64px] px-5 border-b-4 text-white lg:hover:text-opacity-100'
 const buttonClassesActive = 'border-blue text-opacity-100'
 
-const navMenuList = [
-  {
-    title: 'Dashboard',
-    href: '/dashboard/',
-  },
-  {
-    title: 'Alerts',
-    href: '/alerts/',
-  },
-  {
-    title: 'Analysis',
-    href: '/analysis/',
-  },
-  {
-    title: 'Reports',
-    href: '/reports/',
-  },
-  {
-    title: 'States',
-    href: '/states/',
-  },
-  {
-    title: 'Configurations',
-    href: '/configurations/',
-  },
-]
-
 const Header = () => {
   const router = useRouter()
 
+  const { hasPermissions, userState } = useUser()
+
+  const navMenuList = [
+    {
+      title: 'Dashboard',
+      href: '/dashboard/',
+      requiredPermissions: [permission.DASHBOARD_PAGE],
+    },
+    {
+      title: 'Alerts',
+      href: '/alerts/',
+      // requiredPermissions: [permission?.ALERT_PAGE],
+    },
+    {
+      title: 'Analysis',
+      href: '/analysis/',
+      requiredPermissions: [],
+    },
+    {
+      title: 'Reports',
+      href: '/reports/',
+      requiredPermissions: [permission.REPORT_PAGE],
+    },
+    {
+      title: 'States',
+      href: '/states/',
+      requiredPermissions: [permission.STATES_PAGE],
+    },
+    {
+      title: 'Configurations',
+      href: '/configurations/',
+      requiredPermissions: [permission.CONFIGURATION_PAGE],
+    },
+  ]
+
+  console.log({ userState })
   return (
     <header className="relative w-full h-16 z-40">
       <div className="fixed bg-gray-dark w-full flex items-center justify-start text-white">
@@ -71,23 +82,29 @@ const Header = () => {
         <div className="w-full md:flex md:items-center">
           <nav>
             <ul className="flex items-center">
-              {navMenuList.map((item, index) => (
-                <li key={`nav-item-${index}`}>
-                  <Link
-                    href={item.href}
-                    className={classNames(buttonClasses, {
-                      [buttonClassesActive]:
-                        router.pathname.search(item.href.replace(/\/$/, '')) >=
-                        0,
-                      'border-gray-dark text-opacity-50':
-                        router.pathname.search(item.href.replace(/\/$/, '')) <
-                        0,
-                    })}
-                  >
-                    {item.title}
-                  </Link>
-                </li>
-              ))}
+              {navMenuList.map(
+                (item, index) =>
+                  userState &&
+                  hasPermissions(item.requiredPermissions) && (
+                    <li key={`nav-item-${index}`}>
+                      <Link
+                        href={item.href}
+                        className={classNames(buttonClasses, {
+                          [buttonClassesActive]:
+                            router.pathname.search(
+                              item.href.replace(/\/$/, '')
+                            ) >= 0,
+                          'border-gray-dark text-opacity-50':
+                            router.pathname.search(
+                              item.href.replace(/\/$/, '')
+                            ) < 0,
+                        })}
+                      >
+                        {item.title}
+                      </Link>
+                    </li>
+                  )
+              )}
             </ul>
           </nav>
 
@@ -162,7 +179,7 @@ const Header = () => {
           </div>
 
           <button type="button" className="ml-auto inline-block md:hidden">
-            abrir menu
+            Open Menu
           </button>
         </div>
       </div>

@@ -2,11 +2,13 @@ import { faDatabase } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ArcElement, Chart as ChartJS, Legend, Tooltip } from 'chart.js'
 import classNames from 'classnames'
+import { permission } from 'const/permissions'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { Pie } from 'react-chartjs-2'
 
 import Link from '~/components/link'
 import DatabaseIcons from '~/helpers/database-icons'
+import { useUser } from '~/hooks/index'
 import useWindowSize from '~/hooks/use-window-size'
 import useServerContext from '~/services/state-manager/servers'
 import { megaBytesToGigaBytes } from '~/utils/formats'
@@ -59,6 +61,7 @@ const ServerCard = ({
 
   const [lastUpdated, setLastUpdated] = useState(new Date())
 
+  const { hasPermissions } = useUser()
   const { getServerMetrics } = useServerContext()
   if (interval) {
     useEffect(() => {
@@ -129,7 +132,11 @@ const ServerCard = ({
       )}
     >
       <Link
-        href={`/dashboard/${id}`}
+        href={
+          hasPermissions([permission.DASHBOARD_PAGE])
+            ? `/dashboard/${id}`
+            : '/dashboard'
+        }
         className={classNames(
           `block p-2 h-full relative before:content-[""] before:absolute before:w-1
             before:top-0 before:left-0 before:h-full lg:p-4 lg:hover:before:w-2
