@@ -49,7 +49,7 @@ function CurrentActivity(properties) {
 
   useEffect(() => {
     fetchData()
-  }, [fetchData])
+  }, [fetchData, componentCode])
 
   const fetchData = useCallback(async () => {
     setLoading(true)

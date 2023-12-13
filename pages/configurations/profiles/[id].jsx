@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable unicorn/consistent-function-scoping */
 /* eslint-disable no-console */
 /* eslint-disable sonarjs/no-duplicate-string */
@@ -77,7 +78,7 @@ const EditProfilePage = () => {
     }
 
     fetchData()
-  }, [profileId])
+  }, [formik, profileId])
 
   const renderBreadcrumb = () => {
     const breadcrumbs = [

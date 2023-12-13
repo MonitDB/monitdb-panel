@@ -1,24 +1,41 @@
+/* eslint-disable sonarjs/no-duplicate-string */
 /* eslint-disable react-hooks/exhaustive-deps */
+
+import { faArrowRight } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import moment from 'moment'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 
 import { ApexChart, defaultChartOptions } from '~/components/chart'
-import { Select } from '~/components/form'
 import Loading from '~/components/loading/loading'
 import { getBackupsFromDatabase } from '~/services/states'
-import { getMonthsArray } from '~/utils/date'
+import { calculateMinutesFromDate, minutesToHours } from '~/utils/time'
+
+const chartData = (data) =>
+  data.map((item) => [
+    item.backup_start_date,
+    calculateMinutesFromDate(item.backup_start_date),
+    undefined,
+    item,
+  ])
 
 // eslint-disable-next-line sonarjs/cognitive-complexity
 function DatabaseBackupsModal({ modal, onSetModalData }) {
   const { isOpen } = modal
 
   const [data, setData] = useState([])
-  const [availableDate, setAvailableDate] = useState([])
-  const [loading, setLoading] = useState(false)
-  const [startDate, setStartDate] = useState(new Date())
 
-  const fetch = useCallback(async () => {
+  const [loading, setLoading] = useState(false)
+  const [startDate, setStartDate] = useState(
+    moment(new Date()).subtract(1, 'months').format('YYYY-MM-DD')
+  )
+
+  const [endDate, setEndDate] = useState(
+    moment(new Date()).format('YYYY-MM-DD')
+  )
+
+  const fetch = async () => {
     const { id, databaseName } = modal
     if (id && databaseName) {
       try {
@@ -27,26 +44,21 @@ function DatabaseBackupsModal({ modal, onSetModalData }) {
         const { data } = await getBackupsFromDatabase(
           id,
           databaseName,
-          startDate
+          startDate,
+          endDate
         )
         setData(data.backups)
-        setAvailableDate(
-          getMonthsArray(
-            new Date(data?.firstBackup[0]?.backup_start_date ?? '')
-          ).reverse()
-        )
       } catch {
         setData([])
-        setAvailableDate([])
         onSetModalData({ ...data, isOpen: false })
         toast.error('Error fetching data')
       } finally {
         setLoading(false)
       }
     }
-  }, [modal, startDate])
+  }
 
-  useEffect(fetch, [fetch, modal?.databaseName])
+  useEffect(fetch, [modal?.databaseName])
 
   function getMostAmountOfArrayBackups() {
     let arrayBackupsAmount = 0
@@ -105,6 +117,34 @@ function DatabaseBackupsModal({ modal, onSetModalData }) {
           <i className="absolute block w-full h-[2px] rotate-45 bg-black bg-opacity-75" />
           <i className="absolute block  w-full h-[2px] -rotate-45 bg-black bg-opacity-75" />
         </button>
+        <div
+          className="flex items-center space-x-3 "
+          style={{ width: '450px', marginLeft: 'auto', marginRight: '15px' }}
+        >
+          <input
+            type="date"
+            name="start_date"
+            className="w-full px-4 h-10 bg-white leading-10 rounded text-sm"
+            onChange={(event) => setStartDate(event.target.value)}
+            defaultValue={moment(new Date())
+              .subtract(1, 'months')
+              .format('YYYY-MM-DD')}
+            value={startDate}
+          />
+          <FontAwesomeIcon icon={faArrowRight} />
+          <input
+            type="date"
+            name="end_date"
+            className="w-full px-4 h-10 bg-white leading-10 rounded text-sm"
+            defaultValue={moment(new Date()).format('YYYY-MM-DD')}
+            onChange={(event) => setEndDate(event.target.value)}
+            value={endDate}
+          />
+
+          <button onClick={() => fetch()} className="btn">
+            Filter
+          </button>
+        </div>
         {loading && (
           <div
             style={{
@@ -120,18 +160,11 @@ function DatabaseBackupsModal({ modal, onSetModalData }) {
           </div>
         )}
         {!loading && (
-          <div>
-            <Select
-              name="time"
-              containerClass="w-full md:w-1/3 bg-white border-white md:min-w-1/3 ml-auto mr-5"
-              options={availableDate.map((date, index) => ({
-                value: date.value,
-                label:
-                  index == 0 ? 'Current Month' : `${date.month} - ${date.year}`,
-              }))}
-              value={startDate}
-              onChange={(value) => setStartDate(value)}
-            />
+          <div
+            style={{
+              height: '230px',
+            }}
+          >
             {full.length === 0 &&
               log.length === 0 &&
               differential.length === 0 && (
@@ -159,41 +192,20 @@ function DatabaseBackupsModal({ modal, onSetModalData }) {
                   {
                     name: 'FULL',
                     color: '#5046E5',
-                    data: full.map((item) => {
-                      return [
-                        item.backup_start_date,
-                        item.backup_size,
-                        undefined,
-                        item,
-                      ]
-                    }),
+                    data: chartData(full),
                   },
 
                   {
                     color: '#5046E599',
                     name: 'LOG',
-                    // eslint-disable-next-line sonarjs/no-identical-functions
-                    data: log.map((item) => {
-                      return [
-                        item.backup_start_date,
-                        item.backup_size,
-                        undefined,
-                        item,
-                      ]
-                    }),
+
+                    data: chartData(log),
                   },
                   {
                     name: 'DIFFERENTIAL',
                     color: '#161B22',
-                    // eslint-disable-next-line sonarjs/no-identical-functions
-                    data: differential.map((item) => {
-                      return [
-                        item.backup_start_date,
-                        item.backup_size,
-                        undefined,
-                        item,
-                      ]
-                    }),
+
+                    data: chartData(differential),
                   },
                 ]}
                 height={'100%'}
@@ -238,16 +250,14 @@ function DatabaseBackupsModal({ modal, onSetModalData }) {
 
                   yaxis: {
                     labels: {
-                      formatter: (value) =>
-                        `${Math.round(value / 1024 / 1024)} MB`,
+                      formatter: (value) => minutesToHours(value),
                     },
                   },
 
                   xaxis: {
                     type: 'datetime',
                     labels: {
-                      formatter: (value) =>
-                        moment(value).format('DD/MM/YYYY HH:mm'),
+                      formatter: (value) => moment(value).format('DD/MM/YYYY'),
                     },
                   },
                   tooltip: {
@@ -297,9 +307,6 @@ function DatabaseBackupsModal({ modal, onSetModalData }) {
       </div>
     `
                     },
-                    // custom: () => {
-                    //   return <>OPA</>
-                    // },
                   },
                 }}
               />

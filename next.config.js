@@ -8,6 +8,8 @@ const nextConfig = removeImports({
     apiV2: process.env.API_V2,
     apiKey: process.env.API_KEY,
     gtmId: process.env.GTM_ID,
+    cipherKey: process.env.CIPHER_KEY,
+    cipherIv: process.env.CIPHER_IV
   },
   i18n: {
     localeDetection: false,

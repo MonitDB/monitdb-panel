@@ -57,7 +57,6 @@ const Header = () => {
     },
   ]
 
-  console.log({ userState })
   return (
     <header className="relative w-full h-16 z-40">
       <div className="fixed bg-gray-dark w-full flex items-center justify-start text-white">
