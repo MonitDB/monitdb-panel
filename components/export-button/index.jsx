@@ -7,9 +7,20 @@ import * as XLSX from 'xlsx'
 const ExportButton = ({ data, fileName, disabled, className }) => {
   const handleExportClick = () => {
     const wb = XLSX.utils.book_new()
-    const ws = XLSX.utils.json_to_sheet(data ?? [{}])
 
-    XLSX.utils.book_append_sheet(wb, ws, 'Planilha1')
+    if (Array.isArray(data)) {
+      const ws = XLSX.utils.json_to_sheet(data)
+      XLSX.utils.book_append_sheet(wb, ws, 'Sheet1')
+    } else if (typeof data === 'object') {
+      for (const key in data) {
+        if (data[key]) {
+          const sheetName = `${key}`
+
+          const ws = XLSX.utils.json_to_sheet(data[key].data)
+          XLSX.utils.book_append_sheet(wb, ws, sheetName)
+        }
+      }
+    }
 
     const blob = XLSX.write(wb, { bookType: 'xlsx', type: 'buffer' })
 
@@ -25,7 +36,7 @@ const ExportButton = ({ data, fileName, disabled, className }) => {
     <button
       disabled={disabled}
       type="button"
-      className={className ?? 'btn btn--small'}
+      className={className || 'btn btn--small'}
       onClick={handleExportClick}
     >
       <FontAwesomeIcon icon={faFileExport} className="mr-2" />

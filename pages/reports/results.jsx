@@ -54,7 +54,7 @@ const ResultReportsPage = () => {
     globalState: { servers },
   } = useGlobal()
   const router = useRouter()
-  // const [data, setData] = useState()
+
   const [isLoading, setIsLoading] = useState(true)
   const [typeActive, setTypeActive] = useState()
   const [reports, setReports] = useState({})
@@ -154,6 +154,7 @@ const ResultReportsPage = () => {
                 }}
               />
             </form>
+            <ExportButton disabled={isLoading} data={reports} />
           </PageContent>
 
           <PageContent>
@@ -174,9 +175,6 @@ const ResultReportsPage = () => {
                       className="flex flex-col mb-5 md:flex-row md:justify-between md:items-center"
                     >
                       <h3 className="mb-5 heading-md md:mb-0">{name}</h3>
-                      {data?.length > 0
-                        ? !isLoading && <ExportButton data={data} />
-                        : ''}
                     </header>
                     <>
                       {data.length > 0 ? (

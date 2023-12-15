@@ -115,7 +115,7 @@ const MetricsModal = ({ onClose, componentId }) => {
 
   return (
     <div className="fixed top-0 left-0 w-full h-full bg-white z-50 overflow-y-auto md:bg-transparent md:overflow-hidden md:flex md:items-center md:justify-center md:bg-black md:bg-opacity-75">
-      <div className="p-4 md:bg-white w-[800px] md:h-4/5 md:overflow-y-auto md:p-8 lg:h-auto lg:max-h-[80%]">
+      <div className="p-4 md:bg-white w-[90%] md:h-4/5 md:overflow-y-auto md:p-8 lg:h-auto lg:max-h-[80%]">
         <header className="flex items-start mb-10">
           <h2 className="heading-md">Edit component</h2>
           <button type="button" className="ml-auto mt-1" onClick={onClose}>
@@ -210,7 +210,8 @@ const MetricsModal = ({ onClose, componentId }) => {
                 >
                   Query or URL
                 </label>
-
+              </div>
+              <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
                 <AceEditor
                   id="editor"
                   aria-label="editor"

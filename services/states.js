@@ -8,8 +8,8 @@ export const getBackups = async () => {
   return apiV2().get(`/states/backups`)
 }
 
-export const getBackupsFromDatabase = async (serverId,databaseName, startDate) => {
-  return apiV2().get(`/states/backups/${serverId}`, { params: {startDate,databaseName}})
+export const getBackupsFromDatabase = async (serverId,databaseName, startDate, endDate) => {
+  return apiV2().get(`/states/backups/${serverId}`, { params: {startDate,databaseName, endDate}})
 }
 
 

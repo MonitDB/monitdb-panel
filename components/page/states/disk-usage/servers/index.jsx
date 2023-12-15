@@ -12,7 +12,6 @@ import { getPieChartData } from '~/components/cards/server/server'
 import Link from '~/components/link'
 import Reveal from '~/helpers/reveal'
 import { megaBytesToGigaBytes } from '~/utils/formats'
-// import { getPercentage } from '~/utils/global'
 
 const Servers = ({ environmentServers, diskUsage, expand }) => {
   const [serverExpandedIndices, setServerExpandedIndices] = useState(new Set())
@@ -90,6 +89,7 @@ const Servers = ({ environmentServers, diskUsage, expand }) => {
                   style={{
                     display: 'inline',
                     marginRight: '10px',
+                    width: '120px',
                   }}
                 >
                   {serverName}
