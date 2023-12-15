@@ -1,57 +1,29 @@
-/* eslint-disable unicorn/prefer-node-protocol */
+// Importa o módulo crypto
+// eslint-disable-next-line unicorn/prefer-module
+const crypto = require('crypto');
 
-import crypto from 'crypto';
+export function encryptString(text) {
+  try {
 
+    const cipher = crypto.createCipheriv('aes-256-cbc', process.env.cipherKey,  process.env.cipherIv);
+    let encrypted = cipher.update(text, 'utf8', 'hex');
+    encrypted += cipher.final('hex');
 
-
-
-export function hashMD5(dados) {
-  const md5Hash = crypto.createHash('md5');
-  md5Hash.update(dados);
-  return md5Hash.digest('hex');
+    return encrypted;
+  } catch  {
+    return;
+  }
+}
+export function decryptString(encrypted) {
+  try {
+    const decipher = crypto.createDecipherIv('aes-256-cbc', process.env.cipherKey, process.env.cipherIv);
+    let decrypted = decipher.update(encrypted, 'hex', 'utf8');
+    decrypted += decipher.final('utf8');
+    return decrypted;
+      
+  } catch {
+    return;
+  
+  }
 }
 
-export async function encryptString(text) {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(text);
-  const key = process.env.CIPHER_KEY;
-  const iv = process.env.CIPHER_IV;
-
-
-  const encrypted = await crypto.subtle.encrypt(
-    {
-      name: 'AES-GCM',
-      iv: iv,
-    },
-    key,
-    data
-  );
-
-  return new Uint8Array(encrypted);
-}
-
-export async function decryptString(encryptedData) {
-  const key = await importKey();
-
-  const decrypted = await crypto.subtle.decrypt(
-    {
-      name: 'AES-GCM',
-      iv: encryptedData.iv,
-    },
-    key,
-    encryptedData.encryptedData
-  );
-
-  const decoder = new TextDecoder();
-  return decoder.decode(decrypted);
-}
-
-async function importKey() {
-  return await crypto.subtle.importKey(
-    'raw',
-    new TextEncoder().encode(process.env.CIPHER_KEY),
-    { name: 'AES-GCM' },
-    false,
-    ['encrypt', 'decrypt']
-  );
-}

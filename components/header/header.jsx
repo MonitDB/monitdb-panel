@@ -57,15 +57,6 @@ const Header = () => {
     },
   ]
 
-  for (const item of navMenuList) {
-    if (
-      router.pathname.search(item.href.replace(/\/$/, '')) >= 0 &&
-      !hasPermissions(item.requiredPermissions) &&
-      item.href !== '/dashboard/'
-    )
-      router.push('/403/')
-  }
-
   return (
     <header className="relative w-full h-16 z-40">
       <div className="fixed bg-gray-dark w-full flex items-center justify-start text-white">

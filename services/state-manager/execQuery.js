@@ -10,7 +10,8 @@ export const useExecQueryContext = create((set) => ({
     loadingExecuteQuery: false,
     execQuery: async (plainQuery, serverId) => {
         try {
-            const query = await encryptString(query)       
+            const query = encryptString(plainQuery)       
+            console.log(query)
             set({ loadingExecuteQuery: true, queryResult: [] })
             const { data } = await apiV2().post(`/exec-query/${serverId}`, { query });
             set({ queryResult: data })
