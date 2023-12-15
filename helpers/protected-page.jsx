@@ -3,7 +3,7 @@ import { useCallback, useEffect } from 'react'
 
 import { userInitialState } from '~/contexts/user'
 import useUser from '~/hooks/use-user'
-import { postTokenValidate } from '~/services/user'
+import { getMe, postTokenValidate } from '~/services/user'
 import * as Cookies from '~/utils/cookies'
 
 const loginPath = '/?redirected=true'
@@ -14,10 +14,12 @@ const ProtectedPage = ({ children }) => {
   const validateToken = useCallback(async () => {
     try {
       const response = await postTokenValidate(userState?.token)
+      const { data: me } = await getMe()
       const dataResult = response?.data
       if (dataResult?.token) {
         setUserState({
           ...userState,
+          ...me,
           logged: true,
           token: dataResult?.token,
         })

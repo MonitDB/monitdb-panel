@@ -123,7 +123,7 @@ export const AlertHtmlSubTable = (properties) => {
                 setModal(false)
               }}
               width="60%"
-              height="50%"
+              height="400px"
               title="AI Result"
               closable={false}
               footer={

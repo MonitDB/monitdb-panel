@@ -33,12 +33,12 @@ const Header = () => {
     {
       title: 'Alerts',
       href: '/alerts/',
-      // requiredPermissions: [permission?.ALERT_PAGE],
+      requiredPermissions: [permission?.ALERT_PAGE],
     },
     {
       title: 'Analysis',
       href: '/analysis/',
-      requiredPermissions: [],
+      requiredPermissions: [permission?.ANALISYS_PAGE],
     },
     {
       title: 'Reports',
@@ -56,6 +56,15 @@ const Header = () => {
       requiredPermissions: [permission.CONFIGURATION_PAGE],
     },
   ]
+
+  for (const item of navMenuList) {
+    if (
+      router.pathname.search(item.href.replace(/\/$/, '')) >= 0 &&
+      !hasPermissions(item.requiredPermissions) &&
+      item.href !== '/dashboard/'
+    )
+      router.push('/403/')
+  }
 
   return (
     <header className="relative w-full h-16 z-40">

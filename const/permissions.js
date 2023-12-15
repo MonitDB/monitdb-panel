@@ -4,4 +4,5 @@ export const permission = {
     REPORT_PAGE : 5,
     STATES_PAGE: 6,
     CONFIGURATION_PAGE: 7,
+    ANALISYS_PAGE: 8,
 }

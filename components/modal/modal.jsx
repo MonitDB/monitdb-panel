@@ -18,6 +18,7 @@ const StyledModal = styled.div`
     padding: 20px;
     width: ${(properties) => (properties.width ? properties.width : '80%')};
     height: ${(properties) => (properties.height ? properties.height : '80vh')};
+    max-height: '100vh';
     background: #fff;
     border-radius: 8px;
     transition: transform 0.3s ease-in-out;
@@ -35,8 +36,8 @@ const StyledModal = styled.div`
   }
 
   .footer {
-    margin-top: 20px;
     text-align: right;
+    height: 100%;
   }
 
   .flex-container {
