@@ -9,16 +9,69 @@ import React, { useMemo } from 'react'
 import Chart from '~/components/chart'
 import ExportButton from '~/components/export-button'
 import Selector from '~/components/form/selector'
-// import Checkbox from '~/components/form/checkbox'
 import Link from '~/components/link'
 import { PageContent, PageWrapper } from '~/components/page'
-// import useGlobal from '~/hooks/use-global'
 import Layout from '~/layouts/default'
 
+  const datasets = {
+    Log_Full_Scans_Count: {
+      code: 'Log_Full_Scans_Count',
+      options: [],
+      parent: 'HISTORIC',
+    },
+    Log_Batch_Requests_Count: {
+      code: 'Log_Batch_Requests_Count',
+      options: [],
+      parent: 'HISTORIC',
+    },
+    Log_Tempdb_Usage: { code: 'Log_Tempdb_Usage', options: [{ label: "Allocated Space", value: "allocated_space" }, { label: "Space Used", value: "space_used" }, { label: "Available Space", value: "available_space" }], parent: 'a' },
+    Log_Lock_Waits_Count: {
+      code: 'Log_Lock_Waits_Count',
+      options: [],
+      parent: 'HISTORIC',
+    },
+    Log_Tempdb_Space_Use: {
+      code: 'Log_Tempdb_Space_Use',
+      options: [],
+      parent: 'HISTORIC',
+    },
+    Log_Processes: { code: 'Log_Processes', options: [], parent: 'a' },
+    Log_Memory_Usage: {
+      code: 'Log_Memory_Usage', options: [{ label: "Available Os Memory", value: "AVAILABLE_OS_MEMORY" },
+      { label: "Total OS Memory", value: "TOTAL_OS_MEMORY" }, { label: "Percent Usaged", value: "PERCENT_USAGED(%)" },], parent: 'a'
+    },
+    Log_Executions_SP: { code: 'Log_Executions_SP', options: [], parent: 'a' },
+    Log_CPU_Usage: { code: 'Log_CPU_Usage', options: [], parent: 'a' },
+    Log_User_Connections_Count: {
+      code: 'Log_User_Connections_Count',
+      options: [],
+      parent: 'HISTORIC',
+    },
+    Log_SQL_Compilations_Count: {
+      code: 'Log_SQL_Compilations_Count',
+      options: [],
+      parent: 'HISTORIC',
+    },
+    Log_Page_Splits_Count: {
+      code: 'Log_Page_Splits_Count',
+      options: [],
+      parent: 'HISTORIC',
+    },
+    Log_Lock_Timeouts_Count: {
+      code: 'Log_Lock_Timeouts_Count',
+      options: [],
+      parent: 'HISTORIC',
+    },
+    Log_Latch_Waits_Count: {
+      code: 'Log_Latch_Waits_Count',
+      options: [],
+      parent: 'HISTORIC',
+    },
+  }
+
+
 const AnalysisPage = () => {
-  // const {
-  //   globalState: { serverEnvironments },
-  // } = useGlobal()
+
   const statusOptions = useMemo(
     () => [
       { value: '15min', label: '15 minutes' },
@@ -32,58 +85,6 @@ const AnalysisPage = () => {
     []
   )
 
-  const datasets = {
-    Log_Full_Scans_Count: {
-      code: 'Log_Full_Scans_Count',
-      options: [],
-      parent: 'a',
-    },
-    Log_Batch_Requests_Count: {
-      code: 'Log_Batch_Requests_Count',
-      options: [],
-      parent: 'a',
-    },
-    Log_Tempdb_Usage: { code: 'Log_Tempdb_Usage', options: [], parent: 'a' },
-    Log_Lock_Waits_Count: {
-      code: 'Log_Lock_Waits_Count',
-      options: [],
-      parent: 'a',
-    },
-    Log_Tempdb_Space_Use: {
-      code: 'Log_Tempdb_Space_Use',
-      options: [],
-      parent: 'a',
-    },
-    Log_Processes: { code: 'Log_Processes', options: [], parent: 'a' },
-    Log_Memory_Usage: { code: 'Log_Memory_Usage', options: [], parent: 'a' },
-    Log_Executions_SP: { code: 'Log_Executions_SP', options: [], parent: 'a' },
-    Log_CPU_Usage: { code: 'Log_CPU_Usage', options: [], parent: 'a' },
-    Log_User_Connections_Count: {
-      code: 'Log_User_Connections_Count',
-      options: [],
-      parent: 'a',
-    },
-    Log_SQL_Compilations_Count: {
-      code: 'Log_SQL_Compilations_Count',
-      options: [],
-      parent: 'a',
-    },
-    Log_Page_Splits_Count: {
-      code: 'Log_Page_Splits_Count',
-      options: [],
-      parent: 'a',
-    },
-    Log_Lock_Timeouts_Count: {
-      code: 'Log_Lock_Timeouts_Count',
-      options: [],
-      parent: 'a',
-    },
-    Log_Latch_Waits_Count: {
-      code: 'Log_Latch_Waits_Count',
-      options: [],
-      parent: 'a',
-    },
-  }
 
   const groupedDatasets = Object.values(datasets).reduce(
     (accumulator, dataset) => {
@@ -230,6 +231,7 @@ const AnalysisPage = () => {
                   <input
                     type="text"
                     name="metrics"
+                    value={formik.}
                     placeholder="Search by metrics"
                     className="w-full px-4 h-10 mb-2 bg-white leading-10 rounded outline-none text-sm"
                   />
