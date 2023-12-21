@@ -2,7 +2,7 @@
 /* eslint-disable unicorn/no-array-reduce */
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Button, DatePicker, Form } from 'antd'
+import { Button, DatePicker, Form, notification } from 'antd'
 import moment from 'moment'
 import { NextSeo } from 'next-seo'
 import React, { useMemo, useState } from 'react'
@@ -10,6 +10,7 @@ import React, { useMemo, useState } from 'react'
 import { ApexChart, defaultChartOptions } from '~/components/chart'
 import { Select } from '~/components/form'
 import Link from '~/components/link'
+import Loading from '~/components/loading'
 import { PageContent, PageWrapper } from '~/components/page'
 import Layout from '~/layouts/default'
 import { getAnalysis } from '~/services/analysis'
@@ -34,7 +35,7 @@ const datasets = {
       { label: 'Space Used', value: 'space_used' },
       { label: 'Available Space', value: 'available_space' },
     ],
-    parent: 'a',
+    parent: '',
   },
   Log_Lock_Waits_Count: {
     code: 'Log_Lock_Waits_Count',
@@ -44,9 +45,9 @@ const datasets = {
   Log_Tempdb_Space_Use: {
     code: 'Log_Tempdb_Space_Use',
     options: [],
-    parent: 'HISTORIC',
+    parent: '',
   },
-  Log_Processes: { code: 'Log_Processes', options: [], parent: 'a' },
+  Log_Processes: { code: 'Log_Processes', options: [], parent: '' },
   Log_Memory_Usage: {
     code: 'Log_Memory_Usage',
     options: [
@@ -54,10 +55,10 @@ const datasets = {
       { label: 'Total OS Memory', value: 'TOTAL_OS_MEMORY' },
       { label: 'Percent Usaged', value: 'PERCENT_USAGED(%)' },
     ],
-    parent: 'a',
+    parent: '',
   },
-  Log_Executions_SP: { code: 'Log_Executions_SP', options: [], parent: 'a' },
-  Log_CPU_Usage: { code: 'Log_CPU_Usage', options: [], parent: 'a' },
+  Log_Executions_SP: { code: 'Log_Executions_SP', options: [], parent: '' },
+  Log_CPU_Usage: { code: 'Log_CPU_Usage', options: [], parent: '' },
   Log_User_Connections_Count: {
     code: 'Log_User_Connections_Count',
     options: [],
@@ -129,13 +130,19 @@ const AnalysisPage = () => {
     )
   )
 
+  const [loading, setLoading] = useState(false)
+
   const [form] = Form.useForm()
 
   const fetchData = async (metric, serverId, filter) => {
+    setLoading(true)
     try {
       const { data } = await getAnalysis({ metric, serverId, filter })
       setData(data)
-    } catch {}
+    } catch (error) {
+      notification.error({ message: error.message })
+    }
+    setLoading(false)
   }
 
   const handleSubmit = (values) => {
@@ -158,7 +165,11 @@ const AnalysisPage = () => {
                   <strong className="block mr-2 whitespace-nowrap text-sm">
                     Interval
                   </strong>
-                  <Form.Item name="interval" rules={[{ required: true }]}>
+                  <Form.Item
+                    name="interval"
+                    rules={[{ required: true }]}
+                    initialValue={15}
+                  >
                     <Select options={intervalOptions} className="w-40" />
                   </Form.Item>
                 </div>
@@ -175,7 +186,7 @@ const AnalysisPage = () => {
                     <DatePicker />
                   </Form.Item>
                 </div>
-                <Button htmlType="submit" type="dashed">
+                <Button htmlType="submit" type="dashed" loading={loading}>
                   Compare
                 </Button>
               </div>
@@ -299,39 +310,62 @@ const AnalysisPage = () => {
               className="border-b border-gray-light"
             >
               <div className="w-4/5 mb-10 bg-white">
-                <ApexChart
-                  height={'100%'}
-                  options={{
-                    ...defaultChartOptions,
-                    title: {
-                      text: !data
-                        ? 'Error to load the data'
-                        : form.getFieldValue('metric'),
-                      offsetY: 10,
-                      offsetX: 5,
-                    },
-                    stroke: { width: 1, curve: 'smooth' },
-                    xaxis: {
-                      ...defaultChartOptions.xaxis,
-                    },
-                    yaxis: {
-                      ...defaultChartOptions.yaxis,
-                      forceNiceScale: false,
+                {loading && (
+                  <div className="col-span-2 bg-white lg:col-span-6 h-200 flex items-center justify-center h-[215px]">
+                    <Loading />
+                  </div>
+                )}
+                {!loading && (
+                  <ApexChart
+                    height={200}
+                    options={{
+                      ...defaultChartOptions,
+                      title: {
+                        text: !data
+                          ? 'Error to load the data'
+                          : form.getFieldValue('metric')?.replace(/_/g, ' '),
+                        offsetY: 10,
+                        offsetX: 5,
+                      },
+                      stroke: { width: 1, curve: 'smooth' },
+                      xaxis: {
+                        ...defaultChartOptions.xaxis,
+                        type: 'datetime',
+                        labels: {
+                          datetimeUTC: false,
+                          datetimeFormatter: {
+                            year: 'yyyy',
+                            month: "MMM 'yy",
+                            day: 'dd',
+                            hour: 'HH:mm',
+                          },
+                        },
+                      },
+                      yaxis: {
+                        ...defaultChartOptions.yaxis,
+                        forceNiceScale: false,
 
-                      tickAmount: 5,
-                    },
-                    legend: {
-                      ...defaultChartOptions.legend,
-                      itemMargin: '10px',
-                    },
-                  }}
-                  series={[
-                    {
-                      name: '% Other process',
-                      data,
-                    },
-                  ]}
-                />
+                        tickAmount: 5,
+                      },
+                      legend: {
+                        ...defaultChartOptions.legend,
+                        itemMargin: '10px',
+                        labels: {
+                          useSeriesColors: true,
+                          formatter: function (seriesName) {
+                            return seriesName.replace(/_/g, ' ')
+                          },
+                        },
+                      },
+                    }}
+                    series={[
+                      {
+                        name: 'Count',
+                        data,
+                      },
+                    ]}
+                  />
+                )}
               </div>{' '}
               <div className="w-full flex flex-col md:flex-row">
                 <div className="flex flex-col md:flex-row md:space-x-4 md:w-4/5">
