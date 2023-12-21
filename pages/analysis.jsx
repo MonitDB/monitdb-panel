@@ -1,90 +1,105 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable unicorn/no-array-reduce */
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Button } from 'antd'
-import { useFormik } from 'formik'
+import { Button, DatePicker, Form } from 'antd'
+import moment from 'moment'
 import { NextSeo } from 'next-seo'
-import React, { useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
 
-import Chart from '~/components/chart'
-import ExportButton from '~/components/export-button'
-import Selector from '~/components/form/selector'
+import { ApexChart, defaultChartOptions } from '~/components/chart'
+import { Select } from '~/components/form'
 import Link from '~/components/link'
 import { PageContent, PageWrapper } from '~/components/page'
 import Layout from '~/layouts/default'
+import { getAnalysis } from '~/services/analysis'
 
-  const datasets = {
-    Log_Full_Scans_Count: {
-      code: 'Log_Full_Scans_Count',
-      options: [],
-      parent: 'HISTORIC',
-    },
-    Log_Batch_Requests_Count: {
-      code: 'Log_Batch_Requests_Count',
-      options: [],
-      parent: 'HISTORIC',
-    },
-    Log_Tempdb_Usage: { code: 'Log_Tempdb_Usage', options: [{ label: "Allocated Space", value: "allocated_space" }, { label: "Space Used", value: "space_used" }, { label: "Available Space", value: "available_space" }], parent: 'a' },
-    Log_Lock_Waits_Count: {
-      code: 'Log_Lock_Waits_Count',
-      options: [],
-      parent: 'HISTORIC',
-    },
-    Log_Tempdb_Space_Use: {
-      code: 'Log_Tempdb_Space_Use',
-      options: [],
-      parent: 'HISTORIC',
-    },
-    Log_Processes: { code: 'Log_Processes', options: [], parent: 'a' },
-    Log_Memory_Usage: {
-      code: 'Log_Memory_Usage', options: [{ label: "Available Os Memory", value: "AVAILABLE_OS_MEMORY" },
-      { label: "Total OS Memory", value: "TOTAL_OS_MEMORY" }, { label: "Percent Usaged", value: "PERCENT_USAGED(%)" },], parent: 'a'
-    },
-    Log_Executions_SP: { code: 'Log_Executions_SP', options: [], parent: 'a' },
-    Log_CPU_Usage: { code: 'Log_CPU_Usage', options: [], parent: 'a' },
-    Log_User_Connections_Count: {
-      code: 'Log_User_Connections_Count',
-      options: [],
-      parent: 'HISTORIC',
-    },
-    Log_SQL_Compilations_Count: {
-      code: 'Log_SQL_Compilations_Count',
-      options: [],
-      parent: 'HISTORIC',
-    },
-    Log_Page_Splits_Count: {
-      code: 'Log_Page_Splits_Count',
-      options: [],
-      parent: 'HISTORIC',
-    },
-    Log_Lock_Timeouts_Count: {
-      code: 'Log_Lock_Timeouts_Count',
-      options: [],
-      parent: 'HISTORIC',
-    },
-    Log_Latch_Waits_Count: {
-      code: 'Log_Latch_Waits_Count',
-      options: [],
-      parent: 'HISTORIC',
-    },
-  }
+import { useGlobal } from '../hooks'
 
+const datasets = {
+  Log_Full_Scans_Count: {
+    code: 'Log_Full_Scans_Count',
+    options: [],
+    parent: 'HISTORIC',
+  },
+  Log_Batch_Requests_Count: {
+    code: 'Log_Batch_Requests_Count',
+    options: [],
+    parent: 'HISTORIC',
+  },
+  Log_Tempdb_Usage: {
+    code: 'Log_Tempdb_Usage',
+    options: [
+      { label: 'Allocated Space', value: 'allocated_space' },
+      { label: 'Space Used', value: 'space_used' },
+      { label: 'Available Space', value: 'available_space' },
+    ],
+    parent: 'a',
+  },
+  Log_Lock_Waits_Count: {
+    code: 'Log_Lock_Waits_Count',
+    options: [],
+    parent: 'HISTORIC',
+  },
+  Log_Tempdb_Space_Use: {
+    code: 'Log_Tempdb_Space_Use',
+    options: [],
+    parent: 'HISTORIC',
+  },
+  Log_Processes: { code: 'Log_Processes', options: [], parent: 'a' },
+  Log_Memory_Usage: {
+    code: 'Log_Memory_Usage',
+    options: [
+      { label: 'Available Os Memory', value: 'AVAILABLE_OS_MEMORY' },
+      { label: 'Total OS Memory', value: 'TOTAL_OS_MEMORY' },
+      { label: 'Percent Usaged', value: 'PERCENT_USAGED(%)' },
+    ],
+    parent: 'a',
+  },
+  Log_Executions_SP: { code: 'Log_Executions_SP', options: [], parent: 'a' },
+  Log_CPU_Usage: { code: 'Log_CPU_Usage', options: [], parent: 'a' },
+  Log_User_Connections_Count: {
+    code: 'Log_User_Connections_Count',
+    options: [],
+    parent: 'HISTORIC',
+  },
+  Log_SQL_Compilations_Count: {
+    code: 'Log_SQL_Compilations_Count',
+    options: [],
+    parent: 'HISTORIC',
+  },
+  Log_Page_Splits_Count: {
+    code: 'Log_Page_Splits_Count',
+    options: [],
+    parent: 'HISTORIC',
+  },
+  Log_Lock_Timeouts_Count: {
+    code: 'Log_Lock_Timeouts_Count',
+    options: [],
+    parent: 'HISTORIC',
+  },
+  Log_Latch_Waits_Count: {
+    code: 'Log_Latch_Waits_Count',
+    options: [],
+    parent: 'HISTORIC',
+  },
+}
 
 const AnalysisPage = () => {
+  const {
+    globalState: { servers },
+  } = useGlobal()
+  const [data, setData] = useState([])
 
-  const statusOptions = useMemo(
+  const intervalOptions = useMemo(
     () => [
-      { value: '15min', label: '15 minutes' },
-      { value: '1h', label: '1 hour' },
-      { value: '6h', label: '6 hours' },
-      { value: '24h', label: '24 hours' },
-      { value: '7 dias', label: '7 days' },
-      { value: '14 dias', label: '14 days' },
-      { value: '28 dias', label: '28 days' },
+      { value: 15, label: '15 minutes' },
+      { value: 60, label: '1 hour' },
+      { value: 60 * 6, label: '6 hours' },
+      { value: 24 * 60, label: '24 hours' },
     ],
     []
   )
-
 
   const groupedDatasets = Object.values(datasets).reduce(
     (accumulator, dataset) => {
@@ -114,239 +129,255 @@ const AnalysisPage = () => {
     )
   )
 
-  const formik = useFormik({
-    initialValues: {
-      status: [],
-      start_date: '',
-      end_date: '',
-    },
-    onSubmit: (values) => {
-      console.log('submit', values) // eslint-disable-line no-console
-    },
-  })
+  const [form] = Form.useForm()
+
+  const fetchData = async (metric, serverId, filter) => {
+    try {
+      const { data } = await getAnalysis({ metric, serverId, filter })
+      setData(data)
+    } catch {}
+  }
+
+  const handleSubmit = (values) => {
+    const { startDate, endDate, metric, server, interval } = values
+    fetchData(metric, server, { startDate, endDate, interval })
+  }
 
   return (
     <>
       <NextSeo title="Analysis - MonitDB" />
       <Layout>
         <PageWrapper className="p-8">
-          <PageContent
-            removeSidebarMargin={true}
-            className="border-b border-gray-light"
-          >
-            <form
-              className="w-full flex flex-col space-y-4 mb-5 xl:space-x-4 xl:space-y-0 xl:flex-row"
-              onSubmit={formik.handleSubmit}
+          <Form form={form} onFinish={handleSubmit}>
+            <PageContent
+              removeSidebarMargin={true}
+              className="border-b border-gray-light"
             >
-              <div className="flex items-center">
-                <strong className="block mr-2 whitespace-nowrap text-sm">
-                  Interval
-                </strong>
-                <Selector
-                  name="status"
-                  value={formik.values.status}
-                  options={statusOptions}
-                  onChange={(value) => {
-                    formik.setFieldValue('status', value)
-                  }}
-                  className="w-40"
-                />
-              </div>
-              <div className="flex items-center space-x-3">
-                <input
-                  type="date"
-                  name="start_date"
-                  className="w-full px-4 h-10 bg-white leading-10 rounded outline-none text-sm"
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  value={formik.values.start_date}
-                />
-                <FontAwesomeIcon icon={faArrowRight} />
-                <input
-                  type="date"
-                  name="end_date"
-                  className="w-full px-4 h-10 bg-white leading-10 rounded outline-none text-sm"
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  value={formik.values.end_date}
-                />
-              </div>
-              <Button type="dashed">Compare</Button>
-            </form>
-            <div className="flex items-center">
-              <ul
-                className="flex items-center border-r border-r-gray pr-4 mr-4
-                text-blue text-sm space-x-3"
-              >
-                <li>
-                  <Link href="/analysis/" className="">
-                    Last Hour
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/analysis/" className="">
-                    Lasts 6hrs
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/analysis/" className="">
-                    Last 24hrs
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/analysis/" className="">
-                    Lasts 7 days
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/analysis/" className="">
-                    Lasts 14 days
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/analysis/" className="">
-                    Today
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/analysis/" className="">
-                    This week
-                  </Link>
-                </li>
-              </ul>
-              <ExportButton fileName="ANALISYS" />
-            </div>
-          </PageContent>
+              <div className="w-full flex flex-col space-y-4 mb-5 xl:space-x-4 xl:space-y-0 xl:flex-row">
+                <div className="flex items-center">
+                  <strong className="block mr-2 whitespace-nowrap text-sm">
+                    Interval
+                  </strong>
+                  <Form.Item name="interval" rules={[{ required: true }]}>
+                    <Select options={intervalOptions} className="w-40" />
+                  </Form.Item>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <Form.Item name="startDate" rules={[{ required: true }]}>
+                    <DatePicker />
+                  </Form.Item>
 
-          <PageContent
-            removeSidebarMargin={true}
-            className="border-b border-gray-light"
-          >
-            <div className="w-4/5 mb-10 bg-white">
-              <Chart />
-            </div>
-            <div className="w-full flex flex-col md:flex-row">
-              <div className="flex flex-col md:flex-row md:space-x-4 md:w-4/5">
-                <div className="w-60">
-                  <input
-                    type="text"
-                    name="metrics"
-                    value={formik.}
-                    placeholder="Search by metrics"
-                    className="w-full px-4 h-10 mb-2 bg-white leading-10 rounded outline-none text-sm"
+                  <FontAwesomeIcon
+                    icon={faArrowRight}
+                    style={{ transform: 'translateY(-12px)' }}
                   />
-                  <select
-                    size="15"
-                    className="w-full appearance-none border border-gray-light text-xs"
-                    name="metrics_filter"
-                  >
-                    {datasetsOptions}
-                  </select>
+                  <Form.Item name="endDate" rules={[{ required: true }]}>
+                    <DatePicker />
+                  </Form.Item>
                 </div>
-                <div className="w-60">
-                  <input
-                    type="text"
-                    name="cluster"
-                    placeholder="Search by cluster"
-                    className="w-full px-4 h-10 mb-2 bg-white leading-10 rounded outline-none text-sm"
-                  />
-                  <select
-                    size="15"
-                    className="w-full appearance-none border border-gray-light text-xs"
-                    name="cluster_filter"
-                  >
-                    <option
-                      value="r1,4:base,s36:4c07d85a-92f3-4f0e-b040-0121aab069ab,7:Cluster,1,4:Name,s15:azurevm-sqmtest,"
-                      title="azurevm-sqmtest"
-                    >
-                      {' '}
-                      azurevm-sqmtest{' '}
-                    </option>
-                    <option
-                      value="r1,4:base,s36:421db8b6-1db9-486b-b8a8-02812f55648b,7:Cluster,1,4:Name,s6:sm-dc2,"
-                      title="sm-dc2"
-                    >
-                      {' '}
-                      sm-dc2{' '}
-                    </option>
-                    <option
-                      value="r1,4:base,s36:421db8b6-1db9-486b-b8a8-02812f55648b,7:Cluster,1,4:Name,s7:sqm-dc1,"
-                      title="sqm-dc1"
-                    >
-                      {' '}
-                      sqm-dc1{' '}
-                    </option>
-                    <option
-                      value="r1,4:base,s36:421db8b6-1db9-486b-b8a8-02812f55648b,7:Cluster,1,4:Name,s14:sqm-sqlmonitor,"
-                      title="sqm-sqlmonitor"
-                    >
-                      {' '}
-                      sqm-sqlmonitor{' '}
-                    </option>
-                    <option
-                      value="r1,4:base,s36:260ca7e9-c6fa-4cc5-8de2-e05e68114e71,7:Cluster,1,4:Name,s22:sscdbcluster.ssc.local,"
-                      title="sscdbcluster.ssc.local"
-                    >
-                      {' '}
-                      sscdbcluster.ssc.local{' '}
-                    </option>
-                    <option
-                      value="r1,4:base,s36:421db8b6-1db9-486b-b8a8-02812f55648b,7:Cluster,1,4:Name,s28:ssc-web-staging.smdemo.local,"
-                      title="ssc-web-staging.smdemo.local"
-                    >
-                      {' '}
-                      ssc-web-staging.smdemo.local{' '}
-                    </option>
-                    <option
-                      value="r1,4:base,s36:421db8b6-1db9-486b-b8a8-02812f55648b,7:Cluster,1,4:Name,s22:staging01.smdemo.local,"
-                      title="staging01.smdemo.local"
-                    >
-                      {' '}
-                      staging01.smdemo.local{' '}
-                    </option>
-                    <option
-                      value="r1,4:base,s36:421db8b6-1db9-486b-b8a8-02812f55648b,7:Cluster,1,4:Name,s22:staging02.smdemo.local,"
-                      title="staging02.smdemo.local"
-                      selected="selected"
-                      className="selected"
-                    >
-                      {' '}
-                      staging02.smdemo.local{' '}
-                    </option>
-                    <option
-                      value="r1,4:base,s36:421db8b6-1db9-486b-b8a8-02812f55648b,7:Cluster,1,4:Name,s19:test01.smdemo.local,"
-                      title="test01.smdemo.local"
-                    >
-                      {' '}
-                      test01.smdemo.local{' '}
-                    </option>
-                    <option
-                      value="r1,4:base,s36:421db8b6-1db9-486b-b8a8-02812f55648b,7:Cluster,1,4:Name,s19:test02.smdemo.local,"
-                      title="test02.smdemo.local"
-                    >
-                      {' '}
-                      test02.smdemo.local{' '}
-                    </option>
-                    <option
-                      value="r1,4:base,s36:421db8b6-1db9-486b-b8a8-02812f55648b,7:Cluster,1,4:Name,s23:workload01.smdemo.local,"
-                      title="workload01.smdemo.local"
-                    >
-                      {' '}
-                      workload01.smdemo.local{' '}
-                    </option>
-                    <option
-                      value="r1,4:base,s36:421db8b6-1db9-486b-b8a8-02812f55648b,7:Cluster,1,4:Name,s23:workload02.smdemo.local,"
-                      title="workload02.smdemo.local"
-                    >
-                      {' '}
-                      workload02.smdemo.local{' '}
-                    </option>
-                  </select>
-                </div>
+                <Button htmlType="submit" type="dashed">
+                  Compare
+                </Button>
               </div>
-              <div className="w-full md:w-1/5"></div>
-            </div>
-          </PageContent>
+              <div className="flex items-center">
+                <ul
+                  className="flex items-center border-r border-r-gray pr-4 mr-4
+                text-blue text-sm space-x-3"
+                >
+                  <li>
+                    <Link
+                      onClick={() => {
+                        const oneHourAgo = new Date()
+                        oneHourAgo.setHours(oneHourAgo.getHours() - 1)
+
+                        form.setFieldsValue({
+                          startDate: moment(oneHourAgo),
+                          endDate: moment(),
+                        })
+                      }}
+                    >
+                      Last Hour
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      onClick={() => {
+                        const startDate = new Date()
+                        startDate.setHours(startDate.getHours() - 6)
+
+                        form.setFieldsValue({
+                          startDate: moment(startDate),
+                          endDate: moment(),
+                        })
+                      }}
+                    >
+                      Last 6hrs
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      onClick={() => {
+                        const startDate = new Date()
+                        startDate.setHours(startDate.getHours() - 24)
+
+                        form.setFieldsValue({
+                          startDate: moment(startDate),
+                          endDate: moment(),
+                        })
+                      }}
+                    >
+                      Last 24hrs
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      onClick={() => {
+                        const startDate = new Date()
+                        startDate.setDate(startDate.getDate() - 7)
+
+                        form.setFieldsValue({
+                          startDate: moment(startDate),
+                          endDate: moment(),
+                        })
+                      }}
+                    >
+                      Lasts 7 days
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      onClick={() => {
+                        const startDate = new Date()
+                        startDate.setDate(startDate.getDate() - 14)
+
+                        form.setFieldsValue({
+                          startDate: moment(startDate),
+                          endDate: moment(),
+                        })
+                      }}
+                    >
+                      Lasts 14 days
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      onClick={() => {
+                        const startDate = new Date()
+                        startDate.setHours(0)
+
+                        form.setFieldsValue({
+                          startDate: moment(startDate),
+                          endDate: moment(),
+                        })
+                      }}
+                    >
+                      Today
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      onClick={() => {
+                        const today = new Date()
+                        const startDate = new Date(today)
+                        startDate.setDate(today.getDate() - today.getDay())
+
+                        form.setFieldsValue({
+                          startDate: moment(startDate),
+                          endDate: moment(),
+                        })
+                      }}
+                    >
+                      This week
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+            </PageContent>
+
+            <PageContent
+              removeSidebarMargin={true}
+              className="border-b border-gray-light"
+            >
+              <div className="w-4/5 mb-10 bg-white">
+                <ApexChart
+                  height={'100%'}
+                  options={{
+                    ...defaultChartOptions,
+                    title: {
+                      text: !data
+                        ? 'Error to load the data'
+                        : form.getFieldValue('metric'),
+                      offsetY: 10,
+                      offsetX: 5,
+                    },
+                    stroke: { width: 1, curve: 'smooth' },
+                    xaxis: {
+                      ...defaultChartOptions.xaxis,
+                    },
+                    yaxis: {
+                      ...defaultChartOptions.yaxis,
+                      forceNiceScale: false,
+
+                      tickAmount: 5,
+                    },
+                    legend: {
+                      ...defaultChartOptions.legend,
+                      itemMargin: '10px',
+                    },
+                  }}
+                  series={[
+                    {
+                      name: '% Other process',
+                      data,
+                    },
+                  ]}
+                />
+              </div>{' '}
+              <div className="w-full flex flex-col md:flex-row">
+                <div className="flex flex-col md:flex-row md:space-x-4 md:w-4/5">
+                  <div className="w-60">
+                    <input
+                      type="text"
+                      name="metrics"
+                      placeholder="Search by metrics"
+                      className="w-full px-4 h-10 mb-2 bg-white leading-10 rounded outline-none text-sm"
+                    />
+                    <Form.Item name="metric" rules={[{ required: true }]}>
+                      <select
+                        size="15"
+                        className="w-full appearance-none border border-gray-light text-xs"
+                      >
+                        {datasetsOptions}
+                      </select>
+                    </Form.Item>
+                  </div>
+                  <div className="w-60">
+                    <input
+                      type="text"
+                      name="cluster"
+                      placeholder="Search by cluster"
+                      className="w-full px-4 h-10 mb-2 bg-white leading-10 rounded outline-none text-sm"
+                    />{' '}
+                    <Form.Item name="server" rules={[{ required: true }]}>
+                      <select
+                        size="15"
+                        className="w-full appearance-none border border-gray-light text-xs"
+                      >
+                        {servers.map((server, id) => {
+                          return (
+                            <option key={id} value={server.id}>
+                              {server.serverName}
+                            </option>
+                          )
+                        })}
+                      </select>
+                    </Form.Item>
+                  </div>
+                </div>
+                <div className="w-full md:w-1/5"></div>
+              </div>
+            </PageContent>
+          </Form>
         </PageWrapper>
       </Layout>
     </>
