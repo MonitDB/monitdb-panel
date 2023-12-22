@@ -1,6 +1,8 @@
 /* eslint-disable no-console */
 // import { faWarning } from '@fortawesome/free-solid-svg-icons'
 // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { Button } from 'antd'
+import { Select } from 'antd'
 import classNames from 'classnames'
 import faker from 'faker'
 import { useFormik } from 'formik'
@@ -8,7 +10,6 @@ import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
 import React, { useEffect, useMemo, useState } from 'react'
 
-import Select from '~/components/form/select'
 import Grid from '~/components/grid'
 import Loading from '~/components/loading'
 import {
@@ -257,12 +258,9 @@ const SingleDashboard = () => {
                             formik.setFieldValue('lastMinutes', value)
                           }}
                         />
-                        <button
-                          className="bg-blue text-white px-3 h-11 rounded-[5px] font-medium flex items-center gap-1"
-                          onClick={() => setLastFetch(Date.now())}
-                        >
+                        <Button onClick={() => setLastFetch(Date.now())}>
                           Refresh
-                        </button>
+                        </Button>
                       </div>
                     </div>
 

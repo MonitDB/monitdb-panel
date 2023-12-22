@@ -3,6 +3,7 @@ import {
   faMagnifyingGlass,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { Button } from 'antd'
 import classNames from 'classnames'
 import {
   HOUR,
@@ -208,14 +209,14 @@ const DashboardPage = () => {
                       formik.setFieldValue('environments', value)
                     }}
                   />
-                  <button
-                    type="reset"
-                    className="btn"
+                  <Button
+                    type="text"
+                    htmlType="reset"
                     disabled={!hasAnyFilter}
                     onClick={() => formik.resetForm()}
                   >
                     Clear
-                  </button>
+                  </Button>
                   <div style={{ width: '400px' }}>
                     <Select
                       name="refreshInterval"

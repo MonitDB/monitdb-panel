@@ -1,3 +1,4 @@
+/* eslint-disable unicorn/prefer-number-properties */
 /* eslint-disable no-console */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import {
@@ -6,13 +7,13 @@ import {
   faTag,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { Button, Select } from 'antd'
 import classNames from 'classnames'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { toast } from 'react-toastify'
 
-import Select from '~/components/form/select'
 import Selector from '~/components/form/selector'
 import Loading from '~/components/loading'
 import { PageContent, PageWrapper } from '~/components/page'
@@ -71,7 +72,7 @@ const AlertsDetailsPage = () => {
 
   const timeOptions = useMemo(
     () => [
-      { value: '', label: 'All time' },
+      { value: -1, label: 'All time' },
       { value: 1, label: '1 minute' },
       { value: 5, label: '5 minutes' },
       { value: 20, label: '20 minutes' },
@@ -191,9 +192,14 @@ const AlertsDetailsPage = () => {
               />
               <Select
                 name="time"
+                style={{ width: '150px' }}
                 containerClass="w-full md:w-1/3 bg-white border-white md:min-w-1/3"
                 options={timeOptions}
-                value={router?.query?.time}
+                value={
+                  isNaN(Number.parseInt(router?.query?.time))
+                    ? -1
+                    : Number.parseInt(router?.query?.time)
+                }
                 onChange={(value) => {
                   handleChange('time', value)
                   setCurrentPage(1)
@@ -203,7 +209,13 @@ const AlertsDetailsPage = () => {
                 name="server"
                 containerClass="w-full md:w-1/3 bg-white border-white md:min-w-1/3"
                 options={serversOptions}
-                value={router?.query?.server}
+                value={
+                  // eslint-disable-next-line unicorn/prefer-number-properties
+                  isNaN(Number.parseInt(router?.query?.server))
+                    ? -1
+                    : Number.parseInt(router?.query?.server)
+                }
+                style={{ width: '150px' }}
                 onChange={(value) => {
                   handleChange('server', value)
                   setCurrentPage(1)
@@ -348,22 +360,21 @@ const AlertsDetailsPage = () => {
                             </td>
                             <td>{new Date(alert?.dtAlert).toLocaleString()}</td>
                             <td width={'100px'}>
-                              {cleaningAlert === alert.id * alert.serverId ? (
-                                <span>Cleaning...</span>
-                              ) : (
-                                <a
-                                  aria-disabled={cleaningAlert != -1}
-                                  href=""
-                                  onClick={(event) => {
-                                    event.stopPropagation()
-                                    event.preventDefault()
+                              <Button
+                                type="dashed"
+                                href=""
+                                loading={
+                                  cleaningAlert === alert.id * alert.serverId
+                                }
+                                onClick={(event) => {
+                                  event.stopPropagation()
+                                  event.preventDefault()
 
-                                    handleClearAlert(alert?.id, alert?.serverId)
-                                  }}
-                                >
-                                  Clear
-                                </a>
-                              )}
+                                  handleClearAlert(alert?.id, alert?.serverId)
+                                }}
+                              >
+                                Clear
+                              </Button>
                             </td>
                           </tr>
 

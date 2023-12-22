@@ -1,6 +1,7 @@
 /* eslint-disable sonarjs/no-duplicate-string */
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { Button, Col, Row } from 'antd'
 import classNames from 'classnames'
 import React, { useCallback, useEffect, useState } from 'react'
 
@@ -67,39 +68,47 @@ const DiskUsage = ({ tabName }) => {
           <h1 className="heading-lg">{tabName}</h1>
           <div>
             <div>
-              <button
-                type="button"
-                className={'btn btn--small mr-[10px]'}
-                disabled={isLoading}
-                onClick={() => {
-                  setEnvironmentExpandedIndices(new Set())
+              <Row gutter={12}>
+                <Col>
+                  <Button
+                    type="dashed"
+                    disabled={isLoading}
+                    onClick={() => {
+                      setEnvironmentExpandedIndices(new Set())
 
-                  setTimeout(() => {
-                    setExpand(false)
-                  }, 100)
-                }}
-              >
-                Collapse All
-              </button>
-              <button
-                type="button"
-                className={'btn btn--small mr-[10px]'}
-                disabled={isLoading}
-                onClick={() => {
-                  const allEnvironmentIndices = serverEnvironments.map(
-                    (_, index) => index
-                  )
-                  setEnvironmentExpandedIndices(new Set(allEnvironmentIndices))
-                  setExpand(true)
-                }}
-              >
-                Expand All
-              </button>
-              <ExportButton
-                disabled={isLoading}
-                data={diskUsage}
-                fileName={'DISK_USAGE'}
-              />
+                      setTimeout(() => {
+                        setExpand(false)
+                      }, 100)
+                    }}
+                  >
+                    Collapse All
+                  </Button>
+                </Col>
+                <Col>
+                  <Button
+                    type="primary"
+                    disabled={isLoading}
+                    onClick={() => {
+                      const allEnvironmentIndices = serverEnvironments.map(
+                        (_, index) => index
+                      )
+                      setEnvironmentExpandedIndices(
+                        new Set(allEnvironmentIndices)
+                      )
+                      setExpand(true)
+                    }}
+                  >
+                    Expand All
+                  </Button>
+                </Col>
+                <Col>
+                  <ExportButton
+                    disabled={isLoading}
+                    data={diskUsage}
+                    fileName={'DISK_USAGE'}
+                  />
+                </Col>
+              </Row>
             </div>
           </div>
         </header>

@@ -4,10 +4,7 @@
 // import 'ace-builds/src-noconflict/theme-github'
 import '@uiw/react-textarea-code-editor/dist.css'
 
-import {
-  faArrowRotateRight,
-  faChevronRight,
-} from '@fortawesome/free-solid-svg-icons'
+import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import classNames from 'classnames'
 import dynamic from 'next/dynamic'
@@ -17,6 +14,8 @@ const AceEditor = dynamic(
   () => import('react-ace').then((module_) => module_.default),
   { ssr: false }
 )
+
+import { Button } from 'antd'
 
 import BlockMessage from '~/components/block-message'
 import { Select } from '~/components/form'
@@ -97,15 +96,14 @@ function CurrentActivity(properties) {
 
         {/* {sqlCode && <Code code={sqlCode} language="javascript" />} */}
         <div className="w-full flex">
-          <button
-            type="button"
-            className="btn mt-4 ml-auto"
+          <Button
+            type="primary"
             onClick={() => {
               execQuery(sqlCode, currentServer.id)
             }}
           >
             Run
-          </button>
+          </Button>
           <br />
           <br />
         </div>
@@ -123,19 +121,17 @@ function CurrentActivity(properties) {
           value={componentCode}
         />
 
-        <button
+        <Button
+          type="primary"
+          loading={loading}
           onClick={() => {
             setComponentCode(componentCode)
             fetchData()
           }}
           className="mt-6 bg-blue text-white px-3 h-11 rounded-[5px] font-medium flex items-center gap-1 mb-6"
         >
-          <FontAwesomeIcon
-            className={`font-medium ${loading ? 'fa-spin' : ''}`}
-            icon={faArrowRotateRight}
-          />
           Refresh
-        </button>
+        </Button>
       </div>
     </>
   )

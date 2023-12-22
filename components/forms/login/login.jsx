@@ -1,9 +1,10 @@
+import { Button } from 'antd'
 import { useFormik } from 'formik'
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 import * as Yup from 'yup'
 
-import { Field, Input, Submit } from '~/components/form'
+import { Field, Input } from '~/components/form'
 import Link from '~/components/link'
 import useUser from '~/hooks/use-user'
 import { postLogin } from '~/services/user'
@@ -96,19 +97,22 @@ const SignUp = () => {
         )}
       </Field>
       <div className="flex justify-between items-center mt-2 col-span-2 md:col-span-12">
-        <Submit
+        <Button
+          type="primary"
           disabled={formik.isSubmitting}
           loading={formik.isSubmitting}
-          loadingText="Logging in..."
+          htmlType="submit"
         >
           Login
-        </Submit>
-        <Link
-          href="/forgot-password"
-          className="text-sm text-gray-dark underline mt-4 md:mt-0 md:ml-auto"
-        >
-          Recover your password
-        </Link>
+        </Button>
+        <Button type="link">
+          <Link
+            href="/forgot-password"
+            className="text-sm text-gray-dark underline mt-4 md:mt-0 md:ml-auto"
+          >
+            Recover your password
+          </Link>
+        </Button>
       </div>
     </form>
   )

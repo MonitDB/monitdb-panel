@@ -1,3 +1,4 @@
+import { Button } from 'antd'
 import { useFormik } from 'formik'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
@@ -253,16 +254,21 @@ const ConfigurationsServersSinglePage = () => {
                 </Label>
 
                 <div className="col-span-2 flex justify-end w-full">
-                  <button
-                    className="btn mr-4 text-blue-700  border-blue-500 "
+                  <Button
+                    type="dashed"
                     disabled={isLoading || isTesting}
                     onClick={onCheck}
                   >
                     {isTesting ? 'Testing Connection...' : 'Test Server'}
-                  </button>
-                  <button type="submit" className="btn" disabled={isLoading}>
+                  </Button>
+                  <Button
+                    htmlType="submit"
+                    type="primary"
+                    className="btn"
+                    disabled={isLoading}
+                  >
                     {isLoading ? 'Creating...' : 'Create'}
-                  </button>
+                  </Button>
                 </div>
               </form>
             </div>

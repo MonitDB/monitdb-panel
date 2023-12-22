@@ -1,5 +1,4 @@
-import { faArrowRotateRight } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { Button } from 'antd'
 import { useEffect, useState } from 'react'
 import { useCallback } from 'react'
 import { toast } from 'react-toastify'
@@ -35,16 +34,14 @@ export const SPBlitz = ({ currentServer }) => {
     <>
       <br />
       <h3 className="font-bold mb-6">SP Blitz</h3>
-      <button
+      <Button
+        type="primary"
+        loading={loading}
         onClick={fetchData}
         className="mt-6 ml-auto bg-blue text-white px-3 h-11 rounded-[5px] font-medium flex items-center gap-1 mb-6"
       >
-        <FontAwesomeIcon
-          className={`font-medium ${loading ? 'fa-spin' : ''}`}
-          icon={faArrowRotateRight}
-        />
         Refresh
-      </button>
+      </Button>
       <GenericTable data={data ?? []} loading={loading} />
     </>
   )

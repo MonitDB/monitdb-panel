@@ -5,6 +5,7 @@ import {
   faUserPen,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { Button } from 'antd'
 import classNames from 'classnames'
 import { permission } from 'const/permissions'
 import { useRouter } from 'next/router'
@@ -177,9 +178,9 @@ const Header = () => {
             </div>
           </div>
 
-          <button type="button" className="ml-auto inline-block md:hidden">
+          <Button type="primary" className="ml-auto inline-block md:hidden">
             Open Menu
-          </button>
+          </Button>
         </div>
       </div>
     </header>

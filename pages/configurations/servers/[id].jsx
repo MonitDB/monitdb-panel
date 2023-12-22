@@ -1,3 +1,4 @@
+import { Button } from 'antd'
 import { useFormik } from 'formik'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
@@ -265,21 +266,22 @@ const ConfigurationsServersSinglePage = () => {
                   />
                 </Label>
                 <div className="col-span-2 flex justify-between items-center">
-                  <button type="submit" className="btn" disabled={isLoading}>
-                    {isLoading ? 'Saving...' : 'Save'}
-                  </button>
+                  <Button
+                    htmlType="submit"
+                    type="primary"
+                    loading={isLoading}
+                    disabled={isLoading}
+                  >
+                    {'Save'}
+                  </Button>
                 </div>
                 <div
                   className="col-span-2 flex bg-danger bg-opacity-10 border
                   border-danger border-opacity-50 p-4 rounded-md"
                 >
-                  <button
-                    type="button"
-                    className="btn btn-danger ml-auto"
-                    onClick={() => handleDelete()}
-                  >
+                  <Button type="primary" danger onClick={() => handleDelete()}>
                     Delete
-                  </button>
+                  </Button>
                 </div>
               </form>
             </div>

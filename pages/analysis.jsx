@@ -19,11 +19,13 @@ const datasets = {
     code: 'Log_Full_Scans_Count',
     options: [{ label: 'Count', value: 'count' }],
     parent: 'HISTORIC',
+    accumulative: true,
   },
   Log_Batch_Requests_Count: {
     code: 'Log_Batch_Requests_Count',
     options: [{ label: 'Count', value: 'count' }],
     parent: 'HISTORIC',
+    accumulative: true,
   },
   Log_Tempdb_Usage: {
     code: 'Log_Tempdb_Usage',
@@ -33,11 +35,13 @@ const datasets = {
       { label: 'Available Space', value: 'availableSpace' },
     ],
     parent: 'HISTORIC',
+    accumulative: false,
   },
   Log_Lock_Waits_Count: {
     code: 'Log_Lock_Waits_Count',
     options: [{ label: 'Count', value: 'count' }],
     parent: 'HISTORIC',
+    accumulative: true,
   },
   Log_Tempdb_Space_Use: {
     code: 'Log_Tempdb_Space_Use',
@@ -46,6 +50,7 @@ const datasets = {
       { label: 'Space Used (MB)', value: 'spaceUsedMB' },
     ],
     parent: 'HISTORIC',
+    accumulative: false,
   },
   Log_Processes: {
     code: 'Log_Processes',
@@ -56,6 +61,7 @@ const datasets = {
       { label: 'Wait Time', value: 'waitTime' },
     ],
     parent: 'HISTORIC',
+    accumulative: false,
   },
   Log_Memory_Usage: {
     code: 'Log_Memory_Usage',
@@ -64,42 +70,44 @@ const datasets = {
       { label: 'Total OS Memory', value: 'totalOsMemoryMb' },
       { label: 'Percent Usaged', value: 'percentUsage' },
     ],
-    parent: '',
-  },
-  Log_Executions_SP: {
-    code: 'Log_Executions_SP',
-    options: [{ label: 'Count', value: 'count' }],
-    parent: '',
+    parent: 'HISTORIC',
+    accumulative: false,
   },
   Log_CPU_Usage: {
     code: 'Log_CPU_Usage',
     options: [{ label: 'Count', value: 'count' }],
-    parent: '',
+    parent: 'HISTORIC',
+    accumulative: true,
   },
   Log_User_Connections_Count: {
     code: 'Log_User_Connections_Count',
     options: [{ label: 'Count', value: 'count' }],
     parent: 'HISTORIC',
+    accumulative: true,
   },
   Log_SQL_Compilations_Count: {
     code: 'Log_SQL_Compilations_Count',
     options: [{ label: 'Count', value: 'count' }],
     parent: 'HISTORIC',
+    accumulative: true,
   },
   Log_Page_Splits_Count: {
     code: 'Log_Page_Splits_Count',
     options: [{ label: 'Count', value: 'count' }],
     parent: 'HISTORIC',
+    accumulative: true,
   },
   Log_Lock_Timeouts_Count: {
     code: 'Log_Lock_Timeouts_Count',
     options: [{ label: 'Count', value: 'count' }],
     parent: 'HISTORIC',
+    accumulative: true,
   },
   Log_Latch_Waits_Count: {
     code: 'Log_Latch_Waits_Count',
     options: [{ label: 'Count', value: 'count' }],
     parent: 'HISTORIC',
+    accumulative: true,
   },
 }
 
@@ -108,9 +116,14 @@ const AnalysisPage = () => {
     globalState: { servers },
   } = useGlobal()
   const [data, setData] = useState([])
+  const [options, setOptions] = useState([])
 
   const intervalOptions = useMemo(
     () => [
+      { value: 1, label: '1 minutes' },
+      { value: 2, label: '2 minutes' },
+      { value: 5, label: '5 minutes' },
+      { value: 10, label: '10 minutes' },
       { value: 15, label: '15 minutes' },
       { value: 60, label: '1 hour' },
       { value: 60 * 6, label: '6 hours' },
@@ -155,9 +168,15 @@ const AnalysisPage = () => {
   }
 
   const handleSubmit = (values) => {
-    const { rangeDate, metric, server, interval } = values
+    const { rangeDate, metric, server, interval, param } = values
     const [startDate, endDate] = rangeDate
-    fetchData(metric, server, { startDate, endDate, interval })
+    fetchData(metric, server, {
+      startDate,
+      endDate,
+      interval,
+      param,
+      accumulative: datasets[metric].accumulative,
+    })
   }
 
   return (
@@ -214,6 +233,9 @@ const AnalysisPage = () => {
                           // eslint-disable-next-line no-unsafe-optional-chaining
                           datasets[form.getFieldValue('metric')]?.options
                         form.setFieldValue('param', choice?.value)
+                        setOptions(
+                          datasets[form.getFieldValue('metric')].options
+                        )
                       }}
                       options={Object.keys(groupedDatasets).map((key) => {
                         return {
@@ -242,7 +264,7 @@ const AnalysisPage = () => {
                     <Select
                       showSearch
                       optionFilterProp="label"
-                      options={datasets[form.getFieldValue('metric')]?.options}
+                      options={options}
                     />
                   </Form.Item>
                 </Col>
@@ -444,7 +466,7 @@ const AnalysisPage = () => {
                     }}
                     series={[
                       {
-                        name: 'Count',
+                        name: form.getFieldValue('param'),
                         data,
                       },
                     ]}

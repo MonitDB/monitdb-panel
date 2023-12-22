@@ -1,50 +1,38 @@
-import { faChevronDown } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import classNames from 'classnames'
+import { Select } from 'antd'
+import PropTypes from 'prop-types'
 import React from 'react'
 
-const Select = ({
-  containerClass = '',
-  className = '',
-  name,
-  options,
-  onChange,
-  ...properties
-}) => {
-  const handleChange = (event) => {
-    const value = event.target.value
-
-    onChange(value)
-  }
-
+const CustomSelect = ({ name, options, onChange, ...properties }) => {
   return (
-    <div
-      className={classNames(
-        'relative h-10 border border-gray rounded w-full',
-        containerClass
-      )}
+    <Select
+      showSearch
+      optionFilterProp="label"
+      name={name}
+      onChange={onChange}
+      style={{ width: '100%' }}
+      {...properties}
     >
-      <select
-        name={name}
-        className={classNames(
-          'relative w-full bg-transparent px-2 h-10 appearance-none z-10 text-xs',
-          className
-        )}
-        onChange={handleChange}
-        {...properties}
-      >
-        {options.map((option, index) => (
-          <option key={`option-${option.value}-${index}`} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
-      <FontAwesomeIcon
-        icon={faChevronDown}
-        className="absolute top-1/2 right-2 transform -translate-y-1/2 text-xs"
-      />
-    </div>
+      {options.map((option, index) => (
+        <Select.Option
+          key={`option-${option.value}-${index}`}
+          value={option.value}
+        >
+          {option.label}
+        </Select.Option>
+      ))}
+    </Select>
   )
 }
 
-export default Select
+CustomSelect.propTypes = {
+  name: PropTypes.string.isRequired,
+  options: PropTypes.arrayOf(
+    PropTypes.shape({
+      value: PropTypes.any.isRequired,
+      label: PropTypes.string.isRequired,
+    })
+  ).isRequired,
+  onChange: PropTypes.func.isRequired,
+}
+
+export default CustomSelect

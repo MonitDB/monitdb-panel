@@ -46,7 +46,7 @@ function PageSplitsBatchRequests({ seriesData, isLoading }) {
           labels: {
             show: false,
             formatter: function (value) {
-              return format(value, "dd MMM yyyy kk':'mm")
+              if (value) return format(value, "dd MMM yyyy kk':'mm")
             },
           },
         }}

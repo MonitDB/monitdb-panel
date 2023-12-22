@@ -1,5 +1,6 @@
 import { faUserPlus } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { Button } from 'antd'
 import { NextSeo } from 'next-seo'
 import React, { useCallback, useEffect, useState } from 'react'
 
@@ -51,13 +52,12 @@ const ProfilePage = () => {
                 <div className="-mx-4 py-4 px-8 bg-white md:-mx-6">
                   <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-5">
                     <h2 className="text-2xl font-bold mb-4">Profiles</h2>
-                    <Link
-                      href="/configurations/profiles/new-profile"
-                      className="btn btn--small"
-                    >
-                      <FontAwesomeIcon icon={faUserPlus} className="mr-2" />
-                      Add Profile
-                    </Link>
+                    <Button>
+                      <Link href="/configurations/profiles/new-profile">
+                        <FontAwesomeIcon icon={faUserPlus} className="mr-2" />
+                        Add Profile
+                      </Link>
+                    </Button>
                   </div>
 
                   <div className="prose max-w-full w-full">

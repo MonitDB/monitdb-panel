@@ -1,9 +1,9 @@
+import { Select } from 'antd'
 import { useFormik } from 'formik'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
-import Select from '~/components/form/select'
 import Loading from '~/components/loading'
 import { PageContent, PageHeader, PageWrapper } from '~/components/page'
 import MonitoredServersSidebar from '~/components/sidebar/monitored-servers'

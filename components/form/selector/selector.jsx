@@ -61,7 +61,7 @@ const Selector = ({
     <div ref={reference} className={classNames('relative w-full', className)}>
       <button
         type="button"
-        className="relative w-full flex items-center justify-between px-4 h-10
+        className="relative w-full flex items-center justify-between px-4 h-8
         bg-white leading-10 rounded outline-none"
         onClick={() => setIsOpen(!isOpen)}
       >

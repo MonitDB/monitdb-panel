@@ -1,8 +1,8 @@
 /* eslint-disable sonarjs/no-duplicate-string */
 /* eslint-disable react-hooks/exhaustive-deps */
 
-import { faArrowRight } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { Button, Col, DatePicker, Row } from 'antd'
+import dayjs from 'dayjs'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
@@ -118,33 +118,30 @@ function DatabaseBackupsModal({ modal, onSetModalData }) {
           <i className="absolute block  w-full h-[2px] -rotate-45 bg-black bg-opacity-75" />
         </button>
         <div
-          className="flex items-center space-x-3 "
-          style={{ width: '450px', marginLeft: 'auto', marginRight: '15px' }}
+          style={{
+            display: 'flex',
+            justifyContent: 'flex-end',
+            marginRight: '15px',
+          }}
         >
-          <input
-            type="date"
-            name="start_date"
-            className="w-full px-4 h-10 bg-white leading-10 rounded text-sm"
-            onChange={(event) => setStartDate(event.target.value)}
-            defaultValue={moment(new Date())
-              .subtract(1, 'months')
-              .format('YYYY-MM-DD')}
-            value={startDate}
-          />
-          <FontAwesomeIcon icon={faArrowRight} />
-          <input
-            type="date"
-            name="end_date"
-            className="w-full px-4 h-10 bg-white leading-10 rounded text-sm"
-            defaultValue={moment(new Date()).format('YYYY-MM-DD')}
-            onChange={(event) => setEndDate(event.target.value)}
-            value={endDate}
-          />
-
-          <button onClick={() => fetch()} className="btn">
-            Filter
-          </button>
+          <Row gutter={12}>
+            <Col>
+              <DatePicker.RangePicker
+                defaultValue={[dayjs(), dayjs()]}
+                onChange={(value) => {
+                  setStartDate(dayjs(value[0]).format('YYYY-MM-DD'))
+                  setEndDate(dayjs(value[1]).format('YYYY-MM-DD'))
+                }}
+              />
+            </Col>
+            <Col>
+              <Button onClick={() => fetch()} type="primary">
+                Filter
+              </Button>
+            </Col>
+          </Row>
         </div>
+
         {loading && (
           <div
             style={{

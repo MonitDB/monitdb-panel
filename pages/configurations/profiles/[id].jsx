@@ -5,6 +5,7 @@
 /* eslint-disable sonarjs/no-duplicate-string */
 import { faSave } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { Button } from 'antd'
 import { useFormik } from 'formik'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
@@ -214,10 +215,14 @@ const EditProfilePage = () => {
                   </div>
 
                   <div className="mb-4 flex justify-end">
-                    <button disabled={loading} className="btn btn--small mr-2">
-                      <FontAwesomeIcon icon={faSave} className="mr-2" />
-                      {loading ? 'Saving...' : 'Save'}
-                    </button>
+                    <Button
+                      loading={loading}
+                      type="primary"
+                      htmlType="submit"
+                      icon={<FontAwesomeIcon icon={faSave} className="mr-2" />}
+                    >
+                      {'Save'}
+                    </Button>
                   </div>
                 </form>
               </div>

@@ -1,12 +1,13 @@
 import { faClose } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { Button } from 'antd'
+import { Select } from 'antd'
 import classNames from 'classnames'
 import { useFormik } from 'formik'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { toast } from 'react-toastify'
 
 import Checkbox from '~/components/form/checkbox'
-import Select from '~/components/form/select'
 import Grid from '~/components/grid'
 import Loading from '~/components/loading'
 import useAlerts from '~/hooks/use-alerts'
@@ -306,9 +307,14 @@ const MetricsModal = ({ onClose, serverId, parameterId }) => {
               </div>
 
               <div className="col-span-2 flex justify-end items-center pt-10 md:col-span-12">
-                <button type="submit" className="btn" disabled={isSending}>
-                  {isSending ? 'Saving...' : 'Save'}
-                </button>
+                <Button
+                  type="default"
+                  htmlType="submit"
+                  loading={isSending}
+                  disabled={isSending}
+                >
+                  {'Save'}
+                </Button>
               </div>
             </Grid>
           </form>

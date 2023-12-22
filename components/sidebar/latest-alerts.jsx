@@ -2,12 +2,12 @@
 /* eslint-disable no-console */
 import { faBell, faWarning } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { Button, Select } from 'antd'
 import classNames from 'classnames'
 import { useRouter } from 'next/router'
 import React, { useCallback, useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 
-import Select from '~/components/form/select'
 import Link from '~/components/link'
 import Loading from '~/components/loading'
 import { PageSidebarTitle } from '~/components/page'
@@ -70,7 +70,8 @@ const LatestAlerts = () => {
         <form className="mb-4 flex items-center space-x-2">
           <Select
             name="hour"
-            containerClass="bg-white text-gray-dark"
+            containerClass="bg-white text-gray-dark w-100"
+            style={{ width: '100px' }}
             options={[
               { value: '1440', label: '24 hours' },
               { value: '720', label: '12 hours' },
@@ -85,7 +86,9 @@ const LatestAlerts = () => {
           {!router?.query?.id && (
             <Select
               name="group"
-              containerClass="bg-white text-gray-dark"
+              containerClass="bg-white text-gray-dark w-100"
+              style={{ width: '150px' }}
+              defaultValue={-1}
               options={[
                 { value: -1, label: 'All groups' },
                 ...serverEnvironments.map(
@@ -148,9 +151,9 @@ const LatestAlerts = () => {
           )}
         </ul>
         <div className="py-4">
-          <Link href="/alerts/" className="btn btn--small">
-            See all
-          </Link>
+          <Button type="primary">
+            <Link href="/alerts/">See all</Link>{' '}
+          </Button>
         </div>
       </>
     </div>

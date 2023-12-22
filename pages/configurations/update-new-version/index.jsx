@@ -1,6 +1,7 @@
 /* eslint-disable sonarjs/cognitive-complexity */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
+import { Button } from 'antd'
 import { NextSeo } from 'next-seo'
 import React, { useEffect, useState } from 'react'
 
@@ -192,19 +193,16 @@ export default function UpdateNewVersion() {
                   <span className="mr-2">{file.name}</span>
                 </div>
                 <div>
-                  <button
-                    type="button"
-                    onClick={handleRemoveFile}
-                    className="bg-white text-black border border-gray-300 px-4 py-2 rounded cursor-pointer mr-5 ml-10"
-                  >
+                  <Button danger onClick={handleRemoveFile}>
                     Remove
-                  </button>
-                  <button
-                    type="submit"
-                    className="bg-blue text-white px-4 py-2 rounded cursor-pointer"
+                  </Button>
+                  <Button
+                    type="primary"
+                    onClick={handleSubmit}
+                    className="ml-2"
                   >
-                    Submit
-                  </button>
+                    Upload
+                  </Button>
                 </div>
               </div>
             )}

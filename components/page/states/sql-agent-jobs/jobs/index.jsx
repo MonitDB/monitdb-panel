@@ -2,6 +2,7 @@
 /* eslint-disable sonarjs/no-duplicate-string */
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { Button, Col, Row } from 'antd'
 import classNames from 'classnames'
 import React, { useEffect, useState } from 'react'
 import { useCallback } from 'react'
@@ -61,36 +62,38 @@ function Jobs() {
       >
         <header className="pt-8 w-full flex flex-col md:flex-row md:justify-between md:items-end">
           <h1 className="heading-lg">Jobs</h1>
-          <div>
-            <button
-              type="button"
-              className={'btn btn--small mr-[10px]'}
-              disabled={isLoading}
-              onClick={() => {
-                setEnvironmentExpandedIndices(new Set())
+          <Row gutter={12}>
+            <Col>
+              <Button
+                type="dashed"
+                disabled={isLoading}
+                onClick={() => {
+                  setEnvironmentExpandedIndices(new Set())
 
-                setTimeout(() => {
-                  setExpand(false)
-                }, 100)
-              }}
-            >
-              Collapse All
-            </button>
-            <button
-              type="button"
-              className={'btn btn--small mr-[10px]'}
-              disabled={isLoading}
-              onClick={() => {
-                const allEnvironmentIndices = serverEnvironments.map(
-                  (_, index) => index
-                )
-                setEnvironmentExpandedIndices(new Set(allEnvironmentIndices))
-                setExpand(true)
-              }}
-            >
-              Expand All
-            </button>
-          </div>
+                  setTimeout(() => {
+                    setExpand(false)
+                  }, 100)
+                }}
+              >
+                Collapse All
+              </Button>
+            </Col>
+            <Col>
+              <Button
+                type="primary"
+                disabled={isLoading}
+                onClick={() => {
+                  const allEnvironmentIndices = serverEnvironments.map(
+                    (_, index) => index
+                  )
+                  setEnvironmentExpandedIndices(new Set(allEnvironmentIndices))
+                  setExpand(true)
+                }}
+              >
+                Expand All
+              </Button>
+            </Col>
+          </Row>
         </header>
       </PageContent>
 

@@ -14,7 +14,9 @@ const AceEditor = dynamic(
   { ssr: false }
 )
 
-import Select from '~/components/form/select'
+import { Button } from 'antd'
+import { Select } from 'antd'
+
 import Grid from '~/components/grid'
 import Loading from '~/components/loading'
 import {
@@ -238,9 +240,14 @@ const MetricsModal = ({ onClose, componentId }) => {
               </div>
 
               <div className="col-span-2 flex justify-end items-center pt-10 md:col-span-12">
-                <button type="submit" className="btn" disabled={isSending}>
-                  {isSending ? 'Saving...' : 'Save'}
-                </button>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  loading={isSending}
+                  disabled={isSending}
+                >
+                  {'Save'}
+                </Button>
               </div>
             </Grid>
           </form>

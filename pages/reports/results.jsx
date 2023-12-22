@@ -1,3 +1,4 @@
+/* eslint-disable unicorn/prefer-number-properties */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import classNames from 'classnames'
 import { useRouter } from 'next/router'
@@ -61,7 +62,7 @@ const ResultReportsPage = () => {
 
   const serversOptions = useMemo(
     () => [
-      { value: '-1', label: 'All servers' },
+      { value: -1, label: 'All servers' },
       ...(servers || []).map((server) => ({
         value: server.id,
         label: server.serverName,
@@ -148,7 +149,11 @@ const ResultReportsPage = () => {
                 name="servers"
                 containerClass="w-full md:w-1/3 bg-white border-white md:min-w-1/3"
                 options={serversOptions}
-                value={router?.query?.server}
+                value={
+                  isNaN(Number.parseInt(router?.query?.server, 10))
+                    ? '-1'
+                    : Number.parseInt(router?.query?.server, 10)
+                }
                 onChange={(value) => {
                   handleChange('server', value)
                 }}

@@ -1,3 +1,4 @@
+import { Button } from 'antd'
 import MarkdownIt from 'markdown-it'
 import { useCallback, useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
@@ -5,7 +6,6 @@ import { toast } from 'react-toastify'
 import useAlertContext from '~/services/state-manager/alerts'
 import { paginateArray } from '~/utils/array'
 
-import Button from '../Button'
 import Loading from '../loading/loading'
 import Modal from '../modal/modal'
 import Pagination from '../pagination/pagination'
@@ -128,7 +128,7 @@ export const AlertHtmlSubTable = (properties) => {
               closable={false}
               footer={
                 <>
-                  <Button onClick={() => setModal(false)} type={'secondary'}>
+                  <Button onClick={() => setModal(false)} type="dashed">
                     Close
                   </Button>
                 </>
