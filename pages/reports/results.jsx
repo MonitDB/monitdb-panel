@@ -166,8 +166,8 @@ const ResultReportsPage = () => {
 
             {!isLoading &&
               reportTypes.map(({ slug: key }) => {
-                const data = reports[key].data
-                const name = reports[key].name
+                const data = reports[key]?.data
+                const name = reports[key]?.name
                 return (
                   <>
                     <header

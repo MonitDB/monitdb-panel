@@ -7,6 +7,10 @@
 @import 'react-toastify/dist/ReactToastify.css';
 @import './toastify.css';
 
+.ant-btn-primary {
+  background-color: #5046e5; /* Cor de fundo para botões primários do Ant Design */
+}
+
 html {
   @apply scroll-smooth;
 }
@@ -20,7 +24,6 @@ body {
   @apply bg-gray bg-opacity-20 antialiased font-ibm text-gray-dark;
 }
 
-button,
 a {
   @apply transition-all duration-300 ease-in-out;
 }

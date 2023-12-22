@@ -3,7 +3,7 @@
 }
 
 .linksList a,
-.linksList button {
+.linksList {
   @apply block border-l-2 border-white pl-4 py-2;
 }
 

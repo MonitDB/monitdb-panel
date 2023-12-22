@@ -1,14 +1,11 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable unicorn/no-array-reduce */
-import { faArrowRight } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Button, DatePicker, Form, notification } from 'antd'
-import moment from 'moment'
+import { Button, Col, DatePicker, Form, notification, Row, Select } from 'antd'
+import dayjs from 'dayjs'
 import { NextSeo } from 'next-seo'
 import React, { useMemo, useState } from 'react'
 
 import { ApexChart, defaultChartOptions } from '~/components/chart'
-import { Select } from '~/components/form'
 import Link from '~/components/link'
 import Loading from '~/components/loading'
 import { PageContent, PageWrapper } from '~/components/page'
@@ -20,68 +17,88 @@ import { useGlobal } from '../hooks'
 const datasets = {
   Log_Full_Scans_Count: {
     code: 'Log_Full_Scans_Count',
-    options: [],
+    options: [{ label: 'Count', value: 'count' }],
     parent: 'HISTORIC',
   },
   Log_Batch_Requests_Count: {
     code: 'Log_Batch_Requests_Count',
-    options: [],
+    options: [{ label: 'Count', value: 'count' }],
     parent: 'HISTORIC',
   },
   Log_Tempdb_Usage: {
     code: 'Log_Tempdb_Usage',
     options: [
-      { label: 'Allocated Space', value: 'allocated_space' },
-      { label: 'Space Used', value: 'space_used' },
-      { label: 'Available Space', value: 'available_space' },
+      { label: 'Allocated Space', value: 'allocatedSpace' },
+      { label: 'Space Used', value: 'spaceUsed' },
+      { label: 'Available Space', value: 'availableSpace' },
     ],
-    parent: '',
+    parent: 'HISTORIC',
   },
   Log_Lock_Waits_Count: {
     code: 'Log_Lock_Waits_Count',
-    options: [],
+    options: [{ label: 'Count', value: 'count' }],
     parent: 'HISTORIC',
   },
   Log_Tempdb_Space_Use: {
     code: 'Log_Tempdb_Space_Use',
-    options: [],
-    parent: '',
+    options: [
+      { label: 'Allocated Space (MB)', value: 'allocatedSpaceMB' },
+      { label: 'Space Used (MB)', value: 'spaceUsedMB' },
+    ],
+    parent: 'HISTORIC',
   },
-  Log_Processes: { code: 'Log_Processes', options: [], parent: '' },
+  Log_Processes: {
+    code: 'Log_Processes',
+    options: [
+      { label: 'CPU', value: 'cpu' },
+      { label: 'Logical Reads', value: 'logicalReads' },
+      { label: 'Writes', value: 'writes' },
+      { label: 'Wait Time', value: 'waitTime' },
+    ],
+    parent: 'HISTORIC',
+  },
   Log_Memory_Usage: {
     code: 'Log_Memory_Usage',
     options: [
-      { label: 'Available Os Memory', value: 'AVAILABLE_OS_MEMORY' },
-      { label: 'Total OS Memory', value: 'TOTAL_OS_MEMORY' },
-      { label: 'Percent Usaged', value: 'PERCENT_USAGED(%)' },
+      { label: 'Available Os Memory', value: 'availableOsMemoryMb' },
+      { label: 'Total OS Memory', value: 'totalOsMemoryMb' },
+      { label: 'Percent Usaged', value: 'percentUsage' },
     ],
     parent: '',
   },
-  Log_Executions_SP: { code: 'Log_Executions_SP', options: [], parent: '' },
-  Log_CPU_Usage: { code: 'Log_CPU_Usage', options: [], parent: '' },
+  Log_Executions_SP: {
+    code: 'Log_Executions_SP',
+    options: [{ label: 'Count', value: 'count' }],
+    parent: '',
+  },
+  Log_CPU_Usage: {
+    code: 'Log_CPU_Usage',
+    options: [{ label: 'Count', value: 'count' }],
+    parent: '',
+  },
   Log_User_Connections_Count: {
     code: 'Log_User_Connections_Count',
-    options: [],
+    options: [{ label: 'Count', value: 'count' }],
     parent: 'HISTORIC',
   },
   Log_SQL_Compilations_Count: {
     code: 'Log_SQL_Compilations_Count',
-    options: [],
+    options: [{ label: 'Count', value: 'count' }],
     parent: 'HISTORIC',
   },
   Log_Page_Splits_Count: {
     code: 'Log_Page_Splits_Count',
-    options: [],
+    options: [{ label: 'Count', value: 'count' }],
     parent: 'HISTORIC',
   },
   Log_Lock_Timeouts_Count: {
     code: 'Log_Lock_Timeouts_Count',
-    options: [],
+    options: [{ label: 'Count', value: 'count' }],
     parent: 'HISTORIC',
   },
   Log_Latch_Waits_Count: {
     code: 'Log_Latch_Waits_Count',
-    options: [],
+    options: [{ label: 'Count', value: 'count' }],
     parent: 'HISTORIC',
   },
 }
@@ -91,6 +108,7 @@ const AnalysisPage = () => {
     globalState: { servers },
   } = useGlobal()
   const [data, setData] = useState([])
+  const [selectedMetric, setSelectedMetric] = useState()
 
   const intervalOptions = useMemo(
     () => [
@@ -113,22 +131,14 @@ const AnalysisPage = () => {
     {}
   )
 
-  const datasetsOptions = Object.entries(groupedDatasets).map(
-    ([parent, datasets]) => (
-      <optgroup key={parent} label={` ▼ ${parent}`} title={parent}>
-        {datasets.map((dataset, index) => (
-          <option
-            key={index}
-            value={dataset.code}
-            title={dataset.code}
-            className=""
-          >
-            &nbsp;&nbsp;&nbsp;{dataset.code.replace(/_/g, ' ')}
-          </option>
-        ))}
-      </optgroup>
+  const groupedServers = servers.reduce((accumulator, server) => {
+    if (!accumulator[server.typeServerEnvironment.typeServerEnvironmentName])
+      accumulator[server.typeServerEnvironment.typeServerEnvironmentName] = []
+    accumulator[server.typeServerEnvironment.typeServerEnvironmentName].push(
+      server
     )
-  )
+    return accumulator
+  }, {})
 
   const [loading, setLoading] = useState(false)
 
@@ -146,7 +156,8 @@ const AnalysisPage = () => {
   }
 
   const handleSubmit = (values) => {
-    const { startDate, endDate, metric, server, interval } = values
+    const { rangeDate, metric, server, interval } = values
+    const [startDate, endDate] = rangeDate
     fetchData(metric, server, { startDate, endDate, interval })
   }
 
@@ -155,41 +166,117 @@ const AnalysisPage = () => {
       <NextSeo title="Analysis - MonitDB" />
       <Layout>
         <PageWrapper className="p-8">
-          <Form form={form} onFinish={handleSubmit}>
+          <Form form={form} onFinish={handleSubmit} layout="vertical">
             <PageContent
               removeSidebarMargin={true}
               className="border-b border-gray-light"
             >
-              <div className="w-full flex flex-col space-y-4 mb-5 xl:space-x-4 xl:space-y-0 xl:flex-row">
-                <div className="flex items-center">
-                  <strong className="block mr-2 whitespace-nowrap text-sm">
-                    Interval
-                  </strong>
+              <Row gutter={12}>
+                <Col>
                   <Form.Item
+                    label="Sample rate"
                     name="interval"
-                    rules={[{ required: true }]}
+                    rules={[
+                      {
+                        required: true,
+                        message: 'Choice an interval of sample',
+                      },
+                    ]}
                     initialValue={15}
                   >
                     <Select options={intervalOptions} className="w-40" />
                   </Form.Item>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <Form.Item name="startDate" rules={[{ required: true }]}>
-                    <DatePicker />
+                </Col>
+                <Col>
+                  <Form.Item
+                    label="Period"
+                    name="rangeDate"
+                    rules={[
+                      { required: true, message: 'Pick the range of date' },
+                    ]}
+                  >
+                    <DatePicker.RangePicker />
                   </Form.Item>
+                </Col>
+                <Col>
+                  <Form.Item
+                    label="Metric"
+                    name="metric"
+                    style={{ width: '280px' }}
+                    rules={[{ required: true, message: 'Select the metric' }]}
+                  >
+                    <Select
+                      showSearch
+                      size="15"
+                      optionFilterProp="label"
+                      className="w-full appearance-none border border-gray-light text-xs"
+                      onSelect={(value) => {
+                        const [choice] =
+                          // eslint-disable-next-line no-unsafe-optional-chaining
+                          datasets[form.getFieldValue('metric')]?.options
+                        form.setFieldValue('param', choice?.value)
+                        setSelectedMetric(value)
+                      }}
+                      options={Object.keys(groupedDatasets).map((key) => {
+                        return {
+                          label: key,
+                          options: groupedDatasets[key].map((value) => ({
+                            label: value.code.replace(/_/g, ' '),
+                            value: value.code,
+                          })),
+                        }
+                      })}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col>
+                  <Form.Item
+                    label="Parameter"
+                    name="param"
+                    style={{ width: '180px' }}
+                    rules={[
+                      {
+                        required: true,
+                        message: 'Select a parameter',
+                      },
+                    ]}
+                  >
+                    <Select
+                      showSearch
+                      optionFilterProp="label"
+                      options={datasets[form.getFieldValue('metric')]?.options}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col>
+                  <Form.Item
+                    label="Server"
+                    name="server"
+                    style={{ width: '180px' }}
+                    rules={[
+                      {
+                        required: true,
+                        message: 'Select the server to analyze',
+                      },
+                    ]}
+                  >
+                    <Select
+                      showSearch
+                      optionFilterProp="label"
+                      options={Object.keys(groupedServers).map((key) => {
+                        return {
+                          label: key,
+                          options: groupedServers[key].map((value) => ({
+                            label: value.serverName,
+                            value: value.id,
+                          })),
+                        }
+                      })}
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
 
-                  <FontAwesomeIcon
-                    icon={faArrowRight}
-                    style={{ transform: 'translateY(-12px)' }}
-                  />
-                  <Form.Item name="endDate" rules={[{ required: true }]}>
-                    <DatePicker />
-                  </Form.Item>
-                </div>
-                <Button htmlType="submit" type="dashed" loading={loading}>
-                  Compare
-                </Button>
-              </div>
               <div className="flex items-center">
                 <ul
                   className="flex items-center border-r border-r-gray pr-4 mr-4
@@ -202,8 +289,7 @@ const AnalysisPage = () => {
                         oneHourAgo.setHours(oneHourAgo.getHours() - 1)
 
                         form.setFieldsValue({
-                          startDate: moment(oneHourAgo),
-                          endDate: moment(),
+                          rangeDate: [dayjs(oneHourAgo), dayjs()],
                         })
                       }}
                     >
@@ -217,8 +303,7 @@ const AnalysisPage = () => {
                         startDate.setHours(startDate.getHours() - 6)
 
                         form.setFieldsValue({
-                          startDate: moment(startDate),
-                          endDate: moment(),
+                          rangeDate: [dayjs(startDate), dayjs()],
                         })
                       }}
                     >
@@ -232,8 +317,7 @@ const AnalysisPage = () => {
                         startDate.setHours(startDate.getHours() - 24)
 
                         form.setFieldsValue({
-                          startDate: moment(startDate),
-                          endDate: moment(),
+                          rangeDate: [dayjs(startDate), dayjs()],
                         })
                       }}
                     >
@@ -247,8 +331,7 @@ const AnalysisPage = () => {
                         startDate.setDate(startDate.getDate() - 7)
 
                         form.setFieldsValue({
-                          startDate: moment(startDate),
-                          endDate: moment(),
+                          rangeDate: [dayjs(startDate), dayjs()],
                         })
                       }}
                     >
@@ -262,8 +345,7 @@ const AnalysisPage = () => {
                         startDate.setDate(startDate.getDate() - 14)
 
                         form.setFieldsValue({
-                          startDate: moment(startDate),
-                          endDate: moment(),
+                          rangeDate: [dayjs(startDate), dayjs()],
                         })
                       }}
                     >
@@ -277,8 +359,7 @@ const AnalysisPage = () => {
                         startDate.setHours(0)
 
                         form.setFieldsValue({
-                          startDate: moment(startDate),
-                          endDate: moment(),
+                          rangeDate: [dayjs(startDate), dayjs()],
                         })
                       }}
                     >
@@ -291,10 +372,8 @@ const AnalysisPage = () => {
                         const today = new Date()
                         const startDate = new Date(today)
                         startDate.setDate(today.getDate() - today.getDay())
-
                         form.setFieldsValue({
-                          startDate: moment(startDate),
-                          endDate: moment(),
+                          rangeDate: [dayjs(startDate), dayjs()],
                         })
                       }}
                     >
@@ -302,6 +381,13 @@ const AnalysisPage = () => {
                     </Link>
                   </li>
                 </ul>
+              </div>
+              <div className="flex items-center mt-5">
+                <Row>
+                  <Button htmlType="submit" type="primary" loading={loading}>
+                    Compare
+                  </Button>
+                </Row>{' '}
               </div>
             </PageContent>
 
@@ -369,44 +455,8 @@ const AnalysisPage = () => {
               </div>{' '}
               <div className="w-full flex flex-col md:flex-row">
                 <div className="flex flex-col md:flex-row md:space-x-4 md:w-4/5">
-                  <div className="w-60">
-                    <input
-                      type="text"
-                      name="metrics"
-                      placeholder="Search by metrics"
-                      className="w-full px-4 h-10 mb-2 bg-white leading-10 rounded outline-none text-sm"
-                    />
-                    <Form.Item name="metric" rules={[{ required: true }]}>
-                      <select
-                        size="15"
-                        className="w-full appearance-none border border-gray-light text-xs"
-                      >
-                        {datasetsOptions}
-                      </select>
-                    </Form.Item>
-                  </div>
-                  <div className="w-60">
-                    <input
-                      type="text"
-                      name="cluster"
-                      placeholder="Search by cluster"
-                      className="w-full px-4 h-10 mb-2 bg-white leading-10 rounded outline-none text-sm"
-                    />{' '}
-                    <Form.Item name="server" rules={[{ required: true }]}>
-                      <select
-                        size="15"
-                        className="w-full appearance-none border border-gray-light text-xs"
-                      >
-                        {servers.map((server, id) => {
-                          return (
-                            <option key={id} value={server.id}>
-                              {server.serverName}
-                            </option>
-                          )
-                        })}
-                      </select>
-                    </Form.Item>
-                  </div>
+                  <div className="w-60"></div>
+                  <div className="w-60"></div>
                 </div>
                 <div className="w-full md:w-1/5"></div>
               </div>

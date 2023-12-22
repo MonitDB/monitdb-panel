@@ -1,5 +1,6 @@
 import '~/styles/global.css'
 
+import { ConfigProvider } from 'antd'
 import { DefaultSeo } from 'next-seo'
 import { ToastContainer } from 'react-toastify'
 import { setLocale } from 'yup'
@@ -12,24 +13,30 @@ setLocale(pt)
 export default function MyApp({ Component, pageProps }) {
   return (
     <>
-      <DefaultSeo
-        defaultTitle="MonitDB"
-        openGraph={{
-          type: 'website',
-          locale: 'pt-BR',
-          url: process.env.siteUrl,
-          site_name: 'MonitDB',
+      <ConfigProvider
+        theme={{
+          token: { colorPrimary: '#5046e5' },
         }}
-        twitter={{
-          handle: '@handle',
-          site: '@site',
-          cardType: 'summary_large_image',
-        }}
-      />
-      <Main>
-        <Component {...pageProps} />
-      </Main>
-      <ToastContainer position="top-right" />
+      >
+        <DefaultSeo
+          defaultTitle="MonitDB"
+          openGraph={{
+            type: 'website',
+            locale: 'pt-BR',
+            url: process.env.siteUrl,
+            site_name: 'MonitDB',
+          }}
+          twitter={{
+            handle: '@handle',
+            site: '@site',
+            cardType: 'summary_large_image',
+          }}
+        />
+        <Main>
+          <Component {...pageProps} />
+        </Main>
+        <ToastContainer position="top-right" />
+      </ConfigProvider>
     </>
   )
 }
