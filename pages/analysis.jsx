@@ -108,7 +108,6 @@ const AnalysisPage = () => {
     globalState: { servers },
   } = useGlobal()
   const [data, setData] = useState([])
-  const [selectedMetric, setSelectedMetric] = useState()
 
   const intervalOptions = useMemo(
     () => [
@@ -210,12 +209,11 @@ const AnalysisPage = () => {
                       size="15"
                       optionFilterProp="label"
                       className="w-full appearance-none border border-gray-light text-xs"
-                      onSelect={(value) => {
+                      onSelect={() => {
                         const [choice] =
                           // eslint-disable-next-line no-unsafe-optional-chaining
                           datasets[form.getFieldValue('metric')]?.options
                         form.setFieldValue('param', choice?.value)
-                        setSelectedMetric(value)
                       }}
                       options={Object.keys(groupedDatasets).map((key) => {
                         return {
