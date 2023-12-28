@@ -30,9 +30,10 @@ const datasets = {
   Log_Tempdb_Usage: {
     code: 'Log_Tempdb_Usage',
     options: [
-      { label: 'Allocated Space', value: 'allocatedSpace' },
-      { label: 'Space Used', value: 'spaceUsed' },
-      { label: 'Available Space', value: 'availableSpace' },
+      { label: 'Allocated Space', value: 'allocatedSpaceMB' },
+      { label: 'Space Used', value: 'spaceUsedMB' },
+      { label: 'Available Space', value: 'availableSpaceMB' },
+      { label: 'Usage %', value: 'usedPercent' },
     ],
     parent: 'HISTORIC',
     accumulative: false,

@@ -80,7 +80,7 @@ export const TemporaryDBProgram = () => {
                 return {
                   name: item.label,
                   data: item.data.map((index) => [
-                    index.dataHora,
+                    index.createDate,
                     index.tempdbTotalNet,
                   ]),
                 }

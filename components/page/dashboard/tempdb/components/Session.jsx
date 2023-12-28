@@ -77,7 +77,7 @@ export const TemporaryDBSession = () => {
               series={dataTransformed.map((item) => {
                 return {
                   name: item.sessionId,
-                  data: [[item.dataHora, item.tempdbTotalNet]],
+                  data: [[item.createDate, item.tempdbTotalNet]],
                   color: item.color,
                 }
               })}
@@ -166,7 +166,7 @@ export const TemporaryDBSession = () => {
                           maxWidth: '100px',
                         }}
                       >
-                        {moment(item.dataHora).format('DD/MM/YYYY HH:mm')}
+                        {moment(item.createDate).format('DD/MM/YYYY HH:mm')}
                       </td>
                       <td
                         style={{

@@ -85,7 +85,7 @@ export const TopQueries = () => {
                   <td>{item?.count}</td>
                   <td>
                     {new Date(item?.log?.lastRequestStartTime).getTime() -
-                      new Date(item?.log?.dataHora).getTime()}
+                      new Date(item?.log?.createDate).getTime()}
                   </td>
                   <td>{item?.log.cpu}</td>
                   <td>{item?.log.reads}</td>
@@ -114,7 +114,7 @@ export const TopQueries = () => {
                             {new Date(
                               item?.log?.lastRequestStartTime
                             ).getTime() -
-                              new Date(item?.log?.dataHora).getTime()}
+                              new Date(item?.log?.createDate).getTime()}
                             <br />
                             <strong>Plan handle:</strong>
                             {/* {faker.datatype.uuid()} */}

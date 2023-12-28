@@ -39,8 +39,8 @@ export const TemporaryDBSummary = () => {
 
   const seriesData =
     data?.map(
-      ({ dataHora, allocatedSpaceMB, availableSpaceMB, spaceUsedMB }) => ({
-        time: dateStringToTime(dataHora),
+      ({ createDate, allocatedSpaceMB, availableSpaceMB, spaceUsedMB }) => ({
+        time: dateStringToTime(createDate),
         usage: spaceUsedMB,
         allocatedSpace: allocatedSpaceMB,
         availableSpace: availableSpaceMB,
