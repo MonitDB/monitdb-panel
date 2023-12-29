@@ -11,15 +11,13 @@ const useComponentContext = create((set) => ({
   },
   getComponentById: async (componentId) => {
     try {
-      set({loading: true})
-      const { data } = clientApi().get(`/api/component/${componentId}`);
-      return data;
-      
-    } catch (error) {
-      console.log(error)
-      return;
+      set({ loading: true })
+      const { data } = clientApi().get(`/api/component/${componentId}`)
+      return data
+    } catch {
+      return []
     } finally {
-      set({ loading: false})
+      set({ loading: false })
     }
   },
   updateComponentById: async (values) => {
@@ -33,17 +31,18 @@ const useComponentContext = create((set) => ({
     )
   },
   executeQueryComponent: async (componentId, serverId) => {
-      try {
-      set({loading: true})
-      const { data } = await apiV2().get(`/component/execute-component/${componentId}/${serverId || ''}`);
-      return data;
-    } catch (error) {
-      console.log(error)
-      return;
+    try {
+      set({ loading: true })
+      const { data } = await apiV2().get(
+        `/component/execute-component/${componentId}/${serverId || ''}`
+      )
+      return data
+    } catch {
+      return []
     } finally {
-      set({ loading: false})
+      set({ loading: false })
     }
-  }
+  },
 }))
 
 export default useComponentContext

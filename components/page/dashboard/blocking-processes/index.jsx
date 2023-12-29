@@ -87,7 +87,7 @@ function BlockingProcesses(properties) {
                 </td>
               </tr>
             ) : // eslint-disable-next-line unicorn/no-nested-ternary
-            data.length === 0 ? (
+            !(data && Array.isArray(data)) ? (
               <tr>
                 <td colSpan="12">
                   <div>No Blocking processes to display.</div>
