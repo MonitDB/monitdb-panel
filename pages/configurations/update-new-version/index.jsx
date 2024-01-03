@@ -22,6 +22,7 @@ export default function UpdateNewVersion() {
   const {
     globalState: { servers, serverTypes },
   } = useGlobal()
+
   const [formattedServers, setFormattedServers] = useState([])
 
   const [selectedServers, setSelectedServers] = useState([])
@@ -102,7 +103,7 @@ export default function UpdateNewVersion() {
           if (result.error) {
             setTerminalOutput((state) => [
               ...state,
-              `Failed to upload file to ${server.serverName}. Error: ${result.error}`,
+              `Failed to upload file to ${server.serverName}. Error: ${result.output}`,
             ])
             setServerUploadResult((previousResults) => ({
               ...previousResults,
@@ -113,7 +114,11 @@ export default function UpdateNewVersion() {
               ...state,
               `File uploaded to ${
                 server.serverName
-              }. Query runned in ${Math.floor(result.time)} ms`,
+              }.\n\nServer response: ${JSON.stringify(
+                result.output,
+                undefined,
+                2
+              )}\n \nQuery runned in ${Math.floor(result.time)} ms`,
             ])
             setServerUploadResult((previousResults) => ({
               ...previousResults,

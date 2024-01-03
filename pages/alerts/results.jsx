@@ -257,16 +257,6 @@ const AlertsDetailsPage = () => {
                   >
                     <thead>
                       <tr className="text-sm font-bold text-gray-dark text-left">
-                        {/* <th className="w-5 border-b-2 border-gray-light">
-                          <Checkbox
-                            name="all"
-                            value="1"
-                            onChange={(value) => {
-                              // eslint-disable-next-line no-console
-                              console.log(`select all checkboxes ${value}`)
-                            }}
-                          />
-                        </th> */}
                         <th className="border-b-2 border-gray-light">
                           Alert type
                         </th>
@@ -286,10 +276,6 @@ const AlertsDetailsPage = () => {
                     </thead>
                     <tbody>
                       {alertsResult?.result?.map((alert, index) => (
-                        // <tr
-                        //   key={`alert-${index}`}
-                        //   className="text-sm border-b border-gray-light transition-colors duration-200 ease-in-out lg:hover:bg-gray-light lg:hover:bg-opacity-50"
-                        // >
                         <>
                           <tr
                             key={`alert-${index}`}
@@ -304,17 +290,6 @@ const AlertsDetailsPage = () => {
                               else setActiveTableRowIndex(index)
                             }}
                           >
-                            {/* <td>
-                            <Checkbox
-                              className="transform translate-y-1"
-                              name="alerts"
-                              value={alert.idAlert}
-                              onChange={(value) => {
-                                // eslint-disable-next-line no-console
-                                console.log(`select checkbox ${value}`)
-                              }}
-                            />
-                          </td> */}
                             <td>
                               <button
                                 type="button"
