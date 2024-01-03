@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
-import { notification, Select, Table } from 'antd'
+import { notification, Select, Table, Tabs } from 'antd'
 import { format, parseISO } from 'date-fns'
 import { useFormik } from 'formik'
 import { useRouter } from 'next/router'
@@ -9,11 +9,10 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { HighlightCode } from '~/components/highlighter'
 import { PageContent, PageHeader, PageWrapper } from '~/components/page'
+import { ComponentLogs } from '~/components/page/configurations/logs/component-log'
 import useGlobal from '~/hooks/use-global'
 import Layout from '~/layouts/default'
 import { getLogs } from '~/services/logs'
-
-const MAX_POSTS_PER_PAGE = 10
 
 const LogsPage = () => {
   const {
@@ -21,14 +20,6 @@ const LogsPage = () => {
   } = useGlobal()
 
   const router = useRouter()
-
-  const [data, setData] = useState([])
-  const [loading, setLoading] = useState(false)
-  const [pagination, setPagination] = useState({
-    total: 0,
-    pageSize: MAX_POSTS_PER_PAGE,
-    current: 1,
-  })
 
   const serversOptions = useMemo(
     () => [
@@ -74,37 +65,11 @@ const LogsPage = () => {
     for (const field of fields) {
       formik.setFieldValue(field, router.query[field])
     }
-
-    setLoading(true)
-
-    try {
-      const response = await getLogs({
-        page: Number.parseInt(router.query.PageNumber, 10) || 1,
-        pageSize: MAX_POSTS_PER_PAGE,
-        serverName: router.query.ServerName,
-      })
-
-      setData(response?.data?.logs || [])
-      setPagination({
-        ...pagination,
-        totalResults: response?.data?.totalResults || 0,
-      })
-    } catch {
-      notification.error({
-        message: 'Error to load the logs',
-        description: 'Please verify manually the erros at db.',
-      })
-    }
-    setLoading(false)
   }, [router.query])
 
   useEffect(() => {
     updateFormFields()
   }, [updateFormFields])
-
-  const renderExpandableContent = (record) => {
-    return <HighlightCode language="javascript">{record}</HighlightCode>
-  }
 
   return (
     <>
@@ -147,38 +112,21 @@ const LogsPage = () => {
               />
             </form>
           </PageContent>
-
           <PageContent removeSidebarMargin={true}>
-            <Table
-              dataSource={data.map((d) => ({ ...d, key: d.id }))}
-              size="small"
-              loading={loading}
-              expandable={{
-                expandedRowRender: (record) =>
-                  renderExpandableContent(record.componentLogResult),
-              }}
-              columns={[
-                { title: 'Name', dataIndex: 'componentName' },
-                { title: 'Server Name', dataIndex: 'serverName' },
-                { title: 'Component Code', dataIndex: 'componentCode' },
+            <Tabs
+              defaultActiveKey="1"
+              items={[
                 {
-                  title: 'Created At',
-                  dataIndex: 'componentLogDataCreate',
-                  render: (date) =>
-                    format(parseISO(date), 'dd/MM/yyyy HH:mm:ss'),
+                  key: '1',
+                  label: 'Components',
+                  children: <ComponentLogs />,
+                },
+                {
+                  key: '2',
+                  label: 'API',
+                  children: 'Content of Tab Pane 2',
                 },
               ]}
-              pagination={{
-                total: pagination.totalResults,
-                current: pagination.current,
-                showSizeChanger: false,
-                onChange: (page) => {
-                  handleChangeField([{ name: 'PageNumber', value: page }])
-
-                  setPagination({ ...pagination, current: page })
-                  window.scrollTo(0, 0)
-                },
-              }}
             />
           </PageContent>
         </PageWrapper>
