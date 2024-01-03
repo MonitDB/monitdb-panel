@@ -1,14 +1,28 @@
+/* eslint-disable no-console */
 import React from 'react'
 import { CopyBlock, vs2015 } from 'react-code-blocks'
 
-const Highlighter = ({ code, language, showLineNumbers, maxHeight }) => {
-  // Parse o código JSON para formatá-lo com espaçamento
-  const formattedCode = JSON.stringify(JSON.parse(code), undefined, 2)
+const Highlighter = ({
+  code,
+  language,
+  showLineNumbers,
+  maxHeight,
+  maxWidth,
+}) => {
+  let formattedCode
 
-  // Estilo para limitar a altura máxima
+  try {
+    formattedCode = JSON.stringify(JSON.parse(code), undefined, 2)
+  } catch (error) {
+    console.error('Erro ao formatar o código JSON:', error.message)
+    formattedCode = code
+  }
+
   const containerStyle = {
-    maxHeight: maxHeight || 'none', // Use 'none' se maxHeight não estiver definido
-    overflowY: 'auto', // Adiciona uma barra de rolagem vertical se o conteúdo ultrapassar a altura máxima
+    maxHeight: maxHeight || 'none',
+    overflowY: 'auto',
+    maxWidth: maxWidth || 'none',
+    overflowX: 'auto',
   }
 
   return (
@@ -20,6 +34,8 @@ const Highlighter = ({ code, language, showLineNumbers, maxHeight }) => {
         theme={vs2015}
         codeBlock
         copied
+        wrapLines={true}
+        wrapLongLines
       />
     </div>
   )
