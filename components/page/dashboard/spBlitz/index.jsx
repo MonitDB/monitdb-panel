@@ -6,7 +6,17 @@ import { toast } from 'react-toastify'
 import { GenericTable } from '~/components/table/genericTable'
 import { useExecQueryContext } from '~/services/state-manager/execQuery'
 
-const Options = [{ value: 'SP_Blitz', label: 'SP Blitz' }]
+const Options = [
+  { value: 'SP_Blitz', label: 'SP Blitz' },
+  { value: 'SP_BlitzAnalysis', label: 'SP Blitz Analysis' },
+  { value: 'SP_BlitzBackups', label: 'SP Blitz Backups' },
+  // { value: 'SP_BlitzCache', label: 'SP Blitz Cache' },
+  { value: 'SP_BlitzFirst', label: 'SP Blitz First' },
+  { value: 'SP_BlitzIndex', label: 'SP Blitz Index' },
+  { value: 'SP_BlitzLock', label: 'SP Blitz Lock' },
+  { value: 'SP_BlitzQueryStore', label: 'SP Blitz Query Store' },
+  { value: 'SP_BlitzWho', label: 'SP Blitz Who' },
+]
 
 export const SPBlitz = ({ currentServer }) => {
   const id = currentServer.id
@@ -43,6 +53,7 @@ export const SPBlitz = ({ currentServer }) => {
       <Row gutter={16} justify={'end'}>
         <Col>
           <Select
+            style={{ width: '300px' }}
             options={Options}
             value={componentCode}
             onChange={setComponentCode}
@@ -59,7 +70,10 @@ export const SPBlitz = ({ currentServer }) => {
         </Col>
       </Row>
       <Row>
-        <GenericTable data={data ?? []} loading={loading} />
+        {(data?.length > 0 || loading) && (
+          <GenericTable data={data ?? []} loading={loading} />
+        )}
+        {data?.length === 0 && !loading && <p>No data found</p>}
       </Row>
     </>
   )
