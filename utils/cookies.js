@@ -7,7 +7,15 @@ export function getUserToken() {
 }
 
 export function setUserToken(value) {
-  return setCookies('user_token', value)
+  return setCookies('user_token', value, { maxAge: 60 * 60 * 24 })
+}
+
+export function setCookie(name, value) {
+  return setCookies(name, value, { maxAge: 60 * 60 * 24 })
+}
+
+export function remove(name) {
+  return removeCookies(name)
 }
 
 export function get(name) {

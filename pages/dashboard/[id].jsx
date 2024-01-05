@@ -31,7 +31,7 @@ import {
 } from '~/components/page/dashboard'
 import CurrentActivity from '~/components/page/dashboard/current-activity'
 import MemoryUsage from '~/components/page/dashboard/memory-usage'
-import { SPBlitz } from '~/components/page/dashboard/sp-blitz'
+import { SPBlitz } from '~/components/page/dashboard/spBlitz'
 import RdpButton from '~/components/rdpButton'
 import LatestAlertsSidebar from '~/components/sidebar/latest-alerts'
 import SshButon from '~/components/sshButton'
