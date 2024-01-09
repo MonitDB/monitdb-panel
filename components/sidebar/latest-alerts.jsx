@@ -23,7 +23,7 @@ const LatestAlerts = () => {
   const router = useRouter()
 
   const [alerts, setAlerts] = useState([])
-  const [lastMinutes, setLastMinutes] = useState(60 * 24)
+  const [lastMinutes, setLastMinutes] = useState(`${60 * 24}`)
   const [serverEnvironmentId, setEnvironment] = useState()
 
   const [loading, setLoading] = useState(false)

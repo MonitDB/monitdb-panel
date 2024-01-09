@@ -107,6 +107,7 @@ function CurrentActivity(properties) {
           <br />
           <br />
         </div>
+
         <GenericTable data={queryResult} loading={loadingExecuteQuery} />
       </div>
       <br />

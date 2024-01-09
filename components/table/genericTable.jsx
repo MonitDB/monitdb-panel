@@ -1,5 +1,6 @@
 /* eslint-disable no-constant-condition */
 /* eslint-disable unicorn/no-nested-ternary */
+import { Table, Tooltip } from 'antd'
 import { useState } from 'react'
 
 import { paginateArray } from '~/utils/array'
@@ -8,7 +9,7 @@ import Loading from '../loading/loading'
 import Pagination from '../pagination/pagination'
 import { GenericTableStyles } from './genericTableStyles'
 
-export const GenericTable = ({ loading, data, onRowClick }) => {
+export const GenericTable = ({ loading, data, onRowClick, columnAlias }) => {
   const [currentPage, setCurrentPage] = useState(1)
 
   const handleRowClick = (rowData) => {
@@ -16,14 +17,40 @@ export const GenericTable = ({ loading, data, onRowClick }) => {
       onRowClick(rowData)
     }
   }
-
   return (
     <GenericTableStyles>
-      {loading ? (
-        <Loading />
-      ) : (
-        <>
-          {Array.isArray(data) && (
+      {Array.isArray(data) && (
+        <Table
+          loading={loading}
+          size="small"
+          columns={Object?.keys(data[0] ?? []).map((key, index) => ({
+            dataIndex: key,
+            title: (columnAlias && columnAlias[index]) || key,
+            render: (value) => {
+              const maxLength = 50
+              if (value && value.length > maxLength) {
+                return {
+                  children: (
+                    <Tooltip title={value}>{`${value.slice(
+                      0,
+                      maxLength
+                    )}...`}</Tooltip>
+                  ),
+                }
+              }
+              return value
+            },
+          }))}
+          scroll={{ x: 1300 }}
+          dataSource={data}
+        />
+      )}
+    </GenericTableStyles>
+  )
+}
+
+{
+  /* {Array.isArray(data) && (
             <>
               <div className="table-container prose prose-thead:bg-gray-light max-w-full prose-th:capitalize prose-th:border-b-0 prose-tr:border-gray-light prose-td:text-[11px]">
                 <table>
@@ -71,9 +98,5 @@ export const GenericTable = ({ loading, data, onRowClick }) => {
                 />
               )}
             </>
-          )}
-        </>
-      )}
-    </GenericTableStyles>
-  )
+          )} */
 }
