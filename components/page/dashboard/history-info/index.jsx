@@ -1,9 +1,9 @@
-import { Button, Grid, Select } from 'antd'
+import { Button, Select } from 'antd'
 import { useFormik } from 'formik'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 
-// import Grid from '~/components/grid'
+import Grid from '~/components/grid'
 import RdpButton from '~/components/rdpButton'
 import SshButon from '~/components/sshButton'
 import { getServerMetrics } from '~/services/servers'
@@ -20,8 +20,7 @@ import Temppdb from './components/tempdb'
 
 const HOUR = 60
 const DAY = 24 * HOUR
-
-export const History = ({ currentServer }) => {
+const HistoryInfo = ({ currentServer }) => {
   const router = useRouter()
 
   const [lastFetch, setLastFetch] = useState(Date.now())
@@ -129,3 +128,5 @@ export const History = ({ currentServer }) => {
     </div>
   )
 }
+
+export default HistoryInfo

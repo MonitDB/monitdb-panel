@@ -6,24 +6,15 @@ import '@uiw/react-textarea-code-editor/dist.css'
 
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import classNames from 'classnames'
-import dynamic from 'next/dynamic'
-import React, { useCallback, useEffect, useState } from 'react'
-
-const AceEditor = dynamic(
-  () => import('react-ace').then((module_) => module_.default),
-  { ssr: false }
-)
-
 import { Button } from 'antd'
+import classNames from 'classnames'
+import React, { useCallback, useEffect, useState } from 'react'
 
 import BlockMessage from '~/components/block-message'
 import { Select } from '~/components/form'
 import Loading from '~/components/loading/loading'
 import Pagination from '~/components/pagination/pagination'
-import { GenericTable } from '~/components/table/genericTable'
 import useComponentContext from '~/services/state-manager/components'
-import { useExecQueryContext } from '~/services/state-manager/execQuery'
 import { paginateArray } from '~/utils/array'
 const componentsOption = [
   { value: 'LTWISACT', label: 'WHO IS ACTIVE' },
@@ -42,10 +33,6 @@ function CurrentActivity(properties) {
   const [activeTableRowIndex, setActiveTableRowIndex] = useState(-1)
   const { executeQueryComponent } = useComponentContext()
 
-  const [sqlCode, setSqlCode] = useState(
-    `SELECT * FROM Historic.Historic_Parameter;`
-  )
-
   useEffect(() => {
     fetchData()
   }, [fetchData, componentCode])
@@ -63,54 +50,8 @@ function CurrentActivity(properties) {
     setLoading(false)
   }, [componentCode, currentServer?.id, data, executeQueryComponent])
 
-  const { execQuery, loadingExecuteQuery, queryResult } = useExecQueryContext()
-
   const headerSection = (
     <>
-      <br />
-      <h3 className="font-bold mb-6">Execute Query</h3>
-      <div className="col-span-2 bg-white border border-gray-light p-4 lg:col-span-12">
-        <AceEditor
-          id="editor"
-          aria-label="editor"
-          mode="mysql"
-          theme="github"
-          name="editor"
-          fontSize={16}
-          minLines={15}
-          maxLines={10}
-          width="100%"
-          showPrintMargin={false}
-          showGutter
-          placeholder="Write your Query here..."
-          editorProps={{ $blockScrolling: true }}
-          setOptions={{
-            enableBasicAutocompletion: true,
-            enableLiveAutocompletion: true,
-            enableSnippets: true,
-          }}
-          value={sqlCode}
-          onChange={setSqlCode}
-          showLineNumbers
-        />
-
-        <div className="w-full flex justify-end mt-10 mb-10 ">
-          <Button
-            type="primary"
-            style={{ width: '100px' }}
-            onClick={() => {
-              execQuery(sqlCode, currentServer.id)
-            }}
-          >
-            Run
-          </Button>
-          <br />
-          <br />
-        </div>
-
-        <GenericTable data={queryResult} loading={loadingExecuteQuery} />
-      </div>
-      <br />
       <br />
       <h3 className="font-bold mb-6">Current Activity</h3>
       <div className="flex flex-row justify-between items-center items-center gap-2 w-60 ml-auto">

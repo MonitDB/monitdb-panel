@@ -1,10 +1,11 @@
 /* eslint-disable no-console */
 
+import { Tabs } from 'antd'
 import classNames from 'classnames'
 import faker from 'faker'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 
 import Loading from '~/components/loading'
 import {
@@ -14,7 +15,8 @@ import {
   PageWrapper,
 } from '~/components/page'
 import CurrentActivity from '~/components/page/dashboard/current-activity'
-import { History } from '~/components/page/dashboard/history'
+import HistoryInfo from '~/components/page/dashboard/history-info'
+import QueryWindow from '~/components/page/dashboard/query-window'
 import { TuningAdvisor } from '~/components/page/dashboard/tuning-advisor'
 import { ServerInfo } from '~/components/page/server-info'
 import LatestAlertsSidebar from '~/components/sidebar/latest-alerts'
@@ -60,7 +62,7 @@ const SingleDashboard = () => {
     globalState: { servers, serverTypes },
   } = useGlobal()
 
-  const [activeTabId, setActiveTabId] = useState(tabItems[0]['id'])
+  const [activeTabId, setActiveTabId] = useState('0')
 
   const router = useRouter()
 
@@ -74,6 +76,29 @@ const SingleDashboard = () => {
     return formatServer(server, { serverTypes })
   }, [servers, serverTypes, router?.query?.id])
 
+  const items = [
+    {
+      key: '0',
+      label: 'History',
+      children: <HistoryInfo currentServer={currentServer} />,
+    },
+    {
+      key: '1',
+      label: 'Tuning Advisor',
+      children: <QueryWindow currentServer={currentServer} />,
+    },
+    {
+      key: '2',
+      label: 'Current Activity',
+      children: <CurrentActivity currentServer={currentServer} />,
+    },
+    {
+      key: '3',
+      label: 'Tuning Advisor',
+      children: <TuningAdvisor currentServer={currentServer} />,
+    },
+  ]
+
   return (
     <SingleDashboardContextProvider>
       <NextSeo title="Dashboard - MonitDB" />
@@ -81,7 +106,7 @@ const SingleDashboard = () => {
         <PageWrapper>
           <PageSidebar>
             <LatestAlertsSidebar />
-            {activeTabId === 'history' && (
+            {activeTabId === '0' && (
               <PageSidebarLinksList className="mt-5">
                 {dashboardSections.map((section, sectionIndex) => (
                   <li key={section.slug}>
@@ -98,64 +123,29 @@ const SingleDashboard = () => {
               </PageSidebarLinksList>
             )}
           </PageSidebar>
+
           <PageContent hideBreadcrumbs={true}>
-            {!currentServer && <Loading />}
-            {currentServer && (
-              <>
-                <div className="w-full flex flex-col gap-y-6">
-                  <header className="w-full">
-                    <h2 className="heading-lg mb-6">Dashboard - Overview</h2>
-                  </header>
-                  <ServerInfo currentServer={currentServer} />
-                  {/* <div className="w-full flex items-center gap-4 py-2 px-4 border border-orange border-opacity-25 bg-orange bg-opacity-10 text-sm">
-                    <div className="flex items-center justify-center w-16 h-16">
-                      <FontAwesomeIcon
-                        icon={faWarning}
-                        className="text-4xl text-orange"
-                      />
-                    </div>
-                    <div>
-                      <h6 className="heading-xs">
-                        SQL Server Reporting Service status (2017+): ssc-db-n1
-                      </h6>
-                      <p>
-                        Raised at Wed, Oct 6 10:47 (Active for more than 427
-                        days)
-                      </p>
-                    </div>
-                  </div> */}
-                </div>
+            <div style={{ width: '85%' }}>
+              {!currentServer && <Loading />}
+              {currentServer && (
+                <>
+                  <div className="w-full flex flex-col">
+                    <header className="w-full">
+                      <h2 className="heading-lg mb-6">Dashboard - Overview</h2>
+                    </header>
+                    <ServerInfo currentServer={currentServer} />
+                  </div>
 
-                <div className="flex items-center border-b-gray-light border-b-4">
-                  {tabItems.map((tab) => (
-                    <button
-                      className={classNames('px-2 h-11 relative', {
-                        'after:content-[""] after:block after:bg-blue after:h-1 after:w-full after:absolute after:-bottom-1 after:left-0':
-                          tab.id === activeTabId,
-                      })}
-                      key={tab.id}
-                      onClick={() => setActiveTabId(tab.id)}
-                    >
-                      {tab.title}
-                    </button>
-                  ))}
-                </div>
-
-                {activeTabId === 'history' && (
-                  <History currentServer={currentServer} />
-                )}
-
-                {activeTabId === 'current-activity' && (
-                  <CurrentActivity currentServer={currentServer} />
-                )}
-                {activeTabId === 'current-activity' && (
-                  <CurrentActivity currentServer={currentServer} />
-                )}
-                {activeTabId === 'tuning-advisor' && (
-                  <TuningAdvisor currentServer={currentServer} />
-                )}
-              </>
-            )}
+                  <div className="flex items-center border-b-gray-light border-b-4">
+                    <Tabs
+                      defaultActiveKey="0"
+                      items={items}
+                      onChange={setActiveTabId}
+                    />
+                  </div>
+                </>
+              )}
+            </div>
           </PageContent>
         </PageWrapper>
       </Layout>
