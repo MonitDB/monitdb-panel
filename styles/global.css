@@ -11,11 +11,6 @@
   background-color: #5046e5; /* Cor de fundo para botões primários do Ant Design */
 }
 
-code {
-  display: block;
-  white-space: pre-wrap;
-}
-
 html {
   @apply scroll-smooth;
 }

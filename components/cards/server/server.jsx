@@ -80,20 +80,19 @@ const ServerCard = ({
       const response = await getServerMetrics({ id })
 
       if (response?.data) {
-        const { cpu, memory, disks } = response.data
+        const { cpu, memory, disks, serverStatus } = response.data
 
         setLastUpdated(new Date())
 
         setMetrics({
           cpu,
-
           memory: {
             ...memory,
             inUsePercent:
               ((memory.total - memory.available) / memory.total) * 100,
           },
           disks,
-          // serverStatus,
+          serverStatus,
         })
       }
     } catch (error) {
@@ -131,6 +130,7 @@ const ServerCard = ({
         }
       )}
     >
+      {console.log(metrics)}
       <Link
         href={
           hasPermissions([permission.DASHBOARD_PAGE])
