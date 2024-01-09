@@ -3,7 +3,7 @@ import {
   faMagnifyingGlass,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Button } from 'antd'
+import { Button, Input } from 'antd'
 import classNames from 'classnames'
 import {
   HOUR,
@@ -174,10 +174,9 @@ const DashboardPage = () => {
                   onSubmit={formik.handleSubmit}
                 >
                   <div className="relative min-w-56">
-                    <input
+                    <Input
                       type="text"
                       name="str"
-                      className="w-full px-4 h-10 bg-white leading-10 rounded outline-none text-sm"
                       placeholder="Filtrar por nomes"
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}

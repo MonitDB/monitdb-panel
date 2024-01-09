@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import Highlighter from '~/components/highlighter'
 import Image from '~/components/image'
 
-import useComponentContext from '../../../../services/state-manager/components'
+import useComponentContext from '../../../../../../services/state-manager/components'
 
 const COMPONENT_CODE = 'LTTPPR'
 

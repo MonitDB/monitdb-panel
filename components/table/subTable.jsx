@@ -2,17 +2,13 @@
 /* eslint-disable no-unsafe-optional-chaining */
 
 import { Button, Modal, Table } from 'antd'
-import MarkdownIt from 'markdown-it'
-import markdownItStyle from 'markdown-it-style'
 import { useCallback, useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 
 import useAlertContext from '~/services/state-manager/alerts'
 
 import Loading from '../loading/loading'
-
-const md = new MarkdownIt()
-md.use(markdownItStyle)
+import { Markdown } from '../md'
 
 export const AlertHtmlSubTable = (properties) => {
   const { serverId, idSeq } = properties
@@ -105,6 +101,7 @@ export const AlertHtmlSubTable = (properties) => {
         title="AI Result"
         closable={false}
         onOk={() => setModal(false)}
+        cancelButtonProps={{ style: { display: 'none' } }}
       >
         {loadingAI && (
           <div
@@ -122,12 +119,7 @@ export const AlertHtmlSubTable = (properties) => {
         )}
 
         {!loadingAI && (
-          <div
-            className="markdown"
-            dangerouslySetInnerHTML={{
-              __html: md.render(suggestion),
-            }}
-          />
+          <Markdown content={suggestion} children={false} className="prose" />
         )}
       </Modal>
     </>

@@ -1,0 +1,131 @@
+import { Button, Grid, Select } from 'antd'
+import { useFormik } from 'formik'
+import { useRouter } from 'next/router'
+import { useEffect, useState } from 'react'
+
+// import Grid from '~/components/grid'
+import RdpButton from '~/components/rdpButton'
+import SshButon from '~/components/sshButton'
+import { getServerMetrics } from '~/services/servers'
+
+import BlockingProcesses from './components/blocking-processes'
+import CpuUsage from './components/cpu-usage'
+import Databases from './components/databases'
+import ErrorLog from './components/error-log'
+import MemoryUsage from './components/memory-usage'
+import { Permissions } from './components/server-host-metrics'
+import ServerMetrics from './components/server-host-metrics/server-metrics'
+import SqlUserProcesses from './components/sql-user-processes'
+import Temppdb from './components/tempdb'
+
+const HOUR = 60
+const DAY = 24 * HOUR
+
+export const History = ({ currentServer }) => {
+  const router = useRouter()
+
+  const [lastFetch, setLastFetch] = useState(Date.now())
+  const [serverMetrics, setServerMetrics] = useState()
+  useEffect(() => {
+    if (router?.query?.id) {
+      const fetch = async () => {
+        const { data } = await getServerMetrics({ id: router?.query?.id })
+        setServerMetrics(data)
+      }
+      fetch()
+    }
+  }, [router?.query?.id])
+
+  const lastMinutesOptions = [
+    { value: HOUR, label: '1 hour' },
+    { value: 6 * HOUR, label: '6 hours' },
+    { value: 12 * HOUR, label: '12 hours' },
+    { value: 1 * DAY, label: '24 hours' },
+    { value: 2 * DAY, label: '2 days' },
+  ]
+
+  const formik = useFormik({
+    initialValues: {
+      cpu: true,
+      memory: true,
+      disk: true,
+      lastMinutes: router.query.lastMinutes,
+    },
+    onSubmit: () => {},
+  })
+
+  return (
+    <div className="w-full flex flex-col gap-y-6 mt-6">
+      <div className="w-full flex gap-x-8 p-4 border border-gray-light bg-white text-sm">
+        <div className="flex gap-2 mr-auto">
+          {serverMetrics?.osProperties['host_platform'] === 'Windows' && (
+            <RdpButton
+              serverName={currentServer.serverName}
+              address={currentServer.serverHost}
+            />
+          )}
+
+          {serverMetrics?.osProperties['host_platform'] === 'Linux' && (
+            <SshButon
+              serverName={currentServer.serverName}
+              address={currentServer.serverHost}
+            />
+          )}
+        </div>
+
+        <div className="flex gap-2 ml-auto">
+          <Select
+            className="w-40"
+            name="lastMinutes"
+            value={formik.values.lastMinutes}
+            options={lastMinutesOptions}
+            defaultValue={router.query.lastMinutes}
+            onChange={(value) => {
+              const queryParameters = new URLSearchParams(router.query)
+              queryParameters.set('lastMinutes', value)
+              const newUrl = `${router.pathname}?${queryParameters.toString()}`
+              router.push(newUrl)
+              formik.setFieldValue('lastMinutes', value)
+            }}
+          />
+          <Button onClick={() => setLastFetch(Date.now())}>Refresh</Button>
+        </div>
+      </div>
+
+      <div id="allinstancemetrics">
+        <Grid>
+          <MemoryUsage currentServer={currentServer} />
+          <CpuUsage currentServer={currentServer} />
+        </Grid>
+
+        {/* <Server /> */}
+        <ServerMetrics key={lastFetch} />
+        <Permissions currentServer={currentServer} />
+        <div>
+          <br />
+          <h4 className="mb-4 text-sm">OS Properties</h4>
+          <div className="w-full mb-4 prose max-w-full prose-p:m-0 prose-td:align-top prose-tr:border-gray-light prose-headings:m-0">
+            <table className="m-0 py-4 prose-tr:last:!border-b">
+              <tbody>
+                <tr>
+                  <td>Edition</td>
+                  <td>{serverMetrics?.osProperties['OS_Version']}</td>
+                </tr>
+                <tr>
+                  <td>Version</td>
+                  <td> {serverMetrics?.osProperties['OS_Release']}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <Temppdb />
+        <BlockingProcesses currentServer={currentServer} />
+        <SqlUserProcesses currentServer={currentServer} />
+        <ErrorLog currentServer={currentServer} />
+        <Databases currentServer={currentServer} />
+      </div>
+    </div>
+  )
+}

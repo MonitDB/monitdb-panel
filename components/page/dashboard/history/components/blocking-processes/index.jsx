@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import Image from '~/components/image'
 import { GenericTable } from '~/components/table/genericTable'
 
-import useComponentContext from '../../../../services/state-manager/components'
+import useComponentContext from '../../../../../../services/state-manager/components'
 
 const COMPONENT_CODE = 'LTBLPR'
 

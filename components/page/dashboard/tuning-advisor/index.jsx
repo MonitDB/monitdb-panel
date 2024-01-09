@@ -18,7 +18,7 @@ const Options = [
   { value: 'SP_BlitzWho', label: 'SP Blitz Who' },
 ]
 
-export const SPBlitz = ({ currentServer }) => {
+export const TuningAdvisor = ({ currentServer }) => {
   const id = currentServer.id
 
   const [loading, setLoading] = useState(false)
@@ -69,12 +69,8 @@ export const SPBlitz = ({ currentServer }) => {
           </Button>
         </Col>
       </Row>
-      <Row>
-        {(data?.length > 0 || loading) && (
-          <GenericTable data={data ?? []} loading={loading} />
-        )}
-        {data?.length === 0 && !loading && <p>No data found</p>}
-      </Row>
+
+      <GenericTable data={data ?? []} loading={loading} />
     </>
   )
 }
