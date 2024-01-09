@@ -130,7 +130,6 @@ const ServerCard = ({
         }
       )}
     >
-      {console.log(metrics)}
       <Link
         href={
           hasPermissions([permission.DASHBOARD_PAGE])

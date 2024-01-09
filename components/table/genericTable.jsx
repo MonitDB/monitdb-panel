@@ -9,6 +9,7 @@ export const GenericTable = ({ loading, data, columnAlias }) => {
     <GenericTableStyles>
       {Array.isArray(data) && (
         <Table
+          locale={{ emptyText: 'No data to display' }}
           loading={loading}
           size="small"
           columns={Object?.keys(data[0] ?? []).map((key, index) => ({

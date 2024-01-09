@@ -94,10 +94,10 @@ function CurrentActivity(properties) {
           showLineNumbers
         />
 
-        {/* {sqlCode && <Code code={sqlCode} language="javascript" />} */}
-        <div className="w-full flex">
+        <div className="w-full flex justify-end mt-10 mb-10 ">
           <Button
             type="primary"
+            style={{ width: '100px' }}
             onClick={() => {
               execQuery(sqlCode, currentServer.id)
             }}
@@ -129,7 +129,6 @@ function CurrentActivity(properties) {
             setComponentCode(componentCode)
             fetchData()
           }}
-          className="mt-6 bg-blue text-white px-3 h-11 rounded-[5px] font-medium flex items-center gap-1 mb-6"
         >
           Refresh
         </Button>

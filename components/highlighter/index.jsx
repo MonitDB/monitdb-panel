@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import React from 'react'
-import { CopyBlock, vs2015 } from 'react-code-blocks'
+import { atomOneLight, CopyBlock } from 'react-code-blocks'
 
 const Highlighter = ({
   code,
@@ -31,7 +31,7 @@ const Highlighter = ({
         text={formattedCode}
         language={language}
         showLineNumbers={showLineNumbers}
-        theme={vs2015}
+        theme={atomOneLight}
         codeBlock
         copied
         wrapLines={true}

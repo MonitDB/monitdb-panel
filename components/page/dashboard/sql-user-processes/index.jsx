@@ -1,7 +1,8 @@
+import { Table, Tooltip } from 'antd'
 import React, { useCallback, useEffect, useState } from 'react'
 
+import Highlighter from '~/components/highlighter'
 import Image from '~/components/image'
-import { GenericTable } from '~/components/table/genericTable'
 
 import useComponentContext from '../../../../services/state-manager/components'
 
@@ -41,23 +42,57 @@ function SqlUserProcesses(properties) {
         <span className="w-full h-[1px] block bg-gray-light" />
       </div>
       <div style={{ overflowY: 'auto' }}>
-        <GenericTable
-          data={data}
+        <Table
+          locale={{ emptyText: 'No data to display' }}
           loading={loading}
-          columnAlias={[
-            'Session ID',
-            'Last Request Time',
-            'Login Name',
-            'Host Name',
-            'Program Name',
-            'Query',
-            'Status',
-            'Database Name',
-            'CPU',
-            'Reads',
-            'Writes',
-            'Logical Reads',
-          ]}
+          size="small"
+          expandable={{
+            expandedRowRender: (record) => {
+              return (
+                <Highlighter
+                  showLineNumbers={true}
+                  maxHeight={'200px'}
+                  code={record.query}
+                  language={'sql'}
+                />
+              )
+            },
+          }}
+          columns={Object?.keys(data[0] ?? [])
+            .filter((key) => key != 'query')
+            .map((key, index) => ({
+              dataIndex: key,
+              title: [
+                'Session ID',
+                'Last Request Time',
+                'Login Name',
+                'Host Name',
+                'Program Name',
+                'Status',
+                'Database Name',
+                'CPU',
+                'Reads',
+                'Writes',
+                'Logical Reads',
+              ][index],
+              render: (value) => {
+                const maxLength = 50
+                if (value && value.length > maxLength) {
+                  return {
+                    children: (
+                      <Tooltip title={value}>{`${value.slice(
+                        0,
+                        maxLength
+                      )}...`}</Tooltip>
+                    ),
+                  }
+                }
+                return value
+              },
+            }))}
+          scroll={{ x: 1300 }}
+          onRow={() => ({ style: { cursor: 'pointer' } })}
+          dataSource={data.map((item, index) => ({ ...item, key: index }))}
         />
       </div>
     </div>

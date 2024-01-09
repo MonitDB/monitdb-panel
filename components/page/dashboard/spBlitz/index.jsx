@@ -50,7 +50,7 @@ export const SPBlitz = ({ currentServer }) => {
     <>
       <br />
       <h3 className="font-bold mb-6">SP Blitz</h3>
-      <Row gutter={16} justify={'end'}>
+      <Row gutter={16} justify={'end'} style={{ marginBottom: '15px' }}>
         <Col>
           <Select
             style={{ width: '300px' }}

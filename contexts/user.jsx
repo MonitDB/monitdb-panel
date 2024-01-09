@@ -10,7 +10,7 @@ export const userInitialState = {
   roleId: -1,
   token: '',
   permissions: [],
-  hasPermissions: (permissions) => false,
+  hasPermissions: () => false,
 }
 
 const UserContext = createContext(userInitialState)
