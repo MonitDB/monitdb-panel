@@ -42,21 +42,6 @@ const dashboardSections = [
   { name: 'Databases', slug: 'databases' },
 ]
 
-const tabItems = [
-  {
-    title: 'History',
-    id: 'history',
-  },
-  {
-    title: 'Current activity',
-    id: 'current-activity',
-  },
-  {
-    title: 'Tuning Advisor',
-    id: 'tuning-advisor',
-  },
-]
-
 const SingleDashboard = () => {
   const {
     globalState: { servers, serverTypes },
