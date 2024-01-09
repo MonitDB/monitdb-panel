@@ -1,14 +1,8 @@
 /* eslint-disable unicorn/prefer-number-properties */
 /* eslint-disable no-console */
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import {
-  faChevronRight,
-  faDatabase,
-  faTag,
-} from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+
 import { Button, Select, Table, Tag } from 'antd'
-import classNames from 'classnames'
 import moment from 'moment'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
@@ -16,9 +10,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { toast } from 'react-toastify'
 
 import Selector from '~/components/form/selector'
-import Loading from '~/components/loading'
 import { PageContent, PageWrapper } from '~/components/page'
-import Pagination from '~/components/pagination'
 import MonitoredServersSidebar from '~/components/sidebar/monitored-servers'
 import { AlertHtmlSubTable } from '~/components/table/subTable'
 import DatabaseIcons from '~/helpers/database-icons'
@@ -44,8 +36,6 @@ const AlertsDetailsPage = () => {
 
   const [loading, setIsLoading] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
-
-  const [activeTableRowIndex, setActiveTableRowIndex] = useState(-1)
 
   const [cleaningAlert, setCleaningAlert] = useState(-1)
 
