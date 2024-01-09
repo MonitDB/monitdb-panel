@@ -7,8 +7,9 @@ import {
   faTag,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Button, Select } from 'antd'
+import { Button, Select, Table, Tag } from 'antd'
 import classNames from 'classnames'
+import moment from 'moment'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
@@ -242,138 +243,55 @@ const AlertsDetailsPage = () => {
           </PageContent>
 
           <PageContent>
-            {loading && !alertsResult.initialFetch && (
-              <div className="flex justify-center items-center w-full min-h-28">
-                <Loading light />
-              </div>
-            )}
-            {alertsResult?.result.length > 0 && alertsResult.initialFetch ? (
-              <>
-                <div className="-mx-4 mb-4 py-4 px-8 bg-white md:-mx-6">
-                  <table
-                    className={classNames('prose max-w-full w-full mb-4', {
-                      'opacity-25': loading,
-                    })}
-                  >
-                    <thead>
-                      <tr className="text-sm font-bold text-gray-dark text-left">
-                        <th className="border-b-2 border-gray-light">
-                          Alert type
-                        </th>
-                        <th className="border-b-2 border-gray-light">
-                          Alert message
-                        </th>
-                        <th className="border-b-2 border-gray-light w-60">
-                          Source object
-                        </th>
-                        <th className="border-b-2 border-gray-light w-20">
-                          Status
-                        </th>
-                        <th className="border-b-2 border-gray-light w-60">
-                          Last updated
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {alertsResult?.result?.map((alert, index) => (
-                        <>
-                          <tr
-                            key={`alert-${index}`}
-                            className={classNames(
-                              'hover:bg-gray-lightest',
-                              activeTableRowIndex === index &&
-                                'bg-gray-lightest'
-                            )}
-                            onClick={() => {
-                              if (activeTableRowIndex === index)
-                                setActiveTableRowIndex(-1)
-                              else setActiveTableRowIndex(index)
-                            }}
-                          >
-                            <td>
-                              <button
-                                type="button"
-                                className="whitespace-nowrap truncate"
-                              >
-                                <FontAwesomeIcon
-                                  width={7}
-                                  height={7}
-                                  icon={faChevronRight}
-                                  className={classNames(
-                                    'mr-1 transition-all duration-150 ease-in-out',
-                                    {
-                                      'rotate-90':
-                                        activeTableRowIndex === index,
-                                    }
-                                  )}
-                                />
-                              </button>
-                              <span>{alert?.alertName}</span>
-                            </td>
-                            <td>{alert?.dsMessage}</td>
-                            <td>
-                              <div className="flex items-center space-x-4 w-full">
-                                <div className="flex items-center space-x-1">
-                                  <FontAwesomeIcon icon={faDatabase} />
-                                  <strong>{alert?.serverName}</strong>
-                                </div>
-                                {alert?.serverEnvironment && (
-                                  <span className="flex items-center space-x-1">
-                                    <FontAwesomeIcon icon={faTag} />{' '}
-                                    <span className="rounded py-px px-1 text-xs bg-blue text-white">
-                                      {
-                                        alert?.serverEnvironment
-                                          ?.typeServerEnvironmentName
-                                      }
-                                    </span>
-                                  </span>
-                                )}
-                              </div>
-                            </td>
-                            <td>
-                              {alert?.isActive === 1 ? 'Active' : 'Unactive'}
-                            </td>
-                            <td>{new Date(alert?.dtAlert).toLocaleString()}</td>
-                            <td width={'100px'}>
-                              <Button
-                                type="dashed"
-                                href=""
-                                loading={
-                                  cleaningAlert === alert.id * alert.serverId
-                                }
-                                onClick={(event) => {
-                                  event.stopPropagation()
-                                  event.preventDefault()
-
-                                  handleClearAlert(alert?.id, alert?.serverId)
-                                }}
-                              >
-                                Clear
-                              </Button>
-                            </td>
-                          </tr>
-
-                          {activeTableRowIndex === index && (
-                            <AlertHtmlSubTable
-                              serverId={alert.serverId}
-                              idSeq={alert.idSeq}
-                            />
-                          )}
-                        </>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-
-                <Pagination
-                  currentPage={currentPage}
-                  totalResults={alertsResult.count}
-                  onChangePage={(page) => setCurrentPage(page)}
-                />
-              </>
-            ) : (
-              !loading && <h1>No data to Display</h1>
-            )}
+            <Table
+              dataSource={alertsResult.result.map((r) => ({ ...r, key: r.id }))}
+              columns={[
+                { dataIndex: 'alertName', title: 'Alert Name', key: 0 },
+                { dataIndex: 'dsMessage', title: 'Message', key: 1 },
+                {
+                  dataIndex: 'isActive',
+                  title: 'Status',
+                  key: 2,
+                  render: (value) =>
+                    value === 1 && <Tag color="orange">Active</Tag>,
+                },
+                {
+                  dataIndex: 'dtAlert',
+                  title: 'Last Updated',
+                  key: 3,
+                  render: (value) => moment(value).format('DD/MM/yyyy HH:mm'),
+                },
+                {
+                  title: 'Action',
+                  key: 4,
+                  render: (value, alert) => (
+                    <Button
+                      type="dashed"
+                      loading={cleaningAlert === alert.id * alert.serverId}
+                      onClick={(event) => {
+                        event.stopPropagation()
+                        event.preventDefault()
+                        handleClearAlert(alert?.id, alert?.serverId)
+                      }}
+                    >
+                      Clear
+                    </Button>
+                  ),
+                },
+              ]}
+              loading={loading}
+              expandable={{
+                expandedRowRender: (alert) => {
+                  return (
+                    <AlertHtmlSubTable
+                      serverId={alert.serverId}
+                      idSeq={alert.idSeq}
+                    />
+                  )
+                },
+              }}
+              onRow={() => ({ style: { cursor: 'pointer' } })}
+            />
           </PageContent>
         </PageWrapper>
       </Layout>

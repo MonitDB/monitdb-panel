@@ -42,6 +42,7 @@ export const GenericTable = ({ loading, data, onRowClick, columnAlias }) => {
             },
           }))}
           scroll={{ x: 1300 }}
+          onRow={() => ({ style: { cursor: 'pointer' } })}
           dataSource={data}
         />
       )}

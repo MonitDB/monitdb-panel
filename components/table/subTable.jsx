@@ -1,24 +1,24 @@
-import { Button } from 'antd'
+/* eslint-disable react/no-children-prop */
+/* eslint-disable no-unsafe-optional-chaining */
+
+import { Button, Modal, Table } from 'antd'
 import MarkdownIt from 'markdown-it'
+import markdownItStyle from 'markdown-it-style'
 import { useCallback, useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 
 import useAlertContext from '~/services/state-manager/alerts'
-import { paginateArray } from '~/utils/array'
 
 import Loading from '../loading/loading'
-import Modal from '../modal/modal'
-import Pagination from '../pagination/pagination'
-import SuggestionButton from '../suggestionButton'
 
 const md = new MarkdownIt()
+md.use(markdownItStyle)
 
 export const AlertHtmlSubTable = (properties) => {
   const { serverId, idSeq } = properties
 
   const { getAlertHtml, getSuggestion } = useAlertContext()
 
-  const [currentSubPage, setCurrentSubPage] = useState(1)
   const [html, setHtml] = useState([])
   const [loading, setLoading] = useState(false)
   const [loadingAI, setLoadingAI] = useState(false)
@@ -56,15 +56,62 @@ export const AlertHtmlSubTable = (properties) => {
 
   useEffect(getHtml, [getHtml])
 
-  if (loading)
-    return (
-      <tr>
-        <td colSpan={5}>
+  return (
+    <>
+      <Table
+        dataSource={html}
+        loading={loading}
+        columns={[
+          ...(html && html.length > 0
+            ? Object.keys(html[0]).map((element, index) => ({
+                dataIndex: element,
+                key: index,
+                title: element,
+              }))
+            : []),
+          {
+            key: 'suggestion',
+            render: (value, record, index) => (
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'flex-end',
+                }}
+              >
+                <Button
+                  type="dashed"
+                  size="small"
+                  children={<>See how to fix</>}
+                  onClick={() => {
+                    setModal(true)
+                    getAiSuggestion(serverId, idSeq, index)
+                  }}
+                />
+              </div>
+            ),
+          },
+        ]}
+      />
+
+      <Modal
+        open={modal}
+        onClose={() => {
+          setModal(false)
+        }}
+        height={500}
+        width={800}
+        style={{ minHeight: '600px' }}
+        title="AI Result"
+        closable={false}
+        onOk={() => setModal(false)}
+      >
+        {loadingAI && (
           <div
             style={{
               marginTop: 0,
               marginBottom: 0,
-              height: '100px',
+              height: '500px',
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
@@ -72,94 +119,17 @@ export const AlertHtmlSubTable = (properties) => {
           >
             <Loading />
           </div>
-        </td>
-      </tr>
-    )
-
-  return (
-    <tr>
-      <td colSpan={5}>
-        {html[0] && (
-          <table style={{ marginTop: 0 }}>
-            <thead>
-              <tr>
-                {Object?.keys(html[0]).map((element, index) => (
-                  <th key={index}>{element}</th>
-                ))}
-              </tr>
-              <tr></tr>
-            </thead>
-            <tbody>
-              {paginateArray(html, currentSubPage, 10).map((element, index) => (
-                <tr key={index}>
-                  {Object?.values(element).map((value, index) => (
-                    <td key={index}>{value}</td>
-                  ))}
-                  <td>
-                    <SuggestionButton
-                      onClick={() => {
-                        setModal(true)
-                        getAiSuggestion(
-                          serverId,
-                          idSeq,
-                          (currentSubPage - 1) * 10 + index
-                        )
-                      }}
-                    />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-            {html.length > 10 && (
-              <Pagination
-                currentPage={currentSubPage}
-                totalResults={html.length}
-                onChangePage={(page) => setCurrentSubPage(page)}
-              />
-            )}
-            <Modal
-              visible={modal}
-              onClose={() => {
-                setModal(false)
-              }}
-              width="60%"
-              height="400px"
-              title="AI Result"
-              closable={false}
-              footer={
-                <>
-                  <Button onClick={() => setModal(false)} type="dashed">
-                    Close
-                  </Button>
-                </>
-              }
-            >
-              {loadingAI && (
-                <div
-                  style={{
-                    marginTop: 0,
-                    marginBottom: 0,
-                    height: '100%',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}
-                >
-                  <Loading />
-                </div>
-              )}
-
-              {!loadingAI && (
-                <div
-                  dangerouslySetInnerHTML={{
-                    __html: md.render(suggestion),
-                  }}
-                />
-              )}
-            </Modal>
-          </table>
         )}
-      </td>
-    </tr>
+
+        {!loadingAI && (
+          <div
+            className="markdown"
+            dangerouslySetInnerHTML={{
+              __html: md.render(suggestion),
+            }}
+          />
+        )}
+      </Modal>
+    </>
   )
 }
