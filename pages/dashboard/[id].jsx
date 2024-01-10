@@ -110,7 +110,7 @@ const SingleDashboard = () => {
           </PageSidebar>
 
           <PageContent hideBreadcrumbs={true}>
-            <div style={{ width: '85%' }}>
+            <div>
               {!currentServer && <Loading />}
               {currentServer && (
                 <>
@@ -123,9 +123,11 @@ const SingleDashboard = () => {
 
                   <div className="flex items-center border-b-gray-light border-b-4">
                     <Tabs
+                      size="large"
                       defaultActiveKey="0"
                       items={items}
                       onChange={setActiveTabId}
+                      style={{ width: '100%' }}
                     />
                   </div>
                 </>

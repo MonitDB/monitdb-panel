@@ -9,7 +9,7 @@ const PageContent = ({
   return (
     <div
       className={classNames('p-8 w-full lg:px-14', className, {
-        'xl:ml-auto xl:w-[calc(100vw-275px)]': !removeSidebarMargin,
+        'xl:ml-auto xl:w-[calc(100vw-320px)]': !removeSidebarMargin,
       })}
     >
       {children}

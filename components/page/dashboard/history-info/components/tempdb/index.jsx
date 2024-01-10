@@ -1,10 +1,9 @@
 /* eslint-disable sonarjs/no-duplicate-string */
 // import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
 // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import classNames from 'classnames'
-import React, { useState } from 'react'
+import { Tabs } from 'antd'
+import React from 'react'
 
-import Chart from '~/components/chart'
 import Image from '~/components/image'
 
 import { TemporaryDBDatabase } from './components/Database'
@@ -13,39 +12,7 @@ import { TemporaryDBProgram } from './components/Program'
 import { TemporaryDBSession } from './components/Session'
 import { TemporaryDBSummary } from './components/Summary'
 
-const tabDataItems = [
-  {
-    title: 'Usage summary',
-    id: 'usage-summary',
-  },
-  {
-    title: 'Session',
-    id: 'session',
-  },
-  // {
-  //   title: 'Version store',
-  //   id: 'version-store',
-  // },
-  {
-    title: 'Login',
-    id: 'login',
-  },
-  {
-    title: 'Program',
-    id: 'program',
-  },
-  {
-    title: 'Database',
-    id: 'database',
-  },
-  // {
-  //   title: 'Files',
-  //   id: 'files',
-  // },
-]
-
 const Temppdb = () => {
-  const [activeTabId, setActiveTabId] = useState('usage-summary')
   return (
     <div id="tempdb">
       <div className="grid grid-cols-[18px_auto_1fr] gap-2 items-center my-8">
@@ -57,106 +24,38 @@ const Temppdb = () => {
         <h3 className="text-sm text-gray-dark font-bold">tempdb</h3>
         <span className="w-full h-[1px] block bg-gray-light" />
       </div>
-      <div className="flex items-center border-b-4 border-gray-light">
-        {tabDataItems.map((tab) => (
-          <button
-            key={tab.id}
-            className={classNames(
-              "relative py-1.5 px-4 text-center after:left-0 after:content-[''] after:block after:w-full after:h-1  after:absolute after:-bottom-1",
-              {
-                'after:bg-blue': tab.id === activeTabId,
-              }
-            )}
-            onClick={() => setActiveTabId(tab.id)}
-          >
-            {tab.title}
-          </button>
-        ))}
-      </div>
-      <div className="w-full min-h-96">
-        {activeTabId === 'usage-summary' && <TemporaryDBSummary />}
-        {activeTabId === 'session' && <TemporaryDBSession />}
-        {activeTabId === 'version-store' && (
-          <>
-            <h6 className="my-4 text-xs">
-              Summary of tempdb usage by class of object
-            </h6>
-            <div className="bg-white min-h-96">
-              <Chart
-                height="100%"
-                legend={{
-                  show: false,
-                }}
-                xaxis={{
-                  labels: {
-                    show: false,
-                  },
-                }}
-              />
-            </div>
-
-            <div className="mt-4">
-              <h4 className="mb-4 text-sm">Performance</h4>
-              <div className="grid grid-cols-3 gap-3">
-                <div>
-                  <h6 className="mb-4 text-xs">Generation rate</h6>
-                  <div className="bg-white">
-                    <Chart
-                      legend={{
-                        show: false,
-                      }}
-                      xaxis={{
-                        labels: {
-                          show: false,
-                        },
-                      }}
-                    />
-                  </div>
-                </div>
-                <div>
-                  <h6 className="mb-4 text-xs">Cleanup rate</h6>
-                  <div className="bg-white">
-                    <Chart
-                      legend={{
-                        show: false,
-                      }}
-                      xaxis={{
-                        labels: {
-                          show: false,
-                        },
-                      }}
-                    />
-                  </div>
-                </div>
-                <div>
-                  <h6 className="mb-4 text-xs">
-                    Longest running transaction time
-                  </h6>
-                  <div className="bg-white">
-                    <Chart
-                      legend={{
-                        show: false,
-                      }}
-                      xaxis={{
-                        labels: {
-                          show: false,
-                        },
-                      }}
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </>
-        )}
-        {activeTabId === 'login' && <TemporaryDBLogin />}
-        {activeTabId === 'program' && <TemporaryDBProgram />}
-        {activeTabId === 'database' && <TemporaryDBDatabase />}
-        {activeTabId === 'files' && (
-          <p className="min-h-96 flex items-center justify-center text-xs">
-            <strong>No data to display</strong>
-          </p>
-        )}
+      <div>
+        <Tabs
+          defaultActiveKey="1"
+          items={[
+            {
+              key: '1',
+              label: 'Usage Summary',
+              children: <TemporaryDBSummary />,
+            },
+            {
+              key: '2',
+              label: 'Session',
+              children: <TemporaryDBSession />,
+            },
+            {
+              key: '3',
+              label: 'Login',
+              children: <TemporaryDBLogin />,
+            },
+            {
+              key: '4',
+              label: 'Program',
+              children: <TemporaryDBProgram />,
+            },
+            {
+              key: '5',
+              label: 'Database',
+              children: <TemporaryDBDatabase />,
+            },
+          ]}
+          style={{ width: '100%' }}
+        />
       </div>
     </div>
   )

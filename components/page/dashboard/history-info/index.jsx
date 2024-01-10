@@ -78,7 +78,7 @@ const HistoryInfo = ({ currentServer }) => {
             name="lastMinutes"
             value={formik.values.lastMinutes}
             options={lastMinutesOptions}
-            defaultValue={router.query.lastMinutes}
+            defaultValue={'60'}
             onChange={(value) => {
               const queryParameters = new URLSearchParams(router.query)
               queryParameters.set('lastMinutes', value)

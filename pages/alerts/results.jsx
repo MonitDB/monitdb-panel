@@ -11,9 +11,10 @@ import { toast } from 'react-toastify'
 
 import Selector from '~/components/form/selector'
 import { PageContent, PageWrapper } from '~/components/page'
+import { ServerInfo } from '~/components/page/server-info'
 import MonitoredServersSidebar from '~/components/sidebar/monitored-servers'
 import { AlertHtmlSubTable } from '~/components/table/subTable'
-import DatabaseIcons from '~/helpers/database-icons'
+// import DatabaseIcons from '~/helpers/database-icons'
 import useGlobal from '~/hooks/use-global'
 import Layout from '~/layouts/default'
 import useAlertContext from '~/services/state-manager/alerts'
@@ -149,19 +150,7 @@ const AlertsDetailsPage = () => {
           <PageContent className="border-b border-gray-light">
             {currentServer ? (
               <div className="w-full flex items-center gap-4 mb-10">
-                <div className="flex items-center justify-center w-16 h-16 rounded-full border border-gray-light">
-                  <DatabaseIcons
-                    name={currentServer.type.typeServerName}
-                    className="w-9 h-9"
-                  />
-                </div>
-                <div>
-                  <h4 className="heading-md">{currentServer.serverName}</h4>
-                  <p className="text-sm">
-                    4 GB Memory / 2 Intel vCPUs / 50 GB Disk + 25 GB / NYC1 -
-                    Plesk 18.0 on Ubuntu 20.04{' '}
-                  </p>
-                </div>
+                <ServerInfo currentServer={currentServer} />
               </div>
             ) : (
               <></>

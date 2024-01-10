@@ -1,8 +1,6 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 
-import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import moment from 'moment'
 import { useRouter } from 'next/router'
 import { useCallback, useEffect, useState } from 'react'
@@ -10,12 +8,12 @@ import { toast } from 'react-toastify'
 
 import { ApexChart, defaultChartOptions } from '~/components/chart'
 import Loading from '~/components/loading/loading'
-import Reveal from '~/helpers/reveal'
+import { GenericTable } from '~/components/table/genericTable'
 import { useSingleDashboard } from '~/hooks/index'
 import useLogContext from '~/services/state-manager/logs'
 import { colors } from '~/utils/color'
 
-import { SessionQuery } from './SessionQuery'
+// import { SessionQuery } from './SessionQuery'
 
 export const TemporaryDBSession = () => {
   const { currentServer } = useSingleDashboard()
@@ -24,7 +22,7 @@ export const TemporaryDBSession = () => {
   const { getTempDbSession } = useLogContext()
 
   const [data, setData] = useState()
-  const [activeRowIndex, setActiveRowIndex] = useState(-1)
+  // const [activeRowIndex, setActiveRowIndex] = useState(-1)
   const [loading, setLoading] = useState(false)
 
   const fetchData = useCallback(async () => {
@@ -71,7 +69,7 @@ export const TemporaryDBSession = () => {
         </div>
       ) : (
         <>
-          <div className="bg-white min-h-96 p-10">
+          <div className="bg-white min-h-96 ">
             <ApexChart
               type="scatter"
               series={dataTransformed.map((item) => {
@@ -105,20 +103,20 @@ export const TemporaryDBSession = () => {
             />
           </div>
           <div className="prose prose-thead:bg-gray-light max-w-full prose-th:capitalize prose-th:border-b-0 prose-tr:border-gray-light prose-td:text-[11px] prose-th:whitespace-nowrap prose-td:whitespace-nowrap prose-th:px-2 prose-th:h-[35px] prose-th:text-xs prose-tr:cursor-pointer overflow-x-hidden">
-            <table className="m-0 py-4 prose-tr:last:!border-b overflow-x-hidden">
+            <GenericTable data={dataTransformed} />
+
+            {/* {  <table className="m-0 py-4 prose-tr:last:!border-b overflow-x-hidden">
               <thead>
                 <tr>
                   <th>Session</th>
                   <th>Login time</th>
                   <th>Login</th>
-                  {/* <th>Host</th> */}
                   <th>Database</th>
                   <th>Program name</th>
                   <th>User allocations</th>
                   <th>User deallocations</th>
                   <th>Internal allocations</th>
                   <th>Internal deallocations</th>
-                  {/* <th>User deferred</th> */}
                   <th>Total net</th>
                 </tr>
               </thead>
@@ -274,7 +272,7 @@ export const TemporaryDBSession = () => {
                   </>
                 ))}
               </tbody>
-            </table>
+            </table>} */}
           </div>
         </>
       )}
