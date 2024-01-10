@@ -69,7 +69,7 @@ const SingleDashboard = () => {
     },
     {
       key: '1',
-      label: 'Tuning Advisor',
+      label: 'Query Window',
       children: <QueryWindow currentServer={currentServer} />,
     },
     {
