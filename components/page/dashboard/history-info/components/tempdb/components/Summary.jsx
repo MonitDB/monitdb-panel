@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/label-has-associated-control */
+import { Input } from 'antd'
 import { useRouter } from 'next/router'
 import { useCallback, useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
@@ -108,7 +110,7 @@ export const TemporaryDBSummary = () => {
               }}
             >
               <label>
-                <input
+                <Input
                   style={{ margin: '0 0 0 5px' }}
                   type="checkbox"
                   checked={showUsage}
@@ -117,7 +119,7 @@ export const TemporaryDBSummary = () => {
                 <span style={{ margin: '0 0 0 5px' }}>Show Usage</span>
               </label>
               <label>
-                <input
+                <Input
                   type="checkbox"
                   checked={showAllocatedSpace}
                   onChange={() => setShowAllocatedSpace(!showAllocatedSpace)}
@@ -127,7 +129,7 @@ export const TemporaryDBSummary = () => {
                 </span>
               </label>
               <label>
-                <input
+                <Input
                   style={{ margin: '0 0 0 5px' }}
                   type="checkbox"
                   checked={showAvailableSpace}

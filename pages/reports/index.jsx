@@ -1,5 +1,6 @@
 import { faDatabase } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { Input } from 'antd'
 import { NextSeo } from 'next-seo'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
@@ -73,7 +74,7 @@ const AlertsPage = () => {
               onSubmit={handleSubmit}
             >
               <div className="relative">
-                <input
+                <Input
                   type="text"
                   name="search"
                   className="w-full pl-8 pr-20 h-20 shadow-md bg-white leading-10 rounded outline-none text-lg"

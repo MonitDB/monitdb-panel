@@ -1,5 +1,6 @@
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { Input } from 'antd'
 import classNames from 'classnames'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 
@@ -92,7 +93,7 @@ const Selector = ({
                 'transition-all duration-150 ease-in-out lg:hover:bg-gray-light lg:hover:bg-opacity-50'
               )}
             >
-              <input
+              <Input
                 type="checkbox"
                 name={name}
                 value={value}

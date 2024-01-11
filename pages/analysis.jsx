@@ -210,6 +210,10 @@ const AnalysisPage = () => {
                   <Form.Item
                     label="Period"
                     name="rangeDate"
+                    initialValue={[
+                      dayjs(new Date().setHours(new Date().getHours() - 1)),
+                      dayjs(),
+                    ]}
                     rules={[
                       { required: true, message: 'Pick the range of date' },
                     ]}

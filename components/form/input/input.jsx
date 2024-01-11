@@ -18,7 +18,7 @@ const Input = ({
   }, [defaultValue])
 
   return (
-    <input
+    <Input
       ref={inputReference}
       type={type}
       className={classNames(

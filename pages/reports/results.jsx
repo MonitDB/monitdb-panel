@@ -1,12 +1,12 @@
 /* eslint-disable unicorn/prefer-number-properties */
 /* eslint-disable jsx-a11y/anchor-is-valid */
+import { Select } from 'antd'
 import classNames from 'classnames'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
 import ExportButton from '~/components/export-button'
-import { Select } from '~/components/form'
 import Link from '~/components/link'
 import Loading from '~/components/loading'
 import {
@@ -147,8 +147,11 @@ const ResultReportsPage = () => {
             <form className="w-full flex flex-col space-y-4 xl:space-x-4 xl:space-y-0 xl:flex-row">
               <Select
                 name="servers"
-                containerClass="w-full md:w-1/3 bg-white border-white md:min-w-1/3"
+                className="w-full md:w-1/3 md:min-w-1/3"
                 options={serversOptions}
+                showSearch
+                placeholder="Select a server"
+                optionFilterProp="label"
                 value={
                   isNaN(Number.parseInt(router?.query?.server, 10))
                     ? '-1'
@@ -182,11 +185,7 @@ const ResultReportsPage = () => {
                       <h3 className="mb-5 heading-md md:mb-0">{name}</h3>
                     </header>
                     <>
-                      {data.length > 0 ? (
-                        <GenericTable data={data} />
-                      ) : (
-                        'No Data'
-                      )}
+                      <GenericTable data={data} />
                     </>
                     <br />
                   </>

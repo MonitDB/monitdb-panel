@@ -1,5 +1,6 @@
 import { faDatabase } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { Input } from 'antd'
 import { NextSeo } from 'next-seo'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { toast } from 'react-toastify'
@@ -102,7 +103,7 @@ const AlertsPage = () => {
               onSubmit={handleSubmit}
             >
               <div className="relative">
-                <input
+                <Input
                   type="text"
                   name="search"
                   className="w-full pl-8 pr-20 h-20 shadow-md bg-white leading-10 rounded outline-none text-lg"
@@ -136,7 +137,7 @@ const AlertsPage = () => {
                       >
                         <Link
                           href={`/alerts/results/?server=${id}`}
-                          className="relative block p-4 pr-14 border border-gray border-opacity-50 transition-all duration-200 ease-in-out bg-white lg:group-hover:bg-gray lg:group-hover:bg-opacity-25 lg:group-hover:border-opacity-25"
+                          className="relative block p-4 pr-14 border border-gray border-opacity-50 transition-all duration-200 ease-in-out bg-white lg:group-hover:bg-gray lg:group-hover:bg-opacity-25 lg:group-hover:border-opacity-25 "
                         >
                           <h4 className="flex items-center text-sm space-x-2">
                             <FontAwesomeIcon

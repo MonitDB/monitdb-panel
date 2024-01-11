@@ -1,5 +1,6 @@
 import { faCheck } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { Input } from 'antd'
 import classNames from 'classnames'
 import React, { useCallback, useEffect, useRef } from 'react'
 
@@ -25,7 +26,7 @@ const Checkbox = ({ className, defaultValue, onChange, ...properties }) => {
 
   return (
     <div className={classNames(styles.checkbox, className)}>
-      <input
+      <Input
         ref={elementReference}
         type="checkbox"
         onChange={handleChange}

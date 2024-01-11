@@ -1,6 +1,6 @@
 import { faClose } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Button } from 'antd'
+import { Button, Input } from 'antd'
 import { Select } from 'antd'
 import classNames from 'classnames'
 import { useFormik } from 'formik'
@@ -141,7 +141,7 @@ const MetricsModal = ({ onClose, serverId, parameterId }) => {
                 >
                   Alert Name
                 </label>
-                <input
+                <Input
                   type="text"
                   name="alertName"
                   className="w-full px-4 h-10 border border-gray-light leading-10 rounded outline-none text-sm lg:w-2/3"
@@ -158,7 +158,7 @@ const MetricsModal = ({ onClose, serverId, parameterId }) => {
                 >
                   Procedure Name
                 </label>
-                <input
+                <Input
                   type="text"
                   name="procedureName"
                   className="w-full px-4 h-10 border border-gray-light bg-white leading-10 rounded outline-none text-sm lg:w-2/3"
@@ -193,7 +193,7 @@ const MetricsModal = ({ onClose, serverId, parameterId }) => {
                 >
                   Start Hour Execution
                 </label>
-                <input
+                <Input
                   type="number"
                   name="hourStartExecution"
                   className="w-full px-4 h-10 border border-gray-light bg-white leading-10 rounded outline-none text-sm"
@@ -207,7 +207,7 @@ const MetricsModal = ({ onClose, serverId, parameterId }) => {
                 <label className="w-full font-bold" htmlFor="hourEndExecution">
                   End Hour Execution
                 </label>
-                <input
+                <Input
                   type="number"
                   name="hourEndExecution"
                   className="w-full px-4 h-10 border border-gray-light bg-white leading-10 rounded outline-none text-sm"
@@ -241,7 +241,7 @@ const MetricsModal = ({ onClose, serverId, parameterId }) => {
                 >
                   Parameter Value
                 </label>
-                <input
+                <Input
                   type="number"
                   name="parameterValue"
                   className="w-full px-4 h-10 border border-gray-light bg-white leading-10 rounded outline-none text-sm lg:w-2/3"
@@ -259,7 +259,7 @@ const MetricsModal = ({ onClose, serverId, parameterId }) => {
                 >
                   Metric Description
                 </label>
-                <input
+                <Input
                   type="text"
                   name="metricDescription"
                   className="w-full px-4 h-10 border border-gray-light bg-white leading-10 rounded outline-none text-sm lg:w-2/3"
@@ -277,7 +277,7 @@ const MetricsModal = ({ onClose, serverId, parameterId }) => {
                 >
                   Parameter Value 2
                 </label>
-                <input
+                <Input
                   type="number"
                   name="parameterValue2"
                   className="w-full px-4 h-10 border border-gray-light bg-white leading-10 rounded outline-none text-sm lg:w-2/3"
@@ -295,7 +295,7 @@ const MetricsModal = ({ onClose, serverId, parameterId }) => {
                 >
                   Metric Description 2
                 </label>
-                <input
+                <Input
                   type="text"
                   name="metricDescription2"
                   className="w-full px-4 h-10 border border-gray-light bg-white leading-10 rounded outline-none text-sm lg:w-2/3"

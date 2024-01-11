@@ -1,7 +1,7 @@
 /* eslint-disable sonarjs/cognitive-complexity */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
-import { Button } from 'antd'
+import { Button, Input } from 'antd'
 import { NextSeo } from 'next-seo'
 import React, { useEffect, useState } from 'react'
 
@@ -183,7 +183,7 @@ export default function UpdateNewVersion() {
                   className="cursor-pointer bg-white border border-gray-300 py-2 px-4 rounded-md shadow-md flex items-center"
                 >
                   <span className="mr-2">Upload SQL File</span>
-                  <input
+                  <Input
                     id="fileInput"
                     type="file"
                     accept=".sql"

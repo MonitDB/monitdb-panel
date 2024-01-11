@@ -5,7 +5,7 @@
 /* eslint-disable sonarjs/no-duplicate-string */
 import { faSave } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Button } from 'antd'
+import { Button, Input } from 'antd'
 import { useFormik } from 'formik'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
@@ -135,14 +135,14 @@ const EditProfilePage = () => {
                     >
                       Profile Name:
                     </label>
-                    <input
+                    <Input
                       type="text"
                       id="roleName"
                       name="roleName"
                       value={formik.values.roleName}
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
-                      className="mt-1 p-2 border rounded-md w-full"
+                      className="w-full"
                     />
                     {formik.touched.roleName && formik.errors.roleName && (
                       <div className="text-red-500">
@@ -180,7 +180,7 @@ const EditProfilePage = () => {
                     <div className="mt-2">
                       {permissions.map((permission) => (
                         <div key={permission.id} className="flex items-center">
-                          <input
+                          <Input
                             type="checkbox"
                             id={`permission-${permission.id}`}
                             name={`permissions[${permission.id}]`}

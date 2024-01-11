@@ -14,7 +14,7 @@ const AceEditor = dynamic(
   { ssr: false }
 )
 
-import { Button } from 'antd'
+import { Button, Input } from 'antd'
 import { Select } from 'antd'
 
 import Grid from '~/components/grid'
@@ -143,7 +143,7 @@ const MetricsModal = ({ onClose, componentId }) => {
                 >
                   Code
                 </label>
-                <input
+                <Input
                   type="text"
                   name="componentCode"
                   className="w-full px-4 h-10 border border-gray-light leading-10 rounded outline-none text-sm lg:w-2/3"
