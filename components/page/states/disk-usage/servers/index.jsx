@@ -2,123 +2,71 @@
 /* eslint-disable no-console */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable sonarjs/cognitive-complexity */
-import { faChevronDown } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import classNames from 'classnames'
-import React, { useCallback, useEffect, useState } from 'react'
+
+import { Collapse, Table } from 'antd'
+import React, { useEffect, useState } from 'react'
 import { Pie } from 'react-chartjs-2'
 
 import { getPieChartData } from '~/components/cards/server/server'
-import Link from '~/components/link'
-import Reveal from '~/helpers/reveal'
 import { megaBytesToGigaBytes } from '~/utils/formats'
 
 const Servers = ({ environmentServers, diskUsage, expand }) => {
   const [serverExpandedIndices, setServerExpandedIndices] = useState(new Set())
 
-  const handleServerExpandedIndices = useCallback(
-    (index) => {
-      const indices = new Set(serverExpandedIndices)
-
-      if (indices.has(index)) {
-        indices.delete(index)
-      } else {
-        indices.add(index)
-      }
-
-      setServerExpandedIndices(indices)
-    },
-    [serverExpandedIndices]
-  )
-
   useEffect(() => {
     if (expand) {
-      const allEnvironmentIndices = environmentServers.map((_, index) => index)
-      setServerExpandedIndices(new Set(allEnvironmentIndices))
+      const allEnvironmentIndices = environmentServers.map(
+        (_, index) => `${index}`
+      )
+      console.log(allEnvironmentIndices)
+      setServerExpandedIndices(allEnvironmentIndices)
+    } else {
+      setServerExpandedIndices([])
     }
   }, [expand])
 
   return (
     <div className="p-3 pb-0 space-y-3">
-      {environmentServers.map(({ id, serverName }, index) => {
-        const filteredDiskUsage = []
+      <Collapse
+        activeKey={serverExpandedIndices}
+        items={environmentServers
+          .map(({ id, serverName }, index) => {
+            const filteredDiskUsage = []
 
-        for (let disk of diskUsage) {
-          if (id === disk.ServerId) {
-            filteredDiskUsage.push({
-              ...disk,
-              serverName,
-            })
-          }
-        }
+            for (let disk of diskUsage) {
+              if (id === disk.ServerId) {
+                filteredDiskUsage.push({
+                  ...disk,
+                  serverName,
+                })
+              }
+            }
 
-        if (filteredDiskUsage.length === 0) {
-          return ''
-        }
-        return (
-          <div key={`environment-server-${index}`}>
-            <button
-              type="button"
-              className={classNames(
-                `w-full py-2 px-4 bg-white border space-x-4
-                        rounded-sm font-bold text-left text-sm lg:hover:border-gray`,
-                {
-                  'border-gray': serverExpandedIndices.has(index),
-                  'border-gray-light': !serverExpandedIndices.has(index),
-                }
-              )}
-              onClick={() => handleServerExpandedIndices(index)}
-            >
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                }}
-              >
-                <FontAwesomeIcon
-                  icon={faChevronDown}
-                  style={{ marginRight: '10px' }}
-                  className={classNames(
-                    'transition-all duration-300 ease-in-out transform',
-                    {
-                      'rotate-180': serverExpandedIndices.has(index),
-                    }
-                  )}
-                />
-                <div
-                  style={{
-                    display: 'inline',
-                    marginRight: '10px',
-                    width: '120px',
-                  }}
-                >
-                  {serverName}
-                </div>
-                <div style={{ transform: 'translateY(-6px)' }}>
-                  {filteredDiskUsage.map((disk, index) => {
-                    return (
-                      <>
+            return {
+              key: index,
+              label: (
+                <>
+                  {' '}
+                  <div>
+                    <div className="flex items-center">
+                      <div style={{ marginRight: '50px' }}>{serverName}</div>
+                      {filteredDiskUsage.map((disk, index) => (
                         <div
+                          key={index}
                           style={{
-                            display: 'inline',
+                            display: 'flex',
+                            alignItems: 'center',
+                            marginRight: '15px',
                           }}
                         >
-                          <div
-                            style={{
-                              display: 'inline',
-                              marginRight: '5px',
-                            }}
-                            key={index}
-                          >
-                            {disk.Drive}
-                          </div>
+                          <div style={{ marginRight: '5px' }}>{disk.Drive}</div>
                           <div
                             style={{
                               width: '30px',
                               height: '30px',
                               display: 'inline-block',
-                              marginRight: '25px',
-                              transform: 'translateY(10px)',
+                              marginRight: '5px',
+                              transform: 'translateY(-0px)',
                             }}
                           >
                             <Pie
@@ -132,66 +80,63 @@ const Servers = ({ environmentServers, diskUsage, expand }) => {
                             />
                           </div>
                         </div>
-                      </>
-                    )
-                  })}
-                </div>
-              </div>
-            </button>
-
-            <Reveal active={serverExpandedIndices.has(index)}>
-              <div className="w-full mt-3 prose max-w-full prose-p:m-0 prose-th:text-center prose-td:text-center prose-td:align-top prose-th:whitespace-nowrap prose-th:border-b-4 prose-headings:m-0 prose-td:whitespace-nowrap prose-td:text-ellipsis prose-td:overflow-hidden bg-white p-4 space-y-2">
-                <table className="m-0">
-                  <thead>
-                    <tr>
-                      <th>Disk</th>
-                      <th>Used space</th>
-                      <th>Capacity</th>
-                      <th>Used Percentage</th>
-                      <th>Free Space</th>
-                      <th>Free Space (%)</th>
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    {filteredDiskUsage.map((disk, index) => {
-                      const usage = disk['Usage(MB)']
-                      const total = disk['Total(MB)']
-
-                      const free = disk['Free(MB)']
-                      const freePercentage = disk['Free(%)']
-                      const usedPercentage = disk['Usage(%)']
-
-                      return (
-                        <tr key={`server-production-${index}`}>
-                          <td>
-                            <p>
-                              <Link
-                                href="/states/?tab=disk-usage"
-                                className="text-blue no-underline"
-                              >
-                                {disk.Drive}
-                              </Link>
-                            </p>
-                          </td>
-                          <td>{megaBytesToGigaBytes(usage)} GB</td>
-                          <td>
-                            {megaBytesToGigaBytes(total)}
-                            GB
-                          </td>
-                          <td>{usedPercentage}%</td>
-                          <td>{megaBytesToGigaBytes(free)} GB</td>
-                          <td>{freePercentage}%</td>
-                        </tr>
-                      )
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            </Reveal>
-          </div>
-        )
-      })}
+                      ))}
+                    </div>
+                  </div>
+                </>
+              ),
+              children: (
+                <Table
+                  size="small"
+                  pagination={false}
+                  dataSource={filteredDiskUsage}
+                  columns={[
+                    { dataIndex: 'Drive', title: 'Drive' },
+                    {
+                      dataIndex: 'Usage(MB)',
+                      title: 'Used Space',
+                      render: (value) => {
+                        return <div>{megaBytesToGigaBytes(value)} GB</div>
+                      },
+                    },
+                    {
+                      dataIndex: 'Free(MB)',
+                      title: 'Free Space',
+                      render: (value) => {
+                        return <div>{megaBytesToGigaBytes(value)} GB</div>
+                      },
+                    },
+                    {
+                      dataIndex: 'Total(MB)',
+                      title: 'Capacity',
+                      render: (value) => {
+                        return <div>{megaBytesToGigaBytes(value)} GB</div>
+                      },
+                    },
+                    {
+                      dataIndex: 'Free(%)',
+                      title: 'Free Space %',
+                      render: (value) => {
+                        return <div>{value}%</div>
+                      },
+                    },
+                    {
+                      dataIndex: 'Usage(%)',
+                      title: 'Used Space %',
+                      render: (value) => {
+                        return <div>{value}%</div>
+                      },
+                    },
+                  ]}
+                />
+              ),
+            }
+          })
+          .filter((item) => item.children)}
+        onChange={(selectedKeys) => {
+          setServerExpandedIndices(selectedKeys)
+        }}
+      />
     </div>
   )
 }

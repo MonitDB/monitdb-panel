@@ -1,7 +1,7 @@
+import { Table } from 'antd'
 import React, { useEffect, useState } from 'react'
 
 import ExportButton from '~/components/export-button'
-import Loading from '~/components/loading'
 import { PageContent } from '~/components/page'
 import useGlobal from '~/hooks/use-global'
 import { getSqlServerLicensing } from '~/services/states'
@@ -61,59 +61,20 @@ const SqlServerLicensing = ({ tabName }) => {
             />
           </header>
 
-          <div className="-mx-4 py-4 px-8 bg-white md:-mx-6">
-            {isLoading ? (
-              <Loading />
-            ) : (
-              <table className="m-0">
-                <thead>
-                  <tr>
-                    <th>Server Name</th>
-                    <th>Processors</th>
-                    <th>Cores</th>
-                    <th>Logic Processors</th>
-                    <th>License req</th>
-                    <th>Always on</th>
-                    <th>SQL Instance</th>
-                    <th>Version</th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  {servers.map(({ id, serverName }) => {
-                    const filteredSqlServerLicensing =
-                      sqlServerLicensing.filter(
-                        ({ ServerId }) => ServerId === id
-                      )
-
-                    if (filteredSqlServerLicensing.length === 0) {
-                      return ''
-                    }
-
-                    return filteredSqlServerLicensing.map(
-                      (licensing, index) => (
-                        <tr key={`server-item-${id}-${index}`}>
-                          <td>
-                            <span className="rounded py-px px-1 text-xs bg-blue text-white">
-                              VM
-                            </span>{' '}
-                            <strong>{serverName}</strong>
-                          </td>
-                          <td>{licensing['Processadores']}</td>
-                          <td>{licensing['Cores por Processador']}</td>
-                          <td>{licensing['Processadores Logicos']}</td>
-                          <td>{licensing['Licenças Requeridas']}</td>
-                          <td>{licensing['Always On']}</td>
-                          <td>{licensing['InstanciaSQL'] ?? 'null'}</td>
-                          <td>{licensing['Version']}</td>
-                        </tr>
-                      )
-                    )
-                  })}
-                </tbody>
-              </table>
-            )}
-          </div>
+          <Table
+            loading={isLoading}
+            dataSource={sqlServerLicensing}
+            pagination={false}
+            columns={[
+              { dataIndex: 'Server Name', title: 'Server Name' },
+              { dataIndex: 'processors', title: 'Processors' },
+              { dataIndex: 'coresPerProcessors', title: 'Cores' },
+              { dataIndex: 'license', title: 'Licence' },
+              { dataIndex: 'alwaysOn', title: 'Always On' },
+              // { dataIndex: 'SQLInstance', title: 'SQL Instance' },
+              { dataIndex: 'version', title: 'Version' },
+            ]}
+          />
         </div>
       </PageContent>
     </>

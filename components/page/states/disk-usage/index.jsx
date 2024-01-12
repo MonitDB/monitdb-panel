@@ -1,8 +1,5 @@
 /* eslint-disable sonarjs/no-duplicate-string */
-import { faChevronDown } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Button, Col, Row } from 'antd'
-import classNames from 'classnames'
+import { Button, Col, Collapse, Row } from 'antd'
 import React, { useCallback, useEffect, useState } from 'react'
 
 import ExportButton from '~/components/export-button'
@@ -24,20 +21,6 @@ const DiskUsage = ({ tabName }) => {
   const {
     globalState: { servers, serverTypes, serverEnvironments },
   } = useGlobal()
-
-  const handleEnvironmentExpandedIndices = useCallback(
-    (index) => {
-      const indices = new Set(environmentExpandedIndices)
-      if (indices.has(index)) {
-        indices.delete(index)
-      } else {
-        indices.add(index)
-      }
-
-      setEnvironmentExpandedIndices(indices)
-    },
-    [environmentExpandedIndices]
-  )
 
   const getData = async () => {
     const { data } = await getDiskUsage()
@@ -74,7 +57,7 @@ const DiskUsage = ({ tabName }) => {
                     type="dashed"
                     disabled={isLoading}
                     onClick={() => {
-                      setEnvironmentExpandedIndices(new Set())
+                      setEnvironmentExpandedIndices([])
 
                       setTimeout(() => {
                         setExpand(false)
@@ -92,9 +75,7 @@ const DiskUsage = ({ tabName }) => {
                       const allEnvironmentIndices = serverEnvironments.map(
                         (_, index) => index
                       )
-                      setEnvironmentExpandedIndices(
-                        new Set(allEnvironmentIndices)
-                      )
+                      setEnvironmentExpandedIndices(allEnvironmentIndices)
                       setExpand(true)
                     }}
                   >
@@ -120,75 +101,35 @@ const DiskUsage = ({ tabName }) => {
             <Loading />
           ) : (
             <div className="space-y-3">
-              {servers?.length
-                ? serverEnvironments.map(
+              <Collapse
+                activeKey={environmentExpandedIndices}
+                items={serverEnvironments
+                  ?.map(
                     ({ id, typeServerEnvironmentName }, environmentIndex) => {
                       const environmentServers = filterServersByEnvironmentId(
                         id,
                         servers
                       ).map((server) => formatServer(server, { serverTypes }))
-
-                      if (environmentServers.length === 0) return
-
-                      return (
-                        <div
-                          key={`environment-${id}-${environmentIndex}-`}
-                          className="w-full"
-                        >
-                          <button
-                            type="button"
-                            className={classNames(
-                              `w-full py-2 px-4 bg-white border space-x-4
-                    rounded-sm font-bold text-left text-sm lg:hover:border-gray`,
-                              {
-                                'border-gray':
-                                  environmentExpandedIndices.has(
-                                    environmentIndex
-                                  ),
-                                'border-gray-light':
-                                  !environmentExpandedIndices.has(
-                                    environmentIndex
-                                  ),
-                              }
-                            )}
-                            onClick={() =>
-                              handleEnvironmentExpandedIndices(environmentIndex)
-                            }
-                          >
-                            <FontAwesomeIcon
-                              icon={faChevronDown}
-                              className={classNames('transform', {
-                                'rotate-180':
-                                  environmentExpandedIndices.has(
-                                    environmentIndex
-                                  ),
-                              })}
-                            />
+                      if (environmentServers.length === 0) return {}
+                      return {
+                        key: `${environmentIndex}`,
+                        label: (
+                          <div className="flex items-center">
                             <span>{typeServerEnvironmentName}</span>
-                          </button>
-                          <div
-                            className={classNames({
-                              block:
-                                environmentExpandedIndices.has(
-                                  environmentIndex
-                                ),
-                              hidden:
-                                !environmentExpandedIndices.has(
-                                  environmentIndex
-                                ),
-                            })}
-                          >
-                            <Servers
-                              environmentServers={environmentServers}
-                              diskUsage={diskUsage}
-                              expand={expand}
-                            />
                           </div>
-                        </div>
-                      )
+                        ),
+                        children: (
+                          <Servers
+                            environmentServers={environmentServers}
+                            diskUsage={diskUsage}
+                            expand={expand}
+                          />
+                        ),
+                      }
                     }
                   )
-                : undefined}
+                  .filter((item) => item.children)}
+              />
             </div>
           )}
         </div>
