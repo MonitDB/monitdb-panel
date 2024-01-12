@@ -1,3 +1,4 @@
+import { Input as AntdInput } from 'antd'
 import classNames from 'classnames'
 import React from 'react'
 import { useEffect, useRef } from 'react'
@@ -18,7 +19,7 @@ const Input = ({
   }, [defaultValue])
 
   return (
-    <Input
+    <AntdInput
       ref={inputReference}
       type={type}
       className={classNames(
