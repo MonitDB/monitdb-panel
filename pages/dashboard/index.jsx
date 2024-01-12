@@ -1,10 +1,6 @@
-import {
-  faChevronDown,
-  faMagnifyingGlass,
-} from '@fortawesome/free-solid-svg-icons'
+import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Button, Input } from 'antd'
-import classNames from 'classnames'
+import { Button, Collapse, Input } from 'antd'
 import {
   HOUR,
   MINUTE,
@@ -13,7 +9,7 @@ import {
 } from 'const/time'
 import { useFormik } from 'formik'
 import { NextSeo } from 'next-seo'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 
 import ServerCard from '~/components/cards/server'
 import { Select } from '~/components/form'
@@ -21,7 +17,6 @@ import Selector from '~/components/form/selector'
 import Loading from '~/components/loading'
 import { PageContent, PageSidebar, PageWrapper } from '~/components/page'
 import LatestAlertsSidebar from '~/components/sidebar/latest-alerts'
-import Reveal from '~/helpers/reveal'
 import useGlobal from '~/hooks/use-global'
 import Layout from '~/layouts/default'
 import { filterServersByEnvironmentId, formatServer } from '~/utils/server'
@@ -92,21 +87,6 @@ const DashboardPage = () => {
               .length,
           0
         ),
-    [formattedEnvironments]
-  )
-
-  const toggleIndexActive = useCallback(
-    (index) => {
-      setFormattedEnvironments([
-        ...formattedEnvironments.map((environment, environmentIndex) => ({
-          ...environment,
-          isDropdownActive:
-            environmentIndex === index
-              ? !environment.isDropdownActive
-              : environment.isDropdownActive,
-        })),
-      ])
-    },
     [formattedEnvironments]
   )
 
@@ -241,7 +221,54 @@ const DashboardPage = () => {
 
               <PageContent hideBreadcrumbs={true}>
                 <div className="w-full space-y-5">
-                  {formattedEnvironments
+                  <Collapse
+                    size="small"
+                    bordered={false}
+                    defaultActiveKey={formattedEnvironments
+                      .filter(({ isActive }) => isActive)
+                      .map((_, index) => `${index}`)}
+                    items={formattedEnvironments
+                      .filter(({ isActive }) => isActive)
+                      .map((formattedEnvironment, environmentIndex) => {
+                        if (formattedEnvironment.servers.length === 0) {
+                          return
+                        }
+                        return {
+                          key: environmentIndex,
+                          label: (
+                            <div className="flex items-center">
+                              <span className="mr-2">
+                                {environmentIndex + 1} -{' '}
+                                {formattedEnvironment.typeServerEnvironmentName}{' '}
+                                ({formattedEnvironment.servers.length})
+                              </span>
+                            </div>
+                          ),
+                          children: (
+                            <div className="flex flex-wrap py-2 gap-y-4 md:py-4">
+                              {formattedEnvironment.servers
+                                .filter(({ isActive }) => isActive)
+                                .map((server, index) => {
+                                  return (
+                                    <div
+                                      key={index}
+                                      style={{ marginRight: '15px' }}
+                                    >
+                                      <ServerCard
+                                        key={`server-production-${index}`}
+                                        className="w-full mb-4 md:mb-0 m:10"
+                                        {...server}
+                                      />
+                                    </div>
+                                  )
+                                })}
+                            </div>
+                          ),
+                        }
+                      })
+                      .filter((item) => item?.children)}
+                  />
+                  {/* {formattedEnvironments
                     .filter(({ isActive }) => isActive)
                     .map((formattedEnvironment, environmentIndex) => {
                       const formattedServers =
@@ -306,7 +333,7 @@ const DashboardPage = () => {
                           </Reveal>
                         </div>
                       )
-                    })}
+                    })} */}
                 </div>
               </PageContent>
             </>

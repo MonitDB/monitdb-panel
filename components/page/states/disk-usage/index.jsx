@@ -1,6 +1,6 @@
 /* eslint-disable sonarjs/no-duplicate-string */
 import { Button, Col, Collapse, Row } from 'antd'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import ExportButton from '~/components/export-button'
 import Loading from '~/components/loading'
