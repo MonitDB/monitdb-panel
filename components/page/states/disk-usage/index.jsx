@@ -129,6 +129,9 @@ const DiskUsage = ({ tabName }) => {
                     }
                   )
                   .filter((item) => item.children)}
+                onChange={(selectedKeys) => {
+                  setEnvironmentExpandedIndices(selectedKeys)
+                }}
               />
             </div>
           )}
