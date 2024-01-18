@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 
-import { Tabs } from 'antd'
+import { Col, Row, Tabs } from 'antd'
 import classNames from 'classnames'
 import faker from 'faker'
 import { useRouter } from 'next/router'
@@ -54,9 +54,7 @@ const SingleDashboard = () => {
   const currentServer = useMemo(() => {
     const server = servers.find((server) => server.id === +router?.query?.id)
 
-    if (!server) {
-      return
-    }
+    if (!server) return
 
     return formatServer(server, { serverTypes })
   }, [servers, serverTypes, router?.query?.id])
@@ -83,6 +81,25 @@ const SingleDashboard = () => {
       children: <TuningAdvisor currentServer={currentServer} />,
     },
   ]
+
+  if (!currentServer) {
+    return (
+      <Layout>
+        <PageWrapper>
+          <LatestAlertsSidebar />
+          <NextSeo title="Dashboard - MonitDB" />
+          <PageSidebar></PageSidebar>
+          <PageContent hideBreadcrumbs={true}>
+            <Row>
+              <Col span={24}>
+                <h1>Server Not Found</h1>
+              </Col>
+            </Row>
+          </PageContent>
+        </PageWrapper>
+      </Layout>
+    )
+  }
 
   return (
     <SingleDashboardContextProvider>

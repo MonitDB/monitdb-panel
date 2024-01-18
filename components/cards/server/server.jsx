@@ -20,8 +20,16 @@ import { SERVER_STATUS } from '~/utils/server'
 ChartJS.register(ArcElement, Tooltip, Legend)
 
 const Style = styled.div`
-  div.antd-card-body {
-    padding: 6px;
+  :where(.css-dev-only-do-not-override-rmiond).ant-card .ant-card-body {
+    padding: 0px;
+  }
+
+  .before\:w-1::before {
+    width: 50px;
+  }
+
+  .card-link::before {
+    border-radius: 8px 0 0 8px;
   }
 `
 
@@ -142,14 +150,14 @@ const ServerCard = ({
       >
         <Link
           href={
-            hasPermissions([permission.DASHBOARD_PAGE])
+            hasPermissions([permission.DASHBOARD_PAGE]) && serverEnable
               ? `/dashboard/${id}`
               : '/dashboard'
           }
           className={classNames(
-            `block p-2 h-full relative before:content-[""] before:absolute before:w-1
+            `card-link block p-2 h-full relative before:content-[""] before:absolute before:w-1
             before:top-0 before:left-0 before:h-full lg:p-4 lg:hover:before:w-2
-            before:transition-all before:duration-300 before:ease-in-out`,
+            before:transition-all before:duration-300 before:ease-in-out before:border-radius`,
             {
               'before:bg-danger':
                 metrics?.serverStatus === SERVER_STATUS.CRITICAL,

@@ -1,9 +1,6 @@
 /* eslint-disable no-console */
 /* eslint-disable sonarjs/no-duplicate-string */
-import { faChevronDown } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Button, Col, Row } from 'antd'
-import classNames from 'classnames'
+import { Button, Col, Collapse, Row } from 'antd'
 import React, { useEffect, useState } from 'react'
 import { useCallback } from 'react'
 
@@ -21,26 +18,10 @@ function Jobs() {
     new Set()
   )
   const [expand, setExpand] = useState(false)
-  //   const [modalRundeckJobs, setModalRundeckJobs] = useState({})
 
   const {
     globalState: { servers, serverTypes, serverEnvironments },
   } = useGlobal()
-
-  const handleEnvironmentExpandedIndices = useCallback(
-    (index) => {
-      const indices = new Set(environmentExpandedIndices)
-
-      if (indices.has(index)) {
-        indices.delete(index)
-      } else {
-        indices.add(index)
-      }
-
-      setEnvironmentExpandedIndices(indices)
-    },
-    [environmentExpandedIndices]
-  )
 
   const getData = useCallback(async () => {
     const { data } = await getSqlAgentPRjobs()
@@ -84,9 +65,9 @@ function Jobs() {
                 disabled={isLoading}
                 onClick={() => {
                   const allEnvironmentIndices = serverEnvironments.map(
-                    (_, index) => index
+                    (_, index) => `${index}`
                   )
-                  setEnvironmentExpandedIndices(new Set(allEnvironmentIndices))
+                  setEnvironmentExpandedIndices(allEnvironmentIndices)
                   setExpand(true)
                 }}
               >
@@ -103,89 +84,45 @@ function Jobs() {
             <Loading />
           ) : (
             <div className="space-y-3">
-              {servers?.length
-                ? serverEnvironments.map(
-                    ({ id, typeServerEnvironmentName }, environmentIndex) => {
-                      const filteredServers = filterServersByEnvironmentId(
-                        id,
-                        servers
-                      ).map((server) => formatServer(server, { serverTypes }))
+              <Collapse
+                activeKey={environmentExpandedIndices}
+                onChange={setEnvironmentExpandedIndices}
+                items={serverEnvironments
+                  .map(({ id, typeServerEnvironmentName }, index) => {
+                    const filteredServers = filterServersByEnvironmentId(
+                      id,
+                      servers
+                    ).map((server) => formatServer(server, { serverTypes }))
 
-                      const filteredJobs = []
+                    const filteredJobs = []
 
-                      for (let job of sqlAgentPRjobs) {
-                        const server = filteredServers.find(
-                          ({ id }) => id === job.ServerId
-                        )
-
-                        if (!server) continue
-
-                        filteredJobs.push(job)
-                      }
-
-                      if (filteredJobs.length === 0) {
-                        return ''
-                      }
-
-                      return (
-                        <div
-                          key={`environment-${id}-${environmentIndex}-`}
-                          className="w-full"
-                        >
-                          <button
-                            type="button"
-                            className={classNames(
-                              `w-full py-2 px-4 bg-white border space-x-4
-                  rounded-sm font-bold text-left text-sm lg:hover:border-gray`,
-                              {
-                                'border-gray':
-                                  environmentExpandedIndices.has(
-                                    environmentIndex
-                                  ),
-                                'border-gray-light':
-                                  !environmentExpandedIndices.has(
-                                    environmentIndex
-                                  ),
-                              }
-                            )}
-                            onClick={() =>
-                              handleEnvironmentExpandedIndices(environmentIndex)
-                            }
-                          >
-                            <FontAwesomeIcon
-                              icon={faChevronDown}
-                              className={classNames('transform', {
-                                'rotate-180':
-                                  environmentExpandedIndices.has(
-                                    environmentIndex
-                                  ),
-                              })}
-                            />
-                            <span>{typeServerEnvironmentName}</span>
-                          </button>
-                          <div
-                            className={classNames({
-                              block:
-                                environmentExpandedIndices.has(
-                                  environmentIndex
-                                ),
-                              hidden:
-                                !environmentExpandedIndices.has(
-                                  environmentIndex
-                                ),
-                            })}
-                          >
-                            <Servers
-                              environmentServers={filteredServers}
-                              serversJobs={filteredJobs}
-                              expand={expand}
-                            />
-                          </div>
-                        </div>
+                    for (let job of sqlAgentPRjobs) {
+                      const server = filteredServers.find(
+                        ({ id }) => id === job.ServerId
                       )
+
+                      if (!server) continue
+
+                      filteredJobs.push(job)
                     }
-                  )
-                : undefined}
+
+                    if (filteredJobs.length === 0) {
+                      return {}
+                    }
+                    return {
+                      key: index,
+                      label: typeServerEnvironmentName,
+                      children: (
+                        <Servers
+                          environmentServers={filteredServers}
+                          serversJobs={filteredJobs}
+                          expand={expand}
+                        />
+                      ),
+                    }
+                  })
+                  .filter((item) => item?.children)}
+              />
             </div>
           )}
         </div>

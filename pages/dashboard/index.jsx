@@ -26,6 +26,8 @@ const DashboardPage = () => {
     globalState: { servers, serverTypes, serverEnvironments },
   } = useGlobal()
 
+  const [activeKey, setActiveKey] = useState([])
+
   const [refreshInterval, setRefreshInterval] = useState(HOUR)
 
   useEffect(() => {
@@ -76,19 +78,54 @@ const DashboardPage = () => {
     [formattedEnvironments]
   )
 
-  const totalServers = useMemo(
-    () =>
-      formattedEnvironments
-        // .filter(({ isActive }) => isActive)
-        .reduce(
-          (accumulator, formattedEnvironment) =>
-            accumulator +
-            formattedEnvironment.servers.filter((server) => server.isActive)
-              .length,
-          0
-        ),
-    [formattedEnvironments]
-  )
+  const collapseItems = formattedEnvironments
+    .map((formattedEnvironment, environmentIndex) => {
+      return formattedEnvironment.servers.length > 0 &&
+        formattedEnvironment.isActive
+        ? {
+            key: `${formattedEnvironment.id}`,
+            label: (
+              <div className="flex items-center">
+                <span className="mr-2">
+                  {environmentIndex + 1} -{' '}
+                  {formattedEnvironment.typeServerEnvironmentName} (
+                  {formattedEnvironment.servers.length})
+                </span>
+              </div>
+            ),
+            children: (
+              <div className="flex flex-wrap py-2 gap-y-4 md:py-4">
+                {formattedEnvironment.servers
+                  .filter(({ isActive }) => isActive)
+                  .map((server, index) => (
+                    <div key={index} style={{ marginRight: '15px' }}>
+                      <ServerCard
+                        key={`server-production-${index}`}
+                        className="w-full mb-4 md:mb-0 m:10"
+                        {...server}
+                      />
+                    </div>
+                  ))}
+              </div>
+            ),
+          }
+        : undefined
+    })
+    .filter((item) => item?.children)
+
+  const totalServers = useMemo(() => {
+    formattedEnvironments
+      // .filter(({ isActive }) => isActive)
+      .reduce(
+        (accumulator, formattedEnvironment) =>
+          accumulator +
+          formattedEnvironment.servers.filter((server) => server.isActive)
+            .length,
+        0
+      )
+    setActiveKey(collapseItems.map((item) => item.key))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formattedEnvironments])
 
   useEffect(() => {
     const { environments, str } = formik.values
@@ -114,6 +151,8 @@ const DashboardPage = () => {
         })),
       })),
     ])
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [serverEnvironments, formik.values, hasAnyFilter])
 
   useEffect(() => {
@@ -224,116 +263,10 @@ const DashboardPage = () => {
                   <Collapse
                     size="small"
                     bordered={false}
-                    defaultActiveKey={formattedEnvironments
-                      .filter(({ isActive }) => isActive)
-                      .map((_, index) => `${index}`)}
-                    items={formattedEnvironments
-                      .filter(({ isActive }) => isActive)
-                      .map((formattedEnvironment, environmentIndex) => {
-                        if (formattedEnvironment.servers.length === 0) {
-                          return
-                        }
-                        return {
-                          key: environmentIndex,
-                          label: (
-                            <div className="flex items-center">
-                              <span className="mr-2">
-                                {environmentIndex + 1} -{' '}
-                                {formattedEnvironment.typeServerEnvironmentName}{' '}
-                                ({formattedEnvironment.servers.length})
-                              </span>
-                            </div>
-                          ),
-                          children: (
-                            <div className="flex flex-wrap py-2 gap-y-4 md:py-4">
-                              {formattedEnvironment.servers
-                                .filter(({ isActive }) => isActive)
-                                .map((server, index) => {
-                                  return (
-                                    <div
-                                      key={index}
-                                      style={{ marginRight: '15px' }}
-                                    >
-                                      <ServerCard
-                                        key={`server-production-${index}`}
-                                        className="w-full mb-4 md:mb-0 m:10"
-                                        {...server}
-                                      />
-                                    </div>
-                                  )
-                                })}
-                            </div>
-                          ),
-                        }
-                      })
-                      .filter((item) => item?.children)}
+                    activeKey={activeKey}
+                    items={collapseItems}
+                    onChange={setActiveKey}
                   />
-                  {/* {formattedEnvironments
-                    .filter(({ isActive }) => isActive)
-                    .map((formattedEnvironment, environmentIndex) => {
-                      const formattedServers =
-                        formattedEnvironment.servers.filter(
-                          ({ isActive }) => isActive
-                        )
-
-                      if (formattedServers.length === 0) {
-                        return ''
-                      }
-
-                      return (
-                        <div
-                          key={`server-${formattedEnvironment.idTypeServerEnvironment}-${environmentIndex}`}
-                          className="w-full"
-                        >
-                          <button
-                            type="button"
-                            className={classNames(
-                              `w-full py-2 px-4 bg-white border space-x-4
-                                rounded-sm font-bold text-left text-sm md:w-2/3 lg:hover:border-gray`,
-                              {
-                                'border-gray':
-                                  formattedEnvironment.isDropdownActive,
-                                'border-gray-light':
-                                  !formattedEnvironment.isDropdownActive,
-                              }
-                            )}
-                            onClick={() => {
-                              toggleIndexActive(environmentIndex)
-                            }}
-                          >
-                            <FontAwesomeIcon
-                              icon={faChevronDown}
-                              className={classNames(
-                                'transition-all duration-300 ease-in-out transform',
-                                {
-                                  'rotate-180':
-                                    !formattedEnvironment.isDropdownActive,
-                                }
-                              )}
-                            />
-                            <span>
-                              {environmentIndex + 1} -{' '}
-                              {formattedEnvironment.typeServerEnvironmentName} (
-                              {formattedEnvironment.servers.length})
-                            </span>
-                          </button>
-                          <Reveal
-                            active={formattedEnvironment.isDropdownActive}
-                          >
-                            <div className="flex flex-wrap py-2 gap-y-4 md:py-4">
-                              {formattedServers.map((server, index) => (
-                                <ServerCard
-                                  key={`server-production-${index}`}
-                                  className="w-full mb-4 md:w-72 md:mr-4"
-                                  {...server}
-                                  interval={refreshInterval}
-                                />
-                              ))}
-                            </div>
-                          </Reveal>
-                        </div>
-                      )
-                    })} */}
                 </div>
               </PageContent>
             </>

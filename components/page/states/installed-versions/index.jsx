@@ -1,5 +1,6 @@
-import { faDatabase, faDownload } from '@fortawesome/free-solid-svg-icons'
+import { faDownload } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { Collapse, Table } from 'antd'
 import {
   ArcElement,
   CategoryScale,
@@ -12,7 +13,6 @@ import {
   Tooltip,
 } from 'chart.js'
 import classNames from 'classnames'
-import { format, parseISO } from 'date-fns'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { getElementAtEvent, Pie } from 'react-chartjs-2'
 
@@ -111,7 +111,7 @@ const InstalledVersions = ({ tabName }) => {
 
   const chartPieData = useMemo(() => {
     return {
-      labels: [...groupedVersions.map(({ Version }) => Version)],
+      labels: [...groupedVersions.map(({ version }) => version)],
       datasets: [
         {
           label: '',
@@ -217,58 +217,55 @@ const InstalledVersions = ({ tabName }) => {
                   />
                 </div>
                 <div className="w-full md:w-10/12 md:pl-10">
-                  <table className="prose w-full max-w-full">
-                    <thead>
-                      <tr>
-                        <th>Versions</th>
-                        <th>Last Update</th>
-                        {/* <th>Data de lançamento</th> */}
-                      </tr>
-                    </thead>
-                    <tbody className="text-sm">
-                      {groupedVersions.map(
-                        (
-                          { Version, ProductLevel, LastUpdate, LinkUpdate },
-                          labelIndex
-                        ) => (
-                          <tr key={`label-${labelIndex}`}>
-                            <td>
-                              <div className="w-full flex items-center space-x-2">
-                                <i
-                                  className="w-5 h-5 block"
-                                  style={{
-                                    backgroundColor:
-                                      chartPieData.datasets[0].backgroundColor[
-                                        labelIndex
-                                      ],
-                                  }}
-                                />
-                                <strong>{Version}</strong>
-                              </div>
-                            </td>
-                            <td>
-                              <a
-                                href={LinkUpdate}
-                                className="inline-flex items-center space-x-2 text-blue no-underline"
-                                target="_blank"
-                                rel="noreferrer"
-                              >
-                                <FontAwesomeIcon icon={faDownload} />
-                                <span>
-                                  {ProductLevel} {LastUpdate}
-                                </span>
-                              </a>
-                            </td>
-                            {/* <td>28 Sep 2022</td> */}
-                          </tr>
-                        )
-                      )}
-                    </tbody>
-                  </table>
+                  <Table
+                    size="small"
+                    pagination={false}
+                    dataSource={groupedVersions}
+                    columns={[
+                      {
+                        title: 'Versions',
+                        dataIndex: 'version',
+                        key: 'version',
+                        render: (text, record, index) => (
+                          <div className="w-full flex items-center space-x-2">
+                            <i
+                              className="w-5 h-5 block"
+                              style={{
+                                backgroundColor:
+                                  chartPieData.datasets[0].backgroundColor[
+                                    index
+                                  ],
+                              }}
+                            />
+                            <strong>{text}</strong>
+                          </div>
+                        ),
+                      },
+                      {
+                        title: 'Last Update',
+                        dataIndex: 'lastUpdate',
+                        key: 'lastUpdate',
+                        render: (text, record) => (
+                          <a
+                            href={record.linkUpdate}
+                            className="inline-flex items-center space-x-2 text-blue no-underline"
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            <FontAwesomeIcon icon={faDownload} />
+                            <span>
+                              {record.productLevel} {text}
+                            </span>
+                          </a>
+                        ),
+                      },
+                    ]}
+                    rowKey={(record) => record.version}
+                  />
                 </div>
               </div>
 
-              <div className="w-full prose max-w-full prose-p:m-0 prose-td:align-top prose-th:border-b-4 prose-headings:m-0">
+              <div className="w-full h-100vh prose max-w-full prose-p:m-0 prose-td:align-top prose-th:border-b-4 prose-headings:m-0">
                 <header className="flex flex-col mb-5 md:flex-row md:justify-between md:items-center">
                   <ExportButton
                     className="btn btn--small md:ml-auto"
@@ -279,19 +276,13 @@ const InstalledVersions = ({ tabName }) => {
                 </header>
 
                 <div className="-mx-4 py-4 px-8 bg-white md:-mx-6">
-                  <table className="m-0">
-                    <thead>
-                      <tr>
-                        <th>Name</th>
-                        <th>Versions</th>
-                        {/* <th>Status | Nº da versão</th> */}
-                        <th>Last update available</th>
-                        <th>Main suport expires at</th>
-                      </tr>
-                    </thead>
-
-                    {servers?.length
-                      ? serverEnvironments.map(
+                  {
+                    <Collapse
+                      defaultActiveKey={serverEnvironments.map(
+                        ({ id }) => `${id}`
+                      )}
+                      items={serverEnvironments
+                        .map(
                           (
                             { id, typeServerEnvironmentName },
                             environmentIndex
@@ -317,97 +308,52 @@ const InstalledVersions = ({ tabName }) => {
                               })
                             }
 
-                            if (filteredVersions.length === 0) {
-                              return ''
-                            }
+                            if (filteredVersions.length === 0) return
 
-                            return (
-                              <tbody key={`server-${id}-${environmentIndex}`}>
-                                <tr>
-                                  <td colSpan="5">
-                                    <h3 className="heading-xs pt-5">
-                                      {typeServerEnvironmentName}
-                                    </h3>
-                                  </td>
-                                </tr>
-                                {filteredVersions.map(
-                                  (
+                            return {
+                              key: `${id}`,
+                              label: `${typeServerEnvironmentName}`,
+
+                              className: 'mb-4',
+                              children: (
+                                <Table
+                                  size="small"
+                                  pagination={filteredVersions.length > 10}
+                                  key={`server-${id}-${environmentIndex}`}
+                                  dataSource={filteredVersions}
+                                  columns={[
                                     {
-                                      Server,
-                                      Version,
-                                      Edition,
-                                      SuportEndDate,
-                                      LastUpdate,
-                                      ProductLevel,
-                                      LinkUpdate,
+                                      dataIndex: 'Server Name',
+                                      title: 'Name',
+                                      width: 150,
                                     },
-                                    index
-                                  ) => (
-                                    <tr key={`server-production-${index}`}>
-                                      <td className="border-l-4 border-gray">
-                                        <FontAwesomeIcon
-                                          icon={faDatabase}
-                                          className="mr-2"
-                                        />
-                                        {Server}
-                                      </td>
-                                      <td>
-                                        <p>
-                                          {Version}
-                                          <br />
-                                          <span className="text-xs">
-                                            {Edition}
-                                          </span>
-                                        </p>
-                                      </td>
-                                      {/* <td>
-                                    <div className="w-full flex items-center space-x-4">
-                                      <FontAwesomeIcon
-                                        icon={faUpload}
-                                        className="text-lg text-gray-dark"
-                                      />
-                                      <p>
-                                        RTM CU29, June 14, 2022
-                                        <br />
-                                        <span className="text-xs">
-                                          14.0.3445.2
-                                        </span>
-                                      </p>
-                                    </div>
-                                  </td> */}
-                                      <td>
-                                        <a
-                                          href={LinkUpdate}
-                                          className="inline-flex items-center space-x-2 text-blue no-underline"
-                                          target="_blank"
-                                          rel="noreferrer"
-                                        >
-                                          <FontAwesomeIcon icon={faDownload} />
-                                          <span>
-                                            {ProductLevel} {LastUpdate}
-                                          </span>
-                                        </a>
-                                        {/* <p>
-                                      <span className="text-xs">
-                                        Released 13 days ago on 20 Sep 2022
-                                      </span>
-                                    </p> */}
-                                      </td>
-                                      <td>
-                                        {format(
-                                          parseISO(SuportEndDate),
-                                          'dd MMM yyyy'
-                                        )}
-                                      </td>
-                                    </tr>
-                                  )
-                                )}
-                              </tbody>
-                            )
+                                    {
+                                      dataIndex: 'version',
+                                      title: 'Version',
+                                      width: 150,
+                                    },
+                                    {
+                                      dataIndex: 'supportEndDate',
+                                      title: 'Support End Date',
+                                      width: 150,
+                                    },
+                                    {
+                                      dataIndex: 'productLevel',
+                                      title: 'Product Level',
+                                      width: 150,
+                                    },
+                                  ]}
+                                  onRow={() => ({
+                                    style: { cursor: 'pointer' },
+                                  })}
+                                />
+                              ),
+                            }
                           }
                         )
-                      : undefined}
-                  </table>
+                        .filter((item) => item?.children)}
+                    />
+                  }
                 </div>
               </div>
             </PageContent>
