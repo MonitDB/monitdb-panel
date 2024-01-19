@@ -1,7 +1,7 @@
 /* eslint-disable sonarjs/no-duplicate-string */
 /* eslint-disable react-hooks/exhaustive-deps */
 
-import { Button, Col, DatePicker, Row } from 'antd'
+import { Button, Col, DatePicker, Modal, Row } from 'antd'
 import dayjs from 'dayjs'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
@@ -91,32 +91,21 @@ function DatabaseBackupsModal({ modal, onSetModalData }) {
   const serverName = modal?.serverName
   const databaseName = modal?.databaseName
   return (
-    <div className="fixed flex items-center justify-center top-0 left-0 w-full min-h-full h-250 z-[100]">
-      <button
-        className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50"
-        onClick={() => {
-          onSetModalData({ ...data, isOpen: false })
-        }}
-      />
-      <div className="relative py-10 w-[90%] bg-white">
+    <Modal
+      open={isOpen}
+      title={`${serverName} - ${databaseName}`}
+      width={'90%'}
+      cancelButtonProps={{ style: { display: 'none' } }}
+      onOk={() => onSetModalData({ ...data, isOpen: false })}
+      closable={false}
+    >
+      <div className="relative  bg-white">
         <div className="ml-4 z-[1]">
-          <p>
-            {serverName} - {databaseName}
-          </p>
           <p>
             <strong>Backup History</strong>
           </p>
         </div>
 
-        <button
-          className="w-4 h-4 absolute top-5 right-5 z-[1]"
-          onClick={() => {
-            onSetModalData({ ...data, isOpen: false })
-          }}
-        >
-          <i className="absolute block w-full h-[2px] rotate-45 bg-black bg-opacity-75" />
-          <i className="absolute block  w-full h-[2px] -rotate-45 bg-black bg-opacity-75" />
-        </button>
         <div
           style={{
             display: 'flex',
@@ -311,7 +300,7 @@ function DatabaseBackupsModal({ modal, onSetModalData }) {
           </div>
         )}
       </div>
-    </div>
+    </Modal>
   )
 }
 
