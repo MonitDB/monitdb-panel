@@ -24,7 +24,11 @@ const QueryPlanRenderer = ({ queryPlan }) => {
         typeof QP.showPlan === 'function' &&
         containerReference.current
       ) {
-        QP.showPlan(containerReference.current, queryPlan, options)
+        try {
+          QP.showPlan(containerReference.current, queryPlan, options)
+        } catch {
+          /* empty */
+        }
       } else {
         // eslint-disable-next-line no-console
         console.log('QP.showPlan is not available or container is not found')
