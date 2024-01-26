@@ -161,11 +161,7 @@ function CurrentActivity(properties) {
                   <Descriptions.Text label="SQL Command">
                     {modalData.sql_command ?? '-'}
                   </Descriptions.Text>
-                  <Descriptions.Text label="SQL Text">
-                    <Highlighter language={'sql'}>
-                      {modalData.sql_text}
-                    </Highlighter>
-                  </Descriptions.Text>
+
                   <Descriptions.Text label="Status">
                     {modalData.status ?? '-'}
                   </Descriptions.Text>
@@ -176,6 +172,7 @@ function CurrentActivity(properties) {
                     {modalData.writes ?? '-'}
                   </Descriptions.Text>
                 </Descriptions>
+                <Highlighter language={'sql'}>{modalData.sql_text}</Highlighter>
               </div>
             </Modal>
           </div>
