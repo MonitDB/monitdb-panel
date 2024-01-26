@@ -172,7 +172,12 @@ function CurrentActivity(properties) {
                     {modalData.writes ?? '-'}
                   </Descriptions.Text>
                 </Descriptions>
-                <Highlighter language={'sql'}>{modalData.sql_text}</Highlighter>
+                <Highlighter
+                  code={modalData.sql_text}
+                  showLineNumbers={true}
+                  language={'javascript'}
+                  maxHeight={'350px'}
+                />
               </div>
             </Modal>
           </div>
