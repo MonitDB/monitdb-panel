@@ -175,7 +175,7 @@ function CurrentActivity(properties) {
                 <Highlighter
                   code={modalData.sql_text}
                   showLineNumbers={true}
-                  language={'javascript'}
+                  language={'sql'}
                   maxHeight={'350px'}
                 />
               </div>
