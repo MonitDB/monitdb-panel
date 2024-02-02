@@ -5,8 +5,10 @@ import styled from 'styled-components'
 
 const StyledQueryPlanRendererContainer = styled.div`
   margin: 10px;
-  display: flex;
-  justify-content: center;
+
+  div.qp-tt {
+    z-index: 99999999999;
+  }
 `
 
 const QueryPlanRenderer = ({ queryPlan }) => {

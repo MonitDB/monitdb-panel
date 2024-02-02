@@ -87,21 +87,7 @@ function Servers({ environmentServers, serversVerions }) {
                           <tr key={`server-production-${index}`}>
                             <td>{Edition}</td>
                             <td>{Version}</td>
-                            {/* <td>
-                                        <div className="w-full flex items-center space-x-4">
-                                          <FontAwesomeIcon
-                                            icon={faUpload}
-                                            className="text-lg text-gray-dark"
-                                          />
-                                          <p>
-                                            RTM CU29, June 14, 2022
-                                            <br />
-                                            <span className="text-xs">
-                                              14.0.3445.2
-                                            </span>
-                                          </p>
-                                        </div>
-                                      </td> */}
+
                             <td>
                               <a
                                 href={LinkUpdate}
@@ -114,11 +100,6 @@ function Servers({ environmentServers, serversVerions }) {
                                   {ProductLevel} {LastUpdate}
                                 </span>
                               </a>
-                              {/* <p>
-                                          <span className="text-xs">
-                                            Released 13 days ago on 20 Sep 2022
-                                          </span>
-                                        </p> */}
                             </td>
                             <td>
                               {format(parseISO(SuportEndDate), 'dd MMM yyyy')}

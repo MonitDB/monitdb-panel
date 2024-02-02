@@ -1,6 +1,7 @@
 import { Table, Tooltip } from 'antd'
 import React, { useCallback, useEffect, useState } from 'react'
 
+import ExportButton from '~/components/export-button'
 import Highlighter from '~/components/highlighter'
 import Image from '~/components/image'
 
@@ -39,8 +40,11 @@ function SqlUserProcesses(properties) {
         <h3 className="text-sm text-gray-dark font-bold">
           SQL user processes (top 10 by CPU)
         </h3>
-        <span className="w-full h-[1px] block bg-gray-light" />
+        <div style={{ width: '200px', marginLeft: 'auto' }}>
+          <ExportButton data={data} />
+        </div>
       </div>
+
       <div style={{ overflowY: 'auto' }}>
         <Table
           locale={{ emptyText: 'No data to display' }}

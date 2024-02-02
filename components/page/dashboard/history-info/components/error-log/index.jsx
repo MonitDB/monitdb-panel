@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 
+import ExportButton from '~/components/export-button'
 import Image from '~/components/image'
 import { GenericTable } from '~/components/table/genericTable'
 
@@ -35,62 +36,18 @@ function ErrorLog(properties) {
           width="26"
           height="18"
         />
-        <h3 className="text-sm text-gray-dark font-bold">Error log</h3>
-        <span className="w-full h-[1px] block bg-gray-light" />
+        <div className="flex items-center  xl:w-[calc(100vw-450px)]">
+          <div style={'w-[100px]'}>
+            <h3 className="text-sm text-gray-dark font-bold">Error log</h3>
+          </div>
+          <span className="w-full h-[1px] mx-2 block bg-gray-light" />
+          <div style={{ marginRight: 'auto' }}>
+            <ExportButton data={data} />
+          </div>
+        </div>
       </div>
+
       <GenericTable data={data} loading={loading} />
-      {/* <div className="prose prose-thead:bg-gray-light max-w-full prose-th:capitalize prose-th:border-b-0 prose-tr:border-gray-light prose-td:text-[11px]">
-        <table className="m-0 py-4 prose-tr:last:!border-b">
-          <thead>
-            <tr>
-              <th className="w-10">Time</th>
-              <th className="w-5">Server</th>
-              <th className="w-20">Process</th>
-              <th className="w-20">Error</th>
-            </tr>
-          </thead>
-          <tbody>
-            {loading ? (
-              <div
-                style={{
-                  height: '200px',
-                  width: '600px',
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-              >
-                <Loading style={{ margin: 'auto' }} />
-              </div>
-            ) : // eslint-disable-next-line unicorn/no-nested-ternary
-            data === undefined ? (
-              <tr>
-                <td colSpan="12">
-                  <div>Error to load the data.</div>
-                </td>
-              </tr>
-            ) : // eslint-disable-next-line unicorn/no-nested-ternary
-            data?.length === 0 ? (
-              <tr>
-                <td colSpan="12">
-                  <div>No Error Log to display.</div>
-                </td>
-              </tr>
-            ) : (
-              data?.map((row, index) => (
-                <tr key={index} className="hover:bg-gray-lightest">
-                  <td>{new Date(row.DATETIME).toLocaleString('pt-BR')}</td>
-                  <td>{row.ServerId}</td>
-                  <td>{row.TYPE}</td>
-                  <td className="truncate">
-                    {row.ERROR_CODE} {row.ERROR_MESSAGE}
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div> */}
     </div>
   )
 }

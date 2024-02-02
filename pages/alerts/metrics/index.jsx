@@ -1,10 +1,9 @@
-import { Select } from 'antd'
+import { Select, Table } from 'antd'
 import { useFormik } from 'formik'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
-import Loading from '~/components/loading'
 import { PageContent, PageHeader, PageWrapper } from '~/components/page'
 import MonitoredServersSidebar from '~/components/sidebar/monitored-servers'
 import useGlobal from '~/hooks/use-global'
@@ -29,7 +28,7 @@ const MetricsPage = () => {
     () => [
       { value: '', label: 'Select a server...' },
       ...servers.map(({ id, serverName }) => ({
-        value: id,
+        value: `${id}`,
         label: serverName,
       })),
     ],
@@ -116,6 +115,7 @@ const MetricsPage = () => {
                 containerClass="bg-white border-white"
                 options={serversOptions}
                 value={formik.values.server}
+                style={{ width: '300px' }}
                 onChange={handleChangeServer}
               />
             </form>
@@ -130,69 +130,29 @@ const MetricsPage = () => {
 
             {router.query.server && (
               <>
-                {!isLoading ? (
-                  <div className="-mx-4 py-4 px-8 bg-white md:-mx-6">
-                    <table className="prose max-w-full w-full mb-4">
-                      <thead>
-                        <tr className="text-sm font-bold text-gray-dark text-left">
-                          <th
-                            width="25%"
-                            className="border-b-2 border-gray-light"
-                          >
-                            Name
-                          </th>
-                          <th
-                            width="25%"
-                            className="border-b-2 border-gray-light w-60"
-                          >
-                            Procedure
-                          </th>
-                          <th className="border-b-2 border-gray-light w-20">
-                            dsProfileEmail
-                          </th>
-                          <th className="border-b-2 border-gray-light w-20">
-                            Frequency
-                          </th>
-                          <th className="border-b-2 border-gray-light w-40">
-                            E-mail
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {parameters.length === 0 && (
-                          <tr>
-                            <td colSpan={5} className="py-10 text-center">
-                              No parameters found
-                            </td>
-                          </tr>
-                        )}
-
-                        {parameters.length > 0 &&
-                          parameters.map((parameter, index) => (
-                            <tr
-                              key={`parameter-${index}`}
-                              className={`text-sm border-b border-gray-light transition-colors
-                          duration-200 ease-in-out cursor-pointer lg:hover:bg-gray-light lg:hover:bg-opacity-50`}
-                              onClick={() => {
-                                setIsModalOpen(true)
-                                setParameterIdActive(parameter.id)
-                              }}
-                            >
-                              <td>{parameter.alertName}</td>
-                              <td>{parameter.procedureName}</td>
-                              <td>{parameter.profileEmailDescription}</td>
-                              <td>{parameter.frequencyMinutes}</td>
-                              <td>{parameter.emailDescription}</td>
-                            </tr>
-                          ))}
-                      </tbody>
-                    </table>
-                  </div>
-                ) : (
-                  <div className="flex justify-center items-center w-full min-h-28">
-                    <Loading light />
-                  </div>
-                )}
+                <Table
+                  size="small"
+                  loading={isLoading}
+                  pagination={parameters?.length > 10}
+                  dataSource={parameters ?? []}
+                  columns={[
+                    { dataIndex: 'alertName', title: 'Name' },
+                    { dataIndex: 'procedureName', title: 'Procedure' },
+                    {
+                      dataIndex: 'profileEmailDescription',
+                      title: 'dsProfileEmail',
+                    },
+                    { dataIndex: 'frequencyMinutes', title: 'Frequency' },
+                    { dataIndex: 'emailDescription', title: 'E-mail' },
+                  ]}
+                  onRow={(parameter) => ({
+                    style: { cursor: 'pointer' },
+                    onClick: () => {
+                      setIsModalOpen(true)
+                      setParameterIdActive(parameter.id)
+                    },
+                  })}
+                />
               </>
             )}
           </PageContent>

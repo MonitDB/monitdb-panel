@@ -103,6 +103,7 @@ function CurrentActivity(properties) {
             <Modal
               open={modalData.open}
               width={850}
+              style={{ zIndex: 5, display: 'block' }}
               onOk={() => {
                 setModalData({ ...modalData, open: false })
               }}

@@ -48,7 +48,9 @@ function Databases(properties) {
             {
               dataIndex: 'status',
               title: 'Status',
-              render: (value) => <Tag>{value}</Tag>,
+              render: (value) => (
+                <Tag color={value === 'ONLINE' ? 'green' : 'red'}>{value}</Tag>
+              ),
             },
             {
               dataIndex: 'transactions',

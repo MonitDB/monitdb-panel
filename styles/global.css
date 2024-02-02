@@ -11,6 +11,10 @@
   background-color: #5046e5; /* Cor de fundo para botões primários do Ant Design */
 }
 
+div.qp-tt {
+  z-index: 99999999999;
+}
+
 html {
   @apply scroll-smooth;
 }

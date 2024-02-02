@@ -1,4 +1,3 @@
-import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 
 import DatabaseIcons from '~/helpers/database-icons'
@@ -6,16 +5,16 @@ import { getServerMetrics } from '~/services/servers'
 
 export const ServerInfo = ({ currentServer }) => {
   const [serverMetrics, setServerMetrics] = useState()
-  const router = useRouter()
+
   useEffect(() => {
-    if (router?.query?.id) {
+    if (currentServer.id) {
       const fetch = async () => {
-        const { data } = await getServerMetrics({ id: router?.query?.id })
+        const { data } = await getServerMetrics({ id: currentServer.id })
         setServerMetrics(data)
       }
       fetch()
     }
-  }, [router?.query?.id])
+  }, [currentServer.id])
 
   return (
     <div className="w-full flex items-center gap-4">

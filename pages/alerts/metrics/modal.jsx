@@ -1,6 +1,4 @@
-import { faClose } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Button, Input } from 'antd'
+import { Input, Modal } from 'antd'
 import { Select } from 'antd'
 import classNames from 'classnames'
 import { useFormik } from 'formik'
@@ -114,213 +112,202 @@ const MetricsModal = ({ onClose, serverId, parameterId }) => {
   }, [getParameterData, parameters, parameterId])
 
   return (
-    <div className="fixed top-0 left-0 w-full h-full bg-white z-50 overflow-y-auto md:bg-transparent md:overflow-hidden md:flex md:items-center md:justify-center md:bg-black md:bg-opacity-75">
-      <div className="p-4 md:bg-white md:w-[600px] md:h-4/5 md:overflow-y-auto md:p-8 lg:h-auto lg:max-h-[80%]">
-        <header className="flex items-start mb-10">
-          <h2 className="heading-md">Edit metrics</h2>
-          <button type="button" className="ml-auto mt-1" onClick={onClose}>
-            <FontAwesomeIcon icon={faClose} className="text-lg" />
-          </button>
-        </header>
-        <div>
-          <form
-            onSubmit={formik.handleSubmit}
-            className="relative w-full"
-            noValidate
+    <Modal
+      open={true}
+      width={'60%'}
+      onCancel={onClose}
+      onOk={formik.submitForm}
+      okText="Save"
+      closable={false}
+      okButtonProps={{ loading: isSending }}
+    >
+      <header className="flex items-start mb-10">
+        <h2 className="heading-md">Edit metrics</h2>
+        {/* <button type="button" className="ml-auto mt-1" onClick={onClose}>
+          <FontAwesomeIcon icon={faClose} className="text-lg" />
+        </button> */}
+      </header>
+      <div style={{ height: '500px' }}>
+        <form
+          onSubmit={formik.handleSubmit}
+          className="relative w-full"
+          noValidate
+        >
+          {isLoading && <Loading />}
+          <Grid
+            className={classNames({
+              'opacity-0 invisible': isLoading,
+            })}
           >
-            {isLoading && <Loading />}
-            <Grid
-              className={classNames({
-                'opacity-0 invisible': isLoading,
-              })}
-            >
-              <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
-                <label
-                  className="w-full font-bold lg:w-1/3"
-                  htmlFor="alertName"
-                >
-                  Alert Name
-                </label>
-                <Input
-                  type="text"
-                  name="alertName"
-                  className="w-full px-4 h-10 border border-gray-light leading-10 rounded outline-none text-sm lg:w-2/3"
-                  placeholder="alertName"
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  value={formik.values.alertName}
-                />
-              </div>
-              <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
-                <label
-                  className="w-full font-bold lg:w-1/3"
-                  htmlFor="procedureName"
-                >
-                  Procedure Name
-                </label>
-                <Input
-                  type="text"
-                  name="procedureName"
-                  className="w-full px-4 h-10 border border-gray-light bg-white leading-10 rounded outline-none text-sm lg:w-2/3"
-                  placeholder="Procedure Name"
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  value={formik.values.procedureName}
-                />
-              </div>
-              <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
-                <label
-                  className="w-full font-bold lg:w-1/3"
-                  htmlFor="frequencyMinutes"
-                >
-                  Frequency (MIN)
-                </label>
-                <Select
-                  name="frequencyMinutes"
-                  options={frequencyOptions}
-                  value={formik.values.frequencyMinutes}
-                  containerClass="bg-white border-gray-light lg:w-2/3"
-                  onChange={(value) => {
-                    formik.setFieldValue('frequencyMinutes', value)
-                  }}
-                />
-              </div>
+            <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
+              <label className="w-full font-bold lg:w-1/3" htmlFor="alertName">
+                Alert Name
+              </label>
+              <Input
+                type="text"
+                name="alertName"
+                placeholder="alertName"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.alertName}
+              />
+            </div>
+            <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
+              <label
+                className="w-full font-bold lg:w-1/3"
+                htmlFor="procedureName"
+              >
+                Procedure Name
+              </label>
+              <Input
+                type="text"
+                name="procedureName"
+                placeholder="Procedure Name"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.procedureName}
+              />
+            </div>
+            <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
+              <label
+                className="w-full font-bold lg:w-1/3"
+                htmlFor="frequencyMinutes"
+              >
+                Frequency (MIN)
+              </label>
+              <Select
+                name="frequencyMinutes"
+                options={frequencyOptions}
+                value={formik.values.frequencyMinutes}
+                style={{ width: '200px' }}
+                onChange={(value) => {
+                  formik.setFieldValue('frequencyMinutes', value)
+                }}
+              />
+            </div>
 
-              <div className="col-span-2 flex flex-col space-y-2 md:col-span-6">
-                <label
-                  className="w-full font-bold"
-                  htmlFor="hourStartExecution"
-                >
-                  Start Hour Execution
-                </label>
-                <Input
-                  type="number"
-                  name="hourStartExecution"
-                  className="w-full px-4 h-10 border border-gray-light bg-white leading-10 rounded outline-none text-sm"
-                  placeholder="hourStartExecution"
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  value={formik.values.hourStartExecution}
-                />
-              </div>
-              <div className="col-span-2 flex flex-col space-y-2 md:col-span-6">
-                <label className="w-full font-bold" htmlFor="hourEndExecution">
-                  End Hour Execution
-                </label>
-                <Input
-                  type="number"
-                  name="hourEndExecution"
-                  className="w-full px-4 h-10 border border-gray-light bg-white leading-10 rounded outline-none text-sm"
-                  placeholder="hourEndExecution"
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  value={formik.values.hourEndExecution}
-                />
-              </div>
+            <div className="col-span-2 flex flex-col space-y-2 md:col-span-6">
+              <label className="w-full font-bold" htmlFor="hourStartExecution">
+                Start Hour Execution
+              </label>
+              <Input
+                type="number"
+                name="hourStartExecution"
+                placeholder="hourStartExecution"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.hourStartExecution}
+              />
+            </div>
+            <div className="col-span-2 flex flex-col space-y-2 md:col-span-6">
+              <label className="w-full font-bold" htmlFor="hourEndExecution">
+                End Hour Execution
+              </label>
+              <Input
+                type="number"
+                name="hourEndExecution"
+                placeholder="hourEndExecution"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.hourEndExecution}
+              />
+            </div>
 
-              <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
-                <label
-                  className="w-full font-bold lg:w-1/3"
-                  htmlFor="clearFlag"
-                >
-                  Clear Flag
-                </label>
-                <Checkbox
-                  name="clearFlag"
-                  value="1"
-                  onChange={(value) => {
-                    formik.setFieldValue('clearFlag', value)
-                  }}
-                />
-              </div>
+            <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
+              <label className="w-full font-bold lg:w-1/3" htmlFor="clearFlag">
+                Clear Flag
+              </label>
+              <Checkbox
+                name="clearFlag"
+                value="1"
+                onChange={(value) => {
+                  formik.setFieldValue('clearFlag', value)
+                }}
+              />
+            </div>
 
-              <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
-                <label
-                  className="w-full font-bold lg:w-1/3"
-                  htmlFor="parameterValue"
-                >
-                  Parameter Value
-                </label>
-                <Input
-                  type="number"
-                  name="parameterValue"
-                  className="w-full px-4 h-10 border border-gray-light bg-white leading-10 rounded outline-none text-sm lg:w-2/3"
-                  placeholder="parameterValue"
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  value={formik.values.parameterValue}
-                />
-              </div>
+            <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
+              <label
+                className="w-full font-bold lg:w-1/3"
+                htmlFor="parameterValue"
+              >
+                Parameter Value
+              </label>
+              <Input
+                type="number"
+                name="parameterValue"
+                placeholder="parameterValue"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.parameterValue}
+              />
+            </div>
 
-              <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
-                <label
-                  className="w-full font-bold lg:w-1/3"
-                  htmlFor="metricDescription"
-                >
-                  Metric Description
-                </label>
-                <Input
-                  type="text"
-                  name="metricDescription"
-                  className="w-full px-4 h-10 border border-gray-light bg-white leading-10 rounded outline-none text-sm lg:w-2/3"
-                  placeholder="metricDescription"
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  value={formik.values.metricDescription}
-                />
-              </div>
+            <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
+              <label
+                className="w-full font-bold lg:w-1/3"
+                htmlFor="metricDescription"
+              >
+                Metric Description
+              </label>
+              <Input
+                type="text"
+                name="metricDescription"
+                placeholder="metricDescription"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.metricDescription}
+              />
+            </div>
 
-              <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
-                <label
-                  className="w-full font-bold lg:w-1/3"
-                  htmlFor="parameterValue2"
-                >
-                  Parameter Value 2
-                </label>
-                <Input
-                  type="number"
-                  name="parameterValue2"
-                  className="w-full px-4 h-10 border border-gray-light bg-white leading-10 rounded outline-none text-sm lg:w-2/3"
-                  placeholder="parameterValue2"
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  value={formik.values.parameterValue2}
-                />
-              </div>
+            <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
+              <label
+                className="w-full font-bold lg:w-1/3"
+                htmlFor="parameterValue2"
+              >
+                Parameter Value 2
+              </label>
+              <Input
+                type="number"
+                name="parameterValue2"
+                placeholder="parameterValue2"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.parameterValue2}
+              />
+            </div>
 
-              <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
-                <label
-                  className="w-full font-bold lg:w-1/3"
-                  htmlFor="metricDescription2"
-                >
-                  Metric Description 2
-                </label>
-                <Input
-                  type="text"
-                  name="metricDescription2"
-                  className="w-full px-4 h-10 border border-gray-light bg-white leading-10 rounded outline-none text-sm lg:w-2/3"
-                  placeholder="metricDescription2"
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  value={formik.values.metricDescription2}
-                />
-              </div>
+            <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
+              <label
+                className="w-full font-bold lg:w-1/3"
+                htmlFor="metricDescription2"
+              >
+                Metric Description 2
+              </label>
+              <Input
+                type="text"
+                name="metricDescription2"
+                placeholder="metricDescription2"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.metricDescription2}
+              />
+            </div>
 
-              <div className="col-span-2 flex justify-end items-center pt-10 md:col-span-12">
-                <Button
-                  type="default"
-                  htmlType="submit"
-                  loading={isSending}
-                  disabled={isSending}
-                >
-                  {'Save'}
-                </Button>
-              </div>
-            </Grid>
-          </form>
-        </div>
+            <div className="col-span-2 flex justify-end items-center pt-10 md:col-span-12">
+              {/* <Button
+                type="default"
+                htmlType="submit"
+                loading={isSending}
+                disabled={isSending}
+              >
+                {'Save'}
+              </Button> */}
+            </div>
+          </Grid>
+        </form>
       </div>
-    </div>
+    </Modal>
   )
 }
 

@@ -1,6 +1,5 @@
-import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import classNames from 'classnames'
+/* eslint-disable sonarjs/no-identical-functions */
+import { Table } from 'antd'
 import React, { useCallback, useEffect, useState } from 'react'
 
 import useComponentContext from '~/services/state-manager/components'
@@ -10,7 +9,6 @@ const Permissions = (properties) => {
   const { currentServer } = properties
 
   const [data, setData] = useState([])
-  const [activeTableRowIndex, setActiveTableRowIndex] = useState(-1)
   const { executeQueryComponent } = useComponentContext()
 
   useEffect(() => {
@@ -72,7 +70,48 @@ const Permissions = (properties) => {
     <div className="mt-6">
       <h3 className="mb-4 text-sm text-gray-dark font-bold">Permissions</h3>
       <div className="prose max-w-full prose-th:capitalize prose-th:border-b-0 prose-tr:border-gray-light">
-        <table>
+        <Table
+          pagination={data.length > 10}
+          size="small"
+          expandable={{
+            expandedRowRender: (item, index) => (
+              <tr key={index}>
+                <td colSpan={1} />
+                <td colSpan={2} className="border-r border-gray">
+                  {item.windowsAndActivityDirectoryLogins.map((item, index) => (
+                    <>
+                      <span key={index}>
+                        {item.MemberPrincipalName}
+                        <br />
+                      </span>
+                    </>
+                  ))}
+                </td>
+                <td colSpan={1}>
+                  {item.sqlLogins.map((item, index) => (
+                    <>
+                      <span key={index}>
+                        {item.MemberPrincipalName}
+                        <br />
+                      </span>
+                    </>
+                  ))}
+                </td>
+              </tr>
+            ),
+          }}
+          dataSource={data}
+          columns={[
+            { dataIndex: 'Access', title: 'Name' },
+            { dataIndex: 'windosLoginCount', title: 'Windows logins' },
+            {
+              dataIndex: 'activeDiretoryAccountsCount',
+              title: 'Active Directory accounts ',
+            },
+            { dataIndex: 'sqlLoginCount', title: 'SQL logins' },
+          ]}
+        />
+        {/* <table>
           <thead className="noscroll bg-gray-light">
             <tr>
               <th>Access</th>
@@ -153,7 +192,7 @@ const Permissions = (properties) => {
               )
             })}
           </tbody>
-        </table>
+        </table> */}
       </div>
       {/* <h3 className="mt-6 mb-4 text-sm text-gray-dark font-bold">
         Host machine metrics (sqm-sqlmonitor)

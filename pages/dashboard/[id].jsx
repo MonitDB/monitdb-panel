@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 
-import { Col, Row, Tabs } from 'antd'
+import { Tabs } from 'antd'
 import classNames from 'classnames'
 import faker from 'faker'
 import { useRouter } from 'next/router'
@@ -55,7 +55,6 @@ const SingleDashboard = () => {
     const server = servers.find((server) => server.id === +router?.query?.id)
 
     if (!server) return
-
     return formatServer(server, { serverTypes })
   }, [servers, serverTypes, router?.query?.id])
 
@@ -82,24 +81,24 @@ const SingleDashboard = () => {
     },
   ]
 
-  if (!currentServer) {
-    return (
-      <Layout>
-        <PageWrapper>
-          <LatestAlertsSidebar />
-          <NextSeo title="Dashboard - MonitDB" />
-          <PageSidebar></PageSidebar>
-          <PageContent hideBreadcrumbs={true}>
-            <Row>
-              <Col span={24}>
-                <h1>Server Not Found</h1>
-              </Col>
-            </Row>
-          </PageContent>
-        </PageWrapper>
-      </Layout>
-    )
-  }
+  // if (!currentServer) {
+  //   return (
+  //     <Layout>
+  //       <PageWrapper>
+  //         <LatestAlertsSidebar />
+  //         <NextSeo title="Dashboard - MonitDB" />
+  //         <PageSidebar></PageSidebar>
+  //         <PageContent hideBreadcrumbs={true}>
+  //           <Row>
+  //             <Col span={24}>
+  //               <h1>Server Not Found</h1>
+  //             </Col>
+  //           </Row>
+  //         </PageContent>
+  //       </PageWrapper>
+  //     </Layout>
+  //   )
+  // }
 
   return (
     <SingleDashboardContextProvider>
