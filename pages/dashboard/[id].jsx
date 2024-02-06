@@ -62,6 +62,7 @@ const SingleDashboard = () => {
     {
       key: '0',
       label: 'History',
+
       children: <HistoryInfo currentServer={currentServer} />,
     },
     {

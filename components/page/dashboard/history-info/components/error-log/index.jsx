@@ -36,14 +36,10 @@ function ErrorLog(properties) {
           width="26"
           height="18"
         />
-        <div className="flex items-center  xl:w-[calc(100vw-450px)]">
-          <div style={'w-[100px]'}>
-            <h3 className="text-sm text-gray-dark font-bold">Error log</h3>
-          </div>
-          <span className="w-full h-[1px] mx-2 block bg-gray-light" />
-          <div style={{ marginRight: 'auto' }}>
-            <ExportButton data={data} />
-          </div>
+
+        <h3 className="text-sm text-gray-dark font-bold">Error log</h3>
+        <div style={{ width: '200px', marginLeft: 'auto' }}>
+          <ExportButton data={data} />
         </div>
       </div>
 

@@ -14,31 +14,32 @@ const StyledQueryPlanRendererContainer = styled.div`
 const QueryPlanRenderer = ({ queryPlan }) => {
   const containerReference = useRef(null)
 
-  useEffect(() => {
-    const loadQP = async () => {
-      const QP = await import('html-query-plan')
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const loadQP = async () => {
+    const QP = await import('html-query-plan')
 
-      const options = {}
+    const options = {}
 
-      if (
-        QP &&
-        QP.showPlan &&
-        typeof QP.showPlan === 'function' &&
-        containerReference.current
-      ) {
-        try {
-          QP.showPlan(containerReference.current, queryPlan, options)
-        } catch {
-          /* empty */
-        }
-      } else {
-        // eslint-disable-next-line no-console
-        console.log('QP.showPlan is not available or container is not found')
+    if (
+      QP &&
+      QP.showPlan &&
+      typeof QP.showPlan === 'function' &&
+      containerReference.current
+    ) {
+      try {
+        QP.showPlan(containerReference.current, queryPlan, options)
+      } catch {
+        /* empty */
       }
+    } else {
+      // eslint-disable-next-line no-console
+      console.log('QP.showPlan is not available or container is not found')
     }
+  }
 
-    loadQP()
-  }, [queryPlan])
+  useEffect(() => {
+    if (window && document) loadQP()
+  }, [loadQP, queryPlan])
 
   return (
     <StyledQueryPlanRendererContainer>
