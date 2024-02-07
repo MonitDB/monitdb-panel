@@ -1,4 +1,4 @@
-import { Button, Space, Steps } from 'antd'
+import { Button, Form, Space, Steps } from 'antd'
 import { NextSeo } from 'next-seo'
 import { useState } from 'react'
 
@@ -30,6 +30,8 @@ const steps = [
 
 const InstallationWizard = () => {
   const [step, setStep] = useState(0)
+
+  const [form] = Form.useForm()
   return (
     <>
       <NextSeo title="Update New Version - Configurations - MonitDB" />
@@ -51,12 +53,24 @@ const InstallationWizard = () => {
         </PageContent>
         <PageContent removeSidebarMargin={true} className="w-[80%] m-auto">
           <Steps items={steps} current={step} />
-          <div style={{ height: '350px', overflowY: 'auto', padding: '25px' }}>
-            {step === 0 && <ServerInformationStep />}
-            {step === 1 && <ConnectionStep />}
-            {step === 2 && <SetUpNewServerStep />}
-            {step === 3 && <ResultStep />}
-          </div>
+          <Form form={form} layout="vertical">
+            <div
+              style={{ height: '350px', overflowY: 'auto', padding: '25px' }}
+            >
+              <div style={{ display: step === 0 ? 'inherit' : 'none' }}>
+                <ServerInformationStep />
+              </div>
+              <div style={{ display: step === 1 ? 'inherit' : 'none' }}>
+                <ConnectionStep />
+              </div>
+              <div style={{ display: step === 2 ? 'inherit' : 'none' }}>
+                <SetUpNewServerStep />
+              </div>
+              <div style={{ display: step === 3 ? 'inherit' : 'none' }}>
+                <ResultStep />
+              </div>
+            </div>
+          </Form>
           <div className="flex justify-end">
             <Space>
               {step > 0 && (
