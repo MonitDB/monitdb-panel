@@ -109,8 +109,11 @@ const ConfigurationsPage = () => {
                         </span>
                       </Link>
                     </li>
-                    <li className="opacity-25">
-                      <Link href="/configurations/" className="group block">
+                    <li>
+                      <Link
+                        href="/configurations/installation-wizard"
+                        className="group block"
+                      >
                         <strong className="block group-hover:text-blue">
                           Installation Wizard
                         </strong>
