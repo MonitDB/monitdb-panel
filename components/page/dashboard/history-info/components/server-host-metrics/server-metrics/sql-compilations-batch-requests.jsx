@@ -35,7 +35,9 @@ function SqlCompilationsBatchRequests({ isLoading, seriesData }) {
           decimalsInFloat: 2,
 
           labels: {
-            formatter: (value) => value.toFixed(2),
+            formatter: (value) => {
+              return Number(value) ? Number(value).toFixed(2) : 0
+            },
           },
         }}
         seriesName="SQL Compilations/Batch Requests"
