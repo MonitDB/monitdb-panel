@@ -1,4 +1,4 @@
-import { Button, Form, Space, Steps } from 'antd'
+import { Form, Steps } from 'antd'
 import { NextSeo } from 'next-seo'
 import { useState } from 'react'
 
@@ -34,11 +34,11 @@ const InstallationWizard = () => {
   const [form] = Form.useForm()
   return (
     <>
-      <NextSeo title="Update New Version - Configurations - MonitDB" />
+      <NextSeo title="Installation Wizard - Configurations - MonitDB" />
       <Layout>
         <PageContent removeSidebarMargin={true}>
           <PageHeader
-            title="Logs"
+            title="Installation Wizard"
             breadcrumbs={[
               {
                 title: 'Configurations',
@@ -54,35 +54,29 @@ const InstallationWizard = () => {
         <PageContent removeSidebarMargin={true} className="w-[80%] m-auto">
           <Steps items={steps} current={step} />
           <Form form={form} layout="vertical">
-            <div
-              style={{ height: '350px', overflowY: 'auto', padding: '25px' }}
-            >
-              <div style={{ display: step === 0 ? 'inherit' : 'none' }}>
-                <ServerInformationStep />
-              </div>
-              <div style={{ display: step === 1 ? 'inherit' : 'none' }}>
-                <ConnectionStep />
-              </div>
-              <div style={{ display: step === 2 ? 'inherit' : 'none' }}>
-                <SetUpNewServerStep />
-              </div>
-              <div style={{ display: step === 3 ? 'inherit' : 'none' }}>
-                <ResultStep />
-              </div>
+            <div style={{ display: step === 0 ? 'inherit' : 'none' }}>
+              <ServerInformationStep
+                handleNextStep={() => setStep(step + 1)}
+                form={form}
+              />
+            </div>
+            <div style={{ display: step === 1 ? 'inherit' : 'none' }}>
+              <ConnectionStep
+                handleNextStep={() => setStep(step + 1)}
+                handlePreviusStep={() => setStep(step - 1)}
+                form={form}
+              />
+            </div>
+            <div style={{ display: step === 2 ? 'inherit' : 'none' }}>
+              <SetUpNewServerStep
+                handleNextStep={() => setStep(step + 1)}
+                handlePreviusStep={() => setStep(step - 1)}
+              />
+            </div>
+            <div style={{ display: step === 3 ? 'inherit' : 'none' }}>
+              <ResultStep />
             </div>
           </Form>
-          <div className="flex justify-end">
-            <Space>
-              {step > 0 && (
-                <Button type="default" onClick={() => setStep(step - 1)}>
-                  Previous
-                </Button>
-              )}
-              <Button type="primary" onClick={() => setStep(step + 1)}>
-                Next
-              </Button>
-            </Space>
-          </div>
         </PageContent>
       </Layout>
     </>
