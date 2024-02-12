@@ -67,7 +67,6 @@ const ConnectionStep = ({ handleNextStep, handlePreviusStep, form }) => {
                 /* empty */
               }
               const values = form.getFieldsValue()
-              console.log({ values })
               if (
                 !values['serverHost'] ||
                 values['serverHost'] === '' ||
@@ -78,7 +77,6 @@ const ConnectionStep = ({ handleNextStep, handlePreviusStep, form }) => {
                 !values['serverPort'] ||
                 values['serverPort'] === ''
               ) {
-                console.log('empty')
                 return
               }
               try {
