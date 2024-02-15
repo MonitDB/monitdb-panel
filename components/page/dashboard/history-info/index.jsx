@@ -4,8 +4,8 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 
 import Grid from '~/components/grid'
-// import RdpButton from '~/components/rdpButton'
-// import SshButon from '~/components/sshButton'
+import RdpButton from '~/components/rdpButton'
+import SshButon from '~/components/sshButton'
 import { getServerMetrics } from '~/services/servers'
 
 import BlockingProcesses from './components/blocking-processes'
@@ -57,19 +57,19 @@ const HistoryInfo = ({ currentServer }) => {
     <div className="w-full flex flex-col gap-y-6 mt-6">
       <div className="w-full flex gap-x-8 p-4 border border-gray-light bg-white text-sm">
         <div className="flex gap-2 mr-auto">
-          {/* {serverMetrics?.osProperties['host_platform'] === 'Windows' && (
+          {serverMetrics?.osProperties['host_platform'] === 'Windows' && (
             <RdpButton
               serverName={currentServer.serverName}
               address={currentServer.serverHost}
             />
-          )} */}
+          )}
 
-          {/* {serverMetrics?.osProperties['host_platform'] === 'Linux' && (
+          {serverMetrics?.osProperties['host_platform'] === 'Linux' && (
             <SshButon
               serverName={currentServer.serverName}
               address={currentServer.serverHost}
             />
-          )} */}
+          )}
         </div>
 
         <div className="flex gap-2 ml-auto">
