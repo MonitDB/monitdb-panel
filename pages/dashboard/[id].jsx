@@ -100,61 +100,66 @@ const SingleDashboard = () => {
   //     </Layout>
   //   )
   // }
-
-  return (
-    <SingleDashboardContextProvider>
-      <NextSeo title="Dashboard - MonitDB" />
-      <Layout>
-        <PageWrapper>
-          <PageSidebar>
-            <LatestAlertsSidebar />
-            {activeTabId === '0' && (
-              <PageSidebarLinksList className="mt-5">
-                {dashboardSections.map((section, sectionIndex) => (
-                  <li key={section.slug}>
-                    <button
-                      onClick={() => scrollToSection(`#${section.slug}`)}
-                      className={classNames({
-                        active: sectionIndex === 0,
-                      })}
-                    >
-                      {section.name}
-                    </button>
-                  </li>
-                ))}
-              </PageSidebarLinksList>
-            )}
-          </PageSidebar>
-
-          <PageContent hideBreadcrumbs={true}>
-            <div>
-              {!currentServer && <Loading />}
-              {currentServer && (
-                <>
-                  <div className="w-full flex flex-col">
-                    <header className="w-full">
-                      <h2 className="heading-lg mb-6">Dashboard - Overview</h2>
-                    </header>
-                    <ServerInfo currentServer={currentServer} />
-                  </div>
-
-                  <div className="flex items-center border-b-gray-light border-b-4">
-                    <Tabs
-                      size="large"
-                      defaultActiveKey="0"
-                      items={items}
-                      onChange={setActiveTabId}
-                      style={{ width: '100%' }}
-                    />
-                  </div>
-                </>
+  try {
+    return (
+      <SingleDashboardContextProvider>
+        <NextSeo title="Dashboard - MonitDB" />
+        <Layout>
+          <PageWrapper>
+            <PageSidebar>
+              <LatestAlertsSidebar />
+              {activeTabId === '0' && (
+                <PageSidebarLinksList className="mt-5">
+                  {dashboardSections.map((section, sectionIndex) => (
+                    <li key={section.slug}>
+                      <button
+                        onClick={() => scrollToSection(`#${section.slug}`)}
+                        className={classNames({
+                          active: sectionIndex === 0,
+                        })}
+                      >
+                        {section.name}
+                      </button>
+                    </li>
+                  ))}
+                </PageSidebarLinksList>
               )}
-            </div>
-          </PageContent>
-        </PageWrapper>
-      </Layout>
-    </SingleDashboardContextProvider>
-  )
+            </PageSidebar>
+
+            <PageContent hideBreadcrumbs={true}>
+              <div>
+                {!currentServer && <Loading />}
+                {currentServer && (
+                  <>
+                    <div className="w-full flex flex-col">
+                      <header className="w-full">
+                        <h2 className="heading-lg mb-6">
+                          Dashboard - Overview
+                        </h2>
+                      </header>
+                      <ServerInfo currentServer={currentServer} />
+                    </div>
+
+                    <div className="flex items-center border-b-gray-light border-b-4">
+                      <Tabs
+                        size="large"
+                        defaultActiveKey="0"
+                        items={items}
+                        onChange={setActiveTabId}
+                        style={{ width: '100%' }}
+                      />
+                    </div>
+                  </>
+                )}
+              </div>
+            </PageContent>
+          </PageWrapper>
+        </Layout>
+      </SingleDashboardContextProvider>
+    )
+  } catch {
+    router.push('/dashboard')
+  }
 }
 
 export default SingleDashboard
