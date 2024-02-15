@@ -7,6 +7,9 @@ const StyledQueryPlanRendererContainer = styled.div`
   margin: 10px;
 
   div.qp-tt {
+    display: flex;
+    flex-direction: column;
+    position: relative;
     z-index: 99999999999;
   }
 `
