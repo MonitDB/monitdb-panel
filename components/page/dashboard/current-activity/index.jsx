@@ -36,16 +36,20 @@ function CurrentActivity(properties) {
   }, [fetchData, componentCode])
 
   const fetchData = useCallback(async () => {
-    setLoading(true)
-    setData([])
+    try {
+      setLoading(true)
+      setData([])
 
-    const result = await executeQueryComponent(
-      componentCode,
-      currentServer?.id || undefined
-    )
-    data[componentCode] = result
-    setData(data)
-    setLoading(false)
+      const result = await executeQueryComponent(
+        componentCode,
+        currentServer?.id || undefined
+      )
+      data[componentCode] = result
+      setData(data)
+      setLoading(false)
+    } catch {
+      setLoading(false)
+    }
   }, [componentCode, currentServer?.id, data, executeQueryComponent])
 
   const headerSection = (

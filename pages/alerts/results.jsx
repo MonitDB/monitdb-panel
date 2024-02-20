@@ -2,7 +2,7 @@
 /* eslint-disable no-console */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 
-import { Button, Input, Select, Table, Tag } from 'antd'
+import { Button, Select, Table, Tag } from 'antd'
 import moment from 'moment'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
@@ -202,7 +202,7 @@ const AlertsDetailsPage = () => {
                 }}
               />
 
-              <div className="flex items-center">
+              {/* <div className="flex items-center">
                 <Input
                   id="allAlerts"
                   type="checkbox"
@@ -217,7 +217,7 @@ const AlertsDetailsPage = () => {
                 <label htmlFor="allAlerts" className="ml-2">
                   <span>All</span>
                 </label>
-              </div>
+              </div> */}
             </form>
           </PageContent>
 

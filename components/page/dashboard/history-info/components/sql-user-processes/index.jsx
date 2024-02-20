@@ -20,13 +20,17 @@ function SqlUserProcesses(properties) {
   }, [fetchData])
 
   const fetchData = useCallback(async () => {
-    setLoading(true)
-    const data = await executeQueryComponent(
-      COMPONENT_CODE,
-      currentServer?.id || undefined
-    )
-    setData(data)
-    setLoading(false)
+    try {
+      setLoading(true)
+      const data = await executeQueryComponent(
+        COMPONENT_CODE,
+        currentServer?.id || undefined
+      )
+      setData(data)
+      setLoading(false)
+    } catch {
+      setLoading(false)
+    }
   }, [currentServer?.id, executeQueryComponent])
 
   return (

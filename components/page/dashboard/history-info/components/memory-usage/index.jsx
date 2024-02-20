@@ -15,13 +15,17 @@ function MemoryUsage(properties) {
   const lastMinutes = route.query.lastMinutes
 
   const fetchData = useCallback(async () => {
-    setLoading(true)
-    const data = await getMemoryUsage(currentServer?.id, {
-      lastMinutes: lastMinutes ?? 60,
-    })
-    setData(data)
+    try {
+      setLoading(true)
+      const data = await getMemoryUsage(currentServer?.id, {
+        lastMinutes: lastMinutes ?? 60,
+      })
+      setData(data)
 
-    setLoading(false)
+      setLoading(false)
+    } catch {
+      setLoading(false)
+    }
   }, [getMemoryUsage, currentServer?.id, lastMinutes])
 
   useEffect(() => {

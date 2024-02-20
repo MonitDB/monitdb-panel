@@ -15,13 +15,17 @@ function CpuUsage(properties) {
   const lastMinutes = route.query.lastMinutes
 
   const fetchData = useCallback(async () => {
-    setLoading(true)
+    try {
+      setLoading(true)
 
-    const data = await getCpuUsage(currentServer?.id, {
-      lastMinutes: lastMinutes ?? 60,
-    })
-    setData(data)
-    setLoading(false)
+      const data = await getCpuUsage(currentServer?.id, {
+        lastMinutes: lastMinutes ?? 60,
+      })
+      setData(data)
+      setLoading(false)
+    } catch {
+      setLoading(false)
+    }
   }, [getCpuUsage, currentServer?.id, lastMinutes])
 
   useEffect(() => {

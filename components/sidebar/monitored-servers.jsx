@@ -25,10 +25,8 @@ const MonitoredServers = () => {
   } = useGlobal()
   const router = useRouter()
 
-  const [
-    sidebarEnvironmentActiveIndex,
-    setSidebarEnvironmentActiveIndex,
-  ] = useState(-1)
+  const [sidebarEnvironmentActiveIndex, setSidebarEnvironmentActiveIndex] =
+    useState(-1)
   const [sidebarShowAllServers, setSidebarShowAllServers] = useState(true)
 
   return (
@@ -151,7 +149,7 @@ const MonitoredServers = () => {
               Manage monitored servers
             </Link>
           </li>
-          <li>
+          {/* <li>
             <Link href="/alerts/">Manage groups</Link>
           </li>
           <li>
@@ -162,7 +160,7 @@ const MonitoredServers = () => {
           </li>
           <li>
             <Link href="/alerts/">Subscribe to RSS alert feed</Link>
-          </li>
+          </li> */}
         </PageSidebarLinksList>
       </div>
     </PageSidebar>

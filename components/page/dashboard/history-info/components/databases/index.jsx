@@ -42,7 +42,9 @@ function Databases(properties) {
         <Table
           pagination={false}
           loading={loading}
-          dataSource={data.map((d) => ({ ...d, key: JSON.stringify(d) }))}
+          dataSource={
+            data?.map((d) => ({ ...d, key: JSON.stringify(d) })) ?? []
+          }
           columns={[
             { dataIndex: 'name', title: 'Name' },
             {

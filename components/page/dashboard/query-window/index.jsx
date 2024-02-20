@@ -26,6 +26,14 @@ function QueryWindow(properties) {
 
   const { execQuery, loadingExecuteQuery, queryResult } = useExecQueryContext()
 
+  const fetchData = async () => {
+    try {
+      await execQuery(sqlCode, currentServer?.id || undefined)
+    } catch {
+      /* empty */
+    }
+  }
+
   return (
     <>
       <br />
@@ -56,13 +64,7 @@ function QueryWindow(properties) {
         />
 
         <div className="w-full flex justify-end mt-10 mb-10 ">
-          <Button
-            type="primary"
-            style={{ width: '100px' }}
-            onClick={() => {
-              execQuery(sqlCode, currentServer.id)
-            }}
-          >
+          <Button type="primary" style={{ width: '100px' }} onClick={fetchData}>
             Run
           </Button>
           <br />
