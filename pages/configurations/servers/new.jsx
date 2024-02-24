@@ -1,4 +1,4 @@
-import { Button } from 'antd'
+import { Button, Col, Row } from 'antd'
 import { useFormik } from 'formik'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
@@ -252,8 +252,9 @@ const ConfigurationsServersSinglePage = () => {
                     value={formik.values.serverDescription}
                   />
                 </Label>
-
-                <div className="col-span-2 flex justify-end w-full">
+              </form>
+              <Row gutter={16} justify={'end'} style={{ marginTop: '12px' }}>
+                <Col>
                   <Button
                     type="dashed"
                     disabled={isLoading || isTesting}
@@ -261,16 +262,17 @@ const ConfigurationsServersSinglePage = () => {
                   >
                     {isTesting ? 'Testing Connection...' : 'Test Server'}
                   </Button>
+                </Col>
+                <Col>
                   <Button
-                    htmlType="submit"
+                    onClick={formik.submitForm}
                     type="primary"
-                    className="btn"
                     disabled={isLoading}
                   >
                     {isLoading ? 'Creating...' : 'Create'}
                   </Button>
-                </div>
-              </form>
+                </Col>
+              </Row>
             </div>
           </PageContent>
         </PageWrapper>

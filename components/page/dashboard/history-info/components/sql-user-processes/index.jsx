@@ -100,9 +100,10 @@ function SqlUserProcesses(properties) {
             }))}
           scroll={{ x: 1300 }}
           onRow={() => ({ style: { cursor: 'pointer' } })}
-          dataSource={data?.map(
-            (item, index) => ({ ...item, key: index } ?? [])
-          )}
+          dataSource={(data ?? []).map((item, index) => ({
+            ...item,
+            key: index,
+          }))}
         />
       </div>
     </div>

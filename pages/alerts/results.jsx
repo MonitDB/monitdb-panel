@@ -6,7 +6,7 @@ import { Button, Select, Table, Tag } from 'antd'
 import moment from 'moment'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { toast } from 'react-toastify'
 
 import Selector from '~/components/form/selector'
@@ -122,6 +122,8 @@ const AlertsDetailsPage = () => {
       if (parameters.length === 0) await getAlertsParameter()
       if (parameters.length > 0)
         await getAlertsResult({ ...requestQuery, serverId })
+      // console.log({ tableReference })
+      tableReference.current.refresh()
     } catch (error) {
       console.error(error) // eslint-disable-line no-console
     } finally {
@@ -140,6 +142,7 @@ const AlertsDetailsPage = () => {
 
   useEffect(getAlertsData, [getAlertsData])
 
+  const tableReference = useRef()
   return (
     <>
       <NextSeo title="Alerts - MonitDB" />
@@ -222,27 +225,39 @@ const AlertsDetailsPage = () => {
           </PageContent>
 
           <PageContent>
+            {console.log(alertsResult.result)}
             <Table
-              dataSource={alertsResult.result.map((r) => ({ ...r, key: r.id }))}
+              ref={tableReference}
+              dataSource={alertsResult.result.map((r) => ({
+                ...r,
+                key: `${r.serverId}-${r.id}`,
+              }))}
               columns={[
-                { dataIndex: 'alertName', title: 'Alert Name', key: 0 },
-                { dataIndex: 'dsMessage', title: 'Message', key: 1 },
+                { dataIndex: 'alertName', title: 'Alert Name' },
+                {
+                  dataIndex: 'serverName',
+                  title: 'Server Name',
+                  render: (value) => {
+                    return value
+                  },
+                },
+                { dataIndex: 'dsMessage', title: 'Message' },
                 {
                   dataIndex: 'isActive',
                   title: 'Status',
-                  key: 2,
+
                   render: (value) =>
                     value === 1 && <Tag color="orange">Active</Tag>,
                 },
                 {
                   dataIndex: 'dtAlert',
                   title: 'Last Updated',
-                  key: 3,
+
                   render: (value) => moment(value).format('DD/MM/yyyy HH:mm'),
                 },
                 {
                   title: 'Action',
-                  key: 4,
+
                   render: (value, alert) => (
                     <Button
                       type="dashed"

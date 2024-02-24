@@ -16,7 +16,6 @@ export const formatServer = (
   server,
   { serverTypes = [], serverEnvironments = [] }
 ) => {
-  console.log(serverTypes, serverEnvironments)
   return {
     ...server,
     isActive: true,

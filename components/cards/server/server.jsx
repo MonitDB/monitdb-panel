@@ -83,7 +83,11 @@ const ServerCard = ({
   if (interval) {
     useEffect(() => {
       const intervalId = setInterval(() => {
-        getMetrics()
+        try {
+          getMetrics()
+        } catch (error) {
+          console.error(error) // eslint-disable-line no-console
+        }
       }, interval)
 
       return () => {
@@ -94,7 +98,12 @@ const ServerCard = ({
 
   const getMetrics = useCallback(async () => {
     try {
-      const response = await getServerMetrics({ id })
+      let response
+      try {
+        await getServerMetrics({ id })
+      } catch {
+        /* empty */
+      }
 
       if (response?.data) {
         const { cpu, memory, disks, serverStatus } = response.data

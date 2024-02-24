@@ -16,9 +16,6 @@ const ServersPage = () => {
     try {
       const response = await UserServices.list()
 
-      // eslint-disable-next-line no-console
-      console.log(response?.data)
-
       setUsers(response?.data || [])
     } catch (error) {
       // eslint-disable-next-line no-console

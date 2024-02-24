@@ -9,9 +9,14 @@ export const ServerInfo = ({ currentServer }) => {
   useEffect(() => {
     if (currentServer.id) {
       const fetch = async () => {
-        const { data } = await getServerMetrics({ id: currentServer.id })
-        setServerMetrics(data)
+        try {
+          const { data } = await getServerMetrics({ id: currentServer.id })
+          setServerMetrics(data)
+        } catch {
+          setServerMetrics()
+        }
       }
+
       fetch()
     }
   }, [currentServer.id])

@@ -39,8 +39,12 @@ const Backups = ({ tabName }) => {
   }, [])
 
   useEffect(() => {
-    setIsLoading(true)
-    getData()
+    try {
+      setIsLoading(true)
+      getData()
+    } catch {
+      /* empty */
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 

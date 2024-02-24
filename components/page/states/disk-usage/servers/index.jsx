@@ -18,7 +18,7 @@ const Servers = ({ environmentServers, diskUsage, expand }) => {
       const allEnvironmentIndices = environmentServers.map(
         (_, index) => `${index}`
       )
-      console.log(allEnvironmentIndices)
+
       setServerExpandedIndices(allEnvironmentIndices)
     } else {
       setServerExpandedIndices([])

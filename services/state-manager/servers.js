@@ -3,13 +3,15 @@ import { create } from 'zustand'
 import clientApi, { apiV2 } from '../../utils/client-api'
 
 const useServerContext = create(() => ({
-
   getServers: async () => {
     return clientApi().get(`/api/server`)
   },
   getServerMetrics: async ({ id }) => {
-
-    return await apiV2().get(`/server/metrics/${id}`);
+    try {
+      return await apiV2().get(`/server/metrics/${id}`)
+    } catch {
+      /* empty */
+    }
   },
   getTypes: async () => {
     return clientApi().get(`/api/typeserver`)

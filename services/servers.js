@@ -1,11 +1,15 @@
-import  { apiV2 } from '~/utils/client-api'
+import { apiV2 } from '~/utils/client-api'
 
 export const getServers = async () => {
   return apiV2().get(`/server`)
 }
 
 export const getServerMetrics = async ({ id }) => {
-  return apiV2().get(`/server/metrics/${id}`)
+  try {
+    return apiV2().get(`/server/metrics/${id}`)
+  } catch {
+    /* empty */
+  }
 }
 
 export const getTypes = async () => {
@@ -18,17 +22,19 @@ export const getEnvironments = async () => {
 
 export const addServer = async (values) => {
   return apiV2().post(`/server`, {
- ...values  })
+    ...values,
+  })
 }
 
 export const testServer = async (values) => {
   return apiV2().post(`/server/test-connection`, {
- ...values  })
+    ...values,
+  })
 }
 
 export const updateServer = async (values) => {
   return apiV2().put(`/server`, {
-  ...values
+    ...values,
   })
 }
 
@@ -36,7 +42,6 @@ export const deleteServer = async (id) => {
   return apiV2().delete(`/server/${id}`)
 }
 
-export const updateServerNewVersion = async (id, formData) => { 
-
+export const updateServerNewVersion = async (id, formData) => {
   return apiV2().post(`/server/update-new-version/${id}`, formData)
 }

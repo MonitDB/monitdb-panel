@@ -1,9 +1,8 @@
-import { Button, Select } from 'antd'
+import { Button, Col, Row, Select } from 'antd'
 import { useFormik } from 'formik'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 
-import Grid from '~/components/grid'
 import RdpButton from '~/components/rdpButton'
 import SshButon from '~/components/sshButton'
 import { getServerMetrics } from '~/services/servers'
@@ -28,9 +27,14 @@ const HistoryInfo = ({ currentServer }) => {
   useEffect(() => {
     if (router?.query?.id) {
       const fetch = async () => {
-        const { data } = await getServerMetrics({ id: router?.query?.id })
-        setServerMetrics(data)
+        try {
+          const { data } = await getServerMetrics({ id: router?.query?.id })
+          setServerMetrics(data)
+        } catch {
+          /* empty */
+        }
       }
+
       fetch()
     }
   }, [router?.query?.id])
@@ -92,10 +96,14 @@ const HistoryInfo = ({ currentServer }) => {
       </div>
 
       <div id="allinstancemetrics">
-        <Grid>
-          <MemoryUsage currentServer={currentServer} />
-          <CpuUsage currentServer={currentServer} />
-        </Grid>
+        <Row gutter={16}>
+          <Col md={12} sm={24}>
+            <MemoryUsage currentServer={currentServer} />
+          </Col>
+          <Col md={12} sm={24} style={{ marginTop: '12px' }}>
+            <CpuUsage currentServer={currentServer} />
+          </Col>
+        </Row>
 
         {/* <Server /> */}
         <ServerMetrics key={lastFetch} />

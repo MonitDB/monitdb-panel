@@ -1,6 +1,6 @@
 /* eslint-disable no-constant-condition */
 /* eslint-disable unicorn/no-nested-ternary */
-import { Modal, Table, Tooltip, Typography } from 'antd'
+import { Descriptions, Modal, Table, Tooltip, Typography } from 'antd'
 import { useState } from 'react'
 
 import { GenericTableStyles } from './genericTableStyles'
@@ -47,19 +47,22 @@ export const GenericTable = ({ loading, data, columnAlias }) => {
       <Modal
         open={modal.open}
         closable={false}
+        width={800}
         cancelButtonProps={{ style: { display: 'none' } }}
         onOk={() => {
           setModal({ open: false, data: {} })
         }}
       >
-        <div style={{ height: '500px', width: '700px', overflowY: 'auto' }}>
-          {Object.keys(modal.data).map((key) => {
-            return (
-              <Typography key={key} title={key}>
-                <Typography.Text copyable>{modal.data[key]}</Typography.Text>
-              </Typography>
-            )
-          })}
+        <div style={{ height: '500px', overflowY: 'auto' }}>
+          <Descriptions size="small" bordered column={1}>
+            {Object.keys(modal.data).map((key) => {
+              return (
+                <Descriptions.Item key={key} label={key}>
+                  <Typography.Text copyable>{modal.data[key]}</Typography.Text>
+                </Descriptions.Item>
+              )
+            })}
+          </Descriptions>
         </div>
       </Modal>
     </>

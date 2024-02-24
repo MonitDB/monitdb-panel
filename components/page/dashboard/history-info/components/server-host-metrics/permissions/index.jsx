@@ -74,49 +74,49 @@ const Permissions = (properties) => {
   return (
     <div className="mt-6">
       <h3 className="mb-4 text-sm text-gray-dark font-bold">Permissions</h3>
-      <div className="prose max-w-full prose-th:capitalize prose-th:border-b-0 prose-tr:border-gray-light">
-        <Table
-          pagination={data.length > 10}
-          size="small"
-          expandable={{
-            expandedRowRender: (item, index) => (
-              <tr key={index}>
-                <td colSpan={1} />
-                <td colSpan={2} className="border-r border-gray">
-                  {item.windowsAndActivityDirectoryLogins.map((item, index) => (
-                    <>
-                      <span key={index}>
-                        {item.MemberPrincipalName}
-                        <br />
-                      </span>
-                    </>
-                  ))}
-                </td>
-                <td colSpan={1}>
-                  {item.sqlLogins.map((item, index) => (
-                    <>
-                      <span key={index}>
-                        {item.MemberPrincipalName}
-                        <br />
-                      </span>
-                    </>
-                  ))}
-                </td>
-              </tr>
-            ),
-          }}
-          dataSource={data}
-          columns={[
-            { dataIndex: 'Access', title: 'Name' },
-            { dataIndex: 'windosLoginCount', title: 'Windows logins' },
-            {
-              dataIndex: 'activeDiretoryAccountsCount',
-              title: 'Active Directory accounts ',
-            },
-            { dataIndex: 'sqlLoginCount', title: 'SQL logins' },
-          ]}
-        />
-      </div>
+      {/* <div className="prose max-w-full prose-th:capitalize prose-th:border-b-0 prose-tr:border-gray-light"> */}
+      <Table
+        pagination={data.length > 10}
+        size="small"
+        expandable={{
+          expandedRowRender: (item, index) => (
+            <tr key={index}>
+              <td colSpan={1} />
+              <td colSpan={2} className="border-r border-gray">
+                {item.windowsAndActivityDirectoryLogins.map((item, index) => (
+                  <>
+                    <span key={index}>
+                      {item.MemberPrincipalName}
+                      <br />
+                    </span>
+                  </>
+                ))}
+              </td>
+              <td colSpan={1}>
+                {item.sqlLogins.map((item, index) => (
+                  <>
+                    <span key={index}>
+                      {item.MemberPrincipalName}
+                      <br />
+                    </span>
+                  </>
+                ))}
+              </td>
+            </tr>
+          ),
+        }}
+        dataSource={data}
+        columns={[
+          { dataIndex: 'Access', title: 'Name' },
+          { dataIndex: 'windosLoginCount', title: 'Windows logins' },
+          {
+            dataIndex: 'activeDiretoryAccountsCount',
+            title: 'Active Directory accounts ',
+          },
+          { dataIndex: 'sqlLoginCount', title: 'SQL logins' },
+        ]}
+      />
+      {/* </div> */}
     </div>
   )
 }
