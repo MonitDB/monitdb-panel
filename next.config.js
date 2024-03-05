@@ -1,5 +1,7 @@
 const withSvgr = require('next-plugin-svgr')
-const removeImports = require("next-remove-imports")();
+const removeImports = require('next-remove-imports')()
+const webpack = require('webpack')
+
 const nextConfig = removeImports({
   reactStrictMode: true,
   env: {
@@ -9,7 +11,8 @@ const nextConfig = removeImports({
     apiKey: process.env.API_KEY,
     gtmId: process.env.GTM_ID,
     cipherKey: process.env.CIPHER_KEY,
-    cipherIv: process.env.CIPHER_IV
+    cipherIv: process.env.CIPHER_IV,
+    socket: process.env.SOCKET,
   },
   i18n: {
     localeDetection: false,

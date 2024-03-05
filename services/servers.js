@@ -32,6 +32,12 @@ export const testServer = async (values) => {
   })
 }
 
+export const installNewServer = async (values, socketID) => {
+  return apiV2().post(`/server/install-new-server`, values, {
+    params: { socketID },
+  })
+}
+
 export const updateServer = async (values) => {
   return apiV2().put(`/server`, {
     ...values,

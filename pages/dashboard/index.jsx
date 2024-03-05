@@ -102,6 +102,8 @@ const DashboardPage = () => {
                       <ServerCard
                         key={`server-production-${index}`}
                         className="w-full mb-4 md:mb-0 m:10"
+                        interval={refreshInterval}
+                        type={server.idTypeServer}
                         {...server}
                       />
                     </div>

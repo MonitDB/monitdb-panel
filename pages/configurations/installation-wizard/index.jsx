@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { PageContent, PageHeader } from '~/components/page'
 import Layout from '~/layouts/default'
 
-import ConnectionStep from './components/Connection'
+import DetailsStep from './components/DetailsStep'
 import ResultStep from './components/Result'
 import ServerInformationStep from './components/ServerInfo'
 import SetUpNewServerStep from './components/Setup'
@@ -16,8 +16,8 @@ const steps = [
     description: 'Provide server information',
   },
   {
-    title: 'Connection',
-    description: 'Set up and verify the connection',
+    title: 'Details',
+    description: 'Set details about this server',
   },
   {
     title: 'Set Up the New Server',
@@ -61,7 +61,7 @@ const InstallationWizard = () => {
               />
             </div>
             <div style={{ display: step === 1 ? 'inherit' : 'none' }}>
-              <ConnectionStep
+              <DetailsStep
                 handleNextStep={() => setStep(step + 1)}
                 handlePreviusStep={() => setStep(step - 1)}
                 form={form}
@@ -69,8 +69,10 @@ const InstallationWizard = () => {
             </div>
             <div style={{ display: step === 2 ? 'inherit' : 'none' }}>
               <SetUpNewServerStep
+                step={step}
                 handleNextStep={() => setStep(step + 1)}
                 handlePreviusStep={() => setStep(step - 1)}
+                form={form}
               />
             </div>
             <div style={{ display: step === 3 ? 'inherit' : 'none' }}>
