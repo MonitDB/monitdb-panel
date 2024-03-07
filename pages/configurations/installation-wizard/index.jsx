@@ -1,9 +1,11 @@
 import { Form, Steps } from 'antd'
 import { NextSeo } from 'next-seo'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { io } from 'socket.io-client'
 
 import { PageContent, PageHeader } from '~/components/page'
 import Layout from '~/layouts/default'
+import { SOCKET } from '~/utils/client-api'
 
 import DetailsStep from './components/DetailsStep'
 import ResultStep from './components/Result'
@@ -30,8 +32,23 @@ const steps = [
 
 const InstallationWizard = () => {
   const [step, setStep] = useState(0)
+  const [socketID, setSocketID] = useState()
+  const [socket, setSocket] = useState()
 
   const [form] = Form.useForm()
+
+  useEffect(() => {
+    if (!socket) setSocket(io(SOCKET))
+  }, [socket])
+
+  useEffect(() => {
+    if (socket) {
+      socket.on('connect', () => {
+        setSocketID(socket.id)
+      })
+    }
+  }, [socket])
+
   return (
     <>
       <NextSeo title="Installation Wizard - Configurations - MonitDB" />
@@ -72,6 +89,8 @@ const InstallationWizard = () => {
                 step={step}
                 handleNextStep={() => setStep(step + 1)}
                 handlePreviusStep={() => setStep(step - 1)}
+                socketID={socketID}
+                socket={socket}
                 form={form}
               />
             </div>

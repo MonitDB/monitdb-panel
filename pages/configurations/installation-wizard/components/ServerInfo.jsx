@@ -22,7 +22,7 @@ const ServerInformationStep = ({ handleNextStep, form }) => {
   const [loading, setLoading] = useState(false)
 
   return (
-    <div style={{ height: '450px', overflowY: 'auto', padding: '25px' }}>
+    <div style={{ height: '70%', overflowY: 'auto', padding: '25px' }}>
       <div className="w-[100%]">
         <Row gutter={12}>
           <Col sm={12}>
@@ -144,6 +144,7 @@ const ServerInformationStep = ({ handleNextStep, form }) => {
               try {
                 await form.validateFields()
               } catch {
+                setLoading(false)
                 return
               }
 

@@ -1,49 +1,90 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Button, Row, Space } from 'antd'
+import { Button, Col, Row, Select, Space } from 'antd'
 import { useEffect, useState } from 'react'
-import { io } from 'socket.io-client'
 
 import TerminalWindow from '~/components/terminal'
-import { installNewServer } from '~/services/servers'
-import { SOCKET } from '~/utils/client-api'
+import { getAvailableVersions, installNewServer } from '~/services/servers'
 
 const SetUpNewServerStep = ({
   handleNextStep,
   handlePreviusStep,
   form,
   step,
+  socket,
+  socketID,
 }) => {
   const [terminalOutput, setTerminalOutput] = useState([])
-  const [socketID, setSocketID] = useState()
+
+  const [availableVersions, setAvailableVersions] = useState([])
+  const [version, setVersion] = useState()
+  const [installing, setInstalling] = useState(false)
+  const [installResult, setInstallResult] = useState()
+
+  const handleSocketMessage = (event) => {
+    setTerminalOutput((previousOutput) => [...previousOutput, event])
+  }
 
   useEffect(() => {
-    if (step === 2) {
-      const socket = io(SOCKET)
+    socket?.on('message', handleSocketMessage)
+    socket?.on('disconnect', () => {
+      setTerminalOutput((previousOutput) => [...previousOutput, 'Disconnected'])
 
-      const handleSocketMessage = (event) => {
-        setTerminalOutput((previousOutput) => [...previousOutput, event])
+      setInstallResult()
+    })
+  }, [socket])
+
+  useEffect(async () => {
+    try {
+      if (step === 2) {
+        const availableVersionsResult = await getAvailableVersions()
+        setAvailableVersions(availableVersionsResult.data)
       }
-
-      socket.on('connect', () => {
-        setSocketID(socket.id)
-      })
-
-      socket.on('message', handleSocketMessage)
-
-      return () => {
-        socket.off('message', handleSocketMessage)
-        socket.disconnect()
-      }
+    } catch {
+      /* empty */
     }
   }, [step])
 
-  useEffect(() => {
-    installNewServer(form.getFieldsValue(), socketID)
-  }, [form, socketID])
+  useEffect(() => {}, [form, socketID])
+
+  const handleInstall = async () => {
+    setInstalling(true)
+    setInstallResult()
+    try {
+      const { data } = await installNewServer(
+        form.getFieldsValue(),
+        version,
+        socketID
+      )
+      setInstallResult(data)
+      setInstalling(false)
+    } catch {
+      setInstalling(false)
+      return
+    }
+  }
 
   return (
-    <div>
-      <h2>Set Up New Server Step</h2>
+    <div style={{ height: '70%', overflowY: 'auto', padding: '25px' }}>
+      <Row justify={'end'} gutter={12}>
+        <Col sm={12}>
+          <Select
+            style={{ width: '100%' }}
+            loading={!availableVersions}
+            options={availableVersions?.map((availableVersion) => ({
+              value: availableVersion.idVersion,
+              label: availableVersion.versionName,
+            }))}
+            onChange={(value) => {
+              setVersion(value)
+            }}
+          />
+        </Col>
+        <Col sm={5}>
+          <Button disabled={!version || installing} onClick={handleInstall}>
+            RUN
+          </Button>
+        </Col>
+      </Row>
       <Row>
         <div className="mt-10" style={{ width: '100%', marginBotton: '10px' }}>
           <TerminalWindow
@@ -70,7 +111,11 @@ const SetUpNewServerStep = ({
             Previous
           </Button>
 
-          <Button type="primary" onClick={() => handleNextStep()}>
+          <Button
+            type="primary"
+            disabled={!installResult}
+            onClick={() => handleNextStep()}
+          >
             Next
           </Button>
         </Space>

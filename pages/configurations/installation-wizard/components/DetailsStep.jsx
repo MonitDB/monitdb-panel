@@ -4,7 +4,7 @@ import { Button, Col, Form, Input, Row, Space } from 'antd'
 const DetailsStep = ({ handleNextStep, handlePreviusStep }) => {
   return (
     <>
-      <div style={{ height: '350px', overflowY: 'auto', padding: '25px' }}>
+      <div style={{ height: '70%', overflowY: 'auto', padding: '25px' }}>
         <Row gutter={16}>
           <Col sm={12}>
             <Form.Item

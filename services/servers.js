@@ -32,9 +32,17 @@ export const testServer = async (values) => {
   })
 }
 
-export const installNewServer = async (values, socketID) => {
+export const getAvailableVersions = async () => {
+  try {
+    return apiV2().get(`/server/available-versions`)
+  } catch {
+    return []
+  }
+}
+
+export const installNewServer = async (values, versionID, socketID) => {
   return apiV2().post(`/server/install-new-server`, values, {
-    params: { socketID },
+    params: { socketID, versionID },
   })
 }
 
