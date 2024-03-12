@@ -1,21 +1,17 @@
 /* eslint-disable no-console */
-import { Result } from 'antd'
+import { Button, Result, Space } from 'antd'
 import { useEffect, useState } from 'react'
 
-const ResultStep = ({ socket }) => {
+const ResultStep = ({ socket, handlePreviusStep, handleNextStep }) => {
   const [result, setResult] = useState({ show: false, status: '', message: '' })
   useEffect(() => {
     socket?.on('result', (result) => {
       try {
-        setResult(JSON.parse(result))
+        setResult(result)
       } catch (error) {
         console.log(error)
       }
     })
-
-    return () => {
-      socket?.disconnect()
-    }
   }, [socket])
   return (
     <div style={{ height: '70%', overflowY: 'auto', padding: '25px' }}>
@@ -30,6 +26,17 @@ const ResultStep = ({ socket }) => {
         />
         // />
       )}
+      <div className="flex justify-end mt-10">
+        <Space>
+          <Button type="default" onClick={() => handlePreviusStep()}>
+            Previous
+          </Button>
+
+          <Button type="primary" onClick={() => handleNextStep()}>
+            Next
+          </Button>
+        </Space>
+      </div>
     </div>
   )
 }

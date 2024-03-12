@@ -95,7 +95,7 @@ const InstallationWizard = () => {
               />
             </div>
             <div style={{ display: step === 3 ? 'inherit' : 'none' }}>
-              <ResultStep />
+              <ResultStep socket={socket} />
             </div>
           </Form>
         </PageContent>
