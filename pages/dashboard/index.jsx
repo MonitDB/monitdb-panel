@@ -100,7 +100,7 @@ const DashboardPage = () => {
                   .map((server, index) => (
                     <div key={index} style={{ marginRight: '15px' }}>
                       <ServerCard
-                        key={`server-production-${index}`}
+                        key={`server-${index}`}
                         className="w-full mb-4 md:mb-0 m:10"
                         interval={refreshInterval}
                         type={server.idTypeServer}

@@ -100,7 +100,7 @@ const ServerCard = ({
     try {
       let response
       try {
-        await getServerMetrics({ id })
+        response = await getServerMetrics({ id })
       } catch {
         /* empty */
       }
