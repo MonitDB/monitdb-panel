@@ -82,7 +82,7 @@ const ResultStep = ({ socket, handlePreviusStep }) => {
             Previous
           </Button>
 
-          <Button type="primary" onClick={() => router.push('/settings')}>
+          <Button type="primary" onClick={() => router.push('/configurations')}>
             Finish
           </Button>
         </Space>
