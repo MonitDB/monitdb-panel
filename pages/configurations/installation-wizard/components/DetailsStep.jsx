@@ -1,10 +1,12 @@
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons'
 import { Button, Col, Form, Input, Row, Space } from 'antd'
 
+import { StepContainer } from './StepContainer'
+
 const DetailsStep = ({ handleNextStep, handlePreviusStep }) => {
   return (
     <>
-      <div style={{ height: '70%', overflowY: 'auto', padding: '25px' }}>
+      <StepContainer>
         <Row gutter={16}>
           <Col sm={12}>
             <Form.Item
@@ -195,8 +197,7 @@ const DetailsStep = ({ handleNextStep, handlePreviusStep }) => {
             </>
           )}
         </Form.List>
-      </div>
-
+      </StepContainer>
       <div className="flex justify-end">
         <Space>
           <Button type="default" onClick={handlePreviusStep}>

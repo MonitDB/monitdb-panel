@@ -1,43 +1,94 @@
-/* eslint-disable no-console */
-import { Button, Result, Space } from 'antd'
+import { Button, Space } from 'antd'
+import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
+import styled from 'styled-components'
 
-const ResultStep = ({ socket, handlePreviusStep, handleNextStep }) => {
-  const [result, setResult] = useState({ show: false, status: '', message: '' })
+import { StepContainer } from './StepContainer'
+
+const ResultContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`
+
+const ResultMessage = styled.div`
+  text-align: center;
+  margin-top: 20px;
+`
+
+const ResultStep = ({ socket, handlePreviusStep }) => {
+  const [result, setResult] = useState({ status: '', message: '' })
+
+  const router = useRouter()
+  const handleResult = (result) => {
+    try {
+      setResult(result)
+    } catch {
+      // console.log(error)
+    }
+  }
   useEffect(() => {
-    socket?.on('result', (result) => {
-      try {
-        setResult(result)
-      } catch (error) {
-        console.log(error)
-      }
-    })
-  }, [socket])
-  return (
-    <div style={{ height: '70%', overflowY: 'auto', padding: '25px' }}>
-      <h2>Result Step</h2>
+    if (socket) {
+      socket.on('result', handleResult)
+    }
 
-      {result.show !== undefined && (
-        <Result
-          status={result.status ?? 'info'}
-          title="There are some problems with your operation."
-          icon={<></>}
-          extra={[]}
-        />
-        // />
-      )}
+    return () => {
+      if (socket) {
+        socket.off('result', handleResult)
+      }
+    }
+  }, [socket])
+
+  const resultMessage = () => {
+    if (result) {
+      switch (result.status) {
+        case 'success':
+          return (
+            <>
+              <h1>The server was successfully installed</h1>
+              <p>{result.message}</p>
+            </>
+          )
+        case 'error':
+          return (
+            <>
+              <h1>There are some errors at installation of the server</h1>
+              <p>{result.message}</p>
+              <p>Please, try again</p>
+            </>
+          )
+        default:
+          return (
+            <>
+              <h1>The server returned an info</h1>
+              <p>{result.message}</p>
+            </>
+          )
+      }
+    }
+  }
+
+  return (
+    <>
+      <StepContainer>
+        <ResultContainer>
+          <h2>Result Step</h2>
+          {console.log({ result })}
+          {<ResultMessage>{resultMessage()}</ResultMessage>}
+        </ResultContainer>
+      </StepContainer>
       <div className="flex justify-end mt-10">
         <Space>
-          <Button type="default" onClick={() => handlePreviusStep()}>
+          <Button type="default" onClick={handlePreviusStep}>
             Previous
           </Button>
 
-          <Button type="primary" onClick={() => handleNextStep()}>
-            Next
+          <Button type="primary" onClick={() => router.push('')}>
+            Finish
           </Button>
         </Space>
       </div>
-    </div>
+    </>
   )
 }
 
