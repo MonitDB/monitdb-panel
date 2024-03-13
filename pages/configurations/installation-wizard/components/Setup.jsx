@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 import TerminalWindow from '~/components/terminal'
 import { getAvailableVersions, installNewServer } from '~/services/servers'
 
-import { StepContainer } from './StepContainer'
+import StepContainer from './StepContainer'
 
 const SetUpNewServerStep = ({
   handleNextStep,

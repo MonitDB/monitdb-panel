@@ -14,7 +14,7 @@ import { useState } from 'react'
 import { useGlobal } from '~/hooks/index'
 import { testServer } from '~/services/servers'
 
-import { StepContainer } from './StepContainer'
+import StepContainer from './StepContainer'
 
 const ServerInformationStep = ({ handleNextStep, form }) => {
   const {

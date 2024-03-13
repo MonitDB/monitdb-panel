@@ -1,7 +1,7 @@
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons'
 import { Button, Col, Form, Input, Row, Space } from 'antd'
 
-import { StepContainer } from './StepContainer'
+import StepContainer from './StepContainer'
 
 const DetailsStep = ({ handleNextStep, handlePreviusStep }) => {
   return (

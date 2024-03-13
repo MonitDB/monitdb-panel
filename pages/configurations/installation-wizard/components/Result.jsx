@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
-import { StepContainer } from './StepContainer'
+import StepContainer from './StepContainer'
 
 const ResultContainer = styled.div`
   display: flex;
