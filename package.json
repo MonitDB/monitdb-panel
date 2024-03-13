@@ -63,8 +63,8 @@
     "styled-components": "^6.0.8",
     "swr": "^2.1.5",
     "xlsx": "^0.18.5",
-    "yup": "^0.32.11",
-    "yup-locales": "^1.2.2",
+    "yup": "^1.4.0",
+    "yup-locales": "^1.2.21",
     "zustand": "^4.3.8"
   },
   "devDependencies": {

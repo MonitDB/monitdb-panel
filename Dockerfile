@@ -1,4 +1,4 @@
-FROM node:16.15-alpine3.14
+FROM node:17.9.1
 RUN mkdir -p /opt/app
 WORKDIR /opt/app
 RUN adduser -S app
