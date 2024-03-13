@@ -73,7 +73,6 @@ const ResultStep = ({ socket, handlePreviusStep }) => {
       <StepContainer>
         <ResultContainer>
           <h2>Result Step</h2>
-          {console.log({ result })}
           {<ResultMessage>{resultMessage()}</ResultMessage>}
         </ResultContainer>
       </StepContainer>
