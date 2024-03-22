@@ -97,10 +97,22 @@ const HistoryInfo = ({ currentServer }) => {
 
       <div id="allinstancemetrics">
         <Row gutter={16}>
-          <Col md={12} sm={24}>
+          <Col
+            md={12}
+            sm={24}
+            style={{
+              marginBottom: '16px',
+            }}
+          >
             <MemoryUsage currentServer={currentServer} />
           </Col>
-          <Col md={12} sm={24} style={{ marginTop: '12px' }}>
+          <Col
+            md={12}
+            sm={24}
+            style={{
+              marginBottom: '16px',
+            }}
+          >
             <CpuUsage currentServer={currentServer} />
           </Col>
         </Row>

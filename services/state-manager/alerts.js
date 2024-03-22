@@ -41,22 +41,55 @@ const useAlertContext = create((set) => ({
   },
 
   getAlertHtml: async (id, serverId) => {
-    const { data } = await apiV2().get(`/alert/${id}/html`, {
-      params: { serverId },
-    })
-    return data
+    try {
+      const { data } = await apiV2().get(`/alert/${id}/html`, {
+        params: { serverId },
+      })
+      return data
+    } catch {
+      return []
+    }
   },
 
   clearAlert: async (id, serverId) => {
-    const { data } = await apiV2().put(`/alert/clear/${serverId}/${id}/`)
-    return data
+    try {
+      const { data } = await apiV2().put(`/alert/clear/${serverId}/${id}/`)
+      return data
+    } catch {
+      return []
+    }
   },
 
   getSuggestion: async (serverId, id, htmlRow) => {
-    const { data } = await apiV2().get(
-      `/alert/ai-sugestion/${serverId}/${id}/${htmlRow}`
-    )
-    return data
+    try {
+      const { data } = await apiV2().get(
+        `/alert/ai-suggestion/${serverId}/${id}/${htmlRow}`
+      )
+      return data
+    } catch {
+      return []
+    }
+  },
+
+  getPreviousSuggestions: async (id) => {
+    try {
+      const { data } = await apiV2().get(`/alert/previous-suggestions/${id}`)
+      return data
+    } catch {
+      return []
+    }
+  },
+
+  rateSuggestion: async ({ sugestionId, rate, comment }) => {
+    try {
+      return await apiV2().post(`/alert/rate-suggestion`, {
+        sugestionId,
+        rate,
+        comment,
+      })
+    } catch {
+      return []
+    }
   },
 
   // getAlertParameterByServerId: async (serverId, parameterId) => {

@@ -30,7 +30,12 @@ export const ApiLogs = () => {
         serverName: router.query.ServerName,
       })
 
-      setData(response?.data?.logs || [])
+      setData(
+        response && response.data && response.data.logs
+          ? response.data.logs
+          : []
+      )
+
       setPagination({
         ...pagination,
         totalResults: response?.data?.totalResults || 0,
@@ -64,11 +69,35 @@ export const ApiLogs = () => {
           ),
         }}
         columns={[
-          { title: 'Route', dataIndex: 'route' },
+          {
+            title: 'Route',
+            dataIndex: 'route',
+            render: (route) => (
+              <Highlighter code={route} showLineNumbers={true} />
+            ),
+          },
           {
             title: 'Method',
             dataIndex: 'method',
             render: (method) => <Tag>{method.toUpperCase()} </Tag>,
+          },
+          {
+            title: 'Status Code',
+            dataIndex: 'statusCode',
+            render: (statusCode) => {
+              let color = ''
+              if (statusCode >= 200 && statusCode < 300) {
+                color = 'green'
+              } else if (statusCode >= 400 && statusCode < 500) {
+                color = 'orange'
+              } else if (statusCode >= 500 && statusCode < 600) {
+                color = 'red'
+              } else {
+                color = 'default'
+              }
+
+              return <Tag color={color}>{statusCode}</Tag>
+            },
           },
           {
             title: 'Created At',

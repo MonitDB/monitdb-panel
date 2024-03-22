@@ -280,6 +280,7 @@ const AlertsDetailsPage = () => {
                     <AlertHtmlSubTable
                       serverId={alert.serverId}
                       idSeq={alert.idSeq}
+                      id={alert.id}
                     />
                   )
                 },
