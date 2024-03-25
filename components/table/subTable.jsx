@@ -204,7 +204,7 @@ export const AlertHtmlSubTable = ({ serverId, idSeq, id }) => {
       <Modal
         open={modal}
         onCancel={() => setModal(false)}
-        height={'80vh'}
+        height={'95vh'}
         width={'90%'}
         title="AI Result"
         closable={true}
