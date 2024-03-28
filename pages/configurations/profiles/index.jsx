@@ -1,4 +1,4 @@
-import { Button, Table } from 'antd'
+import { Button, Col, Row, Table } from 'antd'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
 import React, { useCallback, useEffect, useState } from 'react'
@@ -52,6 +52,27 @@ const ProfilePage = () => {
             <div>
               <Table
                 loading={loading}
+                title={() => (
+                  <>
+                    <Row justify={'space-between'}>
+                      <Col>
+                        <h1>
+                          <strong>Profiles</strong>
+                        </h1>
+                      </Col>
+                      <Col>
+                        <Button
+                          type="primary"
+                          onClick={() => {
+                            router.push(`/configurations/profiles/new-profile`)
+                          }}
+                        >
+                          Add profile
+                        </Button>
+                      </Col>
+                    </Row>
+                  </>
+                )}
                 columns={[
                   {
                     title: 'Profile',

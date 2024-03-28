@@ -3,9 +3,8 @@
 /* eslint-disable unicorn/consistent-function-scoping */
 /* eslint-disable no-console */
 /* eslint-disable sonarjs/no-duplicate-string */
-import { faSave } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Button, Input } from 'antd'
+
+import { Select, Table } from 'antd'
 import { useFormik } from 'formik'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
@@ -13,13 +12,13 @@ import React, { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import * as Yup from 'yup'
 
-import Loading from '~/components/loading/loading'
 import { PageContent, PageHeader, PageWrapper } from '~/components/page'
 import Layout from '~/layouts/default'
 import {
   createProfile,
   getPermissions,
   getProfileById,
+  getTypesGrants,
   updateProfile,
 } from '~/services/permissions'
 
@@ -29,6 +28,7 @@ const EditProfilePage = () => {
   const [fetching, setIsFetching] = useState(false)
   const [loading, setLoading] = useState(false)
   const [permissions, setPermissions] = useState([])
+  const [typesGrants, setTypesGrants] = useState([])
 
   const validationSchema = Yup.object({
     roleName: Yup.string().required('Profile Name is required'),
@@ -66,6 +66,8 @@ const EditProfilePage = () => {
       setIsFetching(true)
       try {
         const { data: permissionsData } = await getPermissions()
+        const { data: typesGrantsData } = await getTypesGrants()
+        setTypesGrants(typesGrantsData)
         setPermissions(permissionsData)
 
         if (profileId !== 'new-profile') {
@@ -115,118 +117,47 @@ const EditProfilePage = () => {
         <PageWrapper className="p-8">
           <PageContent removeSidebarMargin={true}>
             {renderBreadcrumb()}
-
-            {fetching && (
-              <div className="flex justify-center items-center w-full min-h-28">
-                <Loading light />
-              </div>
-            )}
-
-            {!fetching && (
-              <div className="mt-8">
-                <form
-                  onSubmit={formik.handleSubmit}
-                  className="max-w-xl mx-auto"
-                >
-                  <div className="mb-4">
-                    <label
-                      htmlFor="roleName"
-                      className="block text-sm font-medium text-gray-600"
-                    >
-                      Profile Name:
-                    </label>
-                    <Input
-                      type="text"
-                      id="roleName"
-                      name="roleName"
-                      value={formik.values.roleName}
-                      onChange={formik.handleChange}
-                      onBlur={formik.handleBlur}
-                      className="w-full"
+            <Table
+              columns={[
+                { title: 'Name', dataIndex: 'featureName' },
+                { title: 'Description', dataIndex: 'featureDescription' },
+                { title: 'Version', dataIndex: 'featureVersion' },
+                {
+                  title: 'Level',
+                  render: (record) => (
+                    <Select
+                      style={{
+                        display: Number(record.key) ? 'initial' : 'none',
+                        width: '250px',
+                      }}
+                      defaultValue={typesGrants[1]?.idTypeGrant}
+                      options={typesGrants.map((typeGrant) => ({
+                        label: typeGrant.typeGrantName,
+                        value: typeGrant.idTypeGrant,
+                      }))}
                     />
-                    {formik.touched.roleName && formik.errors.roleName && (
-                      <div className="text-red-500">
-                        {formik.errors.roleName}
-                      </div>
-                    )}
-                  </div>
-                  <div className="mb-4">
-                    <label
-                      htmlFor="roleDescription"
-                      className="block text-sm font-medium text-gray-600"
-                    >
-                      Description:
-                    </label>
-                    <textarea
-                      id="roleDescription"
-                      name="roleDescription"
-                      value={formik.values.roleDescription}
-                      onBlur={formik.handleBlur}
-                      onChange={formik.handleChange}
-                      className="mt-1 p-2 border rounded-md w-full"
-                    />
-                    {formik.touched.roleDescription &&
-                      formik.errors.roleDescription && (
-                        <div className="text-red-500">
-                          {formik.errors.roleDescription}
-                        </div>
-                      )}
-                  </div>
-
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-600">
-                      Permissions:
-                    </label>
-                    <div className="mt-2">
-                      {permissions.map((permission) => (
-                        <div key={permission.id} className="flex items-center">
-                          <Input
-                            type="checkbox"
-                            id={`permission-${permission.id}`}
-                            name={`permissions[${permission.id}]`}
-                            checked={formik.values.permissions?.includes(
-                              permission.id
-                            )}
-                            alt={permission.description}
-                            title={permission.description}
-                            onChange={({ target: { checked } }) => {
-                              const newPermissions = checked
-                                ? [...formik.values.permissions, permission.id]
-                                : formik.values.permissions.filter(
-                                    (id) => id !== permission.id
-                                  )
-
-                              formik.setFieldValue(
-                                'permissions',
-                                newPermissions
-                              )
-                            }}
-                            className="mr-2"
-                          />
-                          <label
-                            htmlFor={`permission-${permission.id}`}
-                            title={permission.description}
-                          >
-                            {permission.name}
-                          </label>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="mb-4 flex justify-end">
-                    <Button
-                      loading={loading}
-                      type="primary"
-                      htmlType="submit"
-                      icon={<FontAwesomeIcon icon={faSave} className="mr-2" />}
-                    >
-                      {'Save'}
-                    </Button>
-                  </div>
-                </form>
-              </div>
-            )}
+                  ),
+                },
+              ]}
+              rowSelection={{
+                checkStrictly: false,
+                onChange: (selectedRows) => {
+                  console.log({ selectedRows })
+                },
+              }}
+              dataSource={permissions.map((permission) => ({
+                ...permission,
+                key: `permission-${permission.id}`,
+                featureName: permission.featureName,
+                children: permission.featureFunction.map((featureFunction) => ({
+                  featureName: featureFunction.featureFunctionName,
+                  featureDescription:
+                    featureFunction.featureFunctionDescription,
+                  featureVersion: featureFunction.featureFunctionVersion,
+                  key: `${featureFunction.idFeatureFunction}`,
+                })),
+              }))}
+            />
           </PageContent>
         </PageWrapper>
       </Layout>

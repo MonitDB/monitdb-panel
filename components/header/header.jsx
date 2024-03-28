@@ -23,38 +23,38 @@ const buttonClassesActive = 'border-blue text-opacity-100'
 const Header = () => {
   const router = useRouter()
 
-  const { hasPermissions, userState } = useUser()
+  const { userState } = useUser()
 
   const navMenuList = [
     {
       title: 'Dashboard',
       href: '/dashboard/',
-      requiredPermissions: [permission.DASHBOARD_PAGE],
+      // requiredPermissions: [permission.DASHBOARD_PAGE],
     },
     {
       title: 'Alerts',
       href: '/alerts/',
-      requiredPermissions: [permission?.ALERT_PAGE],
+      // requiredPermissions: [permission?.ALERT_PAGE],
     },
     {
       title: 'Analysis',
       href: '/analysis/',
-      requiredPermissions: [permission?.ANALISYS_PAGE],
+      // requiredPermissions: [permission?.ANALISYS_PAGE],
     },
     {
       title: 'Reports',
       href: '/reports/',
-      requiredPermissions: [permission.REPORT_PAGE],
+      // requiredPermissions: [permission.REPORT_PAGE],
     },
     {
       title: 'States',
       href: '/states/',
-      requiredPermissions: [permission.STATES_PAGE],
+      // requiredPermissions: [permission.STATES_PAGE],
     },
     {
       title: 'Configurations',
       href: '/configurations/',
-      requiredPermissions: [permission.CONFIGURATION_PAGE],
+      // requiredPermissions: [permission.CONFIGURATION_PAGE],
     },
   ]
 
@@ -84,8 +84,7 @@ const Header = () => {
             <ul className="flex items-center">
               {navMenuList.map(
                 (item, index) =>
-                  userState &&
-                  hasPermissions(item.requiredPermissions) && (
+                  userState && (
                     <li key={`nav-item-${index}`}>
                       <Link
                         href={item.href}
