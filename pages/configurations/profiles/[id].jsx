@@ -25,7 +25,7 @@ import {
 const EditProfilePage = () => {
   const router = useRouter()
   const { id: profileId } = router.query
-  const [fetching, setIsFetching] = useState(false)
+  const [, setIsFetching] = useState(false)
   const [loading, setLoading] = useState(false)
   const [permissions, setPermissions] = useState([])
   const [typesGrants, setTypesGrants] = useState([])
@@ -118,6 +118,7 @@ const EditProfilePage = () => {
           <PageContent removeSidebarMargin={true}>
             {renderBreadcrumb()}
             <Table
+              loading={loading}
               columns={[
                 { title: 'Name', dataIndex: 'featureName' },
                 { title: 'Description', dataIndex: 'featureDescription' },
