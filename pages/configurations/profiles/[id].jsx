@@ -4,7 +4,7 @@
 /* eslint-disable no-console */
 /* eslint-disable sonarjs/no-duplicate-string */
 
-import { Select, Table } from 'antd'
+import { Form, Input, Select, Table } from 'antd'
 import { useFormik } from 'formik'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
@@ -117,48 +117,65 @@ const EditProfilePage = () => {
         <PageWrapper className="p-8">
           <PageContent removeSidebarMargin={true}>
             {renderBreadcrumb()}
-            <Table
-              loading={loading}
-              columns={[
-                { title: 'Name', dataIndex: 'featureName' },
-                { title: 'Description', dataIndex: 'featureDescription' },
-                { title: 'Version', dataIndex: 'featureVersion' },
-                {
-                  title: 'Level',
-                  render: (record) => (
-                    <Select
-                      style={{
-                        display: Number(record.key) ? 'initial' : 'none',
-                        width: '250px',
-                      }}
-                      defaultValue={typesGrants[1]?.idTypeGrant}
-                      options={typesGrants.map((typeGrant) => ({
-                        label: typeGrant.typeGrantName,
-                        value: typeGrant.idTypeGrant,
-                      }))}
-                    />
+            <Form layout="vertical">
+              <Form.Item label="Profile Name" name="roleName">
+                <Input />
+              </Form.Item>
+              <Form.Item label="Description" name="roleDescription">
+                <Input.TextArea rows={3} />
+              </Form.Item>
+              <h2 className="text-lg font-semibold">Permissions</h2>
+              <p className="text-gray-500">
+                Select the permissions that this profile will have
+              </p>
+              <br />
+              <br />
+
+              <Table
+                loading={loading}
+                columns={[
+                  { title: 'Name', dataIndex: 'featureName' },
+                  { title: 'Description', dataIndex: 'featureDescription' },
+                  { title: 'Version', dataIndex: 'featureVersion' },
+                  {
+                    title: 'Level',
+                    render: (record) => (
+                      <Select
+                        style={{
+                          display: Number(record.key) ? 'initial' : 'none',
+                          width: '250px',
+                        }}
+                        defaultValue={typesGrants[1]?.idTypeGrant}
+                        options={typesGrants.map((typeGrant) => ({
+                          label: typeGrant.typeGrantName,
+                          value: typeGrant.idTypeGrant,
+                        }))}
+                      />
+                    ),
+                  },
+                ]}
+                rowSelection={{
+                  checkStrictly: false,
+                  onChange: (selectedRows) => {
+                    console.log({ selectedRows })
+                  },
+                }}
+                dataSource={permissions.map((permission) => ({
+                  ...permission,
+                  key: `permission-${permission.id}`,
+                  featureName: permission.featureName,
+                  children: permission.featureFunction.map(
+                    (featureFunction) => ({
+                      featureName: featureFunction.featureFunctionName,
+                      featureDescription:
+                        featureFunction.featureFunctionDescription,
+                      featureVersion: featureFunction.featureFunctionVersion,
+                      key: `${featureFunction.idFeatureFunction}`,
+                    })
                   ),
-                },
-              ]}
-              rowSelection={{
-                checkStrictly: false,
-                onChange: (selectedRows) => {
-                  console.log({ selectedRows })
-                },
-              }}
-              dataSource={permissions.map((permission) => ({
-                ...permission,
-                key: `permission-${permission.id}`,
-                featureName: permission.featureName,
-                children: permission.featureFunction.map((featureFunction) => ({
-                  featureName: featureFunction.featureFunctionName,
-                  featureDescription:
-                    featureFunction.featureFunctionDescription,
-                  featureVersion: featureFunction.featureFunctionVersion,
-                  key: `${featureFunction.idFeatureFunction}`,
-                })),
-              }))}
-            />
+                }))}
+              />
+            </Form>
           </PageContent>
         </PageWrapper>
       </Layout>
