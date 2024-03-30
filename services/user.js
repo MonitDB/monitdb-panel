@@ -1,14 +1,13 @@
-import  { apiV2 } from '~/utils/client-api'
+import { apiV2 } from '~/utils/client-api'
 
 export const postLogin = async (data) => {
-   return apiV2().post('/user/login', data)
+  return apiV2().post('/user/login', data)
 }
 
 export const postTokenValidate = async (token) => {
   return apiV2(token).post('/user/refresh-token')
 }
 
- 
 export const getMe = async () => {
   return apiV2().get('/user/me')
 }
@@ -18,7 +17,7 @@ export const create = async (data) => {
 }
 
 export const update = async (data) => {
-  return apiV2().put('/user', data)
+  return apiV2().put(`/user/${data.id}`, data)
 }
 
 export const getUserById = async (id) => {

@@ -1,8 +1,6 @@
-// import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { notification } from 'antd'
 import classNames from 'classnames'
 import { useCallback, useEffect, useState } from 'react'
-import { toast } from 'react-toastify'
 
 import Reveal from '~/helpers/reveal'
 import { useSingleDashboard } from '~/hooks/index'
@@ -25,8 +23,11 @@ export const TopQueries = () => {
       setLoading(true)
       const data = await getTopQueries(currentServer.id)
       setData(data)
-    } catch {
-      toast.error('Error to get the Top Queries')
+    } catch (error) {
+      notification.error({
+        message: 'Error',
+        description: error.message,
+      })
     } finally {
       setLoading(false)
     }

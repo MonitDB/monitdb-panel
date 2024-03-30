@@ -1,3 +1,4 @@
+import { Button } from 'antd'
 import { useFormik } from 'formik'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
@@ -110,7 +111,7 @@ const UserSinglePage = () => {
       },
       ...roles.map((role) => ({
         label: role.roleName,
-        value: role.id,
+        value: role.idRole,
       })),
     ]
   }, [roles])
@@ -236,18 +237,19 @@ const UserSinglePage = () => {
                 />
               </Label>
               <div className="col-span-2 flex justify-between items-center">
-                <button type="submit" className="btn" disabled={isLoading}>
+                <Button
+                  type="primary"
+                  typeof="submit"
+                  onClick={() => formik.submitForm()}
+                  loading={isLoading}
+                >
                   {isLoading ? 'Saving...' : 'Save'}
-                </button>
+                </Button>
               </div>
               <div className="col-span-2 flex bg-danger bg-opacity-10 border border-danger border-opacity-50 p-4 rounded-md">
-                <button
-                  type="button"
-                  className="btn btn-danger ml-auto"
-                  onClick={() => handleDelete()}
-                >
+                <Button type="primary" danger onClick={() => handleDelete()}>
                   Delete
-                </button>
+                </Button>
               </div>
             </form>
           </PageContent>

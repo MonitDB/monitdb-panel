@@ -1,16 +1,23 @@
+/* eslint-disable unicorn/no-array-callback-reference */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable unicorn/consistent-function-scoping */
 /* eslint-disable no-console */
 /* eslint-disable sonarjs/no-duplicate-string */
 
-import { Form, Input, Select, Table } from 'antd'
-import { useFormik } from 'formik'
+import {
+  Button,
+  Form,
+  Input,
+  notification,
+  Row,
+  Select,
+  Space,
+  Table,
+} from 'antd'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
 import React, { useEffect, useState } from 'react'
-import { toast } from 'react-toastify'
-import * as Yup from 'yup'
 
 import { PageContent, PageHeader, PageWrapper } from '~/components/page'
 import Layout from '~/layouts/default'
@@ -21,45 +28,18 @@ import {
   getTypesGrants,
   updateProfile,
 } from '~/services/permissions'
-
 const EditProfilePage = () => {
   const router = useRouter()
   const { id: profileId } = router.query
-  const [, setIsFetching] = useState(false)
+  const [fetching, setIsFetching] = useState(false)
   const [loading, setLoading] = useState(false)
   const [permissions, setPermissions] = useState([])
   const [typesGrants, setTypesGrants] = useState([])
 
-  const validationSchema = Yup.object({
-    roleName: Yup.string().required('Profile Name is required'),
-    roleDescription: Yup.string().required('Description is required'),
-  })
+  const [typeGrant, setTypeGrant] = useState({})
+  const [fetureFunctions, setFetureFunctions] = useState([])
 
-  const formik = useFormik({
-    initialValues: {
-      roleName: '',
-      roleDescription: '',
-      permissions: [],
-    },
-    validationSchema,
-    onSubmit: async (values) => {
-      try {
-        setLoading(true)
-
-        if (profileId !== 'new-profile') {
-          updateProfile(profileId, values)
-        } else {
-          createProfile(values)
-        }
-        toast.success('Profile saved successfully')
-        router.push('/configurations/profiles')
-      } catch (error) {
-        toast.error(error.message)
-      } finally {
-        setLoading(false)
-      }
-    },
-  })
+  const [form] = Form.useForm()
 
   useEffect(() => {
     async function fetchData() {
@@ -72,7 +52,21 @@ const EditProfilePage = () => {
 
         if (profileId !== 'new-profile') {
           const { data: profileData } = await getProfileById(profileId)
-          formik.setValues(profileData)
+          form.setFieldsValue({
+            roleName: profileData.roleName,
+            roleDescription: profileData.roleDescription,
+          })
+
+          for (const data of profileData.featureFunctions) {
+            setTypeGrant((oldState) => ({
+              ...oldState,
+              [data.idFeatureFunction]: data.idTypeGrant,
+            }))
+            setFetureFunctions((oldState) => [
+              ...oldState,
+              String(data.idFeatureFunction),
+            ])
+          }
         }
       } catch (error) {
         console.error(error)
@@ -92,7 +86,7 @@ const EditProfilePage = () => {
       },
       {
         title: 'Profile',
-        href: '/configurations/profile',
+        href: '/configurations/profiles',
       },
       {
         title: profileId === 'new-profile' ? 'Create Profile' : 'Edit Profile',
@@ -108,6 +102,42 @@ const EditProfilePage = () => {
     )
   }
 
+  const handleSubmit = async (values) => {
+    const payload = {
+      ...values,
+      featureFunctions: fetureFunctions.map((item) => ({
+        featureFunctionId: item,
+        typeGrantId: typeGrant[item],
+      })),
+    }
+
+    setLoading(true)
+    try {
+      await (profileId === 'new-profile'
+        ? createProfile(payload)
+        : updateProfile(profileId, payload))
+      if (profileId === 'new-profile') {
+        notification.success({
+          message: 'Profile created successfully',
+        })
+      } else {
+        notification.success({
+          message: 'Profile updated successfully',
+        })
+      }
+
+      router.push('/configurations/profiles')
+    } catch (error) {
+      console.error(error)
+      notification.error({
+        message: 'Error',
+        description: error.message,
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <>
       <NextSeo
@@ -117,12 +147,22 @@ const EditProfilePage = () => {
         <PageWrapper className="p-8">
           <PageContent removeSidebarMargin={true}>
             {renderBreadcrumb()}
-            <Form layout="vertical">
-              <Form.Item label="Profile Name" name="roleName">
-                <Input />
+            <Form layout="vertical" form={form} onFinish={handleSubmit}>
+              <Form.Item
+                label="Profile Name"
+                name="roleName"
+                rules={[{ required: 'true', message: 'Name is required' }]}
+              >
+                <Input disabled={loading} />
               </Form.Item>
-              <Form.Item label="Description" name="roleDescription">
-                <Input.TextArea rows={3} />
+              <Form.Item
+                label="Description"
+                name="roleDescription"
+                rules={[
+                  { required: 'true', message: 'Description is required' },
+                ]}
+              >
+                <Input.TextArea disabled={loading} rows={3} />
               </Form.Item>
               <h2 className="text-lg font-semibold">Permissions</h2>
               <p className="text-gray-500">
@@ -132,33 +172,65 @@ const EditProfilePage = () => {
               <br />
 
               <Table
-                loading={loading}
+                loading={fetching || loading}
                 columns={[
                   { title: 'Name', dataIndex: 'featureName' },
                   { title: 'Description', dataIndex: 'featureDescription' },
                   { title: 'Version', dataIndex: 'featureVersion' },
                   {
                     title: 'Level',
-                    render: (record) => (
-                      <Select
-                        style={{
-                          display: Number(record.key) ? 'initial' : 'none',
-                          width: '250px',
-                        }}
-                        defaultValue={typesGrants[1]?.idTypeGrant}
-                        options={typesGrants.map((typeGrant) => ({
-                          label: typeGrant.typeGrantName,
-                          value: typeGrant.idTypeGrant,
-                        }))}
-                      />
-                    ),
+                    width: 300,
+                    render: (record) =>
+                      Number(record.key) ? (
+                        <div>
+                          <Select
+                            onChange={(value) => {
+                              setTypeGrant((previous) => ({
+                                ...previous,
+                                [record.key]: value,
+                              }))
+                            }}
+                            value={typeGrant[record.key]}
+                            defaultValue={typesGrants[1]?.idTypeGrant}
+                            options={typesGrants.map((typeGrant) => ({
+                              label: typeGrant.typeGrantName,
+                              value: typeGrant.idTypeGrant,
+                            }))}
+                          />
+                        </div>
+                      ) : (
+                        <Select
+                          status="warning"
+                          onChange={(value) => {
+                            for (const featureFunction of record.featureFunction) {
+                              setTypeGrant((previous) => ({
+                                ...previous,
+                                [featureFunction.idFeatureFunction]: value,
+                              }))
+                            }
+
+                            setTypeGrant((previous) => ({
+                              ...previous,
+                              [record.key]: value,
+                            }))
+                          }}
+                          value={typeGrant[record.key]}
+                          defaultValue={typesGrants[1]?.idTypeGrant}
+                          options={typesGrants.map((typeGrant) => ({
+                            label: typeGrant.typeGrantName,
+                            value: typeGrant.idTypeGrant,
+                          }))}
+                        />
+                      ),
                   },
                 ]}
                 rowSelection={{
                   checkStrictly: false,
                   onChange: (selectedRows) => {
-                    console.log({ selectedRows })
+                    const rows = selectedRows.filter(Number)
+                    setFetureFunctions(rows)
                   },
+                  selectedRowKeys: fetureFunctions,
                 }}
                 dataSource={permissions.map((permission) => ({
                   ...permission,
@@ -176,6 +248,19 @@ const EditProfilePage = () => {
                 }))}
               />
             </Form>
+
+            <Row justify={'end'}>
+              <Space>
+                <Button
+                  type="primary"
+                  style={{ marginTop: '15px' }}
+                  onClick={form.submit}
+                  loading={loading}
+                >
+                  Salvar
+                </Button>
+              </Space>
+            </Row>
           </PageContent>
         </PageWrapper>
       </Layout>

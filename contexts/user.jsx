@@ -51,10 +51,13 @@ export const UserContextProvider = ({ children }) => {
       Cookies.setUserToken(newUserState.token)
     }
 
-    setUserState((oldUserState) => ({
-      ...oldUserState,
-      ...newUserState,
-    }))
+    setUserState((oldUserState) => {
+      const updatedUserState = oldUserState || {} // Se oldUserState for undefined, use um objeto vazio {}
+      return {
+        ...updatedUserState,
+        ...newUserState,
+      }
+    })
   }, [])
 
   useEffect(() => {
