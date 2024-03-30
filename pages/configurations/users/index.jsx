@@ -5,8 +5,6 @@ import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
 import React, { useCallback, useEffect, useState } from 'react'
 
-import Link from '~/components/link'
-import Loading from '~/components/loading'
 import { PageContent, PageHeader, PageWrapper } from '~/components/page'
 import Layout from '~/layouts/default'
 import * as UserServices from '~/services/user'
