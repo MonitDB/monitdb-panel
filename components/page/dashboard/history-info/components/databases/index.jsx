@@ -1,4 +1,5 @@
 import { Table, Tag } from 'antd'
+import { useRouter } from 'next/router'
 import React, { useCallback, useEffect, useState } from 'react'
 
 import Chart from '~/components/chart'
@@ -11,6 +12,9 @@ function Databases(properties) {
   const { currentServer } = properties
   const { getLogDatabase } = useLogContext()
 
+  const router = useRouter()
+  const lastMinutes = router.query.lastMinutes ?? 60
+
   const [data, setData] = useState([])
   const [loading, setLoading] = useState(false)
 
@@ -19,13 +23,13 @@ function Databases(properties) {
   const fetchData = useCallback(async () => {
     try {
       setLoading(true)
-      const data = await getLogDatabase(currentServer?.id)
+      const data = await getLogDatabase(currentServer?.id, { lastMinutes })
       setData(data)
     } catch {
       setData([])
     }
     setLoading(false)
-  }, [currentServer?.id, getLogDatabase])
+  }, [currentServer?.id, getLogDatabase, lastMinutes])
 
   return (
     <div id="databases" className="mt-4">
