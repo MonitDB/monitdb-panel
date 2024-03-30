@@ -19,6 +19,7 @@ import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
 import React, { useEffect, useState } from 'react'
 
+import Loading from '~/components/loading'
 import { PageContent, PageHeader, PageWrapper } from '~/components/page'
 import Layout from '~/layouts/default'
 import {
@@ -147,120 +148,126 @@ const EditProfilePage = () => {
         <PageWrapper className="p-8">
           <PageContent removeSidebarMargin={true}>
             {renderBreadcrumb()}
-            <Form layout="vertical" form={form} onFinish={handleSubmit}>
-              <Form.Item
-                label="Profile Name"
-                name="roleName"
-                rules={[{ required: 'true', message: 'Name is required' }]}
-              >
-                <Input disabled={loading} />
-              </Form.Item>
-              <Form.Item
-                label="Description"
-                name="roleDescription"
-                rules={[
-                  { required: 'true', message: 'Description is required' },
-                ]}
-              >
-                <Input.TextArea disabled={loading} rows={3} />
-              </Form.Item>
-              <h2 className="text-lg font-semibold">Permissions</h2>
-              <p className="text-gray-500">
-                Select the permissions that this profile will have
-              </p>
-              <br />
-              <br />
+            {fetching && <Loading />}
+            {!fetching && (
+              <>
+                <Form layout="vertical" form={form} onFinish={handleSubmit}>
+                  <Form.Item
+                    label="Profile Name"
+                    name="roleName"
+                    rules={[{ required: 'true', message: 'Name is required' }]}
+                  >
+                    <Input disabled={loading} />
+                  </Form.Item>
+                  <Form.Item
+                    label="Description"
+                    name="roleDescription"
+                    rules={[
+                      { required: 'true', message: 'Description is required' },
+                    ]}
+                  >
+                    <Input.TextArea disabled={loading} rows={3} />
+                  </Form.Item>
+                  <h2 className="text-lg font-semibold">Permissions</h2>
+                  <p className="text-gray-500">
+                    Select the permissions that this profile will have
+                  </p>
+                  <br />
+                  <br />
 
-              <Table
-                loading={fetching || loading}
-                columns={[
-                  { title: 'Name', dataIndex: 'featureName' },
-                  { title: 'Description', dataIndex: 'featureDescription' },
-                  { title: 'Version', dataIndex: 'featureVersion' },
-                  {
-                    title: 'Level',
-                    width: 300,
-                    render: (record) =>
-                      Number(record.key) ? (
-                        <div>
-                          <Select
-                            onChange={(value) => {
-                              setTypeGrant((previous) => ({
-                                ...previous,
-                                [record.key]: value,
-                              }))
-                            }}
-                            value={typeGrant[record.key]}
-                            defaultValue={typesGrants[1]?.idTypeGrant}
-                            options={typesGrants.map((typeGrant) => ({
-                              label: typeGrant.typeGrantName,
-                              value: typeGrant.idTypeGrant,
-                            }))}
-                          />
-                        </div>
-                      ) : (
-                        <Select
-                          status="warning"
-                          onChange={(value) => {
-                            for (const featureFunction of record.featureFunction) {
-                              setTypeGrant((previous) => ({
-                                ...previous,
-                                [featureFunction.idFeatureFunction]: value,
-                              }))
-                            }
+                  <Table
+                    loading={fetching}
+                    columns={[
+                      { title: 'Name', dataIndex: 'featureName' },
+                      { title: 'Description', dataIndex: 'featureDescription' },
+                      { title: 'Version', dataIndex: 'featureVersion' },
+                      {
+                        title: 'Level',
+                        width: 300,
+                        render: (record) =>
+                          Number(record.key) ? (
+                            <div>
+                              <Select
+                                onChange={(value) => {
+                                  setTypeGrant((previous) => ({
+                                    ...previous,
+                                    [record.key]: value,
+                                  }))
+                                }}
+                                value={typeGrant[record.key]}
+                                defaultValue={typesGrants[1]?.idTypeGrant}
+                                options={typesGrants.map((typeGrant) => ({
+                                  label: typeGrant.typeGrantName,
+                                  value: typeGrant.idTypeGrant,
+                                }))}
+                              />
+                            </div>
+                          ) : (
+                            <Select
+                              status="warning"
+                              onChange={(value) => {
+                                for (const featureFunction of record.featureFunction) {
+                                  setTypeGrant((previous) => ({
+                                    ...previous,
+                                    [featureFunction.idFeatureFunction]: value,
+                                  }))
+                                }
 
-                            setTypeGrant((previous) => ({
-                              ...previous,
-                              [record.key]: value,
-                            }))
-                          }}
-                          value={typeGrant[record.key]}
-                          defaultValue={typesGrants[1]?.idTypeGrant}
-                          options={typesGrants.map((typeGrant) => ({
-                            label: typeGrant.typeGrantName,
-                            value: typeGrant.idTypeGrant,
-                          }))}
-                        />
+                                setTypeGrant((previous) => ({
+                                  ...previous,
+                                  [record.key]: value,
+                                }))
+                              }}
+                              value={typeGrant[record.key]}
+                              defaultValue={typesGrants[1]?.idTypeGrant}
+                              options={typesGrants.map((typeGrant) => ({
+                                label: typeGrant.typeGrantName,
+                                value: typeGrant.idTypeGrant,
+                              }))}
+                            />
+                          ),
+                      },
+                    ]}
+                    rowSelection={{
+                      checkStrictly: false,
+                      onChange: (selectedRows) => {
+                        const rows = selectedRows.filter(Number)
+                        setFetureFunctions(rows)
+                      },
+                      selectedRowKeys: fetureFunctions,
+                    }}
+                    dataSource={permissions.map((permission) => ({
+                      ...permission,
+                      key: `permission-${permission.id}`,
+                      featureName: permission.featureName,
+                      children: permission.featureFunction.map(
+                        (featureFunction) => ({
+                          featureName: featureFunction.featureFunctionName,
+                          featureDescription:
+                            featureFunction.featureFunctionDescription,
+                          featureVersion:
+                            featureFunction.featureFunctionVersion,
+                          key: `${featureFunction.idFeatureFunction}`,
+                        })
                       ),
-                  },
-                ]}
-                rowSelection={{
-                  checkStrictly: false,
-                  onChange: (selectedRows) => {
-                    const rows = selectedRows.filter(Number)
-                    setFetureFunctions(rows)
-                  },
-                  selectedRowKeys: fetureFunctions,
-                }}
-                dataSource={permissions.map((permission) => ({
-                  ...permission,
-                  key: `permission-${permission.id}`,
-                  featureName: permission.featureName,
-                  children: permission.featureFunction.map(
-                    (featureFunction) => ({
-                      featureName: featureFunction.featureFunctionName,
-                      featureDescription:
-                        featureFunction.featureFunctionDescription,
-                      featureVersion: featureFunction.featureFunctionVersion,
-                      key: `${featureFunction.idFeatureFunction}`,
-                    })
-                  ),
-                }))}
-              />
-            </Form>
+                    }))}
+                  />
+                </Form>
 
-            <Row justify={'end'}>
-              <Space>
-                <Button
-                  type="primary"
-                  style={{ marginTop: '15px' }}
-                  onClick={form.submit}
-                  loading={loading}
-                >
-                  Salvar
-                </Button>
-              </Space>
-            </Row>
+                <Row justify={'end'}>
+                  <Space>
+                    <Button
+                      type="primary"
+                      style={{ marginTop: '15px' }}
+                      onClick={form.submit}
+                      loading={loading}
+                    >
+                      Salvar
+                    </Button>
+                  </Space>
+                </Row>
+              </>
+            )}
           </PageContent>
         </PageWrapper>
       </Layout>
