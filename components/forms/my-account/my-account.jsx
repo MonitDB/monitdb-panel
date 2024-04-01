@@ -44,10 +44,7 @@ const MyAccount = () => {
     >
       <div className="col-span-2 mb-5 space-y-4 md:col-span-12">
         <h2 className="text-2xl font-bold">Your data</h2>
-        <p className="w-full text-sm md:w-2/3">
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quod atque
-          nulla quis quia dolor ipsum, quas magni quibusdam temporibus quo?
-        </p>
+        <p className="w-full text-sm md:w-2/3"></p>
       </div>
       <Field
         htmlFor="name"

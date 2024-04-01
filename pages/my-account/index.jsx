@@ -21,15 +21,15 @@ const MyAccountPage = () => {
           <header className="mb-10">
             <PageSidebarTitle>
               <FontAwesomeIcon icon={faUserGear} />
-              <span>Minha Conta</span>
+              <span>My Account</span>
             </PageSidebarTitle>
           </header>
           <PageSidebarLinksList>
             <li>
-              <Link href="/my-account/">Dados pessoais</Link>
+              <Link href="/my-account/">Personal data</Link>
             </li>
             <li>
-              <Link href="/my-account/">Preferências</Link>
+              <Link href="/my-account/">Preferences</Link>
             </li>
             <li>
               <Link href="/my-account/">Logout</Link>
