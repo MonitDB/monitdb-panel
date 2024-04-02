@@ -10,9 +10,15 @@ import styled from 'styled-components'
 
 import Link from '~/components/link'
 import DatabaseIcons from '~/helpers/database-icons'
+import { useUser } from '~/hooks/index'
 import useWindowSize from '~/hooks/use-window-size'
 import useServerContext from '~/services/state-manager/servers'
 import { megaBytesToGigaBytes } from '~/utils/formats'
+import {
+  FeatureFunction,
+  hasPermission,
+  TypeGrant,
+} from '~/utils/hasPermission'
 import { SERVER_STATUS } from '~/utils/server'
 
 ChartJS.register(ArcElement, Tooltip, Legend)
@@ -64,6 +70,7 @@ const ServerCard = ({
   className = '',
   interval,
 }) => {
+  const { userState: user } = useUser()
   const windowSize = useWindowSize()
   const elementReference = useRef(null)
   const [tooltipPosition, setTooltipPosition] = useState('left')
@@ -143,7 +150,11 @@ const ServerCard = ({
           `group border bg-white transition-all duration-300
           ease-in-out relative border-opacity-75 lg:hover:border-opacity-100`,
           className,
-          {
+          hasPermission(
+            user,
+            FeatureFunction.STATUS_SERVICE,
+            TypeGrant.READ
+          ) && {
             'lg:min-h-72': metrics?.length,
             'lg:min-h-32': !metrics?.length,
             'border-danger': metrics?.serverStatus === SERVER_STATUS.CRITICAL,

@@ -4,27 +4,94 @@ import { useCallback } from 'react'
 import { toast } from 'react-toastify'
 
 import { GenericTable } from '~/components/table/genericTable'
+import { useUser } from '~/hooks/index'
 import { useExecQueryContext } from '~/services/state-manager/execQuery'
-
-const Options = [
-  { value: 'SP_Blitz', label: 'SP Blitz' },
-  { value: 'SP_BlitzAnalysis', label: 'SP Blitz Analysis' },
-  { value: 'SP_BlitzBackups', label: 'SP Blitz Backups' },
-  // { value: 'SP_BlitzCache', label: 'SP Blitz Cache' },
-  { value: 'SP_BlitzFirst', label: 'SP Blitz First' },
-  { value: 'SP_BlitzIndex', label: 'SP Blitz Index' },
-  { value: 'SP_BlitzLock', label: 'SP Blitz Lock' },
-  { value: 'SP_BlitzQueryStore', label: 'SP Blitz Query Store' },
-  { value: 'SP_BlitzWho', label: 'SP Blitz Who' },
-]
+import {
+  FeatureFunction,
+  hasPermission,
+  TypeGrant,
+} from '~/utils/hasPermission'
 
 export const TuningAdvisor = ({ currentServer }) => {
   const id = currentServer.id
 
+  const { userState: user } = useUser()
+
+  const DefaultOptions = [
+    { value: 'SP_Blitz', label: 'SP Blitz' },
+    { value: 'SP_BlitzAnalysis', label: 'SP Blitz Analysis' },
+    { value: 'SP_BlitzBackups', label: 'SP Blitz Backups' },
+    { value: 'SP_BlitzCache', label: 'SP Blitz Cache' },
+    { value: 'SP_BlitzFirst', label: 'SP Blitz First' },
+    { value: 'SP_BlitzIndex', label: 'SP Blitz Index' },
+    { value: 'SP_BlitzLock', label: 'SP Blitz Lock' },
+    { value: 'SP_BlitzQueryStore', label: 'SP Blitz Query Store' },
+    { value: 'SP_BlitzWho', label: 'SP Blitz Who' },
+  ]
+
+  const Options = DefaultOptions.filter((option) => {
+    if (option.value === 'SP_Blitz') {
+      return hasPermission(user, FeatureFunction.SP_BLITZ, TypeGrant.EXECUTE)
+    }
+    if (option.value === 'SP_BlitzAnalysis') {
+      return hasPermission(
+        user,
+        FeatureFunction.SP_BLITZ_ANALYSIS,
+        TypeGrant.EXECUTE
+      )
+    }
+
+    if (option.value === 'SP_BlitzBackups') {
+      return hasPermission(
+        user,
+        FeatureFunction.SP_BLITZ_BACKUP,
+        TypeGrant.EXECUTE
+      )
+    }
+
+    if (option.value === 'SP_BlitzFirst') {
+      return hasPermission(
+        user,
+        FeatureFunction.SP_BLITZ_FIRST,
+        TypeGrant.EXECUTE
+      )
+    }
+    if (option.value === 'SP_BlitzIndex') {
+      return hasPermission(
+        user,
+        FeatureFunction.SP_BLITZ_INDEX,
+        TypeGrant.EXECUTE
+      )
+    }
+    if (option.value === 'SP_BlitzLock') {
+      return hasPermission(
+        user,
+        FeatureFunction.SP_BLITZ_LOCK,
+        TypeGrant.EXECUTE
+      )
+    }
+    if (option.value === 'SP_BlitzQueryStore') {
+      return hasPermission(
+        user,
+        FeatureFunction.SP_BLITZ_QUERY_STORE,
+        TypeGrant.EXECUTE
+      )
+    }
+    if (option.value === 'SP_BlitzWho') {
+      return hasPermission(
+        user,
+        FeatureFunction.SP_BLITZ_WHO,
+        TypeGrant.EXECUTE
+      )
+    }
+
+    return true
+  })
+
   const [loading, setLoading] = useState(false)
   const [data, setData] = useState([])
   const { execQuery } = useExecQueryContext()
-  const [componentCode, setComponentCode] = useState('SP_Blitz')
+  const [componentCode, setComponentCode] = useState('')
 
   const fetchData = useCallback(
     async (cached = true) => {

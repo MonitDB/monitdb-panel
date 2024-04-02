@@ -5,7 +5,13 @@ import { useEffect, useState } from 'react'
 
 import RdpButton from '~/components/rdpButton'
 import SshButon from '~/components/sshButton'
+import { useUser } from '~/hooks/index'
 import { getServerMetrics } from '~/services/servers'
+import {
+  FeatureFunction,
+  hasPermission,
+  TypeGrant,
+} from '~/utils/hasPermission'
 
 import BlockingProcesses from './components/blocking-processes'
 import CpuUsage from './components/cpu-usage'
@@ -20,6 +26,7 @@ import Temppdb from './components/tempdb'
 const HOUR = 60
 const DAY = 24 * HOUR
 const HistoryInfo = ({ currentServer }) => {
+  const { userState: user } = useUser()
   const router = useRouter()
 
   const [lastFetch, setLastFetch] = useState(Date.now())
@@ -97,24 +104,37 @@ const HistoryInfo = ({ currentServer }) => {
 
       <div id="allinstancemetrics">
         <Row gutter={16}>
-          <Col
-            md={12}
-            sm={24}
-            style={{
-              marginBottom: '16px',
-            }}
-          >
-            <MemoryUsage currentServer={currentServer} />
-          </Col>
-          <Col
-            md={12}
-            sm={24}
-            style={{
-              marginBottom: '16px',
-            }}
-          >
-            <CpuUsage currentServer={currentServer} />
-          </Col>
+          {hasPermission(
+            user,
+            FeatureFunction.STATUS_CPU,
+            TypeGrant.READ && (
+              <Col
+                md={12}
+                sm={24}
+                style={{
+                  marginBottom: '16px',
+                }}
+              >
+                <MemoryUsage currentServer={currentServer} />
+              </Col>
+            )
+          )}
+
+          {hasPermission(
+            user,
+            FeatureFunction.STATUS_MEMORY,
+            TypeGrant.READ
+          ) && (
+            <Col
+              md={12}
+              sm={24}
+              style={{
+                marginBottom: '16px',
+              }}
+            >
+              <CpuUsage currentServer={currentServer} />
+            </Col>
+          )}
         </Row>
 
         {/* <Server /> */}
