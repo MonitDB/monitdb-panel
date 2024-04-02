@@ -106,7 +106,7 @@ const HistoryInfo = ({ currentServer }) => {
         <Row gutter={16}>
           {hasPermission(
             user,
-            FeatureFunction.STATUS_CPU,
+            FeatureFunction.CPU,
             TypeGrant.READ && (
               <Col
                 md={12}
@@ -120,11 +120,7 @@ const HistoryInfo = ({ currentServer }) => {
             )
           )}
 
-          {hasPermission(
-            user,
-            FeatureFunction.STATUS_MEMORY,
-            TypeGrant.READ
-          ) && (
+          {hasPermission(user, FeatureFunction.MEMORY, TypeGrant.READ) && (
             <Col
               md={12}
               sm={24}
@@ -160,10 +156,25 @@ const HistoryInfo = ({ currentServer }) => {
         </div>
 
         <Temppdb />
-        <BlockingProcesses currentServer={currentServer} />
-        <SqlUserProcesses currentServer={currentServer} />
-        <ErrorLog currentServer={currentServer} />
-        <Databases currentServer={currentServer} />
+        {hasPermission(
+          user,
+          FeatureFunction.BLOCKING_PROCESS_TOP_10_BY_TIME,
+          TypeGrant.READ
+        ) && <BlockingProcesses currentServer={currentServer} />}
+
+        {hasPermission(
+          user,
+          FeatureFunction.SQL_USER_PROCESSES_TOP_10_BY_CPU,
+          TypeGrant.READ
+        ) && <SqlUserProcesses currentServer={currentServer} />}
+
+        {hasPermission(user, FeatureFunction.ERROR_LOG, TypeGrant.READ) && (
+          <ErrorLog currentServer={currentServer} />
+        )}
+
+        {hasPermission(user, FeatureFunction.DATABASES, TypeGrant.READ) && (
+          <Databases currentServer={currentServer} />
+        )}
       </div>
     </div>
   )

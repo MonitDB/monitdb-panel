@@ -85,6 +85,14 @@ export const TuningAdvisor = ({ currentServer }) => {
       )
     }
 
+    if (option.value === 'SP_BlitzCache') {
+      return hasPermission(
+        user,
+        FeatureFunction.SP_BLITZ_CACHE,
+        TypeGrant.EXECUTE
+      )
+    }
+
     return true
   })
 

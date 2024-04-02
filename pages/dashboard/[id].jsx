@@ -21,9 +21,16 @@ import { TuningAdvisor } from '~/components/page/dashboard/tuning-advisor'
 import { ServerInfo } from '~/components/page/server-info'
 import LatestAlertsSidebar from '~/components/sidebar/latest-alerts'
 import { SingleDashboardContextProvider } from '~/contexts/single-dashboard'
+import { useUser } from '~/hooks/index'
 import useGlobal from '~/hooks/use-global'
 import Layout from '~/layouts/default'
 import { scrollToSection } from '~/utils/global'
+import {
+  FeatureFunction,
+  hasPermission,
+  hasSomePermissions,
+  TypeGrant,
+} from '~/utils/hasPermission'
 import { formatServer } from '~/utils/server'
 
 export const labels = Array.from({ length: 60 }, (_, index) => `8:${index}`)
@@ -46,6 +53,7 @@ const SingleDashboard = () => {
   const {
     globalState: { servers, serverTypes },
   } = useGlobal()
+  const { userState: user } = useUser()
 
   const [activeTabId, setActiveTabId] = useState('0')
 
@@ -64,42 +72,50 @@ const SingleDashboard = () => {
       label: 'History',
 
       children: <HistoryInfo currentServer={currentServer} />,
+      render: true,
     },
     {
       key: '1',
       label: 'Query Window',
       children: <QueryWindow currentServer={currentServer} />,
+      render: hasPermission(
+        user,
+        FeatureFunction.QUERY_WINDOW,
+        TypeGrant.EXECUTE
+      ),
     },
     {
       key: '2',
       label: 'Current Activity',
       children: <CurrentActivity currentServer={currentServer} />,
+      render: hasPermission(
+        user,
+        FeatureFunction.WHO_IS_ACTIVE,
+        TypeGrant.EXECUTE
+      ),
     },
     {
       key: '3',
       label: 'Tuning Advisor',
       children: <TuningAdvisor currentServer={currentServer} />,
+      render: hasSomePermissions(
+        user,
+        [
+          FeatureFunction.SP_BLITZ,
+          FeatureFunction.SP_BLITZ_ANALYSIS,
+          FeatureFunction.SP_BLITZ_BACKUP,
+          FeatureFunction.SP_BLITZ_CACHE,
+          FeatureFunction.SP_BLITZ_FIRST,
+          FeatureFunction.SP_BLITZ_INDEX,
+          FeatureFunction.SP_BLITZ_INDEX,
+          FeatureFunction.SP_BLITZ_QUERY_STORE,
+          FeatureFunction.SP_BLITZ_WHO,
+        ],
+        TypeGrant.READ
+      ),
     },
   ]
 
-  // if (!currentServer) {
-  //   return (
-  //     <Layout>
-  //       <PageWrapper>
-  //         <LatestAlertsSidebar />
-  //         <NextSeo title="Dashboard - MonitDB" />
-  //         <PageSidebar></PageSidebar>
-  //         <PageContent hideBreadcrumbs={true}>
-  //           <Row>
-  //             <Col span={24}>
-  //               <h1>Server Not Found</h1>
-  //             </Col>
-  //           </Row>
-  //         </PageContent>
-  //       </PageWrapper>
-  //     </Layout>
-  //   )
-  // }
   try {
     return (
       <SingleDashboardContextProvider>
@@ -137,14 +153,19 @@ const SingleDashboard = () => {
                           Dashboard - Overview
                         </h2>
                       </header>
-                      <ServerInfo currentServer={currentServer} />
+
+                      {hasPermission(
+                        user,
+                        FeatureFunction.SERVER_INFORMATION,
+                        TypeGrant.READ
+                      ) && <ServerInfo currentServer={currentServer} />}
                     </div>
 
                     <div className="flex items-center border-b-gray-light border-b-4">
                       <Tabs
                         size="large"
                         defaultActiveKey="0"
-                        items={items}
+                        items={items.filter((item) => item.render)}
                         onChange={setActiveTabId}
                         style={{ width: '100%' }}
                       />

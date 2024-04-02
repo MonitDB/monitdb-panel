@@ -17,14 +17,22 @@ import Selector from '~/components/form/selector'
 import Loading from '~/components/loading'
 import { PageContent, PageSidebar, PageWrapper } from '~/components/page'
 import LatestAlertsSidebar from '~/components/sidebar/latest-alerts'
+import { useUser } from '~/hooks/index'
 import useGlobal from '~/hooks/use-global'
 import Layout from '~/layouts/default'
+import {
+  FeatureFunction,
+  hasPermission,
+  TypeGrant,
+} from '~/utils/hasPermission'
 import { filterServersByEnvironmentId, formatServer } from '~/utils/server'
 
 const DashboardPage = () => {
   const {
     globalState: { servers, serverTypes, serverEnvironments },
   } = useGlobal()
+
+  const { userState: user } = useUser()
 
   const [activeKey, setActiveKey] = useState([])
 
@@ -100,6 +108,26 @@ const DashboardPage = () => {
                   .map((server, index) => (
                     <div key={index} style={{ marginRight: '15px' }}>
                       <ServerCard
+                        showCPU={hasPermission(
+                          user,
+                          FeatureFunction.STATUS_CPU,
+                          TypeGrant.READ
+                        )}
+                        showMemory={hasPermission(
+                          user,
+                          FeatureFunction.STATUS_MEMORY,
+                          TypeGrant.READ
+                        )}
+                        showDisks={hasPermission(
+                          user,
+                          FeatureFunction.DISK_SPACE,
+                          TypeGrant.READ
+                        )}
+                        showStatus={hasPermission(
+                          user,
+                          FeatureFunction.STATUS_SERVICE,
+                          TypeGrant.READ
+                        )}
                         key={`server-${index}`}
                         className="w-full mb-4 md:mb-0 m:10"
                         interval={refreshInterval}
@@ -176,10 +204,11 @@ const DashboardPage = () => {
       <NextSeo title="Dashboard - MonitDB" />
       <Layout>
         <PageWrapper>
-          <PageSidebar>
-            <LatestAlertsSidebar />
-          </PageSidebar>
-
+          {hasPermission(user, FeatureFunction.LAST_ALERTS, TypeGrant.READ) && (
+            <PageSidebar>
+              <LatestAlertsSidebar />
+            </PageSidebar>
+          )}
           {servers?.length > 0 ? (
             <>
               <PageContent
@@ -194,83 +223,104 @@ const DashboardPage = () => {
                   className="w-full flex flex-col space-y-4 xl:space-x-4 xl:space-y-0 xl:flex-row"
                   onSubmit={formik.handleSubmit}
                 >
-                  <div className="relative min-w-56">
-                    <Input
-                      type="text"
-                      name="str"
-                      placeholder="Filtrar por nomes"
-                      onChange={formik.handleChange}
-                      onBlur={formik.handleBlur}
-                      value={formik.values.str}
-                    />
-                    <button
-                      type="submit"
-                      className="group absolute top-1/2 transform -translate-y-1/2 right-4"
-                    >
-                      <FontAwesomeIcon
-                        icon={faMagnifyingGlass}
-                        className="text-sm text-gray lg:group-hover:text-gray-dark"
+                  {hasPermission(
+                    user,
+                    FeatureFunction.DASHBOARD_FILTER,
+                    TypeGrant.EXECUTE
+                  ) && (
+                    <>
+                      <div className="relative min-w-56">
+                        <Input
+                          type="text"
+                          name="str"
+                          placeholder="Filtrar por nomes"
+                          onChange={formik.handleChange}
+                          onBlur={formik.handleBlur}
+                          value={formik.values.str}
+                        />
+                        <button
+                          type="submit"
+                          className="group absolute top-1/2 transform -translate-y-1/2 right-4"
+                        >
+                          <FontAwesomeIcon
+                            icon={faMagnifyingGlass}
+                            className="text-sm text-gray lg:group-hover:text-gray-dark"
+                          />
+                        </button>
+                      </div>
+                      <Selector
+                        name="status"
+                        value={formik.values.status}
+                        options={statusOptions}
+                        onChange={(value) => {
+                          formik.setFieldValue('status', value)
+                        }}
                       />
-                    </button>
-                  </div>
-                  <Selector
-                    name="status"
-                    value={formik.values.status}
-                    options={statusOptions}
-                    onChange={(value) => {
-                      formik.setFieldValue('status', value)
-                    }}
-                  />
-                  <Selector
-                    name="environments"
-                    value={formik.values.environments}
-                    options={environmentsOptions}
-                    onChange={(value) => {
-                      formik.setFieldValue('environments', value)
-                    }}
-                  />
-                  <Button
-                    type="text"
-                    htmlType="reset"
-                    disabled={!hasAnyFilter}
-                    onClick={() => formik.resetForm()}
-                  >
-                    Clear
-                  </Button>
-                  <div style={{ width: '400px' }}>
-                    <Select
-                      name="refreshInterval"
-                      options={[
-                        { value: 5 * SECOND, label: 'Every 5 seconds' },
-                        { value: 15 * SECOND, label: 'Every 15 seconds' },
-                        { value: 30 * SECOND, label: 'Every 30 seconds' },
-                        { value: 15 * SECOND, label: 'Every 45 seconds' },
-                        { value: MINUTE, label: 'Every 1 minute' },
-                      ]}
-                      value={refreshInterval}
-                      onChange={(value) => {
-                        localStorage.setItem(
-                          REFRESH_INTERVAL_LOCAL_STORAGE_KEY,
-                          value
-                        )
-                        setRefreshInterval(value)
-                      }}
-                    />
-                  </div>
+                      <Selector
+                        name="environments"
+                        value={formik.values.environments}
+                        options={environmentsOptions}
+                        onChange={(value) => {
+                          formik.setFieldValue('environments', value)
+                        }}
+                      />
+                      <Button
+                        type="text"
+                        htmlType="reset"
+                        disabled={!hasAnyFilter}
+                        onClick={() => formik.resetForm()}
+                      >
+                        Clear
+                      </Button>
+                    </>
+                  )}
+
+                  {hasPermission(
+                    user,
+                    FeatureFunction.REFRESH_FREQUENCY,
+                    TypeGrant.EXECUTE
+                  ) && (
+                    <div style={{ width: '400px' }}>
+                      <Select
+                        name="refreshInterval"
+                        options={[
+                          { value: 5 * SECOND, label: 'Every 5 seconds' },
+                          { value: 15 * SECOND, label: 'Every 15 seconds' },
+                          { value: 30 * SECOND, label: 'Every 30 seconds' },
+                          { value: 15 * SECOND, label: 'Every 45 seconds' },
+                          { value: MINUTE, label: 'Every 1 minute' },
+                        ]}
+                        value={refreshInterval}
+                        onChange={(value) => {
+                          localStorage.setItem(
+                            REFRESH_INTERVAL_LOCAL_STORAGE_KEY,
+                            value
+                          )
+                          setRefreshInterval(value)
+                        }}
+                      />
+                    </div>
+                  )}
                 </form>
               </PageContent>
 
-              <PageContent hideBreadcrumbs={true}>
-                <div className="w-full space-y-5">
-                  <Collapse
-                    size="small"
-                    bordered={false}
-                    activeKey={activeKey}
-                    items={collapseItems}
-                    onChange={setActiveKey}
-                  />
-                </div>
-              </PageContent>
+              {hasPermission(
+                user,
+                FeatureFunction.INSTANCES,
+                TypeGrant.READ
+              ) && (
+                <PageContent hideBreadcrumbs={true}>
+                  <div className="w-full space-y-5">
+                    <Collapse
+                      size="small"
+                      bordered={false}
+                      activeKey={activeKey}
+                      items={collapseItems}
+                      onChange={setActiveKey}
+                    />
+                  </div>
+                </PageContent>
+              )}
             </>
           ) : (
             <PageContent className="w-full min-h-screen flex items-center justify-center">

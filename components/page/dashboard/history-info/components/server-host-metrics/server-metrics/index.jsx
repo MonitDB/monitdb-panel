@@ -4,7 +4,7 @@ import { toast } from 'react-toastify'
 
 import Grid from '~/components/grid'
 import UserContext from '~/contexts/user'
-import { useSingleDashboard } from '~/hooks/index'
+import { useSingleDashboard, useUser } from '~/hooks/index'
 import useLogContext from '~/services/state-manager/logs'
 import {
   FeatureFunction,
@@ -33,7 +33,7 @@ const ServerMetrics = ({ key }) => {
   const { currentServer } = useSingleDashboard()
   const { getSQLServerMetrics } = useLogContext()
   const route = useRouter()
-  const { userState: user } = UserContext()
+  const { userState: user } = useUser()
 
   const lastMinutes = route.query.lastMinutes
 

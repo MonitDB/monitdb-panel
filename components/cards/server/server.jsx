@@ -69,6 +69,10 @@ const ServerCard = ({
   type,
   className = '',
   interval,
+  showCPU = true,
+  showMemory = true,
+  showDisks = true,
+  showStatus = true,
 }) => {
   const { userState: user } = useUser()
   const windowSize = useWindowSize()
@@ -150,11 +154,7 @@ const ServerCard = ({
           `group border bg-white transition-all duration-300
           ease-in-out relative border-opacity-75 lg:hover:border-opacity-100`,
           className,
-          hasPermission(
-            user,
-            FeatureFunction.STATUS_SERVICE,
-            TypeGrant.READ
-          ) && {
+          showStatus && {
             'lg:min-h-72': metrics?.length,
             'lg:min-h-32': !metrics?.length,
             'border-danger': metrics?.serverStatus === SERVER_STATUS.CRITICAL,
@@ -171,7 +171,7 @@ const ServerCard = ({
             `card-link block p-2 h-full relative before:content-[""] before:absolute before:w-1
             before:top-0 before:left-0 before:h-full lg:p-4 lg:hover:before:w-2
             before:transition-all before:duration-300 before:ease-in-out before:border-radius`,
-            {
+            showStatus && {
               'before:bg-danger':
                 metrics?.serverStatus === SERVER_STATUS.CRITICAL,
               'before:bg-orange':
@@ -194,27 +194,31 @@ const ServerCard = ({
             </div>
           )}
           <dl className="text-xs w-full text-gray">
-            {metrics.memory && (
+            {metrics.memory && showMemory && (
               <>
-                <dt className="block text-gray-dark mt-2">Memory</dt>
-                <dd>
-                  <span
-                    className={classNames({
-                      'text-blue': metrics.memory.inUsePercent <= 85,
-                      'text-orange':
-                        metrics.memory.inUsePercent > 85 &&
-                        metrics.memory.inUsePercent < 95,
-                      'text-danger': metrics.memory.inUsePercent >= 95,
-                    })}
-                  >
-                    {metrics.memory.total - metrics.memory.available}{' '}
-                    {metrics.memory.unitType} - In Use
-                  </span>{' '}
-                  /{' '}
-                  <span>
-                    {metrics.memory.total} {metrics.memory.unitType} Total
-                  </span>
-                </dd>
+                {
+                  <>
+                    <dt className="block text-gray-dark mt-2">Memory</dt>
+                    <dd>
+                      <span
+                        className={classNames({
+                          'text-blue': metrics.memory.inUsePercent <= 85,
+                          'text-orange':
+                            metrics.memory.inUsePercent > 85 &&
+                            metrics.memory.inUsePercent < 95,
+                          'text-danger': metrics.memory.inUsePercent >= 95,
+                        })}
+                      >
+                        {metrics.memory.total - metrics.memory.available}{' '}
+                        {metrics.memory.unitType} - In Use
+                      </span>{' '}
+                      /{' '}
+                      <span>
+                        {metrics.memory.total} {metrics.memory.unitType} Total
+                      </span>
+                    </dd>
+                  </>
+                }
                 <dd className="mt-1 w-full h-1 block relative bg-gray-light">
                   <span
                     className={classNames('absolute top-0 left-0 h-full', {
@@ -232,7 +236,7 @@ const ServerCard = ({
               </>
             )}
 
-            {metrics.cpu && (
+            {metrics.cpu && showCPU && (
               <>
                 <dt className="block text-gray-dark mt-2">CPU</dt>
                 <dd>
@@ -276,7 +280,7 @@ const ServerCard = ({
           </dl>
         </Link>
 
-        {metrics.disks?.length > 0 ? (
+        {metrics.disks?.length > 0 && showDisks ? (
           <div
             className={classNames(
               `absolute bottom-1/2 w-[calc(100%+1.25rem)] min-h-full h-auto py-2 px-4 z-20 transform

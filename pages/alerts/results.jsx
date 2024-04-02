@@ -14,16 +14,25 @@ import { PageContent, PageWrapper } from '~/components/page'
 import { ServerInfo } from '~/components/page/server-info'
 import MonitoredServersSidebar from '~/components/sidebar/monitored-servers'
 import { AlertHtmlSubTable } from '~/components/table/subTable'
+import { useUser } from '~/hooks/index'
 // import DatabaseIcons from '~/helpers/database-icons'
 import useGlobal from '~/hooks/use-global'
 import Layout from '~/layouts/default'
 import useAlertContext from '~/services/state-manager/alerts'
+import {
+  FeatureFunction,
+  hasPermission,
+  hasSomePermissions,
+  TypeGrant,
+} from '~/utils/hasPermission'
 import { formatServer } from '~/utils/server'
 
 const AlertsDetailsPage = () => {
   const {
     globalState: { servers, serverTypes },
   } = useGlobal()
+
+  const { userState: user } = useUser()
 
   const {
     parameters,
@@ -148,7 +157,14 @@ const AlertsDetailsPage = () => {
       <NextSeo title="Alerts - MonitDB" />
       <Layout>
         <PageWrapper>
-          <MonitoredServersSidebar />
+          {hasSomePermissions(
+            user,
+            [
+              FeatureFunction.MONITORED_SERVERS,
+              FeatureFunction.ACTIONS_SHORTCUT,
+            ],
+            TypeGrant.READ
+          ) && <MonitoredServersSidebar />}
 
           <PageContent className="border-b border-gray-light">
             {currentServer ? (
@@ -163,16 +179,23 @@ const AlertsDetailsPage = () => {
               className="w-full flex flex-col space-y-4 max-w-[760px]
                   xl:space-x-4 xl:space-y-0 xl:flex-row"
             >
-              <Selector
-                name="types"
-                options={typesOptions}
-                value={JSON.parse(router?.query?.types || '[]')}
-                onChange={(value) => {
-                  handleChange('types', JSON.stringify(value))
-                  setCurrentPage(1)
-                }}
-                className="w-full md:w-1/3 md:min-w-1/3"
-              />
+              {hasPermission(
+                user,
+                FeatureFunction.ALERTS_FILTER_BY_TYPE,
+                TypeGrant.EXECUTE
+              ) && (
+                <Selector
+                  name="types"
+                  options={typesOptions}
+                  value={JSON.parse(router?.query?.types || '[]')}
+                  onChange={(value) => {
+                    handleChange('types', JSON.stringify(value))
+                    setCurrentPage(1)
+                  }}
+                  className="w-full md:w-1/3 md:min-w-1/3"
+                />
+              )}
+
               <Select
                 name="time"
                 style={{ width: '150px' }}
@@ -225,7 +248,6 @@ const AlertsDetailsPage = () => {
           </PageContent>
 
           <PageContent>
-            {console.log(alertsResult.result)}
             <Table
               ref={tableReference}
               dataSource={alertsResult.result.map((r) => ({
@@ -256,35 +278,54 @@ const AlertsDetailsPage = () => {
                   render: (value) => moment(value).format('DD/MM/yyyy HH:mm'),
                 },
                 {
-                  title: 'Action',
+                  title:
+                    hasPermission(
+                      user,
+                      FeatureFunction.ALERT_ON_CLICK,
+                      TypeGrant.EXECUTE
+                    ) && 'Action',
 
-                  render: (value, alert) => (
-                    <Button
-                      type="dashed"
-                      loading={cleaningAlert === alert.id * alert.serverId}
-                      onClick={(event) => {
-                        event.stopPropagation()
-                        event.preventDefault()
-                        handleClearAlert(alert?.id, alert?.serverId)
-                      }}
-                    >
-                      Clear
-                    </Button>
-                  ),
+                  render: (value, alert) => {
+                    return hasPermission(
+                      user,
+                      FeatureFunction.ALERTS_LISTING,
+                      TypeGrant.EXECUTE
+                    ) ? (
+                      <Button
+                        type="dashed"
+                        loading={cleaningAlert === alert.id * alert.serverId}
+                        onClick={(event) => {
+                          event.stopPropagation()
+                          event.preventDefault()
+                          handleClearAlert(alert?.id, alert?.serverId)
+                        }}
+                      >
+                        Clear
+                      </Button>
+                    ) : (
+                      <></>
+                    )
+                  },
                 },
               ]}
               loading={loading}
-              expandable={{
-                expandedRowRender: (alert) => {
-                  return (
-                    <AlertHtmlSubTable
-                      serverId={alert.serverId}
-                      idSeq={alert.idSeq}
-                      id={alert.id}
-                    />
-                  )
-                },
-              }}
+              expandable={
+                hasPermission(
+                  user,
+                  FeatureFunction.ALERT_ON_CLICK,
+                  TypeGrant.EXECUTE
+                ) && {
+                  expandedRowRender: (alert) => {
+                    return (
+                      <AlertHtmlSubTable
+                        serverId={alert.serverId}
+                        idSeq={alert.idSeq}
+                        id={alert.id}
+                      />
+                    )
+                  },
+                }
+              }
               onRow={() => ({ style: { cursor: 'pointer' } })}
             />
           </PageContent>

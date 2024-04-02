@@ -6,9 +6,15 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { PageContent, PageHeader, PageWrapper } from '~/components/page'
 import MonitoredServersSidebar from '~/components/sidebar/monitored-servers'
+import { useUser } from '~/hooks/index'
 import useGlobal from '~/hooks/use-global'
 import Layout from '~/layouts/default'
 import { getAlertsParameterByServerId } from '~/services/alerts'
+import {
+  FeatureFunction,
+  hasPermission,
+  TypeGrant,
+} from '~/utils/hasPermission'
 
 import MetricsModal from './modal'
 
@@ -43,6 +49,17 @@ const MetricsPage = () => {
       console.log('submit', values) // eslint-disable-line no-console
     },
   })
+
+  const { userState: user } = useUser()
+
+  useEffect(() => {
+    if (
+      user &&
+      !hasPermission(user, FeatureFunction.ALERTS_CUSTOMIZATION, TypeGrant.READ)
+    ) {
+      router.push('/403')
+    }
+  }, [router, user])
 
   const getParameters = useCallback(async () => {
     const { server } = router.query
