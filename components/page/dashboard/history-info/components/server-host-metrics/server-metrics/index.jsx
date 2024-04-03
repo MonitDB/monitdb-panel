@@ -3,7 +3,6 @@ import { memo, useCallback, useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 
 import Grid from '~/components/grid'
-import UserContext from '~/contexts/user'
 import { useSingleDashboard, useUser } from '~/hooks/index'
 import useLogContext from '~/services/state-manager/logs'
 import {
@@ -29,6 +28,7 @@ const formatData = (item) => [
   item?.count === 'Infinity' ? '99999999' : Number(item?.count),
 ]
 
+// eslint-disable-next-line sonarjs/cognitive-complexity
 const ServerMetrics = ({ key }) => {
   const { currentServer } = useSingleDashboard()
   const { getSQLServerMetrics } = useLogContext()

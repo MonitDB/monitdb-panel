@@ -10,15 +10,9 @@ import styled from 'styled-components'
 
 import Link from '~/components/link'
 import DatabaseIcons from '~/helpers/database-icons'
-import { useUser } from '~/hooks/index'
 import useWindowSize from '~/hooks/use-window-size'
 import useServerContext from '~/services/state-manager/servers'
 import { megaBytesToGigaBytes } from '~/utils/formats'
-import {
-  FeatureFunction,
-  hasPermission,
-  TypeGrant,
-} from '~/utils/hasPermission'
 import { SERVER_STATUS } from '~/utils/server'
 
 ChartJS.register(ArcElement, Tooltip, Legend)
@@ -74,7 +68,6 @@ const ServerCard = ({
   showDisks = true,
   showStatus = true,
 }) => {
-  const { userState: user } = useUser()
   const windowSize = useWindowSize()
   const elementReference = useRef(null)
   const [tooltipPosition, setTooltipPosition] = useState('left')

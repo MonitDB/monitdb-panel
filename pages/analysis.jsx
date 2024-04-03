@@ -12,13 +12,7 @@ import Loading from '~/components/loading'
 import { PageContent, PageWrapper } from '~/components/page'
 import Layout from '~/layouts/default'
 import { getAnalysis } from '~/services/analysis'
-import {
-  Feature,
-  FeatureFunction,
-  hasFeature,
-  hasSomePermissions,
-  TypeGrant,
-} from '~/utils/hasPermission'
+import { Feature, hasFeature } from '~/utils/hasPermission'
 
 import { useGlobal, useUser } from '../hooks'
 
