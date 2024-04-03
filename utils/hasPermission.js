@@ -103,6 +103,24 @@ export const FeatureFunction = {
   MANAGE_MONITORED_SERVERS: 6100,
   INSTANCE_DISCOVERY: 6101,
   HOSTS_AND_VMWARE: 6102,
+
+  VESTIGIO: 6103,
+  EXTENDED_EVENTS: 6104,
+  GROUPS: 6105,
+  AUTHENTICATION_SETTINGS: 6200,
+  USER_MANAGEMENT: 6201,
+  BASIC_MONITOR_CONNECTIONS: 6202,
+  DISPLAY_SETTINGS: 6203,
+  AUTHENTICATION_TOKENS: 6300,
+  DOWNLOAD_POWERSHELL_MODULE: 6301,
+  SEE_POWERSHELL_SCRIPT_EXAMPLES: 6302,
+  ALERT_SETTINGS: 6400,
+  NOTIFICATION_SETTINGS: 6401,
+  CUSTOM_METRICS: 6402,
+  ALERT_SUPPRESSION: 6403,
+  DATA_CONFIGURATION: 6500,
+  LICENSING: 6600,
+  ABOUT: 6700,
 }
 
 export const TypeGrant = {
@@ -114,6 +132,24 @@ export const TypeGrant = {
   OWNER: 5,
 }
 
+export const Feature = {
+  DASHBOARD: 1,
+  ALERTS: 2,
+  ANALYSIS: 3,
+  REPORTS: 4,
+  STATES: 5,
+  CONFIGURATION: 6,
+}
+
+export function hasFeature(user, feature) {
+  const grants = user?.grants
+  if (!grants) return false
+
+  const validGrants = grants?.filter((grant) => grant.typeGrant > 0)
+
+  return validGrants?.some((grant) => grant.idFeature === feature) || false
+}
+
 export function hasPermission(user, featureFunction, typeGrant) {
   const grants = user?.grants
   if (!grants) return false
@@ -122,7 +158,7 @@ export function hasPermission(user, featureFunction, typeGrant) {
     (grant) => grant.idFeatureFunction === featureFunction
   )
 
-  return Number(grant?.typeGrant ?? 1) >= Number(typeGrant)
+  return Number(grant?.typeGrant ?? 0) >= Number(typeGrant)
 }
 
 export function hasPermissions(user, featureFunctions, typeGrant) {
@@ -133,7 +169,7 @@ export function hasPermissions(user, featureFunctions, typeGrant) {
     const grant = grants.find(
       (grant) => grant.idFeatureFunction === featureFunction
     )
-    return Number(grant?.typeGrant ?? 1) >= Number(typeGrant)
+    return Number(grant?.typeGrant ?? 0) >= Number(typeGrant)
   })
 }
 
@@ -146,6 +182,18 @@ export function hasSomePermissions(user, featureFunctions, typeGrant) {
     const grant = grants.find(
       (grant) => grant.idFeatureFunction === featureFunction
     )
-    return Number(grant?.typeGrant ?? 1) >= Number(typeGrant)
+    return Number(grant?.typeGrant ?? 0) >= Number(typeGrant)
+  })
+}
+
+export function existsSomePermissions(user, featureFunctions) {
+  const grants = user?.grants
+  if (!grants) return false
+
+  return featureFunctions.some((featureFunction) => {
+    const grant = grants.find(
+      (grant) => grant.idFeatureFunction === featureFunction
+    )
+    return Number(grant?.typeGrant ?? 0) > 0
   })
 }

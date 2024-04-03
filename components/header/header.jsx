@@ -13,6 +13,7 @@ import React from 'react'
 import Image from '~/components/image'
 import Link from '~/components/link'
 import { useUser } from '~/hooks/index'
+import { Feature } from '~/utils/hasPermission'
 // import DatabasesSvg from '~/icons/databases.svg'
 
 const buttonClasses =
@@ -24,38 +25,47 @@ const Header = () => {
 
   const { userState } = useUser()
 
-  const navMenuList = [
+  const navMenuListData = [
     {
       title: 'Dashboard',
       href: '/dashboard/',
-      // requiredPermissions: [permission.DASHBOARD_PAGE],
+      // feature: Feature.DASHBOARD
     },
     {
       title: 'Alerts',
       href: '/alerts/',
-      // requiredPermissions: [permission?.ALERT_PAGE],
+      requiredPermissions: Feature.ALERTS,
     },
     {
       title: 'Analysis',
       href: '/analysis/',
-      // requiredPermissions: [permission?.ANALISYS_PAGE],
+      requiredPermissions: Feature.ANALYSIS,
     },
     {
       title: 'Reports',
       href: '/reports/',
-      // requiredPermissions: [permission.REPORT_PAGE],
+      requiredPermissions: Feature.REPORTS,
     },
     {
       title: 'States',
       href: '/states/',
-      // requiredPermissions: [permission.STATES_PAGE],
+      requiredPermissions: Feature.STATES,
     },
     {
       title: 'Configurations',
       href: '/configurations/',
-      // requiredPermissions: [permission.CONFIGURATION_PAGE],
+      requiredPermissions: Feature.CONFIGURATION,
     },
   ]
+
+  const navMenuList = navMenuListData.filter((item) => {
+    if (item.requiredPermissions) {
+      return userState?.grants?.some(
+        (grant) => grant.idFeature === item.requiredPermissions
+      )
+    }
+    return true
+  })
 
   return (
     <header className="relative w-full h-16 z-40">

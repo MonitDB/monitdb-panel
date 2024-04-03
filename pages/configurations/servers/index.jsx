@@ -1,18 +1,41 @@
 import { faAdd } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Button, Col, Row, Table, Tag } from 'antd'
+import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
+import { useEffect } from 'react'
 import React from 'react'
 
 import Link from '~/components/link'
 import { PageContent, PageHeader, PageWrapper } from '~/components/page'
+import { useUser } from '~/hooks/index'
 import useGlobal from '~/hooks/use-global'
 import Layout from '~/layouts/default'
+import {
+  FeatureFunction,
+  hasPermission,
+  TypeGrant,
+} from '~/utils/hasPermission'
 
 const ConfigurationsServersPage = () => {
   const {
     globalState: { servers },
   } = useGlobal()
+
+  const { userState: user } = useUser()
+  const router = useRouter()
+  useEffect(() => {
+    if (
+      !hasPermission(
+        user,
+        FeatureFunction.MONITORED_SERVERS,
+        TypeGrant.OWNER
+      ) &&
+      user
+    ) {
+      router.push('/403')
+    }
+  }, [router, user])
   return (
     <>
       <NextSeo title="Servers - Configurations - MonitDB" />

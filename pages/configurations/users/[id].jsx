@@ -9,9 +9,15 @@ import * as Yup from 'yup'
 import { Input, Label, Select } from '~/components/form'
 import Loading from '~/components/loading'
 import { PageContent, PageHeader, PageWrapper } from '~/components/page'
+import { useUser } from '~/hooks/index'
 import Layout from '~/layouts/default'
 import * as UserServices from '~/services/user'
 import { handleException } from '~/utils/exceptions'
+import {
+  FeatureFunction,
+  hasPermission,
+  TypeGrant,
+} from '~/utils/hasPermission'
 
 const usersPagePath = '/configurations/users'
 
@@ -28,6 +34,17 @@ const UserSinglePage = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [roles, setRoles] = useState([])
   const [userData, setUserData] = useState()
+
+  const { userState: user } = useUser()
+
+  useEffect(() => {
+    if (
+      !hasPermission(user, FeatureFunction.USER_MANAGEMENT, TypeGrant.OWNER) &&
+      user
+    ) {
+      router.push('/403')
+    }
+  }, [router, user])
 
   const formik = useFormik({
     initialValues: {

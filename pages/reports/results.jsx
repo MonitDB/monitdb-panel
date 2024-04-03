@@ -17,37 +17,145 @@ import {
   PageWrapper,
 } from '~/components/page'
 import { GenericTable } from '~/components/table/genericTable'
+import { useUser } from '~/hooks/index'
 import useGlobal from '~/hooks/use-global'
 import Layout from '~/layouts/default'
 import { getReportsByType } from '~/services/reports'
 import { scrollToSection } from '~/utils/global'
+import {
+  Feature,
+  FeatureFunction,
+  hasFeature,
+  hasPermission,
+  TypeGrant,
+} from '~/utils/hasPermission'
 
-const reportTypes = [
-  { name: 'SQL Server Availability Time', slug: 'rltime' },
-  { name: 'Disk Space', slug: 'rldisk' },
-  { name: 'Data Files TOP 5', slug: 'rldtfile' },
-  { name: 'Log Files TOP 5', slug: 'rllgfile' },
-  { name: 'Database Growth TOP 10', slug: 'rldbgrow' },
-  { name: 'Table Growth TOP 10"', slug: 'rltbgrow' },
-  { name: 'Database Files - Writes', slug: 'rldbfilewr' },
-  { name: 'Database Files - Reads', slug: 'rldbfilerd' },
-  { name: 'Database File Growth TOP 10', slug: 'rldbflgrow' },
-  { name: 'Backups Executed TOP 10', slug: 'rldbbkexe' },
-  { name: 'Jobs Running TOP 10', slug: 'rljobrun' },
-  { name: 'Jobs Changed TOP 10', slug: 'rljobcha' },
-  { name: 'Failed Jobs TOP 10', slug: 'rljobfail' },
-  { name: 'Slow Jobs TOP 10', slug: 'rljobslow' },
-  { name: 'Slow Queries TOP 10', slug: 'rlqryslow' },
-  { name: 'Slow Queries - Last 10 Days', slug: 'rlqryslqtd' },
-  { name: 'Counters', slug: 'rlcounters' },
-  { name: 'Open Connections', slug: 'rlopenconn' },
-  { name: 'Index Fragmentation TOP 10', slug: 'rlidxfrag' },
-  { name: 'Waits Stats TOP 10', slug: 'rlwaitsts' },
-  { name: 'Alerts Without CLEAR', slug: 'rlalert' },
-  { name: 'Alerts - Last Day', slug: 'rlalertld' },
-  { name: 'Login Failed TOP 10', slug: 'rlloginf' },
-  { name: 'Error Log SQL  TOP 100', slug: 'rlerrorlog' },
-  { name: 'Databases Without Backup', slug: 'rldbbkout' },
+const reportTypesData = [
+  {
+    name: 'SQL Server Availability Time',
+    slug: 'rltime',
+    featureFunction: FeatureFunction.SQL_SERVER_AVAILABILITY_TIME,
+  },
+  {
+    name: 'Disk Space',
+    slug: 'rldisk',
+    featureFunction: FeatureFunction.REPORT_DISK_SPACE,
+  },
+  {
+    name: 'Data Files TOP 5',
+    slug: 'rldtfile',
+    featureFunction: FeatureFunction.DATA_FILES_TOP_5,
+  },
+  {
+    name: 'Log Files TOP 5',
+    slug: 'rllgfile',
+    featureFunction: FeatureFunction.LOG_FILES_TOP_5,
+  },
+  {
+    name: 'Database Growth TOP 10',
+    slug: 'rldbgrow',
+    featureFunction: FeatureFunction.DATABASE_GROWTH_TOP_10,
+  },
+  {
+    name: 'Table Growth TOP 10"',
+    slug: 'rltbgrow',
+    featureFunction: FeatureFunction.TABLE_GROWTH_TOP_10,
+  },
+  {
+    name: 'Database Files - Writes',
+    slug: 'rldbfilewr',
+    featureFunction: FeatureFunction.DATABASE_FILES_WRITES,
+  },
+  {
+    name: 'Database Files - Reads',
+    slug: 'rldbfilerd',
+    featureFunction: FeatureFunction.DATABASE_FILES_READS,
+  },
+  {
+    name: 'Database File Growth TOP 10',
+    slug: 'rldbflgrow',
+    featureFunction: FeatureFunction.DATABASE_FILE_GROWTH_TOP_10,
+  },
+  {
+    name: 'Backups Executed TOP 10',
+    slug: 'rldbbkexe',
+    featureFunction: FeatureFunction.BACKUPS_EXECUTED_TOP_10,
+  },
+  {
+    name: 'Jobs Running TOP 10',
+    slug: 'rljobrun',
+    featureFunction: FeatureFunction.JOBS_RUNNING_TOP_10,
+  },
+  {
+    name: 'Jobs Changed TOP 10',
+    slug: 'rljobcha',
+    featureFunction: FeatureFunction.JOBS_CHANGED_TOP_10,
+  },
+  {
+    name: 'Failed Jobs TOP 10',
+    slug: 'rljobfail',
+    featureFunction: FeatureFunction.FAILED_JOBS_TOP_10,
+  },
+  {
+    name: 'Slow Jobs TOP 10',
+    slug: 'rljobslow',
+    featureFunction: FeatureFunction.SLOW_JOBS_TOP_10,
+  },
+  {
+    name: 'Slow Queries TOP 10',
+    slug: 'rlqryslow',
+    featureFunction: FeatureFunction.SLOW_QUERIES_TOP_10,
+  },
+  {
+    name: 'Slow Queries - Last 10 Days',
+    slug: 'rlqryslqtd',
+    featureFunction: FeatureFunction.SLOW_QUERIES_LAST_10_DAYS,
+  },
+  {
+    name: 'Counters',
+    slug: 'rlcounters',
+    featureFunction: FeatureFunction.COUNTERS,
+  },
+  {
+    name: 'Open Connections',
+    slug: 'rlopenconn',
+    featureFunction: FeatureFunction.OPEN_CONNECTIONS,
+  },
+  {
+    name: 'Index Fragmentation TOP 10',
+    slug: 'rlidxfrag',
+    featureFunction: FeatureFunction.INDEX_FRAGMENTATION_TOP_10,
+  },
+  {
+    name: 'Waits Stats TOP 10',
+    slug: 'rlwaitsts',
+    featureFunction: FeatureFunction.WAITS_STATS_TOP_10,
+  },
+  {
+    name: 'Alerts Without CLEAR',
+    slug: 'rlalert',
+    featureFunction: FeatureFunction.ALERT_WITHOUT_CLEAR,
+  },
+  {
+    name: 'Alerts - Last Day',
+    slug: 'rlalertld',
+    featureFunction: FeatureFunction.ALERTS_LAST_DAY,
+  },
+  {
+    name: 'Login Failed TOP 10',
+    slug: 'rlloginf',
+    featureFunction: FeatureFunction.LOGIN_FAILED_TOP_10,
+  },
+  {
+    name: 'Error Log SQL  TOP 100',
+    slug: 'rlerrorlog',
+    featureFunction: FeatureFunction.ERROR_LOG_SQL_TOP_100,
+  },
+  {
+    name: 'Databases Without Backup',
+    slug: 'rldbbkout',
+    featureFunction: FeatureFunction.DATABASES_WITHOUT_BACKUP,
+  },
 ]
 
 const ResultReportsPage = () => {
@@ -55,6 +163,7 @@ const ResultReportsPage = () => {
     globalState: { servers },
   } = useGlobal()
   const router = useRouter()
+  const { userState: user } = useUser()
 
   const [isLoading, setIsLoading] = useState(true)
   const [typeActive, setTypeActive] = useState()
@@ -69,6 +178,10 @@ const ResultReportsPage = () => {
       })),
     ],
     [servers]
+  )
+
+  const reportTypes = reportTypesData.filter((report) =>
+    hasPermission(user, report.featureFunction, TypeGrant.READ)
   )
 
   const handleChange = (path, value) => {
@@ -105,12 +218,15 @@ const ResultReportsPage = () => {
   }, [getData])
 
   useEffect(() => {
+    if (!hasFeature(user, Feature.REPORTS) && user) {
+      router.push('/403')
+    }
     const filteredType = reportTypes.find(
       (type) => type.slug === router?.query?.type
     )
 
     filteredType ? setTypeActive(filteredType) : setTypeActive(reportTypes[0])
-  }, [router.asPath, router.query])
+  }, [router, router.asPath, router?.query, user])
 
   return (
     <>
@@ -124,23 +240,25 @@ const ResultReportsPage = () => {
               </PageSidebarTitle>
             </header>
             <div>
-              <PageSidebarLinksList>
-                {reportTypes.map((type, typeIndex) => (
-                  <li key={`sidebar-type-${type.slug}-${typeIndex}`}>
-                    <Link
-                      onClick={() => {
-                        setTypeActive(type.slug)
-                        scrollToSection(`#${type.slug}`)
-                      }}
-                      className={classNames({
-                        active: typeActive?.slug === type.slug,
-                      })}
-                    >
-                      {type.name}
-                    </Link>
-                  </li>
-                ))}
-              </PageSidebarLinksList>
+              {reportTypes.length > 0 && (
+                <PageSidebarLinksList>
+                  {reportTypes.map((type, typeIndex) => (
+                    <li key={`sidebar-type-${type.slug}-${typeIndex}`}>
+                      <Link
+                        onClick={() => {
+                          setTypeActive(type.slug)
+                          scrollToSection(`#${type.slug}`)
+                        }}
+                        className={classNames({
+                          active: typeActive?.slug === type.slug,
+                        })}
+                      >
+                        {type.name}
+                      </Link>
+                    </li>
+                  ))}
+                </PageSidebarLinksList>
+              )}
             </div>
           </PageSidebar>
           <PageContent className="flex items-start justify-between border-b border-gray-light">

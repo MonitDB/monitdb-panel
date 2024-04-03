@@ -2,8 +2,9 @@
 /* eslint-disable unicorn/no-array-reduce */
 import { Button, Col, DatePicker, Form, notification, Row, Select } from 'antd'
 import dayjs from 'dayjs'
+import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 
 import { ApexChart, defaultChartOptions } from '~/components/chart'
 import Link from '~/components/link'
@@ -11,8 +12,15 @@ import Loading from '~/components/loading'
 import { PageContent, PageWrapper } from '~/components/page'
 import Layout from '~/layouts/default'
 import { getAnalysis } from '~/services/analysis'
+import {
+  Feature,
+  FeatureFunction,
+  hasFeature,
+  hasSomePermissions,
+  TypeGrant,
+} from '~/utils/hasPermission'
 
-import { useGlobal } from '../hooks'
+import { useGlobal, useUser } from '../hooks'
 
 const datasets = {
   Log_Full_Scans_Count: {
@@ -116,6 +124,7 @@ const AnalysisPage = () => {
   const {
     globalState: { servers },
   } = useGlobal()
+  const { userState: user } = useUser()
   const [data, setData] = useState([])
   const [options, setOptions] = useState([])
 
@@ -156,6 +165,13 @@ const AnalysisPage = () => {
   const [loading, setLoading] = useState(false)
 
   const [form] = Form.useForm()
+  const router = useRouter()
+
+  useEffect(() => {
+    if (!hasFeature(user, Feature.ANALYSIS) && user) {
+      router.push('/403')
+    }
+  }, [router, user])
 
   const fetchData = async (metric, serverId, filter) => {
     setLoading(true)

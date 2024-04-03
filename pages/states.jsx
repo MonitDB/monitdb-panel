@@ -9,29 +9,42 @@ import Loading from '~/components/loading'
 import { PageWrapper } from '~/components/page'
 // import GlobalContext from '~/contexts/global'
 import Layout from '~/layouts/default'
+import {
+  Feature,
+  FeatureFunction,
+  hasFeature,
+  hasPermission,
+  TypeGrant,
+} from '~/utils/hasPermission'
 
-const tabs = [
+import { useUser } from '../hooks'
+
+const tabsData = [
   {
     name: 'Installed versions',
     slug: 'installed-versions',
     component: dynamic(() =>
       import('~/components/page/states/installed-versions')
     ),
+    featureFuntion: FeatureFunction.DASHBOARD_OF_VERSIONS,
   },
   {
     name: 'Disk usage',
     slug: 'disk-usage',
     component: dynamic(() => import('~/components/page/states/disk-usage')),
+    featureFuntion: FeatureFunction.DISK_INFORMATION,
   },
   {
     name: 'Backups',
     slug: 'backups',
     component: dynamic(() => import('~/components/page/states/backups')),
+    featureFuntion: FeatureFunction.BACKUPS,
   },
   {
     name: 'Jobs',
     slug: 'sql-agent-jobs',
     component: dynamic(() => import('~/components/page/states/sql-agent-jobs')),
+    featureFuntion: FeatureFunction.JOBS,
   },
   {
     name: 'SQL Server Licensing',
@@ -39,14 +52,23 @@ const tabs = [
     component: dynamic(() =>
       import('~/components/page/states/sql-server-licensing')
     ),
+    featureFuntion: FeatureFunction.LICENSING_INFORMATION,
   },
 ]
 
 const EstatePage = () => {
   const router = useRouter()
   const [tabActive, setTabActive] = useState()
+  const { userState: user } = useUser()
+
+  const tabs = tabsData.filter((tab) =>
+    hasPermission(user, tab.featureFuntion, TypeGrant.READ)
+  )
 
   useEffect(() => {
+    if (user && !hasFeature(user, Feature.STATES)) {
+      router.push('/403')
+    }
     const filteredTab = tabs.find((tab) => tab.slug === router?.query?.tab)
 
     filteredTab ? setTabActive(filteredTab) : setTabActive(tabs[0])

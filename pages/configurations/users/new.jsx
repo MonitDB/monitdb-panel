@@ -7,9 +7,15 @@ import * as Yup from 'yup'
 
 import { Input, Label, Select } from '~/components/form'
 import { PageContent, PageHeader, PageWrapper } from '~/components/page'
+import { useUser } from '~/hooks/index'
 import Layout from '~/layouts/default'
 import * as UserServices from '~/services/user'
 import { handleException } from '~/utils/exceptions'
+import {
+  FeatureFunction,
+  hasPermission,
+  TypeGrant,
+} from '~/utils/hasPermission'
 
 const FormSchema = Yup.object().shape({
   idRole: Yup.string().required(),
@@ -23,6 +29,17 @@ const UsersSinglePage = () => {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [roles, setRoles] = useState([])
+
+  const { userState: user } = useUser()
+
+  useEffect(() => {
+    if (
+      !hasPermission(user, FeatureFunction.USER_MANAGEMENT, TypeGrant.OWNER) &&
+      user
+    ) {
+      router.push('/403')
+    }
+  }, [router, user])
 
   const formik = useFormik({
     initialValues: {

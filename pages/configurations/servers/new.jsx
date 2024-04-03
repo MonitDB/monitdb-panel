@@ -2,16 +2,22 @@ import { Button, Col, Row } from 'antd'
 import { useFormik } from 'formik'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { toast } from 'react-toastify'
 
 import { Input, Label, Select, Textarea } from '~/components/form'
 import { PageContent, PageHeader, PageWrapper } from '~/components/page'
 import DatabaseIcons from '~/helpers/database-icons'
+import { useUser } from '~/hooks/index'
 import useGlobal from '~/hooks/use-global'
 import Layout from '~/layouts/default'
 import { addServer, testServer } from '~/services/servers'
 import { handleException } from '~/utils/exceptions'
+import {
+  FeatureFunction,
+  hasPermission,
+  TypeGrant,
+} from '~/utils/hasPermission'
 
 const ConfigurationsServersSinglePage = () => {
   const {
@@ -23,6 +29,21 @@ const ConfigurationsServersSinglePage = () => {
   const [isLoading, setIsLoading] = useState(false)
 
   const [isTesting, setIsTesting] = useState(false)
+
+  const { userState: user } = useUser()
+
+  useEffect(() => {
+    if (
+      !hasPermission(
+        user,
+        FeatureFunction.MONITORED_SERVERS,
+        TypeGrant.OWNER
+      ) &&
+      user
+    ) {
+      router.push('/403')
+    }
+  }, [router, user])
   const onCheck = async () => {
     setIsTesting(true)
 

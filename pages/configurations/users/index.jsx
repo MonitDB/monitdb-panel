@@ -6,14 +6,31 @@ import { NextSeo } from 'next-seo'
 import React, { useCallback, useEffect, useState } from 'react'
 
 import { PageContent, PageHeader, PageWrapper } from '~/components/page'
+import { useUser } from '~/hooks/index'
 import Layout from '~/layouts/default'
 import * as UserServices from '~/services/user'
+import {
+  FeatureFunction,
+  hasPermission,
+  TypeGrant,
+} from '~/utils/hasPermission'
 
 const ServersPage = () => {
   const [users, setUsers] = useState([])
   const [isLoading, setIsLoading] = useState(false)
 
   const router = useRouter()
+
+  const { userState: user } = useUser()
+
+  useEffect(() => {
+    if (
+      !hasPermission(user, FeatureFunction.USER_MANAGEMENT, TypeGrant.OWNER) &&
+      user
+    ) {
+      router.push('/403')
+    }
+  }, [router, user])
 
   const getUsers = useCallback(async () => {
     setIsLoading(true)

@@ -12,7 +12,7 @@ const NotFoundPage = ({ message }) => {
           </div>
         </div>
 
-        <div className="col-span-12 lg:col-span-4 lg:col-start-8">=</div>
+        <div className="col-span-12 lg:col-span-4 lg:col-start-8"></div>
       </Grid>
     </Layout>
   )

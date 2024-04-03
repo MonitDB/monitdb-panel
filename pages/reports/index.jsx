@@ -1,6 +1,7 @@
 import { faDatabase } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Input } from 'antd'
+import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
@@ -9,14 +10,25 @@ import Link from '~/components/link'
 import Loading from '~/components/loading/loading'
 import { PageContent, PageWrapper } from '~/components/page'
 import DatabaseIcons from '~/helpers/database-icons'
+import { useUser } from '~/hooks/index'
 import useGlobal from '~/hooks/use-global'
 import Layout from '~/layouts/default'
+import {
+  Feature,
+  FeatureFunction,
+  hasFeature,
+  hasPermission,
+  TypeGrant,
+} from '~/utils/hasPermission'
 import { formatServer } from '~/utils/server'
 
 const AlertsPage = () => {
   const {
     globalState: { servers, serverTypes },
   } = useGlobal()
+
+  const { userState: user } = useUser()
+  const router = useRouter()
 
   const [formattedServers, setFormattedServers] = useState([])
   const [search, setSearch] = useState('')
@@ -40,6 +52,9 @@ const AlertsPage = () => {
   }, [])
 
   useEffect(() => {
+    if (!hasFeature(user, Feature.REPORTS) && user) {
+      router.push('/403')
+    }
     if (servers.length === 0 || serverTypes.length === 0) {
       return
     }
@@ -50,7 +65,7 @@ const AlertsPage = () => {
         active: true,
       }))
     )
-  }, [servers, serverTypes])
+  }, [servers, serverTypes, user, router])
 
   useEffect(() => {
     setFormattedServers((oldFormattedServers) =>
@@ -73,16 +88,23 @@ const AlertsPage = () => {
               className="relative w-full mx-auto mb-10 lg:w-2/3 lg:mb-20"
               onSubmit={handleSubmit}
             >
-              <div className="relative">
-                <Input
-                  type="text"
-                  name="search"
-                  className="w-full pl-8 pr-20 h-20 shadow-md bg-white leading-10 rounded outline-none text-lg"
-                  placeholder="Search for a server..."
-                  onChange={handleSearchChanges}
-                  value={search}
-                />
-              </div>
+              {hasPermission(
+                user,
+                FeatureFunction.FILTROS_POR_SERVIDOR,
+                TypeGrant.EXECUTE
+              ) && (
+                <div className="relative">
+                  <Input
+                    type="text"
+                    name="search"
+                    className="w-full pl-8 pr-20 h-20 shadow-md bg-white leading-10 rounded outline-none text-lg"
+                    placeholder="Search for a server..."
+                    onChange={handleSearchChanges}
+                    value={search}
+                  />
+                </div>
+              )}
+
               {search && (
                 <p className="absolute -bottom-8 left-0 w-full text-center text-sm text-gray">
                   {activeServersCount === 0 && <>No server found</>}

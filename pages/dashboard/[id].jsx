@@ -5,7 +5,7 @@ import classNames from 'classnames'
 import faker from 'faker'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 
 import Loading from '~/components/loading'
 import {
@@ -26,7 +26,9 @@ import useGlobal from '~/hooks/use-global'
 import Layout from '~/layouts/default'
 import { scrollToSection } from '~/utils/global'
 import {
+  Feature,
   FeatureFunction,
+  hasFeature,
   hasPermission,
   hasSomePermissions,
   TypeGrant,
@@ -58,6 +60,10 @@ const SingleDashboard = () => {
   const [activeTabId, setActiveTabId] = useState('0')
 
   const router = useRouter()
+
+  useEffect(() => {
+    if (!hasFeature(user, Feature.DASHBOARD) && user) router.push('/403')
+  }, [router, user])
 
   const currentServer = useMemo(() => {
     const server = servers.find((server) => server.id === +router?.query?.id)

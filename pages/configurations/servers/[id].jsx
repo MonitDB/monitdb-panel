@@ -8,10 +8,16 @@ import { toast } from 'react-toastify'
 import { Input, Label, Select, Textarea } from '~/components/form'
 import { PageContent, PageHeader, PageWrapper } from '~/components/page'
 import DatabaseIcons from '~/helpers/database-icons'
+import { useUser } from '~/hooks/index'
 import useGlobal from '~/hooks/use-global'
 import Layout from '~/layouts/default'
 import { deleteServer, updateServer } from '~/services/servers'
 import { handleException } from '~/utils/exceptions'
+import {
+  FeatureFunction,
+  hasPermission,
+  TypeGrant,
+} from '~/utils/hasPermission'
 
 const serversPagePath = '/configurations/servers'
 
@@ -23,6 +29,21 @@ const ConfigurationsServersSinglePage = () => {
 
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
+
+  const { userState: user } = useUser()
+
+  useEffect(() => {
+    if (
+      !hasPermission(
+        user,
+        FeatureFunction.MONITORED_SERVERS,
+        TypeGrant.OWNER
+      ) &&
+      user
+    ) {
+      router.push('/403')
+    }
+  }, [router, user])
 
   const formik = useFormik({
     initialValues: {
