@@ -31,7 +31,7 @@ const ConfigurationsServersPage = () => {
         FeatureFunction.MONITORED_SERVERS,
         TypeGrant.OWNER
       ) &&
-      user
+      user.grants
     ) {
       router.push('/403')
     }

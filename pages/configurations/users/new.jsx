@@ -35,7 +35,7 @@ const UsersSinglePage = () => {
   useEffect(() => {
     if (
       !hasPermission(user, FeatureFunction.USER_MANAGEMENT, TypeGrant.OWNER) &&
-      user
+      user.grants
     ) {
       router.push('/403')
     }

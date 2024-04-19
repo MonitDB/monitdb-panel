@@ -54,7 +54,7 @@ const MetricsPage = () => {
 
   useEffect(() => {
     if (
-      user &&
+      user.grants &&
       !hasPermission(user, FeatureFunction.ALERTS_CUSTOMIZATION, TypeGrant.READ)
     ) {
       router.push('/403')

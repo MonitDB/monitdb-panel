@@ -52,7 +52,7 @@ const AlertsPage = () => {
   }, [])
 
   useEffect(() => {
-    if (!hasFeature(user, Feature.REPORTS) && user) {
+    if (!hasFeature(user, Feature.REPORTS) && user.grants) {
       router.push('/403')
     }
     if (servers.length === 0 || serverTypes.length === 0) {

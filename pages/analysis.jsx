@@ -162,7 +162,7 @@ const AnalysisPage = () => {
   const router = useRouter()
 
   useEffect(() => {
-    if (!hasFeature(user, Feature.ANALYSIS) && user) {
+    if (!hasFeature(user, Feature.ANALYSIS) && user.grants) {
       router.push('/403')
     }
   }, [router, user])

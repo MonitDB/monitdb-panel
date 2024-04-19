@@ -219,7 +219,7 @@ const ResultReportsPage = () => {
   }, [getData])
 
   useEffect(() => {
-    if (!hasFeature(user, Feature.REPORTS) && user) {
+    if (!hasFeature(user, Feature.REPORTS) && user.grants) {
       router.push('/403')
     }
     const filteredType = reportTypes.find(

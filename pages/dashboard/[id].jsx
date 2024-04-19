@@ -62,7 +62,7 @@ const SingleDashboard = () => {
   const router = useRouter()
 
   useEffect(() => {
-    if (!hasFeature(user, Feature.DASHBOARD) && user) router.push('/403')
+    if (!hasFeature(user, Feature.DASHBOARD) && user.grants) router.push('/403')
   }, [router, user])
 
   const currentServer = useMemo(() => {

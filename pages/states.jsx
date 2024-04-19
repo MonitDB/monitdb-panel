@@ -35,6 +35,11 @@ const tabsData = [
     featureFuntion: FeatureFunction.DISK_INFORMATION,
   },
   {
+    name: 'Capacity Plan',
+    slug: 'capacity-plan',
+    component: dynamic(() => import('~/components/page/states/capacity-plan')),
+  },
+  {
     name: 'Backups',
     slug: 'backups',
     component: dynamic(() => import('~/components/page/states/backups')),
@@ -62,11 +67,13 @@ const EstatePage = () => {
   const { userState: user } = useUser()
 
   const tabs = tabsData.filter((tab) =>
-    hasPermission(user, tab.featureFuntion, TypeGrant.READ)
+    tab.featureFuntion
+      ? hasPermission(user, tab.featureFuntion, TypeGrant.READ)
+      : true
   )
 
   useEffect(() => {
-    if (user && !hasFeature(user, Feature.STATES)) {
+    if (user.grants && !hasFeature(user, Feature.STATES)) {
       router.push('/403')
     }
     const filteredTab = tabs.find((tab) => tab.slug === router?.query?.tab)
