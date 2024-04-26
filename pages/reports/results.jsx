@@ -227,6 +227,7 @@ const ResultReportsPage = () => {
     )
 
     filteredType ? setTypeActive(filteredType) : setTypeActive(reportTypes[0])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router, router.asPath, router?.query, user])
 
   return (

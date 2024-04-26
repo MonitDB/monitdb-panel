@@ -1,3 +1,4 @@
+/* eslint-disable unicorn/no-array-reduce */
 /* eslint-disable sonarjs/no-duplicate-string */
 /* eslint-disable sonarjs/no-identical-functions */
 import {
@@ -11,12 +12,14 @@ import {
   Tooltip,
   Typography,
 } from 'antd'
+import dayjs from 'dayjs'
 import moment from 'moment'
 import dynamic from 'next/dynamic'
 import { useEffect } from 'react'
 import { useCallback } from 'react'
 import React, { useState } from 'react'
 
+import Loading from '~/components/loading'
 import { useGlobal } from '~/hooks/index'
 import { getCpDatabase, getCpDisk, getCpFile } from '~/services/states'
 
@@ -64,66 +67,83 @@ const mbToGb = (value) => {
   return `${Math.ceil(value / 1024)}GB`
 }
 
+const today = dayjs()
+const startOfCurrentMonth = today.startOf('month')
+const endOfCurrentMonth = today.endOf('month')
+
+const rangePresets = [
+  { label: 'Last 7 Days', value: [today.subtract(7, 'd'), today] },
+  { label: 'Last 14 Days', value: [today.subtract(14, 'd'), today] },
+  { label: 'Current Month', value: [startOfCurrentMonth, endOfCurrentMonth] },
+  { label: 'Last Month', value: [dayjs().add(-30, 'd'), dayjs()] },
+  { label: 'Last 3 Months', value: [dayjs().add(-90, 'd'), dayjs()] },
+]
+
 const CapacityPlan = ({ tabName }) => {
   const {
-    globalState: { servers, serverTypes, serverEnvironments },
+    globalState: { servers },
   } = useGlobal()
 
   const [cpFile, setCpFile] = useState()
   const [cpDisk, setCpDisk] = useState()
   const [cpDatabase, setCpDatabase] = useState()
-  const [serverId, setServerId] = useState(1)
 
   const [loadingCpFile, setLoadingCpFile] = useState(false)
   const [loadingCpDisk, setLoadingCpDisk] = useState(false)
   const [loadingCpDatabase, setLoadingCpDatabase] = useState(false)
 
+  const [form] = Form.useForm()
+
+  const serverId = Form.useWatch('server', form)
+  const dataRange = Form.useWatch('dataRange', form)
+  const [sd, ed] = dataRange ?? []
+  const startDate = dayjs(sd).format('YYYY-MM-DD')
+  const endDate = dayjs(ed).format('YYYY-MM-DD')
   const fetchCpDatabase = useCallback(async () => {
     try {
       setLoadingCpDatabase(true)
-      const database = await getCpDatabase({ serverId })
+      const database = await getCpDatabase({ serverId, startDate, endDate })
       setCpDatabase(database.data)
     } catch {
-      setCpFile()
+      setCpDatabase()
     }
     setLoadingCpDatabase(false)
-  }, [serverId])
+  }, [serverId, startDate, endDate])
 
   const fetchCpFile = useCallback(async () => {
     try {
       setLoadingCpFile(true)
-      const file = await getCpFile({ serverId })
+      const file = await getCpFile({ serverId, startDate, endDate })
       setCpFile(file.data)
     } catch {
       setCpFile()
     }
     setLoadingCpFile(false)
-  }, [serverId])
+  }, [serverId, startDate, endDate])
 
   const fetchCpDisk = useCallback(async () => {
     try {
       setLoadingCpDisk(true)
-      const disk = await getCpDisk({ serverId })
+      const disk = await getCpDisk({ serverId, startDate, endDate })
       setCpDisk(disk.data)
     } catch {
       setCpDisk()
     }
     setLoadingCpDisk(false)
-  }, [serverId])
+  }, [serverId, startDate, endDate])
 
   const fetchData = useCallback(async () => {
-    try {
-      await Promise.all([fetchCpDatabase(), fetchCpFile(), fetchCpDisk()])
-    } catch {
-      setCpFile()
-      setCpDisk()
-      setCpDatabase()
-    }
+    await Promise.allSettled([fetchCpDatabase(), fetchCpFile(), fetchCpDisk()])
   }, [fetchCpDatabase, fetchCpDisk, fetchCpFile])
 
   useEffect(() => {
     fetchData()
-  }, [fetchData])
+  }, [fetchData, serverId, startDate, endDate])
+
+  useEffect(() => {
+    form.setFieldsValue({ dataRange: [startOfCurrentMonth, endOfCurrentMonth] })
+    form.setFieldsValue({ server: servers[0]?.id })
+  }, [form, servers])
 
   const diskSeries = Array.isArray(cpDisk?.diskGrowth)
     ? groupObjects(cpDisk?.diskGrowth, 'DRIVE_LETTER')
@@ -145,12 +165,13 @@ const CapacityPlan = ({ tabName }) => {
         <Card
           style={{ width: '100%', justifyContent: 'flex-end', display: 'flex' }}
         >
-          <Form layout="inline">
-            <Form.Item name="server" label="Server">
-              <Select
-                defaultValue="server"
-                style={{ width: 120, marginRight: '12px' }}
-              >
+          <Form layout="inline" form={form}>
+            <Form.Item
+              name="server"
+              label="Server"
+              initialValue={servers[0]?.id}
+            >
+              <Select style={{ width: 120, marginRight: '12px' }}>
                 {servers.map((server) => (
                   <Select.Option key={server.id} value={server.id}>
                     {server.serverName}
@@ -159,358 +180,397 @@ const CapacityPlan = ({ tabName }) => {
               </Select>
             </Form.Item>
             <Form.Item name="dataRange" label="Data Range">
-              <DatePicker.RangePicker />
+              <DatePicker.RangePicker presets={rangePresets} />
             </Form.Item>
           </Form>
         </Card>
       </Row>
       <br />
-      <Row gutter={12}>
-        <Col span={24}>
-          <Typography.Title level={3}>Disks</Typography.Title>
-        </Col>
-        <Col span={12}>
-          <ApexChart
-            options={{
-              stroke: {
-                width: 1,
-                curve: 'straight',
-              },
-              chart: {
-                toolbar: {
+      {loadingCpDisk ? (
+        <div style={{ height: '400px' }}>
+          <Loading />
+        </div>
+      ) : (
+        <Row gutter={12}>
+          <Col span={24}>
+            <Typography.Title level={3}>Disks</Typography.Title>
+          </Col>
+          <Col span={12}>
+            <ApexChart
+              options={{
+                stroke: {
+                  width: 1,
+                  curve: 'straight',
+                },
+                chart: {
+                  toolbar: {
+                    show: false,
+                  },
+                  zoom: {
+                    enabled: true,
+                    type: 'x',
+                  },
+                },
+                plotOptions: {
+                  bar: {
+                    horizontal: false,
+                    margin: 10,
+                  },
+                },
+                xaxis: {
+                  type: 'datetime',
                   show: false,
                 },
-                zoom: {
-                  enabled: true,
-                  type: 'x',
+              }}
+              series={Object.keys(diskSeries).map((key) => ({
+                data: diskSeries[key].map((data) => [
+                  new Date(data.CREATEDATA).getTime(),
+                  data.DISC_SPACE_USED_MB,
+                ]),
+                name: key,
+                type: 'line',
+              }))}
+              width={'100%'}
+              height={400}
+            />
+          </Col>
+          <Col span={12} style={{ height: '100%' }}>
+            <Table
+              size="small"
+              pagination={cpDisk?.capacityPlan?.length > 10}
+              dataSource={cpDisk?.capacityPlan ?? []}
+              columns={[
+                {
+                  title: 'Drive Letter',
+                  dataIndex: 'DriveLetter',
                 },
-              },
-              plotOptions: {
-                bar: {
-                  horizontal: false,
-                  margin: 10,
+                {
+                  title: 'Disk Size',
+                  dataIndex: 'LastSize',
+                  render: (value) => {
+                    return mbToGb(value) ? mbToGb(value) : `${value} MB`
+                  },
                 },
-              },
-              xaxis: {
-                type: 'datetime',
-                show: false,
-              },
-            }}
-            series={Object.keys(diskSeries).map((key) => ({
-              data: diskSeries[key].map((data) => [
-                new Date(data.CREATEDATA).getTime(),
-                data.DISC_SPACE_USED_MB,
-              ]),
-              name: key,
-              type: 'line',
-            }))}
-            width={'100%'}
-            height={400}
-          />
-        </Col>
-        <Col span={12} style={{ height: '100%' }}>
-          <Table
-            size="small"
-            pagination={cpDisk?.capacityPlan?.length > 10}
-            dataSource={cpDisk?.capacityPlan ?? []}
-            columns={[
-              {
-                title: 'Drive Letter',
-                dataIndex: 'DriveLetter',
-              },
-              {
-                title: 'Disk Size',
-                dataIndex: 'LastSize',
-                render: (value) => {
-                  return mbToGb(value) ? mbToGb(value) : `${value} MB`
+                {
+                  title: 'Used space',
+                  dataIndex: 'LastSpaceUsed',
+                  render: (value) => {
+                    return mbToGb(value) != '0GB'
+                      ? mbToGb(value)
+                      : `${value} MB`
+                  },
                 },
-              },
-              {
-                title: 'Used space',
-                dataIndex: 'LastSpaceUsed',
-                render: (value) => {
-                  return mbToGb(value) != '0GB' ? mbToGb(value) : `${value} MB`
-                },
-              },
 
-              {
-                title: 'Collected Data',
-                dataIndex: 'LastCollectData',
-                render: (value) => {
-                  return new Date(value).toLocaleString()
+                {
+                  title: 'Collected Data',
+                  dataIndex: 'LastCollectData',
+                  render: (value) => {
+                    return new Date(value).toLocaleString()
+                  },
                 },
-              },
-              {
-                title: 'Growth Rate (Day)',
-                render: (_, record) => {
-                  return `${diskGrowthRate(record)} MB`
+                {
+                  title: 'Growth Rate (Day)',
+                  render: (_, record) => {
+                    return `${diskGrowthRate(record)} MB`
+                  },
                 },
-              },
-              {
-                title: 'Expected use in 3 Months',
-                render: (_, record) => {
-                  console.log(record.LastSpaceUsed, diskGrowthRate(record))
-                  return mbToGb(
-                    record.LastSpaceUsed + diskGrowthRate(record) * 90
-                  )
+                {
+                  title: 'Expected use in 3 Months',
+                  render: (_, record) => {
+                    return mbToGb(
+                      record.LastSpaceUsed + diskGrowthRate(record) * 90
+                    )
+                  },
                 },
-              },
-              {
-                title: 'Disk is full in:',
-                render: (_, record) => {
-                  const capacity = record.LastSize
-                  const used = record.LastSpaceUsed
-                  const growthRate = diskGrowthRate(record)
+                {
+                  title: 'Disk is full in:',
+                  render: (_, record) => {
+                    const capacity = record.LastSize
+                    const used = record.LastSpaceUsed
+                    const growthRate = diskGrowthRate(record)
 
-                  const fullDays = Math.ceil((capacity - used) / growthRate)
-                  const currentDate = new Date()
-                  const fullDate = new Date(
-                    currentDate.setDate(currentDate.getDate() + fullDays)
-                  )
-                  return (
-                    <Tooltip title={'Based in the growth in this datarange'}>
-                      {' '}
-                      <p>{moment(fullDate.toLocaleString()).format('LL')}</p>
-                    </Tooltip>
-                  )
+                    const fullDays = Math.ceil((capacity - used) / growthRate)
+                    const currentDate = new Date()
+                    const fullDate = new Date(
+                      currentDate.setDate(currentDate.getDate() + fullDays)
+                    )
+                    return (
+                      <Tooltip
+                        title={
+                          'Considering the expansion observed within this date range'
+                        }
+                      >
+                        {' '}
+                        <p>{moment(fullDate.toLocaleString()).format('LL')}</p>
+                      </Tooltip>
+                    )
+                  },
                 },
-              },
-            ]}
-          />
-        </Col>
-      </Row>
-      <Row gutter={12}>
-        <Col span={24}>
-          <Typography.Title level={3}>Databases</Typography.Title>
-        </Col>
-        <Col span={12}>
-          <ApexChart
-            options={{
-              stroke: {
-                width: 1,
-                curve: 'straight',
-              },
-              chart: {
-                toolbar: {
-                  show: false,
+              ]}
+            />
+          </Col>
+        </Row>
+      )}
+      {loadingCpDatabase ? (
+        <div style={{ height: '400px' }}>
+          <Loading />{' '}
+        </div>
+      ) : (
+        <Row gutter={12}>
+          <Col span={24}>
+            <Typography.Title level={3}>Databases</Typography.Title>
+          </Col>
+          <Col span={12}>
+            <ApexChart
+              options={{
+                stroke: {
+                  width: 1,
+                  curve: 'straight',
                 },
-                zoom: {
-                  enabled: true,
-                  type: 'x',
+                chart: {
+                  toolbar: {
+                    show: false,
+                  },
+                  zoom: {
+                    enabled: true,
+                    type: 'x',
+                  },
                 },
-              },
-              plotOptions: {
-                bar: {
-                  horizontal: false,
-                  margin: 10,
+                plotOptions: {
+                  bar: {
+                    horizontal: false,
+                    margin: 10,
+                  },
                 },
-              },
-              xaxis: {
-                type: 'datetime',
-              },
-            }}
-            series={Object.keys(databaseSeries).map((key) => ({
-              data: databaseSeries[key].map((data) => [
-                new Date(data.CollectData).getTime(),
-                data.UsedSizeMb,
-              ]),
-              name: key,
-              type: 'line',
-            }))}
-            width={'100%'}
-            height={400}
-          />
-        </Col>
-        <Col span={12} style={{ height: '100%' }}>
-          <Table
-            size="small"
-            pagination={cpDatabase?.capacityPlan?.length > 10}
-            dataSource={cpDatabase?.capacityPlan ?? []}
-            columns={[
-              {
-                title: 'Database',
-                dataIndex: 'DatabaseName',
-              },
-              {
-                title: 'Database Size',
-                dataIndex: 'LastSizeMb',
-                render: (value) => {
-                  return mbToGb(value) != '0GB' ? mbToGb(value) : `${value} MB`
+                xaxis: {
+                  type: 'datetime',
                 },
-              },
-              {
-                title: 'Used space',
-                dataIndex: 'LastUsedSizeMB',
-                render: (value) => {
-                  return mbToGb(value) != '0GB' ? mbToGb(value) : `${value} MB`
+              }}
+              series={Object.keys(databaseSeries).map((key) => ({
+                data: databaseSeries[key].map((data) => [
+                  new Date(data.CollectData).getTime(),
+                  data.UsedSizeMb,
+                ]),
+                name: key,
+                type: 'line',
+              }))}
+              width={'100%'}
+              height={400}
+            />
+          </Col>
+          <Col span={12} style={{ height: '100%' }}>
+            <Table
+              size="small"
+              pagination={cpDatabase?.capacityPlan?.length > 10}
+              dataSource={cpDatabase?.capacityPlan ?? []}
+              columns={[
+                {
+                  title: 'Database',
+                  dataIndex: 'DatabaseName',
                 },
-              },
+                {
+                  title: 'Database Size',
+                  dataIndex: 'LastSizeMb',
+                  render: (value) => {
+                    return mbToGb(value) != '0GB'
+                      ? mbToGb(value)
+                      : `${value} MB`
+                  },
+                },
+                {
+                  title: 'Used space',
+                  dataIndex: 'LastUsedSizeMB',
+                  render: (value) => {
+                    return mbToGb(value) != '0GB'
+                      ? mbToGb(value)
+                      : `${value} MB`
+                  },
+                },
 
-              {
-                title: 'Collected Data',
-                dataIndex: 'LastCollectData',
-                render: (value) => {
-                  return new Date(value).toLocaleString()
+                {
+                  title: 'Collected Data',
+                  dataIndex: 'LastCollectData',
+                  render: (value) => {
+                    return new Date(value).toLocaleString()
+                  },
                 },
-              },
-              {
-                title: 'Growth Rate (Day)',
-                render: (_, record) => {
-                  return `${databaseGrowthRate(record)} MB`
+                {
+                  title: 'Growth Rate (Day)',
+                  render: (_, record) => {
+                    return `${databaseGrowthRate(record)} MB`
+                  },
                 },
-              },
-              {
-                title: 'Expected use in 3 Months',
-                render: (_, record) => {
-                  return mbToGb(
-                    record.LastUsedSizeMB + databaseGrowthRate(record) * 90
-                  )
+                {
+                  title: 'Expected use in 3 Months',
+                  render: (_, record) => {
+                    return mbToGb(
+                      record.LastUsedSizeMB + databaseGrowthRate(record) * 90
+                    )
+                  },
                 },
-              },
-              {
-                title: 'Database is full in:',
-                render: (_, record) => {
-                  const capacity = record.LastSizeMb
-                  const used = record.LastUsedSizeMB
-                  const growthRate = databaseGrowthRate(record)
-                  if (!growthRate) {
-                    return 'N/A'
-                  }
+                {
+                  title: 'Database is full in:',
+                  render: (_, record) => {
+                    const capacity = record.LastSizeMb
+                    const used = record.LastUsedSizeMB
+                    const growthRate = databaseGrowthRate(record)
+                    if (!growthRate) {
+                      return 'N/A'
+                    }
 
-                  const fullDays = Math.ceil((capacity - used) / growthRate)
-                  const currentDate = new Date()
-                  const fullDate = new Date(
-                    currentDate.setDate(currentDate.getDate() + fullDays)
-                  )
-                  return (
-                    <Tooltip title={'Based in the growth in this datarange'}>
-                      {' '}
-                      <p>{moment(fullDate.toLocaleString()).format('LL')}</p>
-                    </Tooltip>
-                  )
+                    const fullDays = Math.ceil((capacity - used) / growthRate)
+                    const currentDate = new Date()
+                    const fullDate = new Date(
+                      currentDate.setDate(currentDate.getDate() + fullDays)
+                    )
+                    return (
+                      <Tooltip
+                        title={
+                          'Considering the expansion observed within this date range,'
+                        }
+                      >
+                        {' '}
+                        <p>{moment(fullDate.toLocaleString()).format('LL')}</p>
+                      </Tooltip>
+                    )
+                  },
                 },
-              },
-            ]}
-          />
-        </Col>
-      </Row>
-      <Row gutter={12}>
-        <Col span={24}>
-          <Typography.Title level={3}>Files</Typography.Title>
-        </Col>
-        <Col span={12}>
-          <ApexChart
-            options={{
-              chart: {
-                type: 'area',
-                toolbar: {
-                  show: false,
-                  offsetX: '-100%',
+              ]}
+            />
+          </Col>
+        </Row>
+      )}
+      {loadingCpFile ? (
+        <div style={{ height: '400px' }}>
+          <Loading />
+        </div>
+      ) : (
+        <Row gutter={12}>
+          <Col span={24}>
+            <Typography.Title level={3}>Files</Typography.Title>
+          </Col>
+          <Col span={12}>
+            <ApexChart
+              options={{
+                chart: {
+                  type: 'area',
+                  toolbar: {
+                    show: false,
+                    offsetX: '-100%',
+                  },
+                  zoom: {
+                    enabled: false,
+                  },
+                  offsetX: 0,
                 },
-                zoom: {
-                  enabled: false,
+                plotOptions: {
+                  bar: {
+                    horizontal: false,
+                    margin: 10,
+                  },
                 },
-                offsetX: 0,
-              },
-              plotOptions: {
-                bar: {
-                  horizontal: false,
-                  margin: 10,
+                stroke: {
+                  width: 1,
+                  curve: 'straight',
                 },
-              },
-              stroke: {
-                width: 1,
-                curve: 'straight',
-              },
-              xaxis: {
-                type: 'datetime',
-              },
-            }}
-            series={Object.keys(fileSeries).map((key) => ({
-              data: fileSeries[key].map((data) => [
-                new Date(data.CREATEDATA).getTime(),
-                data.FILE_SPACE_USED_MB,
-              ]),
-              name: key,
-              type: 'line',
-            }))}
-            width={'100%'}
-            height={400}
-          />
-        </Col>
-        <Col span={12} style={{ height: '100%' }}>
-          <Table
-            size="small"
-            pagination={cpFile?.capacityPlan?.length > 10}
-            dataSource={cpFile?.capacityPlan ?? []}
-            columns={[
-              {
-                title: 'File Name',
-                dataIndex: 'FileName',
-              },
-              {
-                title: 'File Size',
-                dataIndex: 'LastSizeMb',
-                render: (value) => {
-                  return mbToGb(value) != '0GB' ? mbToGb(value) : `${value} MB`
+                xaxis: {
+                  type: 'datetime',
                 },
-              },
-              {
-                title: 'Used space',
-                dataIndex: 'LastUsedSizeMB',
-                render: (value) => {
-                  return mbToGb(value) != '0GB' ? mbToGb(value) : `${value} MB`
+              }}
+              series={Object.keys(fileSeries).map((key) => ({
+                data: fileSeries[key].map((data) => [
+                  new Date(data.CREATEDATA).getTime(),
+                  data.FILE_SPACE_USED_MB,
+                ]),
+                name: key,
+                type: 'line',
+              }))}
+              width={'100%'}
+              height={400}
+            />
+          </Col>
+          <Col span={12} style={{ height: '100%' }}>
+            <Table
+              size="small"
+              pagination={cpFile?.capacityPlan?.length > 10}
+              dataSource={cpFile?.capacityPlan ?? []}
+              columns={[
+                {
+                  title: 'File Name',
+                  dataIndex: 'FileName',
                 },
-              },
+                {
+                  title: 'File Size',
+                  dataIndex: 'LastSizeMb',
+                  render: (value) => {
+                    return mbToGb(value) != '0GB'
+                      ? mbToGb(value)
+                      : `${value} MB`
+                  },
+                },
+                {
+                  title: 'Used space',
+                  dataIndex: 'LastUsedSizeMB',
+                  render: (value) => {
+                    return mbToGb(value) != '0GB'
+                      ? mbToGb(value)
+                      : `${value} MB`
+                  },
+                },
 
-              {
-                title: 'Collected Data',
-                dataIndex: 'LastCollectData',
-                render: (value) => {
-                  return new Date(value).toLocaleString()
+                {
+                  title: 'Collected Data',
+                  dataIndex: 'LastCollectData',
+                  render: (value) => {
+                    return new Date(value).toLocaleString()
+                  },
                 },
-              },
-              {
-                title: 'Growth Rate (Day)',
-                render: (_, record) => {
-                  return `${databaseGrowthRate(record)} MB`
+                {
+                  title: 'Growth Rate (Day)',
+                  render: (_, record) => {
+                    return `${databaseGrowthRate(record)} MB`
+                  },
                 },
-              },
-              {
-                title: 'Expected use in 3 Months',
-                render: (_, record) => {
-                  return mbToGb(
-                    record.LastUsedSizeMB + databaseGrowthRate(record) * 90
-                  )
+                {
+                  title: 'Expected use in 3 Months',
+                  render: (_, record) => {
+                    return mbToGb(
+                      record.LastUsedSizeMB + databaseGrowthRate(record) * 90
+                    )
+                  },
                 },
-              },
-              {
-                title: 'Database is full in:',
-                render: (_, record) => {
-                  const capacity = record.LastSizeMb
-                  const used = record.LastUsedSizeMB
-                  const growthRate = databaseGrowthRate(record)
-                  if (!growthRate) {
-                    return 'N/A'
-                  }
+                {
+                  title: 'Database is full in:',
+                  render: (_, record) => {
+                    const capacity = record.LastSizeMb
+                    const used = record.LastUsedSizeMB
+                    const growthRate = databaseGrowthRate(record)
+                    if (!growthRate) {
+                      return 'N/A'
+                    }
 
-                  const fullDays = Math.ceil((capacity - used) / growthRate)
-                  const currentDate = new Date()
-                  const fullDate = new Date(
-                    currentDate.setDate(currentDate.getDate() + fullDays)
-                  )
-                  return (
-                    <Tooltip title={'Based in the growth in this datarange'}>
-                      {' '}
-                      <p>{moment(fullDate.toLocaleString()).format('LL')}</p>
-                    </Tooltip>
-                  )
+                    const fullDays = Math.ceil((capacity - used) / growthRate)
+                    const currentDate = new Date()
+                    const fullDate = new Date(
+                      currentDate.setDate(currentDate.getDate() + fullDays)
+                    )
+                    return (
+                      <Tooltip
+                        title={
+                          'Considering the expansion observed within this date range,'
+                        }
+                      >
+                        {' '}
+                        <p>{moment(fullDate.toLocaleString()).format('LL')}</p>
+                      </Tooltip>
+                    )
+                  },
                 },
-              },
-            ]}
-          />
-        </Col>
-      </Row>
+              ]}
+            />
+          </Col>
+        </Row>
+      )}
     </PageContent>
   )
 }
