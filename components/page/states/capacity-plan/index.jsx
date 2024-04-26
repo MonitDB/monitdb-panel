@@ -69,7 +69,7 @@ const mbToGb = (value) => {
 
 const today = dayjs()
 const startOfCurrentMonth = today.startOf('month')
-const endOfCurrentMonth = today.endOf('month')
+const endOfCurrentMonth = today.endOf('day')
 
 const rangePresets = [
   { label: 'Last 7 Days', value: [today.subtract(7, 'd'), today] },
@@ -187,7 +187,15 @@ const CapacityPlan = ({ tabName }) => {
       </Row>
       <br />
       {loadingCpDisk ? (
-        <div style={{ height: '400px' }}>
+        <div
+          style={{
+            height: '400px',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            margin: '15px',
+          }}
+        >
           <Loading />
         </div>
       ) : (
@@ -199,8 +207,8 @@ const CapacityPlan = ({ tabName }) => {
             <ApexChart
               options={{
                 stroke: {
-                  width: 1,
-                  curve: 'straight',
+                  width: 2,
+                  curve: 'smooth',
                 },
                 chart: {
                   toolbar: {
@@ -219,6 +227,23 @@ const CapacityPlan = ({ tabName }) => {
                 },
                 xaxis: {
                   type: 'datetime',
+                  show: false,
+                },
+                yaxis: {
+                  show: true,
+                  labels: {
+                    show: true,
+                  },
+                },
+                tooltip: {
+                  x: {
+                    format: 'dd MMM yyyy',
+                  },
+                  y: {
+                    formatter: (value) => `${value} MB`,
+                  },
+                },
+                legend: {
                   show: false,
                 },
               }}
@@ -271,15 +296,17 @@ const CapacityPlan = ({ tabName }) => {
                 {
                   title: 'Growth Rate (Day)',
                   render: (_, record) => {
-                    return `${diskGrowthRate(record)} MB`
+                    const growthRate = diskGrowthRate(record)
+                    if (!growthRate || Number.isNaN(growthRate)) return 'N/A'
+                    return `${growthRate} MB`
                   },
                 },
                 {
                   title: 'Expected use in 3 Months',
                   render: (_, record) => {
-                    return mbToGb(
-                      record.LastSpaceUsed + diskGrowthRate(record) * 90
-                    )
+                    const growthRate = diskGrowthRate(record)
+                    if (!growthRate || Number.isNaN(growthRate)) return 'N/A'
+                    return mbToGb(record.LastSpaceUsed + growthRate * 90)
                   },
                 },
                 {
@@ -288,6 +315,8 @@ const CapacityPlan = ({ tabName }) => {
                     const capacity = record.LastSize
                     const used = record.LastSpaceUsed
                     const growthRate = diskGrowthRate(record)
+
+                    if (!growthRate || Number.isNaN(growthRate)) return 'N/A'
 
                     const fullDays = Math.ceil((capacity - used) / growthRate)
                     const currentDate = new Date()
@@ -312,7 +341,15 @@ const CapacityPlan = ({ tabName }) => {
         </Row>
       )}
       {loadingCpDatabase ? (
-        <div style={{ height: '400px' }}>
+        <div
+          style={{
+            height: '400px',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            margin: '15px',
+          }}
+        >
           <Loading />{' '}
         </div>
       ) : (
@@ -324,8 +361,8 @@ const CapacityPlan = ({ tabName }) => {
             <ApexChart
               options={{
                 stroke: {
-                  width: 1,
-                  curve: 'straight',
+                  width: 2,
+                  curve: 'smooth',
                 },
                 chart: {
                   toolbar: {
@@ -344,6 +381,14 @@ const CapacityPlan = ({ tabName }) => {
                 },
                 xaxis: {
                   type: 'datetime',
+                },
+                tooltip: {
+                  x: {
+                    format: 'dd MMM yyyy',
+                  },
+                  y: {
+                    formatter: (value) => `${value} MB`,
+                  },
                 },
               }}
               series={Object.keys(databaseSeries).map((key) => ({
@@ -397,15 +442,16 @@ const CapacityPlan = ({ tabName }) => {
                 {
                   title: 'Growth Rate (Day)',
                   render: (_, record) => {
-                    return `${databaseGrowthRate(record)} MB`
+                    const growthRate = databaseGrowthRate(record)
+                    return Number.isNaN(growthRate) ? 'N/A' : `${growthRate} MB`
                   },
                 },
                 {
                   title: 'Expected use in 3 Months',
                   render: (_, record) => {
-                    return mbToGb(
-                      record.LastUsedSizeMB + databaseGrowthRate(record) * 90
-                    )
+                    const growthRate = databaseGrowthRate(record)
+                    if (Number.isNaN(growthRate)) return 'N/A'
+                    return mbToGb(record.LastUsedSizeMB + growthRate * 90)
                   },
                 },
                 {
@@ -414,7 +460,7 @@ const CapacityPlan = ({ tabName }) => {
                     const capacity = record.LastSizeMb
                     const used = record.LastUsedSizeMB
                     const growthRate = databaseGrowthRate(record)
-                    if (!growthRate) {
+                    if (!growthRate || Number.isNaN(growthRate)) {
                       return 'N/A'
                     }
 
@@ -441,7 +487,15 @@ const CapacityPlan = ({ tabName }) => {
         </Row>
       )}
       {loadingCpFile ? (
-        <div style={{ height: '400px' }}>
+        <div
+          style={{
+            height: '400px',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            margin: '15px',
+          }}
+        >
           <Loading />
         </div>
       ) : (
@@ -470,11 +524,18 @@ const CapacityPlan = ({ tabName }) => {
                   },
                 },
                 stroke: {
-                  width: 1,
-                  curve: 'straight',
+                  width: 2,
                 },
                 xaxis: {
                   type: 'datetime',
+                },
+                tooltip: {
+                  x: {
+                    format: 'dd MMM yyyy',
+                  },
+                  y: {
+                    formatter: (value) => `${value} MB`,
+                  },
                 },
               }}
               series={Object.keys(fileSeries).map((key) => ({
@@ -528,15 +589,16 @@ const CapacityPlan = ({ tabName }) => {
                 {
                   title: 'Growth Rate (Day)',
                   render: (_, record) => {
-                    return `${databaseGrowthRate(record)} MB`
+                    const growthRate = databaseGrowthRate(record)
+                    return Number.isNaN(growthRate) ? 'N/A' : `${growthRate} MB`
                   },
                 },
                 {
                   title: 'Expected use in 3 Months',
                   render: (_, record) => {
-                    return mbToGb(
-                      record.LastUsedSizeMB + databaseGrowthRate(record) * 90
-                    )
+                    const growthRate = databaseGrowthRate(record)
+                    if (Number.isNaN(growthRate)) return 'N/A'
+                    return mbToGb(record.LastUsedSizeMB + growthRate * 90)
                   },
                 },
                 {
@@ -545,7 +607,7 @@ const CapacityPlan = ({ tabName }) => {
                     const capacity = record.LastSizeMb
                     const used = record.LastUsedSizeMB
                     const growthRate = databaseGrowthRate(record)
-                    if (!growthRate) {
+                    if (!growthRate || Number.isNaN(growthRate)) {
                       return 'N/A'
                     }
 
