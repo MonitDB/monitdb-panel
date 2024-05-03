@@ -529,7 +529,11 @@ const CapacityPlan = ({ tabName }) => {
                     const capacity = record.LastSizeMb
                     const used = record.LastUsedSizeMB
                     const growthRate = databaseGrowthRate(record)
-                    if (!growthRate || Number.isNaN(growthRate)) {
+                    if (
+                      !growthRate ||
+                      Number.isNaN(growthRate) ||
+                      growthRate <= 0
+                    ) {
                       return 'N/A'
                     }
 
@@ -712,7 +716,11 @@ const CapacityPlan = ({ tabName }) => {
                     const capacity = record.LastSizeMb
                     const used = record.LastUsedSizeMB
                     const growthRate = databaseGrowthRate(record)
-                    if (!growthRate || Number.isNaN(growthRate)) {
+                    if (
+                      !growthRate ||
+                      Number.isNaN(growthRate) ||
+                      growthRate <= 0
+                    ) {
                       return 'N/A'
                     }
 
