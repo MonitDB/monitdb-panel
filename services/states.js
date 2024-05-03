@@ -75,8 +75,19 @@ export const getCpFile = async ({
   })
 }
 
-export const getCpDisk = async ({ serverId, startDate, endDate }) => {
+export const getCpDisk = async ({
+  serverId,
+  startDate,
+  endDate,
+  databaseName,
+}) => {
   return apiV2().get(`/states/capacity-plan/disk`, {
-    params: { startDate, serverId, endDate },
+    params: { startDate, serverId, endDate, databaseName },
+  })
+}
+
+export const getAvailableDatabases = async ({ serverId }) => {
+  return apiV2().get(`/states/capacity-plan/available-databases`, {
+    params: { serverId },
   })
 }

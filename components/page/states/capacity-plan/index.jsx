@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/label-has-associated-control */
+/* eslint-disable no-extra-semi */
 /* eslint-disable unicorn/no-array-reduce */
 /* eslint-disable sonarjs/no-duplicate-string */
 /* eslint-disable sonarjs/no-identical-functions */
@@ -21,7 +23,12 @@ import React, { useState } from 'react'
 
 import Loading from '~/components/loading'
 import { useGlobal } from '~/hooks/index'
-import { getCpDatabase, getCpDisk, getCpFile } from '~/services/states'
+import {
+  getAvailableDatabases,
+  getCpDatabase,
+  getCpDisk,
+  getCpFile,
+} from '~/services/states'
 
 import PageContent from '../../content/content'
 
@@ -69,7 +76,7 @@ const mbToGb = (value) => {
 
 const today = dayjs()
 const startOfCurrentMonth = today.startOf('month')
-const endOfCurrentMonth = today.endOf('day')
+const endOfCurrentMonth = today.startOf('day')
 
 const rangePresets = [
   { label: 'Last 7 Days', value: [today.subtract(7, 'd'), today] },
@@ -88,6 +95,11 @@ const CapacityPlan = ({ tabName }) => {
   const [cpDisk, setCpDisk] = useState()
   const [cpDatabase, setCpDatabase] = useState()
 
+  const [availableDatabase, setAvailableDatabases] = useState([])
+
+  const [databaseCpDisk, setDatabaseCpDisk] = useState([])
+  const [databaseCpFile, setDatabaseCpFile] = useState([])
+
   const [loadingCpFile, setLoadingCpFile] = useState(false)
   const [loadingCpDisk, setLoadingCpDisk] = useState(false)
   const [loadingCpDatabase, setLoadingCpDatabase] = useState(false)
@@ -102,29 +114,43 @@ const CapacityPlan = ({ tabName }) => {
   const fetchCpDatabase = useCallback(async () => {
     try {
       setLoadingCpDatabase(true)
-      const database = await getCpDatabase({ serverId, startDate, endDate })
+      const database = await getCpDatabase({
+        serverId,
+        startDate,
+        endDate,
+        databaseName: JSON.stringify(databaseCpDisk),
+      })
       setCpDatabase(database.data)
     } catch {
       setCpDatabase()
     }
     setLoadingCpDatabase(false)
-  }, [serverId, startDate, endDate])
+  }, [serverId, startDate, endDate, databaseCpDisk])
 
   const fetchCpFile = useCallback(async () => {
     try {
       setLoadingCpFile(true)
-      const file = await getCpFile({ serverId, startDate, endDate })
+      const file = await getCpFile({
+        serverId,
+        startDate,
+        endDate,
+        databaseName: JSON.stringify(databaseCpFile),
+      })
       setCpFile(file.data)
     } catch {
       setCpFile()
     }
     setLoadingCpFile(false)
-  }, [serverId, startDate, endDate])
+  }, [serverId, startDate, endDate, databaseCpFile])
 
   const fetchCpDisk = useCallback(async () => {
     try {
       setLoadingCpDisk(true)
-      const disk = await getCpDisk({ serverId, startDate, endDate })
+      const disk = await getCpDisk({
+        serverId,
+        startDate,
+        endDate,
+      })
       setCpDisk(disk.data)
     } catch {
       setCpDisk()
@@ -132,13 +158,17 @@ const CapacityPlan = ({ tabName }) => {
     setLoadingCpDisk(false)
   }, [serverId, startDate, endDate])
 
-  const fetchData = useCallback(async () => {
-    await Promise.allSettled([fetchCpDatabase(), fetchCpFile(), fetchCpDisk()])
-  }, [fetchCpDatabase, fetchCpDisk, fetchCpFile])
-
+  useEffect(fetchCpDatabase, [fetchCpDatabase])
+  useEffect(fetchCpFile, [fetchCpFile])
+  useEffect(fetchCpDisk, [fetchCpDisk])
   useEffect(() => {
-    fetchData()
-  }, [fetchData, serverId, startDate, endDate])
+    {
+      ;(async () => {
+        const databases = await getAvailableDatabases({ serverId })
+        setAvailableDatabases(databases.data.availableDatabases)
+      })()
+    }
+  }, [serverId, startDate, endDate])
 
   useEffect(() => {
     form.setFieldsValue({ dataRange: [startOfCurrentMonth, endOfCurrentMonth] })
@@ -186,6 +216,12 @@ const CapacityPlan = ({ tabName }) => {
         </Card>
       </Row>
       <br />
+      <Row>
+        {' '}
+        <Col span={24}>
+          <Typography.Title level={3}>Disks</Typography.Title>
+        </Col>
+      </Row>
       {loadingCpDisk ? (
         <div
           style={{
@@ -200,9 +236,6 @@ const CapacityPlan = ({ tabName }) => {
         </div>
       ) : (
         <Row gutter={12}>
-          <Col span={24}>
-            <Typography.Title level={3}>Disks</Typography.Title>
-          </Col>
           <Col span={12}>
             <ApexChart
               options={{
@@ -340,6 +373,45 @@ const CapacityPlan = ({ tabName }) => {
           </Col>
         </Row>
       )}
+
+      <Row>
+        <Col span={24}>
+          <Typography.Title level={3}>Databases</Typography.Title>
+        </Col>
+        <Card
+          style={{
+            width: '100%',
+            justifyContent: 'flex-end',
+            display: 'flex',
+            marginBottom: '15px',
+          }}
+        >
+          <label>Database </label>
+          <Select
+            mode="multiple"
+            style={{ width: 250, marginRight: '12px' }}
+            onChange={(value) => {
+              setDatabaseCpDisk(value)
+            }}
+            onSelect={(value) => {
+              if (value === 'NULL') {
+                setDatabaseCpDisk(['NULL'])
+              } else
+                setDatabaseCpDisk([
+                  value,
+                  ...databaseCpDisk.filter((value) => value !== 'NULL'),
+                ])
+            }}
+            value={databaseCpDisk}
+          >
+            {['NULL', ...availableDatabase].map((item) => (
+              <Select.Option key={item} value={item}>
+                {item === 'NULL' ? 'ALL' : item}
+              </Select.Option>
+            ))}
+          </Select>
+        </Card>
+      </Row>
       {loadingCpDatabase ? (
         <div
           style={{
@@ -354,9 +426,6 @@ const CapacityPlan = ({ tabName }) => {
         </div>
       ) : (
         <Row gutter={12}>
-          <Col span={24}>
-            <Typography.Title level={3}>Databases</Typography.Title>
-          </Col>
           <Col span={12}>
             <ApexChart
               options={{
@@ -486,6 +555,45 @@ const CapacityPlan = ({ tabName }) => {
           </Col>
         </Row>
       )}
+      <Row>
+        {' '}
+        <Col span={24}>
+          <Typography.Title level={3}>Files</Typography.Title>
+        </Col>
+        <Card
+          style={{
+            width: '100%',
+            justifyContent: 'flex-end',
+            display: 'flex',
+            marginBottom: '15px',
+          }}
+        >
+          <label>Database </label>
+          <Select
+            mode="multiple"
+            style={{ width: 250, marginRight: '12px' }}
+            onChange={(value) => {
+              setDatabaseCpFile(value)
+            }}
+            onSelect={(value) => {
+              if (value === 'NULL') {
+                setDatabaseCpFile(['NULL'])
+              } else
+                setDatabaseCpFile([
+                  value,
+                  ...databaseCpFile.filter((value) => value !== 'NULL'),
+                ])
+            }}
+            value={databaseCpFile}
+          >
+            {['NULL', ...availableDatabase].map((item) => (
+              <Select.Option key={item} value={item}>
+                {item === 'NULL' ? 'ALL' : item}
+              </Select.Option>
+            ))}
+          </Select>
+        </Card>
+      </Row>
       {loadingCpFile ? (
         <div
           style={{
@@ -500,9 +608,6 @@ const CapacityPlan = ({ tabName }) => {
         </div>
       ) : (
         <Row gutter={12}>
-          <Col span={24}>
-            <Typography.Title level={3}>Files</Typography.Title>
-          </Col>
           <Col span={12}>
             <ApexChart
               options={{
