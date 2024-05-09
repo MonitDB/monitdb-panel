@@ -185,6 +185,12 @@ const AnalysisPage = () => {
   const router = useRouter()
 
   useEffect(() => {
+    const errorHandler = () => {}
+
+    return [errorHandler]
+  }, [])
+
+  useEffect(() => {
     if (!hasFeature(user, Feature.ANALYSIS) && user.grants) {
       router.push('/403')
     }
@@ -486,6 +492,7 @@ const AnalysisPage = () => {
                     width={'100%'}
                     options={{
                       ...defaultChartOptions,
+
                       title: {
                         text: !data
                           ? 'Error to load the data'
@@ -515,6 +522,7 @@ const AnalysisPage = () => {
                       legend: {
                         ...defaultChartOptions.legend,
                         itemMargin: '10px',
+
                         labels: {
                           useSeriesColors: true,
                           formatter: function (seriesName) {
@@ -528,6 +536,7 @@ const AnalysisPage = () => {
                         },
                       },
                       chart: {
+                        toolbar: false,
                         events: {
                           click: function (event, chartContext, options) {
                             const config = options.config
@@ -615,7 +624,9 @@ const AnalysisPage = () => {
                 cancelButtonProps={{ style: { display: 'none' } }}
               >
                 <div style={{ height: '70vh', overflowY: 'auto' }}>
-                  <QueryPlanRenderer queryPlan={modalData.queryPlan} />
+                  {modalData.queryPlan && (
+                    <QueryPlanRenderer queryPlan={modalData.queryPlan} />
+                  )}
                   <Descriptions column={2} layout="vertical">
                     <Descriptions.Text label="CPU">
                       {modalData.cpu ?? '-'}
