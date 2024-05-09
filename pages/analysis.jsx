@@ -131,7 +131,10 @@ const AnalysisPage = () => {
   const { userState: user } = useUser()
   const [data, setData] = useState([])
   const [whoIs, setWhoIs] = useState([])
-  const [options, setOptions] = useState([])
+  const [options, setOptions] = useState([{ label: 'Count', value: 'count' }])
+
+  const [highlightedDate, setHighlightedDate] = useState()
+  const [highlightedWhoIs] = useState([])
 
   const intervalOptions = useMemo(
     () => [
@@ -176,7 +179,16 @@ const AnalysisPage = () => {
     if (!hasFeature(user, Feature.ANALYSIS) && user.grants) {
       router.push('/403')
     }
-  }, [router, user])
+  }, [router, user, servers])
+
+  useEffect(() => {
+    form.setFieldsValue({
+      metric: 'Log_Full_Scans_Count',
+      param: 'count',
+      server: servers[0].id,
+    })
+    form.submit()
+  }, [form, servers])
 
   const fetchData = async (metric, serverId, filter) => {
     setLoading(true)
@@ -487,7 +499,6 @@ const AnalysisPage = () => {
                       yaxis: {
                         ...defaultChartOptions.yaxis,
                         forceNiceScale: false,
-
                         tickAmount: 5,
                       },
                       legend: {
@@ -497,6 +508,33 @@ const AnalysisPage = () => {
                           useSeriesColors: true,
                           formatter: function (seriesName) {
                             return seriesName.replace(/_/g, ' ')
+                          },
+                        },
+                      },
+                      tooltip: {
+                        x: {
+                          format: 'dd MMM yyyy HH:mm',
+                        },
+                      },
+                      chart: {
+                        events: {
+                          click: function (event, chartContext, options) {
+                            const config = options.config
+                            const dataPointIndex = options.dataPointIndex
+                            const seriesIndex = options.seriesIndex
+
+                            if (config && dataPointIndex && seriesIndex) {
+                              const { series } = config
+
+                              const [date] =
+                                series[seriesIndex].data[dataPointIndex]
+
+                              highlightedWhoIs([])
+                              highlightedDate(date)
+                            }
+                          },
+                          mouseLeave: function () {
+                            setHighlightedDate()
                           },
                         },
                       },
@@ -524,7 +562,7 @@ const AnalysisPage = () => {
             >
               <Table
                 loading={loading}
-                dataSource={whoIs}
+                dataSource={highlightedDate ? highlightedWhoIs : whoIs}
                 rowKey={'dtLog'}
                 columns={[
                   {
