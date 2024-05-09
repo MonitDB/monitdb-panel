@@ -1,10 +1,15 @@
+/* eslint-disable sonarjs/cognitive-complexity */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable unicorn/no-array-reduce */
+import '@uiw/react-textarea-code-editor/dist.css'
+
 import {
   Button,
   Col,
   DatePicker,
+  Descriptions,
   Form,
+  Modal,
   notification,
   Row,
   Select,
@@ -17,9 +22,11 @@ import { NextSeo } from 'next-seo'
 import React, { useEffect, useMemo, useState } from 'react'
 
 import { ApexChart, defaultChartOptions } from '~/components/chart'
+import Highlighter from '~/components/highlighter'
 import Link from '~/components/link'
 import Loading from '~/components/loading'
 import { PageContent, PageWrapper } from '~/components/page'
+import QueryPlanRenderer from '~/components/qp-render'
 import Layout from '~/layouts/default'
 import { getAnalysis, getWhoIs } from '~/services/analysis'
 import { Feature, hasFeature } from '~/utils/hasPermission'
@@ -136,6 +143,8 @@ const AnalysisPage = () => {
   const [highlightedDate, setHighlightedDate] = useState()
   const [highlightedWhoIs] = useState([])
 
+  const [modalData, setModalData] = useState()
+
   const intervalOptions = useMemo(
     () => [
       { value: 1, label: '1 minutes' },
@@ -182,12 +191,14 @@ const AnalysisPage = () => {
   }, [router, user, servers])
 
   useEffect(() => {
-    form.setFieldsValue({
-      metric: 'Log_Full_Scans_Count',
-      param: 'count',
-      server: servers[0].id,
-    })
-    form.submit()
+    if (servers && servers[0]) {
+      form.setFieldsValue({
+        metric: 'Log_Full_Scans_Count',
+        param: 'count',
+        server: servers[0].id,
+      })
+      form.submit()
+    }
   }, [form, servers])
 
   const fetchData = async (metric, serverId, filter) => {
@@ -528,7 +539,6 @@ const AnalysisPage = () => {
 
                               const [date] =
                                 series[seriesIndex].data[dataPointIndex]
-
                               highlightedWhoIs([])
                               highlightedDate(date)
                             }
@@ -564,6 +574,12 @@ const AnalysisPage = () => {
                 loading={loading}
                 dataSource={highlightedDate ? highlightedWhoIs : whoIs}
                 rowKey={'dtLog'}
+                onRow={(record) => ({
+                  onClick: () => {
+                    setModalData(record)
+                  },
+                  style: { cursor: 'pointer' },
+                })}
                 columns={[
                   {
                     title: 'Date',
@@ -587,6 +603,81 @@ const AnalysisPage = () => {
                 ]}
               />
             </PageContent>
+            {modalData && (
+              <Modal
+                open={true}
+                width={'90vw'}
+                style={{ zIndex: 5, display: 'absolute' }}
+                onOk={() => {
+                  setModalData()
+                }}
+                closable={false}
+                cancelButtonProps={{ style: { display: 'none' } }}
+              >
+                <div style={{ height: '70vh', overflowY: 'auto' }}>
+                  <QueryPlanRenderer queryPlan={modalData.queryPlan} />
+                  <Descriptions column={2} layout="vertical">
+                    <Descriptions.Text label="CPU">
+                      {modalData.cpu ?? '-'}
+                    </Descriptions.Text>
+                    <Descriptions.Text label="CPU Delta">
+                      {modalData.cpuDelta ?? '-'}
+                    </Descriptions.Text>
+                    <Descriptions.Text label="Blocking Session ID">
+                      {modalData.blockingSessionId || '-'}
+                    </Descriptions.Text>
+
+                    <Descriptions.Text label="Database Name">
+                      {modalData.databaseName ?? '-'}
+                    </Descriptions.Text>
+                    <Descriptions.Text label="Time">
+                      {modalData['ddHhMmSsMss'] ?? '-'}
+                    </Descriptions.Text>
+                    <Descriptions.Text label="Host Name">
+                      {modalData.hostName ?? '-'}
+                    </Descriptions.Text>
+                    <Descriptions.Text label="Login Name">
+                      {modalData.loginName ?? '-'}
+                    </Descriptions.Text>
+                    <Descriptions.Text label="Open transactions count">
+                      {modalData.openTranCount ?? '-'}
+                    </Descriptions.Text>
+                    <Descriptions.Text label="Percent Complete">
+                      {modalData.percentComplete ?? '-'}
+                    </Descriptions.Text>
+                    <Descriptions.Text label="Program Name">
+                      {modalData.programName}
+                    </Descriptions.Text>
+                    <Descriptions.Text label="Reads">
+                      {modalData.reads ?? '-'}
+                    </Descriptions.Text>
+                    <Descriptions.Text label="Reads Delta">
+                      {modalData.readsDelta ?? '-'}
+                    </Descriptions.Text>
+
+                    <Descriptions.Text label="SQL Command">
+                      {modalData.sqlCommand ?? '-'}
+                    </Descriptions.Text>
+
+                    <Descriptions.Text label="Status">
+                      {modalData.status ?? '-'}
+                    </Descriptions.Text>
+                    <Descriptions.Text label="Wait Information">
+                      {modalData.waitInfo ?? '-'}
+                    </Descriptions.Text>
+                    <Descriptions.Text label="writes">
+                      {modalData.writes ?? '-'}
+                    </Descriptions.Text>
+                  </Descriptions>
+                  <Highlighter
+                    code={modalData.sqlText}
+                    showLineNumbers={true}
+                    language={'sql'}
+                    maxHeight={'350px'}
+                  />
+                </div>
+              </Modal>
+            )}
           </Form>
         </PageWrapper>
       </Layout>
