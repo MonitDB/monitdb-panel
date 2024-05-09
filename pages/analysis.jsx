@@ -1,7 +1,17 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable unicorn/no-array-reduce */
-import { Button, Col, DatePicker, Form, notification, Row, Select } from 'antd'
+import {
+  Button,
+  Col,
+  DatePicker,
+  Form,
+  notification,
+  Row,
+  Select,
+  Table,
+} from 'antd'
 import dayjs from 'dayjs'
+import moment from 'moment'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
 import React, { useEffect, useMemo, useState } from 'react'
@@ -11,7 +21,7 @@ import Link from '~/components/link'
 import Loading from '~/components/loading'
 import { PageContent, PageWrapper } from '~/components/page'
 import Layout from '~/layouts/default'
-import { getAnalysis } from '~/services/analysis'
+import { getAnalysis, getWhoIs } from '~/services/analysis'
 import { Feature, hasFeature } from '~/utils/hasPermission'
 
 import { useGlobal, useUser } from '../hooks'
@@ -120,6 +130,7 @@ const AnalysisPage = () => {
   } = useGlobal()
   const { userState: user } = useUser()
   const [data, setData] = useState([])
+  const [whoIs, setWhoIs] = useState([])
   const [options, setOptions] = useState([])
 
   const intervalOptions = useMemo(
@@ -170,8 +181,18 @@ const AnalysisPage = () => {
   const fetchData = async (metric, serverId, filter) => {
     setLoading(true)
     try {
-      const { data } = await getAnalysis({ metric, serverId, filter })
-      setData(data)
+      const [whoIsResult, analysisResult] = await Promise.allSettled([
+        getWhoIs({ serverId, filter }),
+        getAnalysis({ metric, serverId, filter }),
+      ])
+
+      const whoIs =
+        whoIsResult.status === 'fulfilled' ? whoIsResult.value.data : []
+      const analysisData =
+        analysisResult.status === 'fulfilled' ? analysisResult.value.data : []
+
+      setWhoIs(whoIs)
+      setData(analysisData)
     } catch (error) {
       notification.error({ message: error.message })
     }
@@ -430,7 +451,7 @@ const AnalysisPage = () => {
               removeSidebarMargin={true}
               className="border-b border-gray-light"
             >
-              <div className="w-4/5 mb-10 bg-white">
+              <div className=" mb-10 bg-white">
                 {loading && (
                   <div className="col-span-2 bg-white lg:col-span-6 h-200 flex items-center justify-center h-[215px]">
                     <Loading />
@@ -439,6 +460,7 @@ const AnalysisPage = () => {
                 {!loading && (
                   <ApexChart
                     height={200}
+                    width={'100%'}
                     options={{
                       ...defaultChartOptions,
                       title: {
@@ -495,6 +517,37 @@ const AnalysisPage = () => {
                 </div>
                 <div className="w-full md:w-1/5"></div>
               </div>
+            </PageContent>
+            <PageContent
+              removeSidebarMargin={true}
+              className="border-b border-gray-light"
+            >
+              <Table
+                loading={loading}
+                dataSource={whoIs}
+                rowKey={'dtLog'}
+                columns={[
+                  {
+                    title: 'Date',
+                    dataIndex: 'dtLog',
+                    render: (value) => {
+                      return moment(value).format('YYYY/MM/DD HH:mm:ss')
+                    },
+                  },
+                  {
+                    title: 'Status',
+                    dataIndex: 'status',
+                  },
+                  {
+                    title: 'Login Name',
+                    dataIndex: 'loginName',
+                  },
+                  {
+                    title: 'Program Name',
+                    dataIndex: 'programName',
+                  },
+                ]}
+              />
             </PageContent>
           </Form>
         </PageWrapper>

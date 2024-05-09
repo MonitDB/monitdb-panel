@@ -5,3 +5,9 @@ export const getAnalysis = ({ metric, serverId, filter }) => {
     params: { metric, serverId, filter },
   })
 }
+
+export const getWhoIs = ({ serverId, filter }) => {
+  return apiV2().get('/analysis/who-is-active', {
+    params: { serverId, filter },
+  })
+}
