@@ -68,14 +68,14 @@ const HistoryInfo = ({ currentServer }) => {
     <div className="w-full flex flex-col gap-y-6 mt-6">
       <div className="w-full flex gap-x-8 p-4 border border-gray-light bg-white text-sm">
         <div className="flex gap-2 mr-auto">
-          {serverMetrics?.osProperties['host_platform'] === 'Windows' && (
+          {serverMetrics?.osProperties?.['host_platform'] === 'Windows' && (
             <RdpButton
               serverName={currentServer.serverName}
               address={currentServer.serverHost}
             />
           )}
 
-          {serverMetrics?.osProperties['host_platform'] === 'Linux' && (
+          {serverMetrics?.osProperties?.['host_platform'] === 'Linux' && (
             <SshButon
               serverName={currentServer.serverName}
               address={currentServer.serverHost}
@@ -144,11 +144,11 @@ const HistoryInfo = ({ currentServer }) => {
               <tbody>
                 <tr>
                   <td>Edition</td>
-                  <td>{serverMetrics?.osProperties['OS_Version']}</td>
+                  <td>{serverMetrics?.osProperties?.['OS_Version']}</td>
                 </tr>
                 <tr>
                   <td>Version</td>
-                  <td> {serverMetrics?.osProperties['OS_Release']}</td>
+                  <td> {serverMetrics?.osProperties?.['OS_Release']}</td>
                 </tr>
               </tbody>
             </table>

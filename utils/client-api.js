@@ -1,8 +1,16 @@
 import axios from 'axios'
 
-import { getUserToken } from '~/utils/cookies'
+import { getUserToken, remove } from '~/utils/cookies'
 
 const instance = axios.create({ baseURL: process.env.apiBaseUrl })
+
+function isTokenExpired(token) {
+  const decodedToken = JSON.parse(atob(token.split('.')[1]))
+
+  const expirationDate = new Date(decodedToken.exp * 1000)
+
+  return expirationDate < new Date()
+}
 
 const clientApi = (token) => {
   const tokenRequest = token || getUserToken()
@@ -24,13 +32,20 @@ const instance2 = axios.create({
   },
 })
 
+instance2.interceptors.request.use((config) => {
+  const tokenRequest = getUserToken()
+
+  if (tokenRequest && isTokenExpired(tokenRequest)) {
+    remove()
+    window.location.href = ''
+    return config
+  }
+  config.headers.Authorization = tokenRequest ? `Bearer ${tokenRequest}` : ''
+
+  return config
+})
+
 const apiV2 = (token) => {
-  const tokenRequest = token || getUserToken()
-
-  instance2.defaults.headers.common['Authorization'] = tokenRequest
-    ? `Bearer ${tokenRequest}`
-    : ''
-
   return instance2
 }
 

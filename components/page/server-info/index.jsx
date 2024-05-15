@@ -21,6 +21,15 @@ export const ServerInfo = ({ currentServer }) => {
     }
   }, [currentServer.id])
 
+  const memoryMB = serverMetrics?.osProperties?.['Memory MB']
+  const logicProcessors = serverMetrics?.osProperties?.['Logic Processors']
+
+  const memoryInfo = memoryMB
+    ? `${Math.round(
+        memoryMB / 1024
+      )}GB Memory / ${logicProcessors} Intel CPUs /`
+    : 'Memory information not available'
+
   return (
     <div className="w-full flex items-center gap-4">
       <div className="flex items-center justify-center w-16 h-16 rounded-full border border-gray-light">
@@ -31,16 +40,7 @@ export const ServerInfo = ({ currentServer }) => {
       </div>
       <div>
         <h4 className="heading-md">{currentServer.serverName}</h4>
-        <p className="text-sm">
-          {serverMetrics
-            ? `${Math.round(
-                serverMetrics?.osProperties['Memory MB'] / 1024
-              )}GB Memory / ${
-                serverMetrics?.osProperties['Logic Processors']
-              } Intel CPUs /
-                        ${serverMetrics?.osProperties['OS_Plataform']}`
-            : 'Loading...'}
-        </p>
+        <p className="text-sm">{serverMetrics ? memoryInfo : 'Loading...'}</p>
       </div>
     </div>
   )
