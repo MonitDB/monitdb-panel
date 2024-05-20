@@ -145,7 +145,7 @@ export function hasFeature(user, feature) {
   const grants = user?.grants
   if (!grants) return false
 
-  const validGrants = grants?.filter((grant) => grant.typeGrant > 0)
+  const validGrants = grants?.filter((grant) => Number(grant.typeGrant) > 0)
 
   return validGrants?.some((grant) => grant.idFeature === feature) || false
 }

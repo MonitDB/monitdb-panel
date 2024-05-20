@@ -76,7 +76,6 @@ const SingleDashboard = () => {
     {
       key: '0',
       label: 'History',
-
       children: <HistoryInfo currentServer={currentServer} />,
       render: true,
     },
@@ -86,7 +85,7 @@ const SingleDashboard = () => {
       children: <QueryWindow currentServer={currentServer} />,
       render: hasPermission(
         user,
-        FeatureFunction.QUERY_WINDOW,
+        FeatureFunction.QUERY_WINDOWS_FOR_QUERY_EXECUTION,
         TypeGrant.EXECUTE
       ),
     },
