@@ -59,7 +59,7 @@ export const TemporaryDBLogin = () => {
               height={'100%'}
               options={{
                 ...defaultChartOptions,
-                stroke: { width: 1, curve: 'smooth' },
+                stroke: { width: 1, curve: 'straight' },
                 xaxis: {
                   type: 'datetime',
                   labels: {

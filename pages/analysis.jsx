@@ -500,7 +500,7 @@ const AnalysisPage = () => {
                         offsetY: 10,
                         offsetX: 5,
                       },
-                      stroke: { width: 1, curve: 'smooth' },
+                      stroke: { width: 1, curve: 'straight' },
                       xaxis: {
                         ...defaultChartOptions.xaxis,
                         type: 'datetime',

@@ -241,7 +241,7 @@ const CapacityPlan = ({ tabName }) => {
               options={{
                 stroke: {
                   width: 2,
-                  curve: 'smooth',
+                  curve: 'straight',
                 },
                 chart: {
                   toolbar: {
@@ -431,7 +431,7 @@ const CapacityPlan = ({ tabName }) => {
               options={{
                 stroke: {
                   width: 2,
-                  curve: 'smooth',
+                  curve: 'straight',
                 },
                 chart: {
                   toolbar: {
