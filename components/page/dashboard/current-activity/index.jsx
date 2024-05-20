@@ -44,8 +44,14 @@ function CurrentActivity(properties) {
         componentCode,
         currentServer?.id || undefined
       )
+
+      if (Object.keys(result).length === 0) {
+        setLoading(false)
+        return
+      }
+
       data[componentCode] = result
-      setData(data)
+      if (data[componentCode]) setData(data)
       setLoading(false)
     } catch {
       setLoading(false)
