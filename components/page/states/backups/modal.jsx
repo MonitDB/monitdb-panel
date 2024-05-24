@@ -99,7 +99,7 @@ function DatabaseBackupsModal({ modal, onSetModalData }) {
       onOk={() => onSetModalData({ ...data, isOpen: false })}
       closable={false}
     >
-      <div className="relative  bg-white">
+      <div className="relative  bg-white" style={{ height: '70vh' }}>
         <div className="ml-4 z-[1]">
           <p>
             <strong>Backup History</strong>
@@ -134,7 +134,7 @@ function DatabaseBackupsModal({ modal, onSetModalData }) {
         {loading && (
           <div
             style={{
-              height: '230px',
+              height: '100%',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
@@ -148,21 +148,17 @@ function DatabaseBackupsModal({ modal, onSetModalData }) {
         {!loading && (
           <div
             style={{
-              height: '230px',
+              height: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
             }}
           >
             {full.length === 0 &&
               log.length === 0 &&
               differential.length === 0 && (
-                <div
-                  style={{
-                    height: '220px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
+                <div>
                   <h1>No data to display</h1>
                 </div>
               )}

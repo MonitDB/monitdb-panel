@@ -275,7 +275,8 @@ const AlertsDetailsPage = () => {
                   dataIndex: 'dtAlert',
                   title: 'Last Updated',
 
-                  render: (value) => moment(value).format('DD/MM/yyyy HH:mm'),
+                  render: (value) =>
+                    value && moment(value).format('DD/MM/yyyy HH:mm'),
                 },
                 {
                   title:
