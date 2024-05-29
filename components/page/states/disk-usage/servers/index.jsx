@@ -9,6 +9,7 @@ import { Pie } from 'react-chartjs-2'
 
 import { getPieChartData } from '~/components/cards/server/server'
 import { megaBytesToGigaBytes } from '~/utils/formats'
+import { truncateString } from '~/utils/truncateString'
 
 const Servers = ({ environmentServers, diskUsage, expand }) => {
   const [serverExpandedIndices, setServerExpandedIndices] = useState(new Set())
@@ -49,7 +50,13 @@ const Servers = ({ environmentServers, diskUsage, expand }) => {
                   {' '}
                   <div>
                     <div className="flex items-center">
-                      <div style={{ marginRight: '50px' }}>{serverName}</div>
+                      <div
+                        style={{
+                          marginRight: '50px',
+                        }}
+                      >
+                        {truncateString(serverName, 50)}
+                      </div>
                       {filteredDiskUsage.map((disk, index) => (
                         <div
                           key={index}
@@ -57,9 +64,18 @@ const Servers = ({ environmentServers, diskUsage, expand }) => {
                             display: 'flex',
                             alignItems: 'center',
                             marginRight: '15px',
+                            marginLeft: 'auto',
+                            width: '80%',
+                            flexWrap: 'wrap',
                           }}
                         >
-                          <div style={{ marginRight: '5px' }}>{disk.Drive}</div>
+                          <div
+                            style={{
+                              marginRight: '5px',
+                            }}
+                          >
+                            {disk.Drive}
+                          </div>
                           <div
                             style={{
                               width: '30px',

@@ -149,11 +149,11 @@ function Servers({ environmentServers, serversJobs, expand }) {
         open={jobModal.isOpen}
         onOk={() => setJobModal({ ...jobModal, isOpen: false })}
         width={'80%'}
-        style={{ height: '550px', overflowY: 'auto' }}
+        style={{ overflowY: 'none' }}
         closable={false}
         cancelButtonProps={{ style: { display: 'none' } }}
       >
-        <div style={{ height: '400px', overflowY: 'auto' }}>
+        <div style={{ height: '75vh', overflowY: 'auto' }}>
           <h2 className="heading-md">Job</h2>
           <br />
           <Table size="small" dataSource={[jobModal.jobData]}>

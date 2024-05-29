@@ -146,15 +146,7 @@ function DatabaseBackupsModal({ modal, onSetModalData }) {
           </div>
         )}
         {!loading && (
-          <div
-            style={{
-              height: '100%',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
+          <div style={{ height: '70vh' }}>
             {full.length === 0 &&
               log.length === 0 &&
               differential.length === 0 && (
@@ -190,12 +182,13 @@ function DatabaseBackupsModal({ modal, onSetModalData }) {
                     data: chartData(differential),
                   },
                 ]}
-                height={'100%'}
+                height={'90%'}
                 options={{
                   chart: {
                     ...defaultChartOptions.chart,
                     type: 'scatter',
                   },
+
                   title: {
                     // text: `y`,
                     style: {
