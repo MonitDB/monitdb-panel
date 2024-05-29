@@ -44,26 +44,7 @@ const MetricsModal = ({ onClose, serverId, parameterId }) => {
       const response = await getAlertParameterByServerId(serverId, parameterId)
       const parameterData = response?.data
 
-      formik.setFieldValue('id', parameterData?.id)
-      formik.setFieldValue('alertName', parameterData?.alertName)
-      formik.setFieldValue('procedureName', parameterData?.procedureName)
-      formik.setFieldValue('frequencyMinutes', parameterData?.frequencyMinutes)
-      formik.setFieldValue(
-        'hourStartExecution',
-        parameterData?.hourStartExecution
-      )
-      formik.setFieldValue('hourEndExecution', parameterData?.hourEndExecution)
-      formik.setFieldValue('clearFlag', parameterData?.clearFlag)
-      formik.setFieldValue('parameterValue', parameterData?.parameterValue)
-      formik.setFieldValue(
-        'metricDescription',
-        parameterData?.metricDescription
-      )
-      formik.setFieldValue('parameterValue2', parameterData?.parameterValue2)
-      formik.setFieldValue(
-        'metricDescription2',
-        parameterData?.metricDescription2
-      )
+      formik.setValues(parameterData) // Updated to set all values at once
     } catch (error) {
       console.error(error) // eslint-disable-line no-console
     } finally {
@@ -84,6 +65,16 @@ const MetricsModal = ({ onClose, serverId, parameterId }) => {
       metricDescription: '',
       parameterValue2: 0,
       metricDescription2: '',
+      profileEmailDescription: '', // Add profileEmailDescription field
+      emailDescription: '', // Add emailDescription field
+      alertMessageENG: '', // Add alertMessageENG field
+      clearMessageENG: '', // Add clearMessageENG field
+      alertMessagePTB: '', // Add alertMessagePTB field
+      clearMessagePTB: '', // Add clearMessagePTB field
+      emailInformation1ENG: '', // Add emailInformation1ENG field
+      emailInformation2ENG: '', // Add emailInformation2ENG field
+      emailInformation1PTB: '', // Add emailInformation1PTB field
+      emailInformation2PTB: '', // Add emailInformation2PTB field
     },
     onSubmit: async (values) => {
       setIsSending(true)
@@ -114,20 +105,18 @@ const MetricsModal = ({ onClose, serverId, parameterId }) => {
   return (
     <Modal
       open={true}
-      width={'60%'}
+      width={'80%'}
       onCancel={onClose}
       onOk={formik.submitForm}
       okText="Save"
+      height={'75vh'}
       closable={false}
       okButtonProps={{ loading: isSending }}
     >
       <header className="flex items-start mb-10">
         <h2 className="heading-md">Edit metrics</h2>
-        {/* <button type="button" className="ml-auto mt-1" onClick={onClose}>
-          <FontAwesomeIcon icon={faClose} className="text-lg" />
-        </button> */}
       </header>
-      <div style={{ height: '500px' }}>
+      <div style={{ height: '70vh', overflowY: 'auto' }}>
         <form
           onSubmit={formik.handleSubmit}
           className="relative w-full"
@@ -146,12 +135,13 @@ const MetricsModal = ({ onClose, serverId, parameterId }) => {
               <Input
                 type="text"
                 name="alertName"
-                placeholder="alertName"
+                placeholder="Alert Name"
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values.alertName}
               />
             </div>
+
             <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
               <label
                 className="w-full font-bold lg:w-1/3"
@@ -168,6 +158,7 @@ const MetricsModal = ({ onClose, serverId, parameterId }) => {
                 value={formik.values.procedureName}
               />
             </div>
+
             <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
               <label
                 className="w-full font-bold lg:w-1/3"
@@ -193,12 +184,13 @@ const MetricsModal = ({ onClose, serverId, parameterId }) => {
               <Input
                 type="number"
                 name="hourStartExecution"
-                placeholder="hourStartExecution"
+                placeholder="Start Hour Execution"
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values.hourStartExecution}
               />
             </div>
+
             <div className="col-span-2 flex flex-col space-y-2 md:col-span-6">
               <label className="w-full font-bold" htmlFor="hourEndExecution">
                 End Hour Execution
@@ -206,7 +198,7 @@ const MetricsModal = ({ onClose, serverId, parameterId }) => {
               <Input
                 type="number"
                 name="hourEndExecution"
-                placeholder="hourEndExecution"
+                placeholder="End Hour Execution"
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values.hourEndExecution}
@@ -236,7 +228,7 @@ const MetricsModal = ({ onClose, serverId, parameterId }) => {
               <Input
                 type="number"
                 name="parameterValue"
-                placeholder="parameterValue"
+                placeholder="Parameter Value"
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values.parameterValue}
@@ -253,7 +245,7 @@ const MetricsModal = ({ onClose, serverId, parameterId }) => {
               <Input
                 type="text"
                 name="metricDescription"
-                placeholder="metricDescription"
+                placeholder="Metric Description"
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values.metricDescription}
@@ -270,7 +262,7 @@ const MetricsModal = ({ onClose, serverId, parameterId }) => {
               <Input
                 type="number"
                 name="parameterValue2"
-                placeholder="parameterValue2"
+                placeholder="Parameter Value 2"
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values.parameterValue2}
@@ -287,22 +279,173 @@ const MetricsModal = ({ onClose, serverId, parameterId }) => {
               <Input
                 type="text"
                 name="metricDescription2"
-                placeholder="metricDescription2"
+                placeholder="Metric Description 2"
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values.metricDescription2}
               />
             </div>
 
-            <div className="col-span-2 flex justify-end items-center pt-10 md:col-span-12">
-              {/* <Button
-                type="default"
-                htmlType="submit"
-                loading={isSending}
-                disabled={isSending}
+            {/* Additional fields */}
+            <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
+              <label
+                className="w-full font-bold lg:w-1/3"
+                htmlFor="profileEmailDescription"
               >
-                {'Save'}
-              </Button> */}
+                Profile Email Description
+              </label>
+              <Input
+                type="text"
+                name="profileEmailDescription"
+                placeholder="Profile Email Description"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.profileEmailDescription}
+              />
+            </div>
+            <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
+              <label
+                className="w-full font-bold lg:w-1/3"
+                htmlFor="emailDescription"
+              >
+                Email Description
+              </label>
+              <Input
+                type="text"
+                name="emailDescription"
+                placeholder="Email Description"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.emailDescription}
+              />
+            </div>
+            <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
+              <label
+                className="w-full font-bold lg:w-1/3"
+                htmlFor="alertMessageENG"
+              >
+                Alert Message ENG
+              </label>
+              <Input
+                type="text"
+                name="alertMessageENG"
+                placeholder="Alert Message ENG"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.alertMessageENG}
+              />
+            </div>
+            <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
+              <label
+                className="w-full font-bold lg:w-1/3"
+                htmlFor="clearMessageENG"
+              >
+                Clear Message ENG
+              </label>
+              <Input
+                type="text"
+                name="clearMessageENG"
+                placeholder="Clear Message ENG"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.clearMessageENG}
+              />
+            </div>
+            <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
+              <label
+                className="w-full font-bold lg:w-1/3"
+                htmlFor="alertMessagePTB"
+              >
+                Alert Message PTB
+              </label>
+              <Input
+                type="text"
+                name="alertMessagePTB"
+                placeholder="Alert Message PTB"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.alertMessagePTB}
+              />
+            </div>
+            <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
+              <label
+                className="w-full font-bold lg:w-1/3"
+                htmlFor="clearMessagePTB"
+              >
+                Clear Message PTB
+              </label>
+              <Input
+                type="text"
+                name="clearMessagePTB"
+                placeholder="Clear Message PTB"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.clearMessagePTB}
+              />
+            </div>
+            <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
+              <label
+                className="w-full font-bold lg:w-1/3"
+                htmlFor="emailInformation1ENG"
+              >
+                Email Information ENG 1
+              </label>
+              <Input
+                type="text"
+                name="emailInformation1ENG"
+                placeholder="Email Information ENG 1"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.emailInformation1ENG}
+              />
+            </div>
+            <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
+              <label
+                className="w-full font-bold lg:w-1/3"
+                htmlFor="emailInformation2ENG"
+              >
+                Email Information ENG 2
+              </label>
+              <Input
+                type="text"
+                name="emailInformation2ENG"
+                placeholder="Email Information ENG 2"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.emailInformation2ENG}
+              />
+            </div>
+            <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
+              <label
+                className="w-full font-bold lg:w-1/3"
+                htmlFor="emailInformation1PTB"
+              >
+                Email information PTB 1
+              </label>
+              <Input
+                type="text"
+                name="emailInformation1PTB"
+                placeholder="Email information PTB 1"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.emailInformation1PTB}
+              />
+            </div>
+            <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
+              <label
+                className="w-full font-bold lg:w-1/3"
+                htmlFor="emailInformation2PTB"
+              >
+                Email information PTB 2
+              </label>
+              <Input
+                type="text"
+                name="emailInformation2PTB"
+                placeholder="Email information PTB 2"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.emailInformation2PTB}
+              />
             </div>
           </Grid>
         </form>
