@@ -26,6 +26,14 @@ export const GlobalContextProvider = ({ children }) => {
       const [responseServers, responseTypes, responseEnvironments] =
         await Promise.all(promises)
 
+      setInterval(async () => {
+        const serversData = await getServers()
+        setGlobalState((oldGlobalState) => ({
+          ...oldGlobalState,
+          servers: serversData?.data || [],
+        }))
+      }, 10_000)
+
       setGlobalState((oldGlobalState) => ({
         ...oldGlobalState,
         servers: responseServers?.data || [],

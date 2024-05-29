@@ -28,6 +28,14 @@ body {
   @apply bg-gray bg-opacity-20 antialiased font-ibm text-gray-dark;
 }
 
+.border-yellow {
+  border: 1px solid rgb(221, 221, 0);
+}
+
+.before\:bg-yellow::before {
+  background-color: rgb(221, 221, 0);
+}
+
 a {
   @apply transition-all duration-300 ease-in-out;
 }

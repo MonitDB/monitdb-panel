@@ -10,6 +10,7 @@ import styled from 'styled-components'
 
 import Link from '~/components/link'
 import DatabaseIcons from '~/helpers/database-icons'
+import { useGlobal } from '~/hooks/index'
 import useWindowSize from '~/hooks/use-window-size'
 import useServerContext from '~/services/state-manager/servers'
 import { megaBytesToGigaBytes } from '~/utils/formats'
@@ -78,7 +79,12 @@ const ServerCard = ({
     disks: [],
   })
 
+  const {
+    globalState: { servers },
+  } = useGlobal()
+
   const [lastUpdated, setLastUpdated] = useState(new Date())
+  const server = servers.find((server) => server.id === id)
 
   const { getServerMetrics } = useServerContext()
   if (interval) {
@@ -104,12 +110,12 @@ const ServerCard = ({
         response = await getServerMetrics({ id })
       } catch {
         /* empty */
+      } finally {
+        setLastUpdated(new Date())
       }
 
       if (response?.data) {
         const { cpu, memory, disks, serverStatus } = response.data
-
-        setLastUpdated(new Date())
 
         setMetrics({
           cpu,
@@ -150,29 +156,30 @@ const ServerCard = ({
           showStatus && {
             'lg:min-h-72': metrics?.length,
             'lg:min-h-32': !metrics?.length,
-            'border-danger': metrics?.serverStatus === SERVER_STATUS.CRITICAL,
-            'border-orange': metrics?.serverStatus === SERVER_STATUS.WARNING,
-            'border-success': metrics?.serverStatus === SERVER_STATUS.HEALTLY,
-            'border-blue': metrics?.serverStatus === SERVER_STATUS.INFO,
-            'border-gray': metrics?.serverStatus === SERVER_STATUS.DOWN,
+            'border-orange': server?.status === SERVER_STATUS.CRITICAL,
+            'border-yellow': server?.status === SERVER_STATUS.WARNING,
+            'border-success': server?.status === SERVER_STATUS.HEALTLY,
+            'border-blue': server?.status === SERVER_STATUS.INFO,
+            'border-danger': server?.status === SERVER_STATUS.DOWN,
+            'border-gray': !serverEnable,
           }
         )}
       >
         <Link
-          href={serverEnable ? `/dashboard/${id}` : '/dashboard'}
+          href={
+            serverEnable && server.online ? `/dashboard/${id}` : '/dashboard'
+          }
           className={classNames(
             `card-link block p-2 h-full relative before:content-[""] before:absolute before:w-1
             before:top-0 before:left-0 before:h-full lg:p-4 lg:hover:before:w-2
             before:transition-all before:duration-300 before:ease-in-out before:border-radius`,
             showStatus && {
-              'before:bg-danger':
-                metrics?.serverStatus === SERVER_STATUS.CRITICAL,
-              'before:bg-orange':
-                metrics?.serverStatus === SERVER_STATUS.WARNING,
-              'before:bg-success':
-                metrics?.serverStatus === SERVER_STATUS.HEALTLY,
-              'before:bg-blue': metrics?.serverStatus === SERVER_STATUS.INFO,
-              'before:bg-gray': metrics?.serverStatus === SERVER_STATUS.DOWN,
+              'before:bg-orange': server?.status === SERVER_STATUS.CRITICAL,
+              'before:bg-yellow': server?.status === SERVER_STATUS.WARNING,
+              'before:bg-success': server?.status === SERVER_STATUS.HEALTLY,
+              'before:bg-blue': server?.status === SERVER_STATUS.INFO,
+              'before:bg-danger': server?.status === SERVER_STATUS.DOWN,
+              'before:bg-gray': !serverEnable,
               'opacity-25': !serverEnable,
             }
           )}
@@ -186,91 +193,92 @@ const ServerCard = ({
               <DatabaseIcons name={type.typeServerName} className="w-10 h-10" />
             </div>
           )}
-          <dl className="text-xs w-full text-gray">
-            {metrics.memory && showMemory && (
-              <>
-                {
-                  <>
-                    <dt className="block text-gray-dark mt-2">Memory</dt>
-                    <dd>
-                      <span
-                        className={classNames({
-                          'text-blue': metrics.memory.inUsePercent <= 85,
-                          'text-orange':
-                            metrics.memory.inUsePercent > 85 &&
-                            metrics.memory.inUsePercent < 95,
-                          'text-danger': metrics.memory.inUsePercent >= 95,
-                        })}
-                      >
-                        {metrics.memory.total - metrics.memory.available}{' '}
-                        {metrics.memory.unitType} - In Use
-                      </span>{' '}
-                      /{' '}
-                      <span>
-                        {metrics.memory.total} {metrics.memory.unitType} Total
-                      </span>
-                    </dd>
-                  </>
-                }
-                <dd className="mt-1 w-full h-1 block relative bg-gray-light">
-                  <span
-                    className={classNames('absolute top-0 left-0 h-full', {
-                      'bg-blue': metrics.memory.inUsePercent <= 85,
-                      'bg-orange':
-                        metrics.memory.inUsePercent > 85 &&
-                        metrics.memory.inUsePercent < 95,
-                      'bg-danger': metrics.memory.inUsePercent >= 95,
-                    })}
-                    style={{
-                      width: `${metrics.memory.inUsePercent}%`,
-                    }}
-                  />
-                </dd>
-              </>
-            )}
+          <div style={{ minHeight: '100px' }}>
+            <dl className="text-xs w-full text-gray">
+              {metrics.memory && showMemory && (
+                <>
+                  {
+                    <>
+                      <dt className="block text-gray-dark mt-2">Memory</dt>
+                      <dd>
+                        <span
+                          className={classNames({
+                            'text-blue': metrics.memory.inUsePercent <= 85,
+                            'text-orange':
+                              metrics.memory.inUsePercent > 85 &&
+                              metrics.memory.inUsePercent < 95,
+                            'text-danger': metrics.memory.inUsePercent >= 95,
+                          })}
+                        >
+                          {metrics.memory.total - metrics.memory.available}{' '}
+                          {metrics.memory.unitType} - In Use
+                        </span>{' '}
+                        /{' '}
+                        <span>
+                          {metrics.memory.total} {metrics.memory.unitType} Total
+                        </span>
+                      </dd>
+                    </>
+                  }
+                  <dd className="mt-1 w-full h-1 block relative bg-gray-light">
+                    <span
+                      className={classNames('absolute top-0 left-0 h-full', {
+                        'bg-blue': metrics.memory.inUsePercent <= 85,
+                        'bg-orange':
+                          metrics.memory.inUsePercent > 85 &&
+                          metrics.memory.inUsePercent < 95,
+                        'bg-danger': metrics.memory.inUsePercent >= 95,
+                      })}
+                      style={{
+                        width: `${metrics.memory.inUsePercent}%`,
+                      }}
+                    />
+                  </dd>
+                </>
+              )}
 
-            {metrics.cpu && showCPU && (
-              <>
-                <dt className="block text-gray-dark mt-2">CPU</dt>
-                <dd>
-                  <span
-                    className={classNames({
-                      'text-blue': metrics.cpu.otherProcessPercent <= 85,
-                      'text-orange':
-                        metrics.cpu.otherProcessPercent > 85 &&
-                        metrics.cpu.otherProcessPercent < 95,
-                      'text-danger': metrics.cpu.otherProcessPercent >= 95,
-                    })}
-                  >
-                    {metrics.cpu.otherProcessPercent}%
-                  </span>
-                  <span> - In use</span>
-                </dd>
-                <dd className="mt-1 w-full h-1 block relative bg-gray-light">
-                  <span
-                    className="absolute top-0 h-full bg-orange"
-                    style={{
-                      width: `${metrics.cpu.otherProcessPercent}%`,
-                      left: `${metrics.cpu.instanceProcessPercent}%`,
-                    }}
-                  />
-                  <span
-                    className={classNames(
-                      'absolute top-0 left-0 h-full bg-blue'
-                    )}
-                    style={{
-                      width: `${metrics.cpu.instanceProcessPercent}%`,
-                    }}
-                  />
-                </dd>
-              </>
-            )}
+              {metrics.cpu && showCPU && (
+                <>
+                  <dt className="block text-gray-dark mt-2">CPU</dt>
+                  <dd>
+                    <span
+                      className={classNames({
+                        'text-blue': metrics.cpu.otherProcessPercent <= 85,
+                        'text-orange':
+                          metrics.cpu.otherProcessPercent > 85 &&
+                          metrics.cpu.otherProcessPercent < 95,
+                        'text-danger': metrics.cpu.otherProcessPercent >= 95,
+                      })}
+                    >
+                      {metrics.cpu.otherProcessPercent}%
+                    </span>
+                    <span> - In use</span>
+                  </dd>
+                  <dd className="mt-1 w-full h-1 block relative bg-gray-light">
+                    <span
+                      className="absolute top-0 h-full bg-orange"
+                      style={{
+                        width: `${metrics.cpu.otherProcessPercent}%`,
+                        left: `${metrics.cpu.instanceProcessPercent}%`,
+                      }}
+                    />
+                    <span
+                      className={classNames(
+                        'absolute top-0 left-0 h-full bg-blue'
+                      )}
+                      style={{
+                        width: `${metrics.cpu.instanceProcessPercent}%`,
+                      }}
+                    />
+                  </dd>
+                </>
+              )}
 
-            <>
-              <dt className="block text-gray-dark mt-2">Last Updated</dt>
-              <dd className="mt-1">{lastUpdated.toLocaleString()}</dd>
-            </>
-          </dl>
+              <></>
+            </dl>
+          </div>
+          <dt className="block text-gray mt-2">Last Updated</dt>
+          <dd className="mt-1  text-gray">{lastUpdated.toLocaleString()}</dd>
         </Link>
 
         {metrics.disks?.length > 0 && showDisks ? (
