@@ -10,3 +10,9 @@ export const getLogs = async (parameters = {}, token = '') => {
 export const getApiLogs = async (parameters = {}, token = '') => {
   return apiV2(token).get(`/log/api-log?${formatObjectToQuery(parameters)}`)
 }
+
+export const getInstallationLogs = async (parameters = {}, token = '') => {
+  return apiV2(token).get(
+    `/log/installation-log?${formatObjectToQuery(parameters)}`
+  )
+}

@@ -7,6 +7,7 @@ import React from 'react'
 import { PageContent, PageHeader, PageWrapper } from '~/components/page'
 import { ApiLogs } from '~/components/page/configurations/logs/api-log'
 import { ComponentLogs } from '~/components/page/configurations/logs/component-log'
+import { InstallationLog } from '~/components/page/configurations/logs/installation-log'
 import Layout from '~/layouts/default'
 
 const LogsPage = () => {
@@ -46,6 +47,11 @@ const LogsPage = () => {
                   key: '2',
                   label: 'API',
                   children: <ApiLogs />,
+                },
+                {
+                  key: '3',
+                  label: 'Installation History',
+                  children: <InstallationLog />,
                 },
               ]}
             />
