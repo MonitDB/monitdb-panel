@@ -174,16 +174,15 @@ const ServerCard = ({
             `card-link block p-2 h-full relative before:content-[""] before:absolute before:w-1
             before:top-0 before:left-0 before:h-full lg:p-4 lg:hover:before:w-2
             before:transition-all before:duration-300 before:ease-in-out before:border-radius`,
-            showStatus &&
-              server.online && {
-                'before:bg-orange': server?.status === SERVER_STATUS.CRITICAL,
-                'before:bg-yellow': server?.status === SERVER_STATUS.WARNING,
-                'before:bg-success': server?.status === SERVER_STATUS.HEALTLY,
-                'before:bg-blue': server?.status === SERVER_STATUS.INFO,
-                'before:bg-danger': server?.status === SERVER_STATUS.DOWN,
-                'before:bg-gray': !serverEnable,
-                'opacity-25': !serverEnable,
-              }
+            showStatus && {
+              'before:bg-orange': server?.status === SERVER_STATUS.CRITICAL,
+              'before:bg-yellow': server?.status === SERVER_STATUS.WARNING,
+              'before:bg-success': server?.status === SERVER_STATUS.HEALTLY,
+              'before:bg-blue': server?.status === SERVER_STATUS.INFO,
+              'before:bg-danger': server?.status === SERVER_STATUS.DOWN,
+              'before:bg-gray': !serverEnable,
+              'opacity-25': !serverEnable,
+            }
           )}
         >
           <h4 className="flex items-center text-sm space-x-2 mb-2 lg:mb-4">
