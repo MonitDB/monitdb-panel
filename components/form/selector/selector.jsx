@@ -1,111 +1,31 @@
-import { faChevronDown } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Input } from 'antd'
-import classNames from 'classnames'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import { Select } from 'antd'
+import React from 'react'
 
-import useOutsideClick from '~/helpers/use-click-outside'
+const { Option } = Select
 
 const Selector = ({
   className = '',
-  name,
+  //  name,
   options,
-  value,
-  // enableSelectAllFirstItem = false,
+  value = [],
   onChange,
 }) => {
-  const listReference = useRef(null)
-  const [isOpen, setIsOpen] = useState(false)
-  const [selectedOptions, setSelectedOptions] = useState([])
-
-  const handleClickOutside = () => {
-    setIsOpen(false)
-  }
-
-  const reference = useOutsideClick(handleClickOutside)
-
-  const handleChange = useCallback(() => {
-    const selectedValues = []
-
-    const inputsChecked =
-      listReference.current?.querySelectorAll('input:checked')
-
-    if (inputsChecked?.length) {
-      for (const input of inputsChecked) {
-        if (!input.value) {
-          continue
-        }
-
-        selectedValues.push(input.value)
-      }
-    }
-
-    onChange(selectedValues)
-  }, [onChange])
-
-  useEffect(() => {
-    const temporarySelectedOptions = []
-
-    for (const option of options) {
-      if (
-        value.includes(option.value) ||
-        value.includes(option.value.toString())
-      ) {
-        temporarySelectedOptions.push(option)
-      }
-    }
-
-    setSelectedOptions(temporarySelectedOptions)
-  }, [options, value])
-
   return (
-    <div ref={reference} className={classNames('relative w-full', className)}>
-      <button
-        type="button"
-        className="relative w-full flex items-center justify-between px-4 h-8
-        bg-white leading-10 rounded outline-none"
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        <span className="text-xs truncate pr-2">
-          {selectedOptions.length > 0
-            ? selectedOptions.map(({ label }) => label).join(', ')
-            : options[0].label}
-        </span>
-        <FontAwesomeIcon icon={faChevronDown} className="ml-auto text-sm" />
-      </button>
-      <ul
-        ref={listReference}
-        className={classNames(
-          `absolute top-full left-0 rounded bg-white w-full transform
-            overflow-hidden transition-all duration-150 ease-in-out shadow-md
-            max-h-56 overflow-y-auto`,
-          {
-            'translate-y-1 z-10': isOpen,
-            'translate-y-2 opacity-0 invisible': !isOpen,
-          }
-        )}
-      >
-        {options.map(({ value, label }, index) => (
-          <li key={`selector-${name}-${value}-${index}`}>
-            <label
-              className={classNames(
-                'py-2 px-2 pl-4 flex items-center space-x-2 cursor-pointer text-xs',
-                'transition-all duration-150 ease-in-out lg:hover:bg-gray-light lg:hover:bg-opacity-50'
-              )}
-            >
-              <Input
-                type="checkbox"
-                name={name}
-                value={value}
-                aria-label={label}
-                onChange={handleChange}
-              />
-              <span>{label}</span>
-            </label>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <Select
+      mode="multiple"
+      className={className}
+      value={value}
+      onChange={onChange}
+      maxTagCount={'responsive'}
+      placeholder={options.length > 0 ? options[0].label : 'Select options'}
+      style={{ width: '100%' }}
+    >
+      {options.map(({ value: optionValue, label }) => (
+        <Option key={optionValue} value={optionValue}>
+          {label}
+        </Option>
+      ))}
+    </Select>
   )
 }
 

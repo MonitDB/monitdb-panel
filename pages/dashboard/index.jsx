@@ -9,7 +9,7 @@ import {
 } from 'const/time'
 import { useFormik } from 'formik'
 import { NextSeo } from 'next-seo'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
 import ServerCard from '~/components/cards/server'
 import { Select } from '~/components/form'
@@ -63,7 +63,7 @@ const DashboardPage = () => {
 
   const statusOptions = useMemo(
     () => [
-      { value: '', label: 'All status' },
+      // { value: '', label: 'All status' },
       { value: 1, label: 'Healtly' },
       { value: 2, label: 'Info' },
       { value: 3, label: 'Warning' },
@@ -75,7 +75,7 @@ const DashboardPage = () => {
 
   const environmentsOptions = useMemo(
     () => [
-      { value: '', label: 'All groups' },
+      // { value: '', label: 'All groups' },
       ...formattedEnvironments
         .filter((environment) => environment.servers.length > 0)
         .map(({ id, typeServerEnvironmentName }) => ({
@@ -86,108 +86,41 @@ const DashboardPage = () => {
     [formattedEnvironments]
   )
 
-  const collapseItems = formattedEnvironments
-    .map((formattedEnvironment, environmentIndex) => {
-      return formattedEnvironment.servers.length > 0 &&
-        formattedEnvironment.isActive
-        ? {
-            key: `${formattedEnvironment.id}`,
-            label: (
-              <div className="flex items-center">
-                <span className="mr-2">
-                  {environmentIndex + 1} -{' '}
-                  {formattedEnvironment.typeServerEnvironmentName} (
-                  {formattedEnvironment.servers.length})
-                </span>
-              </div>
-            ),
-            children: (
-              <div className="flex flex-wrap py-2 gap-y-4 md:py-4">
-                {formattedEnvironment.servers
-                  .filter(({ isActive }) => isActive)
-                  .map((server, index) => (
-                    <div key={index} style={{ marginRight: '15px' }}>
-                      <ServerCard
-                        showCPU={hasPermission(
-                          user,
-                          FeatureFunction.STATUS_CPU,
-                          TypeGrant.READ
-                        )}
-                        showMemory={hasPermission(
-                          user,
-                          FeatureFunction.STATUS_MEMORY,
-                          TypeGrant.READ
-                        )}
-                        showDisks={hasPermission(
-                          user,
-                          FeatureFunction.DISK_SPACE,
-                          TypeGrant.READ
-                        )}
-                        showStatus={hasPermission(
-                          user,
-                          FeatureFunction.STATUS_SERVICE,
-                          TypeGrant.READ
-                        )}
-                        key={`server-${index}`}
-                        className="w-full mb-4 md:mb-0 m:10"
-                        interval={refreshInterval}
-                        type={server.idTypeServer}
-                        {...server}
-                      />
-                    </div>
-                  ))}
-              </div>
-            ),
-          }
-        : undefined
-    })
-    .filter((item) => item?.children)
+  const updateFormattedEnvironments = useCallback(() => {
+    const { environments, str, status } = formik.values
 
-  const totalServers = useMemo(() => {
-    formattedEnvironments
-      // .filter(({ isActive }) => isActive)
-      .reduce(
-        (accumulator, formattedEnvironment) =>
-          accumulator +
-          formattedEnvironment.servers.filter((server) => server.isActive)
-            .length,
-        0
-      )
-    setActiveKey(collapseItems.map((item) => item.key))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formattedEnvironments])
-
-  useEffect(() => {
-    const { environments, str } = formik.values
-
-    setFormattedEnvironments((formattedEnvironments) => [
-      ...formattedEnvironments.map((formattedEnvironment) => ({
-        ...formattedEnvironment,
-        isActive:
+    setFormattedEnvironments((previousEnvironments) =>
+      previousEnvironments.map((environment) => {
+        const isActiveEnvironment =
           !hasAnyFilter ||
           environments.length === 0 ||
-          (environments.length > 0 &&
-            environments.includes(formattedEnvironment.id.toString()))
-            ? true
-            : false,
-        servers: formattedEnvironment.servers.map((server) => ({
-          ...server,
-          isActive:
-            !hasAnyFilter ||
-            !str ||
-            (str && server.serverName.toLowerCase().includes(str.toLowerCase()))
-              ? true
-              : false,
-        })),
-      })),
-    ])
+          environments.includes(environment.id)
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [serverEnvironments, formik.values, hasAnyFilter])
+        const filteredServers = environment.servers.map((server) => {
+          const isActiveServer =
+            (!str ||
+              server.serverName.toLowerCase().includes(str.toLowerCase())) &&
+            (status.length === 0 || status.includes(server.status))
+
+          return {
+            ...server,
+            isActive: isActiveEnvironment && isActiveServer,
+          }
+        })
+
+        return {
+          ...environment,
+          isActive: isActiveEnvironment,
+          servers: filteredServers,
+        }
+      })
+    )
+  }, [formik.values, hasAnyFilter])
 
   useEffect(() => {
-    setFormattedEnvironments([
-      ...serverEnvironments.map((environment) => ({
+    // Atualize os ambientes formatados sempre que os servidores ou os tipos de servidor mudarem
+    setFormattedEnvironments(
+      serverEnvironments.map((environment) => ({
         ...environment,
         isActive: true,
         isDropdownActive: true,
@@ -195,9 +128,85 @@ const DashboardPage = () => {
           filterServersByEnvironmentId(environment.id, servers).map((server) =>
             formatServer(server, { serverTypes })
           ) || [],
-      })),
-    ])
+      }))
+    )
   }, [serverEnvironments, servers, serverTypes])
+
+  useEffect(() => {
+    updateFormattedEnvironments()
+  }, [servers, formik.values, hasAnyFilter, updateFormattedEnvironments])
+
+  const collapseItems = useMemo(
+    () =>
+      formattedEnvironments
+        .map((formattedEnvironment, environmentIndex) => {
+          return formattedEnvironment.servers.length > 0 &&
+            formattedEnvironment.isActive
+            ? {
+                key: `${formattedEnvironment.id}`,
+                label: (
+                  <div className="flex items-center">
+                    <span className="mr-2">
+                      {environmentIndex + 1} -{' '}
+                      {formattedEnvironment.typeServerEnvironmentName} (
+                      {formattedEnvironment.servers.length})
+                    </span>
+                  </div>
+                ),
+                children: (
+                  <div className="flex flex-wrap py-2 gap-y-4 md:py-4">
+                    {formattedEnvironment.servers
+                      .filter(({ isActive }) => isActive)
+                      .map((server, index) => (
+                        <div key={index} style={{ marginRight: '15px' }}>
+                          <ServerCard
+                            showCPU={hasPermission(
+                              user,
+                              FeatureFunction.STATUS_CPU,
+                              TypeGrant.READ
+                            )}
+                            showMemory={hasPermission(
+                              user,
+                              FeatureFunction.STATUS_MEMORY,
+                              TypeGrant.READ
+                            )}
+                            showDisks={hasPermission(
+                              user,
+                              FeatureFunction.DISK_SPACE,
+                              TypeGrant.READ
+                            )}
+                            showStatus={hasPermission(
+                              user,
+                              FeatureFunction.STATUS_SERVICE,
+                              TypeGrant.READ
+                            )}
+                            key={`server-${index}`}
+                            className="w-full mb-4 md:mb-0 m:10"
+                            interval={refreshInterval}
+                            type={server.idTypeServer}
+                            {...server}
+                          />
+                        </div>
+                      ))}
+                  </div>
+                ),
+              }
+            : undefined
+        })
+        .filter((item) => item?.children),
+    [formattedEnvironments, refreshInterval, user]
+  )
+
+  const totalServers = useMemo(() => {
+    const total = formattedEnvironments.reduce(
+      (accumulator, formattedEnvironment) =>
+        accumulator +
+        formattedEnvironment.servers.filter((server) => server.isActive).length,
+      0
+    )
+    setActiveKey(collapseItems.map((item) => item.key))
+    return total
+  }, [formattedEnvironments, collapseItems])
 
   return (
     <>
@@ -233,7 +242,7 @@ const DashboardPage = () => {
                         <Input
                           type="text"
                           name="str"
-                          placeholder="Filtrar por nomes"
+                          placeholder="Filter by names"
                           onChange={formik.handleChange}
                           onBlur={formik.handleBlur}
                           value={formik.values.str}
