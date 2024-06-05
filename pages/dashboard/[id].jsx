@@ -46,7 +46,7 @@ const dashboardSections = [
   { name: 'TEMPDB', slug: 'tempdb' },
   { name: 'Blocking processes', slug: 'blocking-processes' },
   { name: 'SQL user processes', slug: 'sqlprocesses' },
-  { name: 'Processes', slug: 'processes' },
+  { name: 'Permissions', slug: 'processes' },
   { name: 'Error log', slug: 'error-log' },
   { name: 'Databases', slug: 'databases' },
 ]
@@ -58,6 +58,7 @@ const SingleDashboard = () => {
   const { userState: user } = useUser()
 
   const [activeTabId, setActiveTabId] = useState('0')
+  const [activeSectionIndex, setActiveSectionIndex] = useState(0)
 
   const router = useRouter()
 
@@ -134,9 +135,12 @@ const SingleDashboard = () => {
                   {dashboardSections.map((section, sectionIndex) => (
                     <li key={section.slug}>
                       <button
-                        onClick={() => scrollToSection(`#${section.slug}`)}
+                        onClick={() => {
+                          scrollToSection(`#${section.slug}`)
+                          setActiveSectionIndex(sectionIndex)
+                        }}
                         className={classNames({
-                          active: sectionIndex === 0,
+                          active: activeSectionIndex === sectionIndex, // Alterado para comparar com activeSectionIndex
                         })}
                       >
                         {section.name}

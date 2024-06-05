@@ -41,11 +41,16 @@ export const scrollToSection = (element) => {
 
   if (!$DOMElement) return
 
-  const $headerHeight = 64
-  const $sectionMargin = 20
-  const $sectionTop = $DOMElement?.offsetTop || 0
+  const $headerHeight = 64 // altura do cabeçalho
+  const $vh = Math.max(
+    document.documentElement.clientHeight || 0,
+    window.innerHeight || 0
+  )
+
+  const $sectionTop = $DOMElement.offsetTop || 0
 
   window.scrollTo({
-    top: $sectionTop - $headerHeight - $sectionMargin,
+    top: $sectionTop - $headerHeight + $vh * 0.35,
+    behavior: 'smooth',
   })
 }

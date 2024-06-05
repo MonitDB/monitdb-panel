@@ -22,6 +22,7 @@ export const ServerProperties = () => {
         componentCode,
         currentServer?.id || undefined
       )
+
       setDate(result)
     } catch {
       toast.error('Error to get ServerProperties')
