@@ -61,6 +61,7 @@ function Databases(properties) {
             {
               dataIndex: 'transactions',
               title: 'Transactions/sec',
+              width: 450,
               render: (value, record, index) => (
                 <GraphContainer>
                   <Chart
@@ -68,6 +69,7 @@ function Databases(properties) {
                     disableLabels
                     height={75}
                     yaxisAbs
+                    seriesName="Transactions/sec"
                     seriesData={data[index].logs?.map((log) => [
                       log.createDate,
                       log.currentTransaction,
@@ -79,6 +81,7 @@ function Databases(properties) {
             {
               dataIndex: 'size',
               title: 'Database size',
+              width: 450,
               render: (value, record, index) => (
                 <GraphContainer>
                   <Chart
@@ -86,6 +89,7 @@ function Databases(properties) {
                     disableLabels
                     height={75}
                     yaxisAbs
+                    seriesName="Database size (MB)"
                     seriesData={data[index].logs?.map((log) => [
                       log.createDate,
                       log.databaseSize,

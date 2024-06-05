@@ -72,7 +72,7 @@ const Permissions = (properties) => {
   }, [currentServer?.id, executeQueryComponent])
 
   return (
-    <div className="mt-6">
+    <div className="mt-6" id="permissions">
       <h3 className="mb-4 text-sm text-gray-dark font-bold">Permissions</h3>
       {/* <div className="prose max-w-full prose-th:capitalize prose-th:border-b-0 prose-tr:border-gray-light"> */}
       <Table

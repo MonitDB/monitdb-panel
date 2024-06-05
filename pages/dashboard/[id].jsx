@@ -46,7 +46,7 @@ const dashboardSections = [
   { name: 'TEMPDB', slug: 'tempdb' },
   { name: 'Blocking processes', slug: 'blocking-processes' },
   { name: 'SQL user processes', slug: 'sqlprocesses' },
-  { name: 'Permissions', slug: 'processes' },
+  { name: 'Permissions', slug: 'permissions' },
   { name: 'Error log', slug: 'error-log' },
   { name: 'Databases', slug: 'databases' },
 ]
