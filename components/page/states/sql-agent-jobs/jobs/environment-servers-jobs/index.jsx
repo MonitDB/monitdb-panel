@@ -29,7 +29,6 @@ function Servers({ environmentServers, serversJobs, expand }) {
     try {
       const serverId = jobModal.jobData?.ServerId
       const jobName = jobModal.jobData?.jobName
-
       if (serverId) {
         setIsLoading(true)
         toggleActiveTableRowIndex(-1)
@@ -37,6 +36,7 @@ function Servers({ environmentServers, serversJobs, expand }) {
           jobName,
           page: currentPage,
         })
+
         if (!data) return
         setJobsExe(data)
       }
@@ -182,6 +182,17 @@ function Servers({ environmentServers, serversJobs, expand }) {
                 <Table
                   loading={isLoadingExecutions}
                   dataSource={jobsExecutions}
+                  onRow={(record) => ({
+                    onClick: () => {
+                      Modal.confirm({
+                        content: record.Message,
+                        icon: <></>,
+                        cancelButtonProps: { style: { display: 'none' } },
+                        centered: true,
+                      })
+                    },
+                    style: { cursor: 'pointer' },
+                  })}
                   columns={[
                     { dataIndex: 'Step_Id', title: 'Step ID' },
                     { dataIndex: 'Status', title: 'Status' },
@@ -202,6 +213,7 @@ function Servers({ environmentServers, serversJobs, expand }) {
                   ]}
                 />
               ),
+
               onExpand: (expanded, record) => {
                 if (expanded) getExecutions(record.RunDateTime, record.key)
                 else toggleActiveTableRowIndex(-1)
