@@ -1,3 +1,4 @@
+/* eslint-disable sonarjs/cognitive-complexity */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { faDatabase } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -104,33 +105,41 @@ const ServerCard = ({
   }
 
   const getMetrics = useCallback(async () => {
-    try {
-      let response
+    if (serverEnable)
       try {
-        response = await getServerMetrics({ id })
-      } catch {
-        /* empty */
-      } finally {
-        setLastUpdated(new Date())
-      }
+        let response
+        try {
+          response = await getServerMetrics({ id })
+        } catch {
+          /* empty */
+        } finally {
+          setLastUpdated(new Date())
+        }
 
-      if (response?.data) {
-        const { cpu, memory, disks, serverStatus } = response.data
+        if (response?.data) {
+          const { cpu, memory, disks, serverStatus } = response.data
 
-        setMetrics({
-          cpu,
-          memory: {
-            ...memory,
-            inUsePercent:
-              ((memory.total - memory.available) / memory.total) * 100,
-          },
-          disks,
-          serverStatus,
-        })
+          setMetrics({
+            cpu,
+            memory: {
+              ...memory,
+              inUsePercent:
+                ((memory.total - memory.available) / memory.total) * 100,
+            },
+            disks,
+            serverStatus,
+          })
+          return
+        }
+      } catch (error) {
+        console.error(error) // eslint-disable-line no-console
       }
-    } catch (error) {
-      console.error(error) // eslint-disable-line no-console
-    }
+    setMetrics({
+      serverStatus: undefined,
+      cpu: undefined,
+      memory: undefined,
+      disks: [],
+    })
   }, [getServerMetrics, id])
 
   useEffect(() => {
@@ -157,11 +166,16 @@ const ServerCard = ({
             server.online && {
               'lg:min-h-72': metrics?.length,
               'lg:min-h-32': !metrics?.length,
-              'border-orange': server?.status === SERVER_STATUS.CRITICAL,
-              'border-yellow': server?.status === SERVER_STATUS.WARNING,
-              'border-success': server?.status === SERVER_STATUS.HEALTLY,
-              'border-blue': server?.status === SERVER_STATUS.INFO,
-              'border-danger': server?.status === SERVER_STATUS.DOWN,
+              'border-orange':
+                serverEnable && server?.status === SERVER_STATUS.CRITICAL,
+              'border-yellow':
+                serverEnable && server?.status === SERVER_STATUS.WARNING,
+              'border-success':
+                serverEnable && server?.status === SERVER_STATUS.HEALTLY,
+              'border-blue':
+                serverEnable && server?.status === SERVER_STATUS.INFO,
+              'border-danger':
+                serverEnable && server?.status === SERVER_STATUS.DOWN,
               'border-gray': !serverEnable,
             }
         )}
@@ -175,13 +189,18 @@ const ServerCard = ({
             before:top-0 before:left-0 before:h-full lg:p-4 lg:hover:before:w-2
             before:transition-all before:duration-300 before:ease-in-out before:border-radius`,
             showStatus && {
-              'before:bg-orange': server?.status === SERVER_STATUS.CRITICAL,
-              'before:bg-yellow': server?.status === SERVER_STATUS.WARNING,
-              'before:bg-success': server?.status === SERVER_STATUS.HEALTLY,
-              'before:bg-blue': server?.status === SERVER_STATUS.INFO,
-              'before:bg-danger': server?.status === SERVER_STATUS.DOWN,
-              'before:bg-gray': !serverEnable,
+              'before:bg-orange':
+                serverEnable && server?.status === SERVER_STATUS.CRITICAL,
+              'before:bg-yellow':
+                serverEnable && server?.status === SERVER_STATUS.WARNING,
+              'before:bg-success':
+                serverEnable && server?.status === SERVER_STATUS.HEALTLY,
+              'before:bg-blue':
+                serverEnable && server?.status === SERVER_STATUS.INFO,
+              'before:bg-danger':
+                serverEnable && server?.status === SERVER_STATUS.DOWN,
               'opacity-25': !serverEnable,
+              'before:bg-gray': !serverEnable,
             }
           )}
         >

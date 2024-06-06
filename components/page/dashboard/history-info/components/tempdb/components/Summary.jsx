@@ -1,14 +1,16 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
-import { Input } from 'antd'
+
+import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 import { useCallback, useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 
-import Chart from '~/components/chart'
 import Loading from '~/components/loading/loading'
 import { useSingleDashboard } from '~/hooks/index'
 import useLogContext from '~/services/state-manager/logs'
 import { dateStringToTime } from '~/utils/formats'
+
+const ApexChart = dynamic(() => import('react-apexcharts'), { ssr: false })
 
 export const TemporaryDBSummary = () => {
   const { currentServer } = useSingleDashboard()
@@ -16,11 +18,8 @@ export const TemporaryDBSummary = () => {
   const route = useRouter()
   const { query } = route
 
-  const [data, setData] = useState()
+  const [data, setData] = useState([])
   const [loading, setLoading] = useState(false)
-  const [showUsage, setShowUsage] = useState(true)
-  const [showAllocatedSpace, setShowAllocatedSpace] = useState(true)
-  const [showAvailableSpace, setShowAvailableSpace] = useState(true)
 
   const fetchData = useCallback(async () => {
     try {
@@ -70,6 +69,8 @@ export const TemporaryDBSummary = () => {
     availableSpace.data.push([item.time, item.availableSpace])
   }
 
+  const series = [usage, allocatedSpace]
+
   return (
     <>
       <h6 className="my-4 text-xs">
@@ -90,56 +91,49 @@ export const TemporaryDBSummary = () => {
           </div>
         ) : (
           <>
-            <Chart
-              height="100%"
-              unit={'MB'}
-              multipleSeries={[usage, allocatedSpace, availableSpace].filter(
-                (element, index) => {
-                  if (index === 0 && !showUsage) return false
-                  if (index === 1 && !showAllocatedSpace) return false
-                  if (index === 2 && !showAvailableSpace) return false
-                  return element.data.length > 0
-                }
-              )}
-            />
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-evenly',
-                padding: '10px',
+            <ApexChart
+              options={{
+                chart: {
+                  type: 'area',
+                  height: '100%',
+                  toolbar: false,
+                },
+                xaxis: {
+                  type: 'datetime',
+                },
+                yaxis: {
+                  title: {
+                    text: 'MB',
+                  },
+                },
+                dataLabels: {
+                  enabled: false,
+                },
+                stroke: {
+                  curve: 'smooth',
+                },
+                tooltip: {
+                  custom: function ({ dataPointIndex }) {
+                    const [, availableSpaceValue] =
+                      availableSpace.data[dataPointIndex]
+                    const [, allocatedSpaceValue] =
+                      allocatedSpace.data[dataPointIndex]
+                    const [, usageValue] = usage.data[dataPointIndex]
+
+                    return `
+                      <div style="background-color: rgba(255, 255, 255, 0.9); border: 1px solid #ccc; border-radius: 5px; padding: 10px;">
+                        <div><strong>Usage:</strong> ${usageValue} MB</div>
+                        <div><strong>Allocated Space:</strong> ${allocatedSpaceValue} MB</div>
+                        <div><strong>Available Space:</strong> ${availableSpaceValue} MB</div>
+                      </div>
+                     `
+                  },
+                },
               }}
-            >
-              <label>
-                <Input
-                  style={{ margin: '0 0 0 5px' }}
-                  type="checkbox"
-                  checked={showUsage}
-                  onChange={() => setShowUsage(!showUsage)}
-                />
-                <span style={{ margin: '0 0 0 5px' }}>Show Usage</span>
-              </label>
-              <label>
-                <Input
-                  type="checkbox"
-                  checked={showAllocatedSpace}
-                  onChange={() => setShowAllocatedSpace(!showAllocatedSpace)}
-                />
-                <span style={{ margin: '0 0 0 5px' }}>
-                  Show Allocated Space
-                </span>
-              </label>
-              <label>
-                <Input
-                  style={{ margin: '0 0 0 5px' }}
-                  type="checkbox"
-                  checked={showAvailableSpace}
-                  onChange={() => setShowAvailableSpace(!showAvailableSpace)}
-                />
-                <span style={{ margin: '0 0 0 5px' }}>
-                  Show Available Space
-                </span>
-              </label>
-            </div>
+              series={series}
+              type="area"
+              height="400"
+            />
           </>
         )}
       </div>
