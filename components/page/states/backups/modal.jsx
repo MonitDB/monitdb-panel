@@ -165,19 +165,19 @@ function DatabaseBackupsModal({ modal, onSetModalData }) {
                 series={[
                   {
                     name: 'FULL',
-                    color: '#5046E5',
+                    color: 'rgba(80, 70, 229, 0.85)',
                     data: chartData(full),
                   },
 
                   {
-                    color: '#5046E599',
+                    color: 'rgba(254, 176, 25, 0.85)',
                     name: 'LOG',
 
                     data: chartData(log),
                   },
                   {
                     name: 'DIFFERENTIAL',
-                    color: '#161B22',
+                    color: 'rgba(0, 227, 150, 0.85)',
 
                     data: chartData(differential),
                   },
@@ -193,7 +193,7 @@ function DatabaseBackupsModal({ modal, onSetModalData }) {
                     // text: `y`,
                     style: {
                       fontFamily: 'Arial, sans-serif',
-                      color: '#333',
+
                       fontWeight: 'bold',
                     },
                   },

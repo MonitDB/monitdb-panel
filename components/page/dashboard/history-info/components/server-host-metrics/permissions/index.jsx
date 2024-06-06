@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable sonarjs/no-identical-functions */
 import { Table } from 'antd'
 import React, { useCallback, useEffect, useState } from 'react'

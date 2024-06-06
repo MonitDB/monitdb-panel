@@ -164,7 +164,12 @@ const EnvironmentServersBackups = ({
                     <Table.ColumnGroup
                       title={
                         <>
-                          <span className="w-2.5 h-2.5 bg-gray-dark mr-1 inline-block relative top-[0.5px]" />
+                          <span
+                            className="w-2.5 h-2.5 bg-gray-dark mr-1 inline-block relative top-[0.5px]"
+                            style={{
+                              backgroundColor: 'rgba(80, 70, 229, 0.85)',
+                            }}
+                          />
                           Full
                         </>
                       }
@@ -206,7 +211,12 @@ const EnvironmentServersBackups = ({
                     <Table.ColumnGroup
                       title={
                         <>
-                          <span className="w-2.5 h-2.5 bg-blue mr-1 inline-block relative top-[0.5px]" />
+                          <span
+                            className="w-2.5 h-2.5 mr-1 inline-block relative top-[0.5px]"
+                            style={{
+                              backgroundColor: 'rgba(0, 227, 150, 0.85)',
+                            }}
+                          />
                           Differential
                         </>
                       }
@@ -248,7 +258,12 @@ const EnvironmentServersBackups = ({
                     <Table.ColumnGroup
                       title={
                         <>
-                          <span className="w-2.5 h-2.5 bg-blue bg-opacity-60 mr-1 inline-block relative top-[0.5px]" />
+                          <span
+                            className="w-2.5 h-2.5  mr-1 inline-block relative top-[0.5px]"
+                            style={{
+                              backgroundColor: 'rgba(254, 176, 25, 0.85)',
+                            }}
+                          />
                           Log
                         </>
                       }
