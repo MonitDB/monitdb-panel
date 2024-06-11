@@ -1,10 +1,10 @@
 import { faCheck, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { Table } from 'antd'
 import { format, parseISO } from 'date-fns'
 import { NextSeo } from 'next-seo'
 import React, { useCallback, useEffect, useState } from 'react'
 
-import Loading from '~/components/loading'
 import { PageContent, PageHeader, PageWrapper } from '~/components/page'
 import Layout from '~/layouts/default'
 import { getComponents } from '~/services/components'
@@ -16,7 +16,7 @@ const ComponentsPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [componentIdActive, setComponentIdActive] = useState('')
   const [isLoading, setIsLoading] = useState(true)
-  const [isLoaded, setIsLoaded] = useState(false)
+
   const [features, setFeatures] = useState([])
   const [data, setData] = useState([])
 
@@ -33,14 +33,12 @@ const ComponentsPage = () => {
       console.error(error) // eslint-disable-line no-console
     } finally {
       setIsLoading(false)
-      setIsLoaded(true)
     }
   }, [])
 
   const getFeatureNameById = useCallback(
     (featureId) => {
       const feature = features?.find((feature) => feature?.id === featureId)
-
       return feature?.featureName
     },
     [features]
@@ -59,6 +57,52 @@ const ComponentsPage = () => {
   useEffect(() => {
     getData()
   }, [getData])
+
+  const columns = [
+    {
+      title: 'Code',
+      dataIndex: 'componentCode',
+      key: 'componentCode',
+    },
+    {
+      title: 'Type Component ID',
+      dataIndex: 'idTypeComponent',
+      key: 'idTypeComponent',
+    },
+    {
+      title: 'Feature',
+      dataIndex: 'idFeature',
+      key: 'idFeature',
+      render: (text, record) => getFeatureNameById(record.idFeature),
+    },
+    {
+      title: 'Name',
+      dataIndex: 'componentName',
+      key: 'componentName',
+    },
+    {
+      title: 'Query / URL',
+      dataIndex: 'componentQuery',
+      key: 'componentQuery',
+    },
+    {
+      title: 'Created at',
+      dataIndex: 'componentDataCreate',
+      key: 'componentDataCreate',
+      render: (text) => format(parseISO(text), "dd MMM yyyy kk':'mm"),
+    },
+    {
+      title: 'Enabled',
+      dataIndex: 'componentEnable',
+      key: 'componentEnable',
+      render: (text, record) =>
+        record.componentEnable ? (
+          <FontAwesomeIcon icon={faCheck} className="text-success" />
+        ) : (
+          <FontAwesomeIcon icon={faXmark} className="text-danger" />
+        ),
+    },
+  ]
 
   return (
     <>
@@ -80,90 +124,20 @@ const ComponentsPage = () => {
               ]}
             />
 
-            {isLoading && (
-              <div className="flex justify-center items-center w-full min-h-28">
-                <Loading light />
-              </div>
-            )}
-
-            {!isLoading && isLoaded && (
-              <div className="-mx-4 py-4 px-8 bg-white md:-mx-6">
-                <table className="prose max-w-full w-full mb-4">
-                  <thead>
-                    <tr className="text-sm font-bold text-gray-dark text-left">
-                      <th className="border-b-2 border-gray-light whitespace-nowrap">
-                        Code
-                      </th>
-                      <th className="border-b-2 border-gray-light whitespace-nowrap">
-                        Type Component ID
-                      </th>
-                      <th className="border-b-2 border-gray-light whitespace-nowrap">
-                        Feature
-                      </th>
-                      <th className="border-b-2 border-gray-light whitespace-nowrap">
-                        Name
-                      </th>
-                      <th className="border-b-2 border-gray-light whitespace-nowrap">
-                        Query / URL
-                      </th>
-                      <th className="border-b-2 border-gray-light whitespace-nowrap">
-                        Created at
-                      </th>
-                      <th className="border-b-2 border-gray-light whitespace-nowrap">
-                        Enabled
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {data.length === 0 && (
-                      <tr>
-                        <td colSpan={8} className="py-10 text-center">
-                          No components found
-                        </td>
-                      </tr>
-                    )}
-
-                    {data.length > 0 &&
-                      data.map((component) => (
-                        <tr
-                          key={`component-${component.componentCode}`}
-                          className={`text-sm border-b border-gray-light transition-colors
-                          duration-200 ease-in-out cursor-pointer lg:hover:bg-gray-light lg:hover:bg-opacity-50`}
-                          onClick={() => {
-                            setIsModalOpen(true)
-                            setComponentIdActive(component.componentCode)
-                          }}
-                        >
-                          <td>{component.componentCode}</td>
-                          <td>{component.idTypeComponent}</td>
-                          <td>{getFeatureNameById(component.idFeature)}</td>
-                          <td>{component.componentName}</td>
-                          <td>{component.componentQuery}</td>
-                          <td className="whitespace-nowrap">
-                            {format(
-                              parseISO(component.componentDataCreate),
-                              "dd MMM yyyy kk':'mm"
-                            )}
-                          </td>
-                          <td align="center">
-                            {component.componentEnable ? (
-                              <FontAwesomeIcon
-                                icon={faCheck}
-                                className="text-success"
-                              />
-                            ) : (
-                              <FontAwesomeIcon
-                                icon={faXmark}
-                                className="text-danger"
-                              />
-                            )}
-                          </td>
-                        </tr>
-                      ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
+            <Table
+              loading={isLoading}
+              columns={columns}
+              dataSource={data}
+              rowKey={(record) => record.componentCode}
+              onRow={(record) => ({
+                onClick: () => {
+                  setIsModalOpen(true)
+                  setComponentIdActive(record.componentCode)
+                },
+                style: { cursor: 'pointer' },
+              })}
+              pagination={true}
+            />
           </PageContent>
         </PageWrapper>
       </Layout>
