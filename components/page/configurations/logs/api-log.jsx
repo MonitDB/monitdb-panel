@@ -55,7 +55,7 @@ export const ApiLogs = () => {
     <PageContent removeSidebarMargin={true}>
       <Table
         dataSource={data.map((d) => ({ ...d, key: d.idExecutionLog }))}
-        size="small"
+        size="large"
         loading={loading}
         expandable={{
           expandedRowRender: (record) => (

@@ -116,7 +116,7 @@ export const ComponentLogs = () => {
       <br />
       <Table
         dataSource={data.map((d) => ({ ...d, key: d.id }))}
-        size="small"
+        size="large"
         loading={loading}
         expandable={{
           expandedRowRender: (record) => (
