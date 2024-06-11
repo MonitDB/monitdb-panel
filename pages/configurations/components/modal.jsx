@@ -115,8 +115,10 @@ const MetricsModal = ({ onClose, componentId }) => {
       title="Edit component"
       visible={true}
       onCancel={() => onClose(false)}
-      footer={null}
+      footer={undefined}
       width="80%"
+      okButtonProps={{ style: { display: 'none' } }}
+      cancelButtonProps={{ style: { display: 'none' } }}
     >
       <Spin spinning={isLoading}>
         <form

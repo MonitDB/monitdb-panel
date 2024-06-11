@@ -1,5 +1,4 @@
 /* eslint-disable no-console */
-import { format } from 'date-fns'
 import React, { memo, useMemo } from 'react'
 
 import Chart from '~/components/chart'
