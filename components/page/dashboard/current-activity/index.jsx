@@ -4,7 +4,7 @@
 // import 'ace-builds/src-noconflict/theme-github'
 import '@uiw/react-textarea-code-editor/dist.css'
 
-import { Button, Descriptions, Modal, Table } from 'antd'
+import { Button, Descriptions, Modal, notification, Table } from 'antd'
 import moment from 'moment'
 import React, { useCallback, useEffect, useState } from 'react'
 
@@ -44,6 +44,12 @@ function CurrentActivity(properties) {
         componentCode,
         currentServer?.id || undefined
       )
+
+      if (result.originalError) {
+        notification.error({ message: result.originalError.info.message })
+        setLoading(false)
+        return
+      }
 
       if (Object.keys(result).length === 0) {
         setLoading(false)
