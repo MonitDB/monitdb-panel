@@ -20,6 +20,7 @@ const ComponentsPage = () => {
   const [features, setFeatures] = useState([])
   const [data, setData] = useState([])
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const getData = useCallback(async () => {
     setIsLoading(true)
     setData([])

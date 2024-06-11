@@ -19,7 +19,7 @@ import dayjs from 'dayjs'
 import moment from 'moment'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 
 import { ApexChart, defaultChartOptions } from '~/components/chart'
 import Highlighter from '~/components/highlighter'
@@ -145,6 +145,8 @@ const AnalysisPage = () => {
 
   const [modalData, setModalData] = useState()
 
+  const firstFetch = useRef(false)
+
   const intervalOptions = useMemo(
     () => [
       { value: 1, label: '1 minutes' },
@@ -185,24 +187,19 @@ const AnalysisPage = () => {
   const router = useRouter()
 
   useEffect(() => {
-    const errorHandler = () => {}
-
-    return [errorHandler]
-  }, [])
-
-  useEffect(() => {
     if (!hasFeature(user, Feature.ANALYSIS) && user.grants) {
       router.push('/403')
     }
-  }, [router, user, servers])
+  }, [router, user])
 
   useEffect(() => {
-    if (servers && servers[0]) {
+    if (servers && servers[0] && !firstFetch.current) {
       form.setFieldsValue({
         metric: 'Log_Full_Scans_Count',
         param: 'count',
         server: servers[0].id,
       })
+      firstFetch.current = true
       form.submit()
     }
   }, [form, servers])
@@ -263,7 +260,11 @@ const AnalysisPage = () => {
                     ]}
                     initialValue={15}
                   >
-                    <Select options={intervalOptions} className="w-40" />
+                    <Select
+                      onChange={() => form.submit()}
+                      options={intervalOptions}
+                      className="w-40"
+                    />
                   </Form.Item>
                 </Col>
                 <Col>
@@ -278,7 +279,7 @@ const AnalysisPage = () => {
                       { required: true, message: 'Pick the range of date' },
                     ]}
                   >
-                    <DatePicker.RangePicker />
+                    <DatePicker.RangePicker onChange={() => form.submit()} />
                   </Form.Item>
                 </Col>
                 <Col>
@@ -302,6 +303,7 @@ const AnalysisPage = () => {
                           datasets[form.getFieldValue('metric')].options
                         )
                       }}
+                      onChange={() => form.submit()}
                       options={Object.keys(groupedDatasets).map((key) => {
                         return {
                           label: key,
@@ -330,6 +332,7 @@ const AnalysisPage = () => {
                       showSearch
                       optionFilterProp="label"
                       options={options}
+                      onChange={() => form.submit()}
                     />
                   </Form.Item>
                 </Col>
@@ -348,6 +351,7 @@ const AnalysisPage = () => {
                     <Select
                       showSearch
                       optionFilterProp="label"
+                      onChange={() => form.submit()}
                       options={Object.keys(groupedServers).map((key) => {
                         return {
                           label: key,
