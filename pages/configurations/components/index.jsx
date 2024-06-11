@@ -34,7 +34,7 @@ const ComponentsPage = () => {
     } finally {
       setIsLoading(false)
     }
-  }, [])
+  })
 
   const getFeatureNameById = useCallback(
     (featureId) => {

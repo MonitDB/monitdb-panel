@@ -1,12 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { notification, Select, Table } from 'antd'
+import { notification, Table } from 'antd'
 import { format, parseISO } from 'date-fns'
 import { useFormik } from 'formik'
 import { useRouter } from 'next/router'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 // import Highlighter from '~/components/highlighter'
-import { useGlobal } from '~/hooks/index'
+// import { useGlobal } from '~/hooks/index'
 import { getInstallationLogs } from '~/services/logs'
 
 import { default as PageContent } from '../../content/content'
@@ -22,20 +22,20 @@ export const InstallationLog = () => {
     current: 1,
   })
 
-  const {
-    globalState: { servers },
-  } = useGlobal()
+  // const {
+  //   globalState: { servers },
+  // } = useGlobal()
 
-  const serversOptions = useMemo(
-    () => [
-      { value: '', label: 'All servers' },
-      ...servers.map(({ serverName }) => ({
-        value: serverName,
-        label: serverName,
-      })),
-    ],
-    [servers]
-  )
+  // const serversOptions = useMemo(
+  //   () => [
+  //     { value: '', label: 'All servers' },
+  //     ...servers.map(({ serverName }) => ({
+  //       value: serverName,
+  //       label: serverName,
+  //     })),
+  //   ],
+  //   [servers]
+  // )
   const formik = useFormik({
     initialValues: {
       PageNumber: 1,
@@ -69,25 +69,25 @@ export const InstallationLog = () => {
 
   useEffect(fetchData, [fetchData])
 
-  const handleChangeField = useCallback(
-    (values) => {
-      const parameters_ = {
-        ...formik.values,
-      }
-      for (const { name, value } of values) {
-        parameters_[name] = value
-        formik.setFieldValue(name, value)
-      }
+  // const handleChangeField = useCallback(
+  //   (values) => {
+  //     const parameters_ = {
+  //       ...formik.values,
+  //     }
+  //     for (const { name, value } of values) {
+  //       parameters_[name] = value
+  //       formik.setFieldValue(name, value)
+  //     }
 
-      const query = Object.keys(parameters_)
-        .filter((key) => parameters_[key])
-        .map((key) => `${key}=${parameters_[key]}`)
-        .join('&')
+  //     const query = Object.keys(parameters_)
+  //       .filter((key) => parameters_[key])
+  //       .map((key) => `${key}=${parameters_[key]}`)
+  //       .join('&')
 
-      router.push(`/configurations/logs/?${query}`)
-    },
-    [formik.values] // eslint-disable-line react-hooks/exhaustive-deps
-  )
+  //     router.push(`/configurations/logs/?${query}`)
+  //   },
+  //   [formik.values] // eslint-disable-line react-hooks/exhaustive-deps
+  // )
 
   const updateFormFields = useCallback(async () => {
     const fields = Object.keys(router.query)
@@ -103,7 +103,7 @@ export const InstallationLog = () => {
 
   return (
     <PageContent removeSidebarMargin={true}>
-      <Select
+      {/* <Select
         name="ServerName"
         containerClass="w-full md:w-1/3 bg-white border-white md:min-w-1/3"
         options={serversOptions}
@@ -112,11 +112,11 @@ export const InstallationLog = () => {
           handleChangeField([{ name: 'ServerName', value }])
         }}
         style={{ marginBottom: '15px' }}
-      />
+      /> */}
       <br />
       <Table
         dataSource={data.map((d) => ({ ...d, key: d.id }))}
-        size="small"
+        size="large"
         loading={loading}
         // expandable={{
         //   expandedRowRender: (record) => (
@@ -131,7 +131,11 @@ export const InstallationLog = () => {
         // }}
         columns={[
           { title: 'id', dataIndex: 'idVersionFile' },
-          { title: 'File', dataIndex: 'versionFile.versionFileName' },
+          {
+            title: 'File',
+            dataIndex: 'versionFile',
+            render: (value) => value.versionFileName,
+          },
           {
             title: 'Output',
             dataIndex: 'versionInstallationHistoryDescription',
