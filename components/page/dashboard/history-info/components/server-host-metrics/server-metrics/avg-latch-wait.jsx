@@ -2,6 +2,7 @@ import { format } from 'date-fns'
 import React, { memo } from 'react'
 
 import Chart from '~/components/chart'
+import { formatter } from '~/utils/date'
 
 function AvgLatchWait({ isLoading, seriesData }) {
   if (isLoading) {
@@ -44,9 +45,7 @@ function AvgLatchWait({ isLoading, seriesData }) {
           },
           labels: {
             show: false,
-            formatter: function (value) {
-              return format(value, "dd MMM yyyy kk':'mm")
-            },
+            formatter,
           },
         }}
         seriesData={seriesData}

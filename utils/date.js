@@ -1,3 +1,5 @@
+import { format, isValid, parseISO } from 'date-fns'
+
 function getMonthsArray(startDate) {
   const currentDate = new Date()
   const monthsArray = []
@@ -24,4 +26,15 @@ const parseDateString = (dateString) => {
   return new Date(year, month - 1, day)
 }
 
-export { getMonthsArray, parseDateString }
+const formatter = function (value) {
+  if (value) {
+    const date = parseISO(value) // Converte o valor para um objeto Date
+    if (isValid(date)) {
+      // Verifica se é uma data válida
+      return format(date, "dd MMM yyyy kk':'mm")
+    }
+  }
+  return ''
+}
+
+export { getMonthsArray, parseDateString, formatter }

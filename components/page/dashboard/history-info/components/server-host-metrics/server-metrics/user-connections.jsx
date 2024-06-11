@@ -3,6 +3,7 @@ import React, { memo } from 'react'
 
 import Chart from '~/components/chart'
 import Loading from '~/components/loading/loading'
+import { formatter } from '~/utils/date'
 
 function userConnections({ isLoading, seriesData }) {
   if (isLoading) {
@@ -45,9 +46,7 @@ function userConnections({ isLoading, seriesData }) {
           },
           labels: {
             show: false,
-            formatter: function (value) {
-              return format(value, "dd MMM yyyy kk':'mm")
-            },
+            formatter,
           },
         }}
         seriesData={seriesData}

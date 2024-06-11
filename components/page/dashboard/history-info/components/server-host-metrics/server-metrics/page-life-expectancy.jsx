@@ -4,6 +4,7 @@ import React, { memo, useMemo } from 'react'
 
 import Chart from '~/components/chart'
 import { useLockWaits, useSingleDashboard } from '~/hooks/index'
+import { formatter } from '~/utils/date'
 
 function LockWaitsSec() {
   const { currentServer } = useSingleDashboard()
@@ -67,9 +68,7 @@ function LockWaitsSec() {
           },
           labels: {
             show: false,
-            formatter: function (value) {
-              return format(value, "dd MMM yyyy kk':'mm")
-            },
+            formatter,
           },
         }}
         seriesData={seriesData}
