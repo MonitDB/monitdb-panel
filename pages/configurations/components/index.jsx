@@ -9,6 +9,7 @@ import { PageContent, PageHeader, PageWrapper } from '~/components/page'
 import Layout from '~/layouts/default'
 import { getComponents } from '~/services/components'
 import { getFeatures } from '~/services/features'
+import { truncateString } from '~/utils/truncateString'
 
 import ComponentsModal from './modal'
 
@@ -35,7 +36,7 @@ const ComponentsPage = () => {
     } finally {
       setIsLoading(false)
     }
-  })
+  }, [])
 
   const getFeatureNameById = useCallback(
     (featureId) => {
@@ -85,6 +86,7 @@ const ComponentsPage = () => {
       title: 'Query / URL',
       dataIndex: 'componentQuery',
       key: 'componentQuery',
+      render: (value) => truncateString(value, 50),
     },
     {
       title: 'Created at',
@@ -137,7 +139,6 @@ const ComponentsPage = () => {
                 },
                 style: { cursor: 'pointer' },
               })}
-              pagination={true}
             />
           </PageContent>
         </PageWrapper>
