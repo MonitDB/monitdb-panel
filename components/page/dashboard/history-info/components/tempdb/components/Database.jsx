@@ -57,9 +57,10 @@ export const TemporaryDBDatabase = () => {
           <>
             <ApexChart
               height={'100%'}
+              type="scatter"
               options={{
                 ...defaultChartOptions,
-                stroke: { width: 1, curve: 'straight' },
+
                 xaxis: {
                   type: 'datetime',
                   labels: {

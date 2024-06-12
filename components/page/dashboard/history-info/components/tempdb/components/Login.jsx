@@ -57,6 +57,7 @@ export const TemporaryDBLogin = () => {
           <>
             <ApexChart
               height={'100%'}
+              type="scatter"
               options={{
                 ...defaultChartOptions,
                 stroke: { width: 1, curve: 'straight' },
@@ -83,7 +84,6 @@ export const TemporaryDBLogin = () => {
                     index.createDate,
                     index.tempdbTotalNet,
                   ]),
-                  group: item.label,
                 }
               })}
             />

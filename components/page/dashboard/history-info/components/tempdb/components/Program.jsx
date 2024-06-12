@@ -56,10 +56,13 @@ export const TemporaryDBProgram = () => {
         ) : (
           <>
             <ApexChart
+              type="scatter"
               height={'100%'}
               options={{
                 ...defaultChartOptions,
-                stroke: { width: 1, curve: 'straight' },
+                chart: {
+                  toolbar: false,
+                },
                 xaxis: {
                   type: 'datetime',
                   labels: {
@@ -80,9 +83,10 @@ export const TemporaryDBProgram = () => {
                 return {
                   name: item.label,
                   data: item.data.map((index) => [
-                    index.createDate,
+                    new Date(index.createDate).getTime(),
                     index.tempdbTotalNet,
                   ]),
+                  // group: item.label,
                 }
               })}
             />

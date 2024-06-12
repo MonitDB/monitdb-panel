@@ -36,7 +36,7 @@ instance2.interceptors.request.use((config) => {
   const tokenRequest = getUserToken()
 
   if (tokenRequest && isTokenExpired(tokenRequest)) {
-    remove()
+    remove(tokenRequest)
     window.location.href = ''
     return config
   }
