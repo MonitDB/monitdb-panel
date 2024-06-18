@@ -12,30 +12,16 @@ import { getInstallationLogs } from '~/services/logs'
 import { default as PageContent } from '../../content/content'
 
 export const InstallationLog = () => {
-  const MAX_POSTS_PER_PAGE = 10
+  const DEFAULT_PAGE_SIZE = 10
   const router = useRouter()
   const [data, setData] = useState([])
   const [loading, setLoading] = useState(false)
   const [pagination, setPagination] = useState({
-    total: 0,
-    pageSize: MAX_POSTS_PER_PAGE,
+    pageSize: DEFAULT_PAGE_SIZE,
     current: 1,
   })
+  const [total, setTotal] = useState(0)
 
-  // const {
-  //   globalState: { servers },
-  // } = useGlobal()
-
-  // const serversOptions = useMemo(
-  //   () => [
-  //     { value: '', label: 'All servers' },
-  //     ...servers.map(({ serverName }) => ({
-  //       value: serverName,
-  //       label: serverName,
-  //     })),
-  //   ],
-  //   [servers]
-  // )
   const formik = useFormik({
     initialValues: {
       PageNumber: 1,
@@ -49,45 +35,26 @@ export const InstallationLog = () => {
     try {
       const response = await getInstallationLogs({
         page: pagination.current,
-        pageSize: MAX_POSTS_PER_PAGE,
+        pageSize: pagination.pageSize,
         serverName: router.query.ServerName,
       })
 
       setData(response?.data?.logs || [])
-      setPagination({
-        ...pagination,
-        totalResults: response?.data?.totalResults || 0,
-      })
+      setPagination((previous) => ({
+        ...previous,
+        total: response?.data?.totalResults || 0,
+      }))
+      setTotal(response?.data?.totalResults || 0)
     } catch {
       notification.error({
         message: 'Error to load the logs',
-        description: 'Please verify manually the erros at db.',
+        description: 'Please verify manually the errors at db.',
       })
     }
     setLoading(false)
-  }, [pagination.current, router.query.ServerName])
+  }, [pagination.current, pagination.pageSize, router.query.ServerName])
 
   useEffect(fetchData, [fetchData])
-
-  // const handleChangeField = useCallback(
-  //   (values) => {
-  //     const parameters_ = {
-  //       ...formik.values,
-  //     }
-  //     for (const { name, value } of values) {
-  //       parameters_[name] = value
-  //       formik.setFieldValue(name, value)
-  //     }
-
-  //     const query = Object.keys(parameters_)
-  //       .filter((key) => parameters_[key])
-  //       .map((key) => `${key}=${parameters_[key]}`)
-  //       .join('&')
-
-  //     router.push(`/configurations/logs/?${query}`)
-  //   },
-  //   [formik.values] // eslint-disable-line react-hooks/exhaustive-deps
-  // )
 
   const updateFormFields = useCallback(async () => {
     const fields = Object.keys(router.query)
@@ -101,36 +68,29 @@ export const InstallationLog = () => {
     updateFormFields()
   }, [updateFormFields])
 
+  const handleTableChange = (page, pageSize) => {
+    setPagination((current) => {
+      const newPage = current.pageSize !== pageSize ? 1 : page
+      return {
+        ...current,
+        current: newPage,
+        pageSize: pageSize,
+      }
+    })
+  }
+
   return (
     <PageContent removeSidebarMargin={true}>
-      {/* <Select
-        name="ServerName"
-        containerClass="w-full md:w-1/3 bg-white border-white md:min-w-1/3"
-        options={serversOptions}
-        value={formik.values.ServerName}
-        onChange={(value) => {
-          handleChangeField([{ name: 'ServerName', value }])
-        }}
-        style={{ marginBottom: '15px' }}
-      /> */}
       <br />
       <Table
         dataSource={data.map((d) => ({ ...d, key: d.id }))}
         size="large"
         loading={loading}
-        // expandable={{
-        //   expandedRowRender: (record) => (
-        //     <Highlighter
-        //       code={record.componentLogResult.replace(',', ',\n')}
-        //       showLineNumbers={true}
-        //       language={'javascript'}
-        //       maxHeight={'350px'}
-        //       maxWidth={'86vw'}
-        //     />
-        //   ),
-        // }}
         columns={[
-          { title: 'id', dataIndex: 'idVersionFile' },
+          {
+            title: 'Server Name',
+            dataIndex: 'versionInstalationHistoryServerName',
+          },
           {
             title: 'File',
             dataIndex: 'versionFile',
@@ -147,13 +107,12 @@ export const InstallationLog = () => {
           },
         ]}
         pagination={{
-          total: pagination.totalResults,
+          pageSize: pagination.pageSize,
+          total: total,
           current: pagination.current,
-          showSizeChanger: false,
-          onChange: (page) => {
-            setPagination({ ...pagination, current: page })
-            window.scrollTo(0, 0)
-          },
+          showSizeChanger: true,
+          pageSizeOptions: ['10', '20', '50', '100'],
+          onChange: handleTableChange,
         }}
       />
     </PageContent>

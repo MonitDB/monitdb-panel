@@ -21,7 +21,7 @@ export const TuningAdvisor = ({ currentServer }) => {
     { value: 'SP_Blitz', label: 'SP Blitz' },
     { value: 'SP_BlitzAnalysis', label: 'SP Blitz Analysis' },
     { value: 'SP_BlitzBackups', label: 'SP Blitz Backups' },
-    { value: 'SP_BlitzCache', label: 'SP Blitz Cache' },
+    { value: 'SP_Cache', label: 'SP Blitz Cache' },
     { value: 'SP_BlitzFirst', label: 'SP Blitz First' },
     { value: 'SP_BlitzIndex', label: 'SP Blitz Index' },
     { value: 'SP_BlitzLock', label: 'SP Blitz Lock' },
