@@ -1,4 +1,4 @@
-import { Button, Space } from 'antd'
+import { Button, Result, Space } from 'antd'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
@@ -45,15 +45,21 @@ const ResultStep = ({ socket, handlePreviusStep }) => {
         case 'success':
           return (
             <>
-              <h1>The server was successfully installed</h1>
-              <p>{result.message}</p>
+              <Result
+                status={'success'}
+                title={'The server was successfully installed'}
+                subTitle={result.message}
+              />
             </>
           )
         case 'error':
           return (
             <>
-              <h1>There are some errors at installation of the server</h1>
-              <p>{result.message}</p>
+              <Result
+                status={'error'}
+                title={'There are some errors at installation of the server'}
+                subTitle={result.message}
+              />
               <p>Please, try again</p>
             </>
           )
@@ -72,7 +78,7 @@ const ResultStep = ({ socket, handlePreviusStep }) => {
     <>
       <StepContainer>
         <ResultContainer>
-          <h2>Result Step</h2>
+          {/* <h2>Result Step</h2> */}
           {<ResultMessage>{resultMessage()}</ResultMessage>}
         </ResultContainer>
       </StepContainer>
