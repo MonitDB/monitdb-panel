@@ -1,6 +1,6 @@
 import React, { memo } from 'react'
 
-import Chart from '~/components/chart'
+import Chart, { tooltipFormatter } from '~/components/chart'
 import Loading from '~/components/loading/loading'
 import { formatter } from '~/utils/date'
 
@@ -17,6 +17,7 @@ function PageSplitsSec({ isLoading, seriesData }) {
     <div className="bg-white pt-5 pr-2">
       <Chart
         height="140"
+        group="opa"
         title={{
           text: 'Page Splits',
           offsetX: 7,
@@ -41,7 +42,8 @@ function PageSplitsSec({ isLoading, seriesData }) {
         xaxis={{
           type: 'datetime',
           tooltip: {
-            enabled: false,
+            enabled: true,
+            formatter: tooltipFormatter,
           },
           labels: {
             show: false,

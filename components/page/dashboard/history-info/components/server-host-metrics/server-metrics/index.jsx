@@ -71,6 +71,7 @@ const ServerMetrics = ({ key }) => {
               <BatchRequests
                 isLoading={isLoading}
                 seriesData={data?.batchRequest?.map(formatData) ?? []}
+                group={'opa'}
               />
             )}
           </div>
@@ -85,6 +86,7 @@ const ServerMetrics = ({ key }) => {
                 seriesData={
                   data?.sqlCompilationsPerBatchRequests?.map(formatData) ?? []
                 }
+                group={'opa'}
               />
             )}
           </div>

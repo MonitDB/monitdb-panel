@@ -17,7 +17,7 @@ import {
 import dayjs from 'dayjs'
 import moment from 'moment'
 import dynamic from 'next/dynamic'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useCallback } from 'react'
 import React, { useState } from 'react'
 
@@ -170,9 +170,16 @@ const CapacityPlan = ({ tabName }) => {
     }
   }, [serverId, startDate, endDate])
 
+  const firstFetch = useRef(false)
+
   useEffect(() => {
-    form.setFieldsValue({ dataRange: [startOfCurrentMonth, endOfCurrentMonth] })
-    form.setFieldsValue({ server: servers[0]?.id })
+    if (firstFetch.current === false) {
+      form.setFieldsValue({
+        dataRange: [startOfCurrentMonth, endOfCurrentMonth],
+      })
+      form.setFieldsValue({ server: servers[0]?.id })
+    }
+    if (servers.length > 0) firstFetch.current = true
   }, [form, servers])
 
   const diskSeries = Array.isArray(cpDisk?.diskGrowth)

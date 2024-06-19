@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import React, { memo } from 'react'
 
-import Chart from '~/components/chart'
+import Chart, { tooltipFormatter } from '~/components/chart'
 import Loading from '~/components/loading/loading'
 import { formatter } from '~/utils/date'
 
@@ -42,7 +42,8 @@ function LockWaitsSec({ isLoading, seriesData }) {
         xaxis={{
           type: 'datetime',
           tooltip: {
-            enabled: false,
+            enabled: true,
+            formatter: tooltipFormatter,
           },
           labels: {
             show: false,

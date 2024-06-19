@@ -1,5 +1,5 @@
 import dynamic from 'next/dynamic'
-import React from 'react'
+import React, { useRef } from 'react'
 
 export const ApexChart = dynamic(
   () => {
@@ -85,12 +85,16 @@ const Chart = (properties) => {
     key,
     strokeWidth,
     className,
+    group,
     ...options
   } = properties
+
+  const chartReference = useRef(null)
 
   const chartOptions = {
     chart: {
       type: type || 'area',
+      group,
       toolbar: {
         show: false,
         offsetX: '-100%',
@@ -355,6 +359,7 @@ const Chart = (properties) => {
       unit={unit || '%'}
       className={className}
       strokeWidth={strokeWidth}
+      ref={chartReference}
     />
   )
 }
@@ -370,3 +375,8 @@ export default Chart
 //   () => import('@ant-design/charts').then(({ Line }) => Line),
 //   { ssr: false }
 // )
+
+export const tooltipFormatter = (value) => {
+  const date = new Date(value)
+  return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`
+}

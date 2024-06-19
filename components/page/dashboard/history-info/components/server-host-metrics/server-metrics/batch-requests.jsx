@@ -1,10 +1,10 @@
 import React, { memo } from 'react'
 
-import Chart from '~/components/chart'
+import Chart, { tooltipFormatter } from '~/components/chart'
 import Loading from '~/components/loading/loading'
 import { formatter } from '~/utils/date'
 
-function BatchRequests({ isLoading, seriesData }) {
+function BatchRequests({ isLoading, seriesData, group }) {
   if (isLoading) {
     return (
       <div className="col-span-2 bg-white lg:col-span-6 h-200 flex items-center justify-center h-[140px]">
@@ -41,7 +41,8 @@ function BatchRequests({ isLoading, seriesData }) {
         xaxis={{
           type: 'datetime',
           tooltip: {
-            enabled: false,
+            enabled: true,
+            formatter: tooltipFormatter,
           },
           labels: {
             show: false,
@@ -49,6 +50,7 @@ function BatchRequests({ isLoading, seriesData }) {
           },
         }}
         seriesData={seriesData}
+        group={group}
       />
     </div>
   )

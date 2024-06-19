@@ -1,9 +1,9 @@
 import React, { memo } from 'react'
 
-import Chart from '~/components/chart'
+import Chart, { tooltipFormatter } from '~/components/chart'
 import { formatter } from '~/utils/date'
 
-function AvgLatchWait({ isLoading, seriesData }) {
+function AvgLatchWait({ isLoading, seriesData, group }) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-full">
@@ -40,13 +40,15 @@ function AvgLatchWait({ isLoading, seriesData }) {
         xaxis={{
           type: 'datetime',
           tooltip: {
-            enabled: false,
+            enabled: true,
+            formatter: tooltipFormatter,
           },
           labels: {
             show: false,
             formatter,
           },
         }}
+        group={group}
         seriesData={seriesData}
       />
     </div>

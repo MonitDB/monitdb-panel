@@ -1,7 +1,7 @@
 import { format } from 'date-fns'
 import React, { memo } from 'react'
 
-import Chart from '~/components/chart'
+import Chart, { tooltipFormatter } from '~/components/chart'
 import Loading from '~/components/loading/loading'
 
 function PageSplitsBatchRequests({ seriesData, isLoading }) {
@@ -41,7 +41,8 @@ function PageSplitsBatchRequests({ seriesData, isLoading }) {
         xaxis={{
           type: 'datetime',
           tooltip: {
-            enabled: false,
+            enabled: true,
+            formatter: tooltipFormatter,
           },
           labels: {
             show: false,
