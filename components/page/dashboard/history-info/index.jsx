@@ -65,7 +65,10 @@ const HistoryInfo = ({ currentServer }) => {
   })
 
   return (
-    <div className="w-full flex flex-col gap-y-6 mt-6">
+    <div
+      className="w-full flex flex-col gap-y-6 mt-6"
+      style={{ overflow: 'hidden' }}
+    >
       <div className="w-full flex gap-x-8 p-4 border border-gray-light bg-white text-sm">
         <div className="flex gap-2 mr-auto">
           {serverMetrics?.osProperties?.['host_platform'] === 'Windows' && (
