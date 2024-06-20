@@ -59,7 +59,7 @@ const HistoryInfo = ({ currentServer }) => {
       cpu: true,
       memory: true,
       disk: true,
-      lastMinutes: router.query.lastMinutes,
+      lastMinutes: Number(router.query.lastMinutes),
     },
     onSubmit: () => {},
   })
@@ -107,7 +107,7 @@ const HistoryInfo = ({ currentServer }) => {
 
       <div id="allinstancemetrics">
         <Row gutter={16}>
-          {hasPermission(user, FeatureFunction.CPU, TypeGrant.READ) && (
+          {hasPermission(user, FeatureFunction.MEMORY, TypeGrant.READ) && (
             <Col
               md={12}
               sm={24}
@@ -119,7 +119,7 @@ const HistoryInfo = ({ currentServer }) => {
             </Col>
           )}
 
-          {hasPermission(user, FeatureFunction.MEMORY, TypeGrant.READ) && (
+          {hasPermission(user, FeatureFunction.CPU, TypeGrant.READ) && (
             <Col
               md={12}
               sm={24}
@@ -172,7 +172,10 @@ const HistoryInfo = ({ currentServer }) => {
         )}
 
         {hasPermission(user, FeatureFunction.DATABASES, TypeGrant.READ) && (
-          <Databases currentServer={currentServer} />
+          <Databases
+            key={router.query.lastMinutes}
+            currentServer={currentServer}
+          />
         )}
       </div>
     </div>

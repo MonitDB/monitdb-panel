@@ -13,7 +13,7 @@ function Databases(properties) {
   const { getLogDatabase } = useLogContext()
 
   const router = useRouter()
-  const lastMinutes = router.query.lastMinutes ?? 60
+  const lastMinutes = router.query.lastMinutes
 
   const [data, setData] = useState([])
   const [loading, setLoading] = useState(false)
@@ -23,7 +23,9 @@ function Databases(properties) {
   const fetchData = useCallback(async () => {
     try {
       setLoading(true)
-      const data = await getLogDatabase(currentServer?.id, { lastMinutes })
+      const data = await getLogDatabase(currentServer?.id, {
+        lastMinutes: lastMinutes ?? 60,
+      })
       setData(data)
     } catch {
       setData([])

@@ -150,7 +150,10 @@ const MetricsPage = () => {
                 <Table
                   size="small"
                   loading={isLoading}
-                  pagination={parameters?.length > 10}
+                  pagination={{
+                    showSizeChanger: true,
+                    pageSizeOptions: ['10', '20', '50', '100'],
+                  }}
                   dataSource={parameters ?? []}
                   columns={[
                     { dataIndex: 'alertName', title: 'Name' },

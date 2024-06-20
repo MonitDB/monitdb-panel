@@ -37,7 +37,7 @@ function MemoryUsage(properties) {
       <Loading />
     </div>
   ) : (
-    <div className="col-span-2 bg-white lg:col-span-6">
+    <div className="col-span-2 bg-white lg:col-span-6 h-[215px] ">
       <ApexChart
         height={'100%'}
         options={{

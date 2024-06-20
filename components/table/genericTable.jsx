@@ -5,7 +5,12 @@ import { useState } from 'react'
 
 import { GenericTableStyles } from './genericTableStyles'
 
-export const GenericTable = ({ loading, data, columnAlias }) => {
+export const GenericTable = ({
+  loading,
+  data,
+  columnAlias,
+  pagination = false,
+}) => {
   const [modal, setModal] = useState({ open: false, data: {} })
   return (
     <>
@@ -15,6 +20,7 @@ export const GenericTable = ({ loading, data, columnAlias }) => {
             locale={{ emptyText: 'No data to display' }}
             loading={loading}
             size="small"
+            pagination={pagination}
             columns={Object?.keys(data[0] ?? []).map((key, index) => ({
               dataIndex: key,
               title: (columnAlias && columnAlias[index]) || key,

@@ -145,7 +145,14 @@ export const TuningAdvisor = ({ currentServer }) => {
         </Col>
       </Row>
 
-      <GenericTable data={data ?? []} loading={loading} />
+      <GenericTable
+        data={data ?? []}
+        loading={loading}
+        pagination={{
+          showSizeChanger: true,
+          pageSizeOptions: ['10', '20', '50', '100'],
+        }}
+      />
     </>
   )
 }
