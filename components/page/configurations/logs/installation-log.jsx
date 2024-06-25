@@ -3,7 +3,6 @@ import { DatePicker, notification, Select, Space, Table } from 'antd'
 import { format, parseISO } from 'date-fns'
 import dayjs from 'dayjs'
 import { useFormik } from 'formik'
-import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 
 import { getInstallationLogs, getInstallationServers } from '~/services/logs'
