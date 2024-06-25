@@ -15,8 +15,14 @@ const ResultMessage = styled.div`
   text-align: center;
   margin-top: 20px;
 `
-
-const ResultStep = ({ socket, handlePreviusStep }) => {
+/**
+ * Componente para exibir o passo de resultado.
+ *
+ * @param {Object} props - Props do componente.
+ * @param {EventSource | undefined} props.eventSource - Objeto EventSource ou undefined.
+ * @param {Function} props.handlePreviusStep - Função para voltar para o passo anterior.
+ */
+const ResultStep = ({ eventSource, handlePreviusStep }) => {
   const [result, setResult] = useState({ status: '', message: '' })
 
   const router = useRouter()
@@ -28,16 +34,13 @@ const ResultStep = ({ socket, handlePreviusStep }) => {
     }
   }
   useEffect(() => {
-    if (socket) {
-      socket.on('result', handleResult)
+    if (eventSource) {
+      // eslint-disable-next-line unicorn/prevent-abbreviations
+      eventSource.addEventListener('result', (e) => {
+        handleResult(JSON.parse(e.data))
+      })
     }
-
-    return () => {
-      if (socket) {
-        socket.off('result', handleResult)
-      }
-    }
-  }, [socket])
+  }, [eventSource])
 
   const resultMessage = () => {
     if (result) {

@@ -1,11 +1,12 @@
 import { Form, Steps } from 'antd'
+import { EventSourcePolyfill } from 'event-source-polyfill'
 import { NextSeo } from 'next-seo'
-import { useEffect, useState } from 'react'
-import { io } from 'socket.io-client'
+import { useEffect, useRef, useState } from 'react'
 
 import { PageContent, PageHeader } from '~/components/page'
 import Layout from '~/layouts/default'
-import { SOCKET } from '~/utils/client-api'
+import { APIV2 } from '~/utils/client-api'
+import { getUserToken } from '~/utils/cookies'
 
 import DetailsStep from './components/DetailsStep'
 import ResultStep from './components/Result'
@@ -32,22 +33,39 @@ const steps = [
 
 const InstallationWizard = () => {
   const [step, setStep] = useState(0)
-  const [socketID, setSocketID] = useState()
-  const [socket, setSocket] = useState()
+  const [connectionId, setConnectionId] = useState()
 
   const [form] = Form.useForm()
+  const eventSource = useRef()
 
   useEffect(() => {
-    if (!socket) setSocket(io(SOCKET))
-  }, [socket])
+    eventSource.current = new EventSourcePolyfill(APIV2 + '/events', {
+      headers: {
+        Authorization: `Bearer ${getUserToken()}`,
+        'x-api-key': process.env.apiKey,
+      },
+    })
 
-  useEffect(() => {
-    if (socket) {
-      socket.on('connect', () => {
-        setSocketID(socket.id)
-      })
+    eventSource.current.addEventListener('connection', function (event) {
+      const data = JSON.parse(event.data)
+      setConnectionId(data.id)
+    })
+
+    setInterval(() => {
+      if (eventSource.current.readyState == EventSource.CLOSED) {
+        eventSource.current = new EventSourcePolyfill(APIV2 + '/events', {
+          headers: {
+            Authorization: `Bearer ${getUserToken()}`,
+            'x-api-key': process.env.apiKey,
+          },
+        })
+      }
+    }, 3000)
+
+    return () => {
+      eventSource.current.close()
     }
-  }, [socket])
+  }, [])
 
   return (
     <>
@@ -89,14 +107,14 @@ const InstallationWizard = () => {
                 step={step}
                 handleNextStep={() => setStep(step + 1)}
                 handlePreviusStep={() => setStep(step - 1)}
-                socketID={socketID}
-                socket={socket}
+                connectionId={connectionId}
+                eventSource={eventSource.current}
                 form={form}
               />
             </div>
             <div style={{ display: step === 3 ? 'inherit' : 'none' }}>
               <ResultStep
-                socket={socket}
+                eventSource={eventSource.current}
                 handlePreviusStep={() => setStep(step - 1)}
               />
             </div>

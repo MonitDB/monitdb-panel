@@ -30,6 +30,7 @@
     "date-fns": "^2.29.3",
     "dayjs": "^1.11.10",
     "dotenv": "^16.4.5",
+    "event-source-polyfill": "^1.0.31",
     "faker": "5.5.3",
     "file-saver": "^2.0.5",
     "formik": "^2.4.5",

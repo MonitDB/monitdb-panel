@@ -40,9 +40,9 @@ export const getAvailableVersions = async () => {
   }
 }
 
-export const installNewServer = async (values, versionID, socketID) => {
+export const installNewServer = async (values, versionID, connectionId) => {
   return apiV2().post(`/server/install-new-server`, values, {
-    params: { socketID, versionID },
+    params: { connectionId, versionID },
   })
 }
 

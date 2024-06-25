@@ -7,13 +7,25 @@ import { getAvailableVersions, installNewServer } from '~/services/servers'
 
 import StepContainer from './StepContainer'
 
+/**
+ * Componente para configurar um novo passo de servidor.
+ *
+ * @param {Object} props - Props do componente.
+ * @param {Function} props.handleNextStep - Função para avançar para o próximo passo.
+ * @param {Function} props.handlePreviusStep - Função para voltar para o passo anterior.
+ * @param {Object} props.form - Objeto contendo os dados do formulário.
+ * @param {number} props.step - Número do passo atual.
+ * @param {EventSource | undefined} props.eventSource - Objeto EventSource ou undefined.
+ * @param {number} props.connectionId - ID da conexão.
+ */
+
 const SetUpNewServerStep = ({
   handleNextStep,
   handlePreviusStep,
   form,
   step,
-  socket,
-  socketID,
+  eventSource,
+  connectionId,
 }) => {
   const [terminalOutput, setTerminalOutput] = useState([])
 
@@ -27,13 +39,25 @@ const SetUpNewServerStep = ({
   }
 
   useEffect(() => {
-    socket?.on('message', handleSocketMessage)
-    socket?.on('disconnect', () => {
-      setTerminalOutput((previousOutput) => [...previousOutput, 'Disconnected'])
-
-      setInstallResult()
+    eventSource.addEventListener('message', (event) => {
+      handleSocketMessage(event.data)
     })
-  }, [socket])
+
+    eventSource.addEventListener('error', () => {
+      if (eventSource?.current?.readyState == EventSource.CLOSED) {
+        setTerminalOutput((previousOutput) => [
+          ...previousOutput,
+          'Disconnected',
+        ])
+        setInstallResult()
+      }
+    })
+
+    return () => {
+      eventSource.removeEventListener('message')
+      eventSource.removeEventListener('error')
+    }
+  }, [])
 
   useEffect(async () => {
     try {
@@ -46,8 +70,6 @@ const SetUpNewServerStep = ({
     }
   }, [step])
 
-  useEffect(() => {}, [form, socketID])
-
   const handleInstall = async () => {
     setInstalling(true)
     setInstallResult()
@@ -55,7 +77,7 @@ const SetUpNewServerStep = ({
       const { data } = await installNewServer(
         form.getFieldsValue(),
         version,
-        socketID
+        connectionId
       )
       setInstallResult(data)
       setInstalling(false)

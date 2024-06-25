@@ -27,7 +27,7 @@ export const APIV2 = process.env.apiV2
 export const SOCKET = process.env.socket
 
 const instance2 = axios.create({
-  baseURL: process.env.apiV2,
+  baseURL: APIV2,
   headers: {
     'x-api-key': process.env.apiKey,
   },
