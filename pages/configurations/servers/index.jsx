@@ -90,7 +90,7 @@ const ConfigurationsServersPage = () => {
                       render: (value, record) => (
                         <Row>
                           <Col>
-                            <Button type="link">
+                            <Button type="default">
                               {' '}
                               <Link
                                 href={`/configurations/servers/${record.id}`}

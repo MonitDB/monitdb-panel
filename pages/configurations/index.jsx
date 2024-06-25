@@ -146,19 +146,6 @@ const ConfigurationsPage = () => {
                   <ul className="space-y-4 text-sm">
                     <li>
                       <Link
-                        href="/configurations/profiles"
-                        className="group block"
-                      >
-                        <strong className="block group-hover:text-blue">
-                          Manage profiles
-                        </strong>
-                        <span className="group-hover:opacity-75">
-                          Configure the permissions of each profile
-                        </span>
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
                         href="/configurations/installation-wizard"
                         className="group block"
                       >
@@ -183,23 +170,19 @@ const ConfigurationsPage = () => {
                         </span>
                       </Link>
                     </li>
-                    {hasPermission(
-                      user,
-                      FeatureFunction.AUTHENTICATION_SETTINGS,
-                      TypeGrant.OWNER
-                    ) && (
-                      <li className="opacity-25">
-                        <Link href="/configurations/" className="group block">
-                          <strong className="block group-hover:text-blue">
-                            Authentication settings
-                          </strong>
-                          <span className="group-hover:opacity-75">
-                            Set authentication preferences for MonitDB.
-                          </span>
-                        </Link>
-                      </li>
-                    )}
-
+                    <li>
+                      <Link
+                        href="/configurations/profiles"
+                        className="group block"
+                      >
+                        <strong className="block group-hover:text-blue">
+                          Manage profiles
+                        </strong>
+                        <span className="group-hover:opacity-75">
+                          Configure the permissions of each profile
+                        </span>
+                      </Link>
+                    </li>
                     {hasPermission(
                       user,
                       FeatureFunction.USER_MANAGEMENT,
@@ -222,16 +205,16 @@ const ConfigurationsPage = () => {
 
                     {hasPermission(
                       user,
-                      FeatureFunction.BASIC_MONITOR_CONNECTIONS
+                      FeatureFunction.AUTHENTICATION_SETTINGS,
+                      TypeGrant.OWNER
                     ) && (
                       <li className="opacity-25">
                         <Link href="/configurations/" className="group block">
                           <strong className="block group-hover:text-blue">
-                            Base monitor connections
+                            Authentication settings
                           </strong>
                           <span className="group-hover:opacity-75">
-                            View details of your base monitor connections;
-                            connect to different base monitors.
+                            Set authentication preferences for MonitDB.
                           </span>
                         </Link>
                       </li>
@@ -249,6 +232,22 @@ const ConfigurationsPage = () => {
                           </strong>
                           <span className="group-hover:opacity-75">
                             Set user display preferences for MonitDB.
+                          </span>
+                        </Link>
+                      </li>
+                    )}
+                    {hasPermission(
+                      user,
+                      FeatureFunction.BASIC_MONITOR_CONNECTIONS
+                    ) && (
+                      <li className="opacity-25">
+                        <Link href="/configurations/" className="group block">
+                          <strong className="block group-hover:text-blue">
+                            Base monitor connections
+                          </strong>
+                          <span className="group-hover:opacity-75">
+                            View details of your base monitor connections;
+                            connect to different base monitors.
                           </span>
                         </Link>
                       </li>
@@ -347,23 +346,6 @@ const ConfigurationsPage = () => {
                       )}
                       {hasPermission(
                         user,
-                        FeatureFunction.NOTIFICATION_SETTINGS,
-                        TypeGrant.EXECUTE
-                      ) && (
-                        <li className="opacity-25">
-                          <Link href="/configurations/" className="group block">
-                            <strong className="block group-hover:text-blue">
-                              Notification settings
-                            </strong>
-                            <span className="group-hover:opacity-75">
-                              Set up and manage notifications for alerts
-                              (Email/Slack/SNMP/Webhook/EventLog).
-                            </span>
-                          </Link>
-                        </li>
-                      )}
-                      {hasPermission(
-                        user,
                         FeatureFunction.CUSTOM_METRICS,
                         TypeGrant.DELETE
                       ) && (
@@ -375,6 +357,23 @@ const ConfigurationsPage = () => {
                             <span className="group-hover:opacity-75">
                               Create and manage custom metrics and custom
                               alerts.
+                            </span>
+                          </Link>
+                        </li>
+                      )}
+                      {hasPermission(
+                        user,
+                        FeatureFunction.NOTIFICATION_SETTINGS,
+                        TypeGrant.EXECUTE
+                      ) && (
+                        <li className="opacity-25">
+                          <Link href="/configurations/" className="group block">
+                            <strong className="block group-hover:text-blue">
+                              Notification settings
+                            </strong>
+                            <span className="group-hover:opacity-75">
+                              Set up and manage notifications for alerts
+                              (Email/Slack/SNMP/Webhook/EventLog).
                             </span>
                           </Link>
                         </li>

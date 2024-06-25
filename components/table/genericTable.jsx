@@ -53,13 +53,13 @@ export const GenericTable = ({
       <Modal
         open={modal.open}
         closable={false}
-        width={800}
+        width={'80vw'}
         cancelButtonProps={{ style: { display: 'none' } }}
         onOk={() => {
           setModal({ open: false, data: {} })
         }}
       >
-        <div style={{ height: '500px', overflowY: 'auto' }}>
+        <div style={{ height: '70vh', overflowY: 'auto' }}>
           <Descriptions size="small" bordered column={1}>
             {Object.keys(modal.data).map((key) => {
               return (

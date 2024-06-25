@@ -39,11 +39,11 @@ const SetUpNewServerStep = ({
   }
 
   useEffect(() => {
-    eventSource.addEventListener('message', (event) => {
+    eventSource?.addEventListener('message', (event) => {
       handleSocketMessage(event.data)
     })
 
-    eventSource.addEventListener('error', () => {
+    eventSource?.addEventListener('error', () => {
       if (eventSource?.current?.readyState == EventSource.CLOSED) {
         setTerminalOutput((previousOutput) => [
           ...previousOutput,
@@ -54,8 +54,8 @@ const SetUpNewServerStep = ({
     })
 
     return () => {
-      eventSource.removeEventListener('message')
-      eventSource.removeEventListener('error')
+      eventSource?.removeEventListener('message')
+      eventSource?.removeEventListener('error')
     }
   }, [])
 
