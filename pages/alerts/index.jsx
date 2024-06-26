@@ -1,3 +1,4 @@
+/* eslint-disable unicorn/no-nested-ternary */
 import { faDatabase } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Input } from 'antd'
@@ -37,7 +38,7 @@ const AlertsPage = () => {
   const [formattedServers, setFormattedServers] = useState([])
   const [search, setSearch] = useState('')
   const [loadingAlertCount, setLoadingAlertCount] = useState(false)
-  const [error, setError] = useState(false)
+  const [, setError] = useState(false)
   const [serverAlertsCount, setServerAlertsCount] = useState({})
 
   const activeServersCount = useMemo(
@@ -186,10 +187,14 @@ const AlertsPage = () => {
                                 className="text-base"
                               />
                               <span className="truncate">{serverName}</span>
-                              <span className="flex items-center justify-center rounded-full w-5 min-w-5 h-5 ml-auto text-xs bg-orange text-white">
-                                {error
-                                  ? '?'
-                                  : serverAlertsCount[id]?.count || '?'}
+                              <span
+                                className={`flex items-center justify-center rounded-full w-5 min-w-5 h-5 ml-auto text-xs ${
+                                  serverAlertsCount[id]?.count === 0
+                                    ? 'bg-green'
+                                    : 'bg-orange'
+                                } text-white`}
+                              >
+                                {serverAlertsCount[id]?.count}
                               </span>
                             </h4>
                             {type?.typeServerName && (

@@ -101,11 +101,10 @@ const ConfigurationsServersSinglePage = () => {
 
     return formik?.values?.idTypeServer
       ? serverTypes.find(
-          (idTypeServer) =>
-            idTypeServer.idtypeserver === formik.values.idTypeServer
-        )?.typeservername
-      : serverTypes[0]?.typeservername
-  }, [formik?.values?.idTypeServer, serverTypes])
+          (serverType) => serverType.id === formik.values.idTypeServer
+        )?.typeServerName
+      : serverTypes[0]?.typeServerName
+  }, [formik.values.idTypeServer, serverTypes])
 
   return (
     <>

@@ -36,6 +36,10 @@ body {
   background-color: rgb(221, 221, 0);
 }
 
+.bg-green {
+  background-color: green;
+}
+
 a {
   @apply transition-all duration-300 ease-in-out;
 }

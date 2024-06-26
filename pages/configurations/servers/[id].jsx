@@ -89,12 +89,12 @@ const ConfigurationsServersSinglePage = () => {
   const databaseName = useMemo(() => {
     if (serverTypes?.length === 0) return ''
 
-    return formik?.values?.serverType
+    return formik?.values?.idTypeServer
       ? serverTypes.find(
-          (serverType) => serverType.idtypeserver === formik.values.serverType
-        )?.typeservername
-      : serverTypes[0]?.typeservername
-  }, [formik?.values?.serverType, serverTypes])
+          (serverType) => serverType.id === formik.values.idTypeServer
+        )?.typeServerName
+      : serverTypes[0]?.typeServerName
+  }, [formik.values.idTypeServer, serverTypes])
 
   const handleDelete = useCallback(async () => {
     if (!currentServer || !window?.confirm) return

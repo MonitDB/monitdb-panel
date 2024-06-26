@@ -11,6 +11,7 @@ import {
 } from 'antd'
 import { useState } from 'react'
 
+import DatabaseIcons from '~/helpers/database-icons'
 import { useGlobal } from '~/hooks/index'
 import { testServer } from '~/services/servers'
 
@@ -22,6 +23,12 @@ const ServerInformationStep = ({ handleNextStep, form }) => {
   } = useGlobal()
 
   const [loading, setLoading] = useState(false)
+
+  const serverType = Form.useWatch('idTypeServer', form)
+
+  const serverTypeName = serverTypes?.find(
+    (st) => st.id === serverType
+  )?.typeServerName
 
   return (
     <>
@@ -55,24 +62,6 @@ const ServerInformationStep = ({ handleNextStep, form }) => {
           <Row gutter={12}>
             <Col sm={12}>
               <Form.Item
-                name={'idTypeServer'}
-                label="Server Type"
-                rules={[
-                  { required: true, message: 'Server Type is required!' },
-                ]}
-              >
-                <Select
-                  disabled={loading}
-                  placeholder="Server type"
-                  options={serverTypes.map((type) => ({
-                    value: type.id,
-                    label: type.typeServerName,
-                  }))}
-                />
-              </Form.Item>
-            </Col>
-            <Col sm={12}>
-              <Form.Item
                 name={'idTypeServerEnvironment'}
                 label={'Environment'}
                 rules={[{ required: 'Environment is required!' }]}
@@ -86,6 +75,36 @@ const ServerInformationStep = ({ handleNextStep, form }) => {
                   }))}
                 />
               </Form.Item>
+            </Col>
+            <Col sm={12}>
+              <Row>
+                <Col sm={20}>
+                  <div style={{ display: 'flex' }}>
+                    <Form.Item
+                      name={'idTypeServer'}
+                      label="Server Type"
+                      style={{ width: '100%' }}
+                      rules={[
+                        { required: true, message: 'Server Type is required!' },
+                      ]}
+                    >
+                      <Select
+                        disabled={loading}
+                        placeholder="Server type"
+                        options={serverTypes.map((type) => ({
+                          value: type.id,
+                          label: type.typeServerName,
+                        }))}
+                      />
+                    </Form.Item>
+                    <DatabaseIcons
+                      name={serverTypeName}
+                      className="w-20 h-20 ml-5"
+                    />
+                  </div>
+                </Col>
+                <Col></Col>
+              </Row>
             </Col>
           </Row>
           <Row gutter={16}>
