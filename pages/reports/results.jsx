@@ -1,6 +1,6 @@
 /* eslint-disable unicorn/prefer-number-properties */
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { Select } from 'antd'
+import { Button, Select } from 'antd'
 import classNames from 'classnames'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
@@ -21,6 +21,7 @@ import { useUser } from '~/hooks/index'
 import useGlobal from '~/hooks/use-global'
 import Layout from '~/layouts/default'
 import { getReportsByType } from '~/services/reports'
+import useComponentContext from '~/services/state-manager/components'
 import { scrollToSection } from '~/utils/global'
 import {
   Feature,
@@ -165,6 +166,8 @@ const ResultReportsPage = () => {
   const router = useRouter()
   const { userState: user } = useUser()
 
+  const { executeQueryComponent } = useComponentContext()
+
   const [isLoading, setIsLoading] = useState(true)
   const [typeActive, setTypeActive] = useState()
   const [reports, setReports] = useState({})
@@ -213,6 +216,18 @@ const ResultReportsPage = () => {
     setIsLoading(false)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router?.query?.server])
+
+  const refreshReports = async () => {
+    try {
+      setReports({})
+      setIsLoading(true)
+      await executeQueryComponent(router.query.server, 'SPLOADCHK')
+      getData()
+    } catch {
+      /* empty */
+    }
+    setIsLoading(false)
+  }
 
   useEffect(() => {
     getData()
@@ -282,6 +297,17 @@ const ResultReportsPage = () => {
                 }}
               />
             </form>
+            {router?.query?.server !== '-1' && router?.query?.server ? (
+              <Button
+                onClick={refreshReports}
+                type="primary"
+                disabled={isLoading}
+              >
+                Get newest reports
+              </Button>
+            ) : (
+              ''
+            )}
             <ExportButton disabled={isLoading} data={reports} />
           </PageContent>
 

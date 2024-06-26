@@ -1,7 +1,5 @@
 import '@uiw/react-textarea-code-editor/dist.css'
 
-import classNames from 'classnames'
-import { useFormik } from 'formik'
 import dynamic from 'next/dynamic'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { toast } from 'react-toastify'
@@ -11,9 +9,8 @@ const AceEditor = dynamic(
   { ssr: false }
 )
 
-import { Button, Input, Modal, Select, Spin } from 'antd'
+import { Button, Col, Form, Input, Modal, Row, Select, Spin } from 'antd'
 
-import Grid from '~/components/grid'
 import {
   getComponentById,
   getComponentTypes,
@@ -28,6 +25,8 @@ const MetricsModal = ({ onClose, componentId }) => {
   const [features, setFeatures] = useState([])
   const [componentTypes, setComponentTypes] = useState([])
 
+  const [form] = Form.useForm()
+
   const getComponentData = useCallback(async () => {
     setIsLoading(true)
 
@@ -41,7 +40,7 @@ const MetricsModal = ({ onClose, componentId }) => {
 
       const componentData = componentResponse?.data
 
-      formik.setValues({
+      form.setFieldsValue({
         idTypeComponent: componentData?.idTypeComponent,
         idFeature: componentData?.idFeature,
         componentCode: componentData?.componentCode,
@@ -56,35 +55,26 @@ const MetricsModal = ({ onClose, componentId }) => {
     } finally {
       setIsLoading(false)
     }
-  }, [componentId]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [componentId, form]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const formik = useFormik({
-    initialValues: {
-      idTypeComponent: -1,
-      idFeature: -1,
-      componentCode: '',
-      componentName: '',
-      componentQuery: '',
-    },
-    onSubmit: async (values) => {
-      setIsSending(true)
+  const onFinish = async (values) => {
+    setIsSending(true)
 
-      try {
-        const response = await updateComponentById(componentId, {
-          ...values,
-        })
+    try {
+      const response = await updateComponentById(componentId, {
+        ...values,
+      })
 
-        if (response?.status === 200) {
-          toast.success(`Component updated!`)
-          onClose(true)
-        }
-      } catch (error) {
-        toast.error(handleException(error))
-      } finally {
-        setIsSending(false)
+      if (response?.status === 200) {
+        toast.success(`Component updated!`)
+        onClose(true)
       }
-    },
-  })
+    } catch (error) {
+      toast.error(handleException(error))
+    } finally {
+      setIsSending(false)
+    }
+  }
 
   const featuresOptions = useMemo(
     () =>
@@ -93,15 +83,6 @@ const MetricsModal = ({ onClose, componentId }) => {
         label: feature.featureName,
       })),
     [features]
-  )
-
-  const componentTypesOptions = useMemo(
-    () =>
-      componentTypes.map((componentType) => ({
-        value: componentType.id,
-        label: componentType.typeComponentName,
-      })),
-    [componentTypes]
   )
 
   useEffect(() => {
@@ -116,95 +97,81 @@ const MetricsModal = ({ onClose, componentId }) => {
       visible={true}
       onCancel={() => onClose(false)}
       footer={undefined}
-      width="80%"
+      width="90%"
       okButtonProps={{ style: { display: 'none' } }}
       cancelButtonProps={{ style: { display: 'none' } }}
     >
       <Spin spinning={isLoading}>
-        <form
-          onSubmit={formik.handleSubmit}
-          className="relative w-full"
-          noValidate
-        >
-          <Grid
-            className={classNames({
-              'opacity-0 invisible': isLoading,
-            })}
-          >
-            <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
-              <label
-                className="w-full font-bold lg:w-1/3"
-                htmlFor="componentCode"
-              >
-                Code
-              </label>
-              <Input
-                type="text"
-                name="componentCode"
-                className="w-full px-4 h-10 border border-gray-light leading-10 rounded outline-none text-sm lg:w-2/3"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.componentCode}
-              />
-            </div>
-            <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
-              <label
-                className="w-full font-bold lg:w-1/3"
-                htmlFor="idTypeComponent"
-              >
-                Component type
-              </label>
-              <Select
-                className="bg-white w-full lg:w-2/3"
-                name="idTypeComponent"
-                options={componentTypesOptions}
-                onChange={(value) => {
-                  formik.setFieldValue('idTypeComponent', value)
-                }}
-                value={formik.values.idTypeComponent}
-              />
-            </div>
-            <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
-              <label className="w-full font-bold lg:w-1/3" htmlFor="idFeature">
-                Feature ID
-              </label>
-              <Select
-                className="bg-white w-full lg:w-2/3"
-                name="idFeature"
-                options={featuresOptions}
-                onChange={(value) => {
-                  formik.setFieldValue('idFeature', value)
-                }}
-                value={formik.values.idFeature}
-              />
-            </div>
+        <div style={{ height: '65vh', overflowY: 'auto' }}>
+          <Form form={form} onFinish={onFinish} layout="vertical">
+            <Row gutter={12}>
+              <Col sm={6}>
+                <Form.Item
+                  name="componentName"
+                  label="Name"
+                  rules={[{ required: true, message: 'Please enter the name' }]}
+                >
+                  <Input type="text" />
+                </Form.Item>
+              </Col>
+              <Col sm={6}>
+                <Form.Item
+                  name="componentCode"
+                  label="Code"
+                  style={{ width: '100%' }}
+                  rules={[{ required: true, message: 'Please enter the code' }]}
+                >
+                  <Input type="text" />
+                </Form.Item>
+              </Col>
+              <Col sm={6}>
+                <Form.Item
+                  name="idTypeComponent"
+                  label="Component type"
+                  rules={[
+                    {
+                      required: true,
+                      message: 'Please select a component type',
+                    },
+                  ]}
+                >
+                  <Select>
+                    {' '}
+                    {componentTypes.map((componentType, index) => (
+                      <Select.Option
+                        key={index}
+                        value={componentType.idTypeComponent}
+                      >
+                        {componentType.typeComponentName}{' '}
+                      </Select.Option>
+                    ))}{' '}
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col sm={6}>
+                <Form.Item
+                  name="idFeature"
+                  label="Feature ID"
+                  rules={[
+                    { required: true, message: 'Please select a feature ID' },
+                  ]}
+                >
+                  <Select
+                    className="bg-white w-full lg:w-2/3"
+                    options={featuresOptions}
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
 
-            <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
-              <label
-                className="w-full font-bold lg:w-1/3"
-                htmlFor="componentName"
-              >
-                Name
-              </label>
-              <Input
-                type="text"
-                name="componentName"
-                className="w-full px-4 h-10 border border-gray-light leading-10 rounded outline-none text-sm lg:w-2/3"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.componentName}
-              />
-            </div>
-
-            <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
-              <label
-                className="w-full font-bold lg:w-1/3"
-                htmlFor="componentQuery"
-              >
-                Query or URL
-              </label>
-            </div>
-            <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
+            <Form.Item
+              name="componentQuery"
+              label="Query or URL"
+              rules={[
+                { required: true, message: 'Please enter the query or URL' },
+              ]}
+            >
+              <Input type="hidden" />
               <AceEditor
                 id="editor"
                 aria-label="editor"
@@ -213,7 +180,6 @@ const MetricsModal = ({ onClose, componentId }) => {
                 name="editor"
                 fontSize={16}
                 minLines={15}
-                maxLines={10}
                 width="100%"
                 showPrintMargin={false}
                 showGutter
@@ -224,24 +190,25 @@ const MetricsModal = ({ onClose, componentId }) => {
                   enableLiveAutocompletion: true,
                   enableSnippets: true,
                 }}
-                onChange={formik.handleChange}
-                value={formik.values.componentQuery}
+                onChange={(value) => {
+                  form.setFieldsValue({ componentQuery: value })
+                }}
+                value={form.getFieldValue('componentQuery')}
                 showLineNumbers
               />
-            </div>
-
-            <div className="col-span-2 flex justify-end items-center pt-10 md:col-span-12">
-              <Button
-                type="primary"
-                htmlType="submit"
-                loading={isSending}
-                disabled={isSending}
-              >
-                Save
-              </Button>
-            </div>
-          </Grid>
-        </form>
+            </Form.Item>
+          </Form>
+        </div>
+        <div className="col-span-2 flex justify-end items-center pt-10 md:col-span-12">
+          <Button
+            type="primary"
+            htmlType="submit"
+            loading={isSending}
+            disabled={isSending}
+          >
+            Save
+          </Button>
+        </div>
       </Spin>
     </Modal>
   )
