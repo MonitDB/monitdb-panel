@@ -59,7 +59,7 @@ const HistoryInfo = ({ currentServer }) => {
       cpu: true,
       memory: true,
       disk: true,
-      lastMinutes: Number(router.query.lastMinutes),
+      lastMinutes: Number(router.query.lastMinutes ?? 60),
     },
     onSubmit: () => {},
   })

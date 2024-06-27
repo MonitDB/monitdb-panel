@@ -25,9 +25,7 @@ export const ServerInfo = ({ currentServer }) => {
   const logicProcessors = serverMetrics?.osProperties?.['Logic Processors']
 
   const memoryInfo = memoryMB
-    ? `${Math.round(
-        memoryMB / 1024
-      )}GB Memory / ${logicProcessors} Intel CPUs /`
+    ? `${Math.round(memoryMB / 1024)}GB Memory / ${logicProcessors} CPUs`
     : 'Memory information not available'
 
   return (

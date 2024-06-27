@@ -3,6 +3,7 @@
 import { Descriptions, Modal, Table, Tooltip, Typography } from 'antd'
 import { useState } from 'react'
 
+import { interpretWord } from '../../utils/interpretWord'
 import { GenericTableStyles } from './genericTableStyles'
 
 export const GenericTable = ({
@@ -10,8 +11,17 @@ export const GenericTable = ({
   data,
   columnAlias,
   pagination = false,
+  omitColumns = [],
+  maxLength = 50,
 }) => {
   const [modal, setModal] = useState({ open: false, data: {} })
+
+  const filteredColumns = (data) => {
+    if (!Array.isArray(data) || data.length === 0) return []
+    const columns = Object.keys(data[0])
+    return columns.filter((col) => !omitColumns.includes(col))
+  }
+
   return (
     <>
       <GenericTableStyles>
@@ -21,12 +31,11 @@ export const GenericTable = ({
             loading={loading}
             size="small"
             pagination={pagination}
-            columns={Object?.keys(data[0] ?? []).map((key, index) => ({
+            columns={filteredColumns(data).map((key, index) => ({
               dataIndex: key,
-              title: (columnAlias && columnAlias[index]) || key,
+              title: interpretWord((columnAlias && columnAlias[index]) || key),
               render: (value) => {
-                const maxLength = 50
-                if (value && value.length > maxLength) {
+                if (typeof value === 'string' && value.length > maxLength) {
                   return {
                     children: (
                       <Tooltip title={value}>{`${value.slice(
@@ -62,11 +71,15 @@ export const GenericTable = ({
         <div style={{ height: '70vh', overflowY: 'auto' }}>
           <Descriptions size="small" bordered column={1}>
             {Object.keys(modal.data).map((key) => {
-              return (
-                <Descriptions.Item key={key} label={key}>
-                  <Typography.Text copyable>{modal.data[key]}</Typography.Text>
-                </Descriptions.Item>
-              )
+              if (omitColumns.includes(key)) return
+              const data = modal.data[key]
+              if (typeof data === 'string')
+                return (
+                  <Descriptions.Item key={key} label={key}>
+                    <Typography.Text copyable>{data}</Typography.Text>
+                  </Descriptions.Item>
+                )
+              return <></>
             })}
           </Descriptions>
         </div>

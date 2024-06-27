@@ -47,7 +47,7 @@ function ErrorLog(properties) {
         </div>
       </div>
 
-      <GenericTable data={data} loading={loading} />
+      <GenericTable data={data} loading={loading} maxLength={150} />
     </div>
   )
 }

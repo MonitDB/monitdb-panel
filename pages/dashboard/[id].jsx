@@ -170,13 +170,13 @@ const SingleDashboard = () => {
                       ) && <ServerInfo currentServer={currentServer} />}
                     </div>
 
-                    <div className="flex items-center border-b-gray-light border-b-4">
+                    <div className="flex items-center border-b-gray-light">
                       <Tabs
                         size="large"
                         defaultActiveKey="0"
                         items={items.filter((item) => item.render)}
                         onChange={setActiveTabId}
-                        style={{ width: '100%' }}
+                        style={{ width: '100%', overflowX: 'hidden' }}
                       />
                     </div>
                   </>

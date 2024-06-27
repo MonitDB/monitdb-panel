@@ -287,21 +287,16 @@ const ConfigurationsServersSinglePage = () => {
                   />
                 </Label>
                 <div className="col-span-2 flex justify-between items-center">
+                  <Button type="primary" danger onClick={() => handleDelete()}>
+                    Delete
+                  </Button>
                   <Button
                     htmlType="submit"
                     type="primary"
                     loading={isLoading}
                     disabled={isLoading}
                   >
-                    {'Save'}
-                  </Button>
-                </div>
-                <div
-                  className="col-span-2 flex bg-danger bg-opacity-10 border
-                  border-danger border-opacity-50 p-4 rounded-md"
-                >
-                  <Button type="primary" danger onClick={() => handleDelete()}>
-                    Delete
+                    Save
                   </Button>
                 </div>
               </form>

@@ -97,8 +97,8 @@ const CapacityPlan = ({ tabName }) => {
 
   const [availableDatabase, setAvailableDatabases] = useState([])
 
-  const [databaseCpDisk, setDatabaseCpDisk] = useState([])
-  const [databaseCpFile, setDatabaseCpFile] = useState([])
+  const [databaseCpDisk, setDatabaseCpDisk] = useState(['NULL'])
+  const [databaseCpFile, setDatabaseCpFile] = useState(['NULL'])
 
   const [loadingCpFile, setLoadingCpFile] = useState(false)
   const [loadingCpDisk, setLoadingCpDisk] = useState(false)
@@ -400,6 +400,7 @@ const CapacityPlan = ({ tabName }) => {
             onChange={(value) => {
               setDatabaseCpDisk(value)
             }}
+            defaultValue={['NULL']}
             onSelect={(value) => {
               if (value === 'NULL') {
                 setDatabaseCpDisk(['NULL'])
@@ -586,6 +587,7 @@ const CapacityPlan = ({ tabName }) => {
             onChange={(value) => {
               setDatabaseCpFile(value)
             }}
+            defaultValue={['NULL']}
             onSelect={(value) => {
               if (value === 'NULL') {
                 setDatabaseCpFile(['NULL'])

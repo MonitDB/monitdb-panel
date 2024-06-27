@@ -273,7 +273,11 @@ const ConfigurationsServersSinglePage = () => {
                   />
                 </Label>
               </form>
-              <Row gutter={16} justify={'end'} style={{ marginTop: '12px' }}>
+              <Row
+                gutter={16}
+                justify={'end'}
+                style={{ marginTop: '12px', width: '50%' }}
+              >
                 <Col>
                   <Button
                     type="dashed"

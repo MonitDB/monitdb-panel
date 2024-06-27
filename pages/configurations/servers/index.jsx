@@ -84,6 +84,8 @@ const ConfigurationsServersPage = () => {
                         ),
                     },
                     { dataIndex: 'serverUser', title: 'Server User' },
+                    { dataIndex: 'serverDescription', title: 'Description' },
+                    { dataIndex: 'serverPort', title: 'Port' },
                     {
                       dataIndex: '',
                       title: 'Actions',

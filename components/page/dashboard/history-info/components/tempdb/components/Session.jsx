@@ -103,7 +103,7 @@ export const TemporaryDBSession = () => {
             />
           </div>
           <div className="prose prose-thead:bg-gray-light max-w-full prose-th:capitalize prose-th:border-b-0 prose-tr:border-gray-light prose-td:text-[11px] prose-th:whitespace-nowrap prose-td:whitespace-nowrap prose-th:px-2 prose-th:h-[35px] prose-th:text-xs prose-tr:cursor-pointer overflow-x-hidden">
-            <GenericTable data={dataTransformed} />
+            <GenericTable data={dataTransformed} omitColumns={['color']} />
 
             {/* {  <table className="m-0 py-4 prose-tr:last:!border-b overflow-x-hidden">
               <thead>

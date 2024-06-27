@@ -254,6 +254,9 @@ const UserSinglePage = () => {
                 />
               </Label>
               <div className="col-span-2 flex justify-between items-center">
+                <Button type="primary" danger onClick={() => handleDelete()}>
+                  Delete
+                </Button>
                 <Button
                   type="primary"
                   typeof="submit"
@@ -261,11 +264,6 @@ const UserSinglePage = () => {
                   loading={isLoading}
                 >
                   {isLoading ? 'Saving...' : 'Save'}
-                </Button>
-              </div>
-              <div className="col-span-2 flex bg-danger bg-opacity-10 border border-danger border-opacity-50 p-4 rounded-md">
-                <Button type="primary" danger onClick={() => handleDelete()}>
-                  Delete
                 </Button>
               </div>
             </form>
