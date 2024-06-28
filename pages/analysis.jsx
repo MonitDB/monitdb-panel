@@ -17,11 +17,11 @@ import {
 } from 'antd'
 import dayjs from 'dayjs'
 import moment from 'moment'
+import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 
-import { ApexChart, defaultChartOptions } from '~/components/chart'
 import Highlighter from '~/components/highlighter'
 import Link from '~/components/link'
 import Loading from '~/components/loading'
@@ -32,6 +32,8 @@ import { getAnalysis, getWhoIs } from '~/services/analysis'
 import { Feature, hasFeature } from '~/utils/hasPermission'
 
 import { useGlobal, useUser } from '../hooks'
+
+const ApexChart = dynamic(() => import('react-apexcharts'), { ssr: false })
 
 const datasets = {
   Log_Full_Scans_Count: {
@@ -224,6 +226,8 @@ const AnalysisPage = () => {
     }
     setLoading(false)
   }
+
+  const dataRange = Form.useWatch('rangeDate', form)
 
   const handleSubmit = (values) => {
     const { rangeDate, metric, server, interval, param } = values
@@ -495,8 +499,6 @@ const AnalysisPage = () => {
                     height={200}
                     width={'100%'}
                     options={{
-                      ...defaultChartOptions,
-
                       title: {
                         text: !data
                           ? 'Error to load the data'
@@ -506,25 +508,14 @@ const AnalysisPage = () => {
                       },
                       stroke: { width: 1, curve: 'straight' },
                       xaxis: {
-                        ...defaultChartOptions.xaxis,
                         type: 'datetime',
-                        labels: {
-                          datetimeUTC: false,
-                          datetimeFormatter: {
-                            year: 'yyyy',
-                            month: "MMM 'yy",
-                            day: 'dd',
-                            hour: 'HH:mm',
-                          },
-                        },
+                        min: dayjs(dataRange[0]).valueOf(), // Valor mínimo no eixo X usando dayjs
+                        max: dayjs(dataRange[data.length - 1]).valueOf(),
                       },
                       yaxis: {
-                        ...defaultChartOptions.yaxis,
-                        forceNiceScale: false,
                         tickAmount: 5,
                       },
                       legend: {
-                        ...defaultChartOptions.legend,
                         itemMargin: '10px',
 
                         labels: {
@@ -534,11 +525,11 @@ const AnalysisPage = () => {
                           },
                         },
                       },
-                      tooltip: {
-                        x: {
-                          format: 'dd MMM yyyy HH:mm',
-                        },
-                      },
+                      // tooltip: {
+                      //   x: {
+                      //     format: 'dd MMM yyyy HH:mm',
+                      //   },
+                      // },
                       chart: {
                         toolbar: false,
                         events: {
