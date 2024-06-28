@@ -39,25 +39,26 @@ const SetUpNewServerStep = ({
   }
 
   useEffect(() => {
-    eventSource.onmessage((event) => {
-      handleSocketMessage(event.data)
-    })
+    if (eventSource) {
+      eventSource?.addEventListener('message', (event) => {
+        handleSocketMessage(event.data)
+      })
 
-    eventSource?.addEventListener('error', () => {
-      if (eventSource?.current?.readyState == EventSource.CLOSED) {
-        setTerminalOutput((previousOutput) => [
-          ...previousOutput,
-          'Disconnected',
-        ])
-        setInstallResult()
-      }
-    })
-
+      eventSource?.addEventListener('error', () => {
+        if (eventSource?.current?.readyState == EventSource.CLOSED) {
+          setTerminalOutput((previousOutput) => [
+            ...previousOutput,
+            'Disconnected',
+          ])
+          setInstallResult()
+        }
+      })
+    }
     return () => {
       eventSource?.removeEventListener('message')
       eventSource?.removeEventListener('error')
     }
-  }, [])
+  }, [eventSource])
 
   useEffect(async () => {
     try {
