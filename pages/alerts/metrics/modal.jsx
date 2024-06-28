@@ -36,7 +36,6 @@ const MetricsModal = ({ onClose, serverId, parameterId }) => {
 
   const getParameterData = useCallback(async () => {
     setIsLoading(true)
-
     try {
       const response = await getAlertParameterByServerId(serverId, parameterId)
       const parameterData = response?.data
@@ -46,13 +45,16 @@ const MetricsModal = ({ onClose, serverId, parameterId }) => {
     } finally {
       setIsLoading(false)
     }
-  }, [serverId, parameterId, form]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [serverId, parameterId, form])
 
   const onFinish = async (values) => {
     setIsSending(true)
 
     try {
-      const response = await updateAlertsParameterByServerId(serverId, values)
+      const response = await updateAlertsParameterByServerId(serverId, {
+        ...values,
+        id: parameterId,
+      })
 
       if (response?.status === 200) {
         toast.success(`Metrics updated!`)
@@ -66,7 +68,7 @@ const MetricsModal = ({ onClose, serverId, parameterId }) => {
   }
 
   useEffect(() => {
-    if (!parameterId || parameters.length === 0) return
+    if (!parameterId) return
 
     getParameterData()
   }, [getParameterData, parameters, parameterId])
@@ -123,12 +125,21 @@ const MetricsModal = ({ onClose, serverId, parameterId }) => {
                   <Input type="number" placeholder="Start Hour Execution" />
                 </Form.Item>
               </Col>
-              <Col span={6}>
+              <Col span={4}>
                 <Form.Item label="End Hour Execution" name="hourEndExecution">
                   <Input type="number" placeholder="End Hour Execution" />
                 </Form.Item>
               </Col>
-              <Col span={8}>
+              <Col span={6}>
+                <Form.Item
+                  label="AI Flag"
+                  name="aiFlag"
+                  valuePropName="checked"
+                >
+                  <Checkbox />
+                </Form.Item>
+              </Col>
+              <Col span={6}>
                 <Form.Item
                   label="Clear Flag"
                   name="clearFlag"
@@ -137,7 +148,7 @@ const MetricsModal = ({ onClose, serverId, parameterId }) => {
                   <Checkbox />
                 </Form.Item>
               </Col>
-              <Col span={8}>
+              <Col span={6}>
                 <Form.Item
                   label="Enable Flag"
                   name="enableFlag"
@@ -146,7 +157,7 @@ const MetricsModal = ({ onClose, serverId, parameterId }) => {
                   <Checkbox />
                 </Form.Item>
               </Col>
-              <Col span={8}>
+              <Col span={6}>
                 <Form.Item
                   label="Language Flag"
                   name="languageFlag"
