@@ -39,7 +39,7 @@ const InstallationWizard = () => {
   const eventSource = useRef()
 
   useEffect(() => {
-    eventSource.current = new EventSourcePolyfill(APIV2 + 'events', {
+    eventSource.current = new EventSourcePolyfill(APIV2 + '/events', {
       headers: {
         Authorization: `Bearer ${getUserToken()}`,
         'x-api-key': process.env.apiKey,
