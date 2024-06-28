@@ -57,46 +57,59 @@ const Servers = ({ environmentServers, diskUsage, expand }) => {
                       >
                         {truncateString(serverName, 50)}
                       </div>
-                      {filteredDiskUsage.map((disk, index) => (
+                      <div
+                        style={{
+                          display: 'flex',
+                          marginLeft: 'auto',
+                          width: '80%',
+                        }}
+                      >
                         <div
-                          key={index}
                           style={{
                             display: 'flex',
-                            alignItems: 'center',
-                            marginRight: '15px',
-                            marginLeft: 'auto',
-                            width: '80%',
                             flexWrap: 'wrap',
+                            justifyItems: 'flex-start',
                           }}
                         >
-                          <div
-                            style={{
-                              marginRight: '5px',
-                            }}
-                          >
-                            {disk.Drive}
-                          </div>
-                          <div
-                            style={{
-                              width: '30px',
-                              height: '30px',
-                              display: 'inline-block',
-                              marginRight: '5px',
-                              transform: 'translateY(-0px)',
-                            }}
-                          >
-                            <Pie
-                              data={getPieChartData(disk)}
-                              options={{
-                                plugins: {
-                                  tooltip: { enabled: false },
-                                  legend: { display: false },
-                                },
+                          {filteredDiskUsage.map((disk, index) => (
+                            <div
+                              key={index}
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                marginRight: '15px',
                               }}
-                            />
-                          </div>
+                            >
+                              <div
+                                style={{
+                                  marginRight: '5px',
+                                }}
+                              >
+                                {disk.Drive}
+                              </div>
+                              <div
+                                style={{
+                                  width: '30px',
+                                  height: '30px',
+                                  display: 'inline-block',
+                                  marginRight: '5px',
+                                  transform: 'translateY(-0px)',
+                                }}
+                              >
+                                <Pie
+                                  data={getPieChartData(disk)}
+                                  options={{
+                                    plugins: {
+                                      tooltip: { enabled: false },
+                                      legend: { display: false },
+                                    },
+                                  }}
+                                />
+                              </div>
+                            </div>
+                          ))}
                         </div>
-                      ))}
+                      </div>
                     </div>
                   </div>
                 </>

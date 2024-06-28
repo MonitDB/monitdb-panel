@@ -267,6 +267,8 @@ const CapacityPlan = ({ tabName }) => {
                 },
                 xaxis: {
                   type: 'datetime',
+                  min: new Date(startDate).getTime(),
+                  max: new Date(endDate).getTime(),
                   show: false,
                 },
                 yaxis: {
@@ -277,7 +279,7 @@ const CapacityPlan = ({ tabName }) => {
                 },
                 tooltip: {
                   x: {
-                    format: 'dd MMM yyyy',
+                    format: 'dd MMM yyyy hh:mm:ss',
                   },
                   y: {
                     formatter: (value) => `${value} MB`,
@@ -458,10 +460,12 @@ const CapacityPlan = ({ tabName }) => {
                 },
                 xaxis: {
                   type: 'datetime',
+                  min: new Date(startDate).getTime(),
+                  max: new Date(endDate).getTime(),
                 },
                 tooltip: {
                   x: {
-                    format: 'dd MMM yyyy',
+                    format: 'dd MMM yyyy hh:mm:ss',
                   },
                   y: {
                     formatter: (value) => `${value} MB`,
@@ -646,10 +650,12 @@ const CapacityPlan = ({ tabName }) => {
                 },
                 xaxis: {
                   type: 'datetime',
+                  min: new Date(startDate).getTime(),
+                  max: new Date(endDate).getTime(),
                 },
                 tooltip: {
                   x: {
-                    format: 'dd MMM yyyy',
+                    format: 'dd MMM yyyy hh:mm:ss',
                   },
                   y: {
                     formatter: (value) => `${value} MB`,

@@ -22,12 +22,9 @@ export function formatTimestamp(timestamp) {
   const date = new Date(timestamp)
   const hours = date.getHours()
   const minutes = date.getMinutes()
-  const seconds = date.getSeconds()
+  // const seconds = date.getSeconds()
 
-  return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(
-    2,
-    '0'
-  )}:${String(seconds).padStart(2, '0')}`
+  return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`
 }
 
 export function calculateMinutesFromDate(value) {
