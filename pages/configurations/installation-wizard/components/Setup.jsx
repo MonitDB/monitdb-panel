@@ -39,7 +39,7 @@ const SetUpNewServerStep = ({
   }
 
   useEffect(() => {
-    eventSource?.addEventListener('message', (event) => {
+    eventSource.onmessage((event) => {
       handleSocketMessage(event.data)
     })
 
