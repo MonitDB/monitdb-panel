@@ -109,6 +109,13 @@ function Servers({ environmentServers, serversJobs, expand }) {
                   dataSource={serverJobs}
                   columns={[
                     { dataIndex: 'jobName', title: 'Job Name' },
+
+                    {
+                      dataIndex: 'LastRunDateTime',
+                      title: 'Last Execution',
+                      render: (value) =>
+                        value ? moment(value).format('DD/MM/YYYY HH:mm') : '-',
+                    },
                     {
                       dataIndex: 'enabled',
                       title: 'Enabled',
@@ -158,7 +165,15 @@ function Servers({ environmentServers, serversJobs, expand }) {
           <br />
           <Table size="small" dataSource={[jobModal.jobData]}>
             <Table.Column dataIndex="jobName" title="Job Name" />
+            <Table.Column
+              dataIndex="LastRunDateTime"
+              title="Last Execution"
+              render={(value) =>
+                value ? moment(value).format('DD/MM/YYYY HH:mm') : '-'
+              }
+            />
             <Table.Column dataIndex="enabled" title="Enabled" />
+
             <Table.Column
               dataIndex="createdAt"
               title="Job Created Date"
