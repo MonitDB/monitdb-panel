@@ -83,7 +83,7 @@ const AlertsPage = () => {
       <NextSeo title="Reports - MonitDB" />
       <Layout>
         <PageWrapper>
-          <PageContent className="lg:pt-20">
+          <PageContent className="lg:pt-20" removeSidebarMargin>
             <form
               className="relative w-full mx-auto mb-10 lg:w-2/3 lg:mb-20"
               onSubmit={handleSubmit}

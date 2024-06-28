@@ -69,6 +69,7 @@ export const AlertHtmlSubTable = ({ serverId, idSeq, id }) => {
         await getSuggestion(serverId, alertId, htmlRow)
         const updatedPreviousSuggestions = await getPrevious()
         setSuggestions(updatedPreviousSuggestions)
+        return
       }
       setSuggestions(previousSuggestions)
     } catch {

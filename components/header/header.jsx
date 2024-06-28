@@ -29,7 +29,6 @@ const Header = () => {
     {
       title: 'Dashboard',
       href: '/dashboard/',
-      // feature: Feature.DASHBOARD
     },
     {
       title: 'Alerts',
@@ -51,11 +50,11 @@ const Header = () => {
       href: '/states/',
       requiredPermissions: Feature.STATES,
     },
-    {
-      title: 'Configurations',
-      href: '/configurations/',
-      requiredPermissions: Feature.CONFIGURATION,
-    },
+    // {
+    //   title: 'Configurations',
+    //   href: '/configurations/',
+    //   requiredPermissions: Feature.CONFIGURATION,
+    // },
   ]
 
   const navMenuList = navMenuListData.filter((item) => {
@@ -117,6 +116,20 @@ const Header = () => {
           </nav>
 
           <div className="ml-auto pr-4 flex items-center justify-between space-x-2 lg:pr-6">
+            {userState?.grants?.some(
+              (grant) => grant.idFeature === Feature.CONFIGURATION
+            ) && (
+              <Link
+                href="/configurations/"
+                className="w-8 h-8 flex items-center justify-center transition-all duration-300 ease-in-out
+                  lg:group-hover:opacity-75"
+              >
+                <i className="block w-5 h-5">
+                  <FontAwesomeIcon icon={faGear} />
+                </i>
+              </Link>
+            )}
+
             <div className="group relative">
               <Link
                 href="/my-account/"
@@ -145,7 +158,7 @@ const Header = () => {
                     <span>Profile settings</span>
                   </Link>
                 </li>
-                <li>
+                {/* <li>
                   <Link
                     href="/my-account/"
                     className="flex items-center space-x-2 py-1 px-4
@@ -156,7 +169,7 @@ const Header = () => {
                     </i>
                     <span>Account Settings</span>
                   </Link>
-                </li>
+                </li> */}
                 <li>
                   <Link
                     href="/logout/"

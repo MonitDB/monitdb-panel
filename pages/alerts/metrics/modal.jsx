@@ -1,13 +1,8 @@
-import { Input, Modal } from 'antd'
-import { Select } from 'antd'
+import { Checkbox, Col, Form, Input, Modal, Row, Select, Spin } from 'antd'
 import classNames from 'classnames'
-import { useFormik } from 'formik'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { toast } from 'react-toastify'
 
-import Checkbox from '~/components/form/checkbox'
-import Grid from '~/components/grid'
-import Loading from '~/components/loading'
 import useAlerts from '~/hooks/use-alerts'
 import {
   getAlertParameterByServerId,
@@ -23,10 +18,12 @@ const MetricsModal = ({ onClose, serverId, parameterId }) => {
   const [isLoading, setIsLoading] = useState(false)
   const [isSending, setIsSending] = useState(false)
 
+  const [form] = Form.useForm()
+
   const frequencyOptions = useMemo(
     () => [
       { value: '', label: 'Unactive' },
-      { value: 1, label: '1 minutes' },
+      { value: 1, label: '1 minute' },
       { value: 5, label: '5 minutes' },
       { value: 20, label: '20 minutes' },
       { value: 60, label: '1 hour' },
@@ -43,58 +40,30 @@ const MetricsModal = ({ onClose, serverId, parameterId }) => {
     try {
       const response = await getAlertParameterByServerId(serverId, parameterId)
       const parameterData = response?.data
-
-      formik.setValues(parameterData) // Updated to set all values at once
+      form.setFieldsValue(parameterData) // Atualiza os valores do formulário
     } catch (error) {
       console.error(error) // eslint-disable-line no-console
     } finally {
       setIsLoading(false)
     }
-  }, [serverId, parameterId]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [serverId, parameterId, form]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const formik = useFormik({
-    initialValues: {
-      id: -1,
-      alertName: '',
-      procedureName: '',
-      frequencyMinutes: 0,
-      hourStartExecution: 0,
-      hourEndExecution: 0,
-      clearFlag: false,
-      parameterValue: 0,
-      metricDescription: '',
-      parameterValue2: 0,
-      metricDescription2: '',
-      profileEmailDescription: '', // Add profileEmailDescription field
-      emailDescription: '', // Add emailDescription field
-      alertMessageENG: '', // Add alertMessageENG field
-      clearMessageENG: '', // Add clearMessageENG field
-      alertMessagePTB: '', // Add alertMessagePTB field
-      clearMessagePTB: '', // Add clearMessagePTB field
-      emailInformation1ENG: '', // Add emailInformation1ENG field
-      emailInformation2ENG: '', // Add emailInformation2ENG field
-      emailInformation1PTB: '', // Add emailInformation1PTB field
-      emailInformation2PTB: '', // Add emailInformation2PTB field
-    },
-    onSubmit: async (values) => {
-      setIsSending(true)
+  const onFinish = async (values) => {
+    setIsSending(true)
 
-      try {
-        const response = await updateAlertsParameterByServerId(serverId, {
-          ...values,
-        })
+    try {
+      const response = await updateAlertsParameterByServerId(serverId, values)
 
-        if (response?.status === 200) {
-          toast.success(`Metrics updated!`)
-          onClose(true)
-        }
-      } catch (error) {
-        toast.error(handleException(error))
-      } finally {
-        setIsSending(false)
+      if (response?.status === 200) {
+        toast.success(`Metrics updated!`)
+        onClose(true)
       }
-    },
-  })
+    } catch (error) {
+      toast.error(handleException(error))
+    } finally {
+      setIsSending(false)
+    }
+  }
 
   useEffect(() => {
     if (!parameterId || parameters.length === 0) return
@@ -107,349 +76,178 @@ const MetricsModal = ({ onClose, serverId, parameterId }) => {
       open={true}
       width={'80%'}
       onCancel={onClose}
-      onOk={formik.submitForm}
+      onOk={form.submit}
       okText="Save"
       height={'75vh'}
       closable={false}
       okButtonProps={{ loading: isSending }}
     >
-      <header className="flex items-start mb-10">
-        <h2 className="heading-md">Edit metrics</h2>
-      </header>
-      <div style={{ height: '70vh', overflowY: 'auto' }}>
-        <form
-          onSubmit={formik.handleSubmit}
-          className="relative w-full"
-          noValidate
-        >
-          {isLoading && <Loading />}
-          <Grid
-            className={classNames({
-              'opacity-0 invisible': isLoading,
-            })}
+      <Spin spinning={isLoading}>
+        <header className="flex items-start mb-10">
+          <h2 className="heading-md">Edit metrics</h2>
+        </header>
+        <div style={{ height: '71vh', overflowY: 'auto' }}>
+          <Form
+            form={form}
+            onFinish={onFinish}
+            className="relative w-full"
+            layout="vertical"
           >
-            <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
-              <label className="w-full font-bold lg:w-1/3" htmlFor="alertName">
-                Alert Name
-              </label>
-              <Input
-                type="text"
-                name="alertName"
-                placeholder="Alert Name"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.alertName}
-              />
-            </div>
-
-            <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
-              <label
-                className="w-full font-bold lg:w-1/3"
-                htmlFor="procedureName"
-              >
-                Procedure Name
-              </label>
-              <Input
-                type="text"
-                name="procedureName"
-                placeholder="Procedure Name"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.procedureName}
-              />
-            </div>
-
-            <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
-              <label
-                className="w-full font-bold lg:w-1/3"
-                htmlFor="frequencyMinutes"
-              >
-                Frequency (MIN)
-              </label>
-              <Select
-                name="frequencyMinutes"
-                options={frequencyOptions}
-                value={formik.values.frequencyMinutes}
-                style={{ width: '200px' }}
-                onChange={(value) => {
-                  formik.setFieldValue('frequencyMinutes', value)
-                }}
-              />
-            </div>
-
-            <div className="col-span-2 flex flex-col space-y-2 md:col-span-6">
-              <label className="w-full font-bold" htmlFor="hourStartExecution">
-                Start Hour Execution
-              </label>
-              <Input
-                type="number"
-                name="hourStartExecution"
-                placeholder="Start Hour Execution"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.hourStartExecution}
-              />
-            </div>
-
-            <div className="col-span-2 flex flex-col space-y-2 md:col-span-6">
-              <label className="w-full font-bold" htmlFor="hourEndExecution">
-                End Hour Execution
-              </label>
-              <Input
-                type="number"
-                name="hourEndExecution"
-                placeholder="End Hour Execution"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.hourEndExecution}
-              />
-            </div>
-
-            <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
-              <label className="w-full font-bold lg:w-1/3" htmlFor="clearFlag">
-                Clear Flag
-              </label>
-              <Checkbox
-                name="clearFlag"
-                value="1"
-                onChange={(value) => {
-                  formik.setFieldValue('clearFlag', value)
-                }}
-              />
-            </div>
-
-            <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
-              <label
-                className="w-full font-bold lg:w-1/3"
-                htmlFor="parameterValue"
-              >
-                Parameter Value
-              </label>
-              <Input
-                type="number"
-                name="parameterValue"
-                placeholder="Parameter Value"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.parameterValue}
-              />
-            </div>
-
-            <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
-              <label
-                className="w-full font-bold lg:w-1/3"
-                htmlFor="metricDescription"
-              >
-                Metric Description
-              </label>
-              <Input
-                type="text"
-                name="metricDescription"
-                placeholder="Metric Description"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.metricDescription}
-              />
-            </div>
-
-            <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
-              <label
-                className="w-full font-bold lg:w-1/3"
-                htmlFor="parameterValue2"
-              >
-                Parameter Value 2
-              </label>
-              <Input
-                type="number"
-                name="parameterValue2"
-                placeholder="Parameter Value 2"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.parameterValue2}
-              />
-            </div>
-
-            <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
-              <label
-                className="w-full font-bold lg:w-1/3"
-                htmlFor="metricDescription2"
-              >
-                Metric Description 2
-              </label>
-              <Input
-                type="text"
-                name="metricDescription2"
-                placeholder="Metric Description 2"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.metricDescription2}
-              />
-            </div>
-
-            {/* Additional fields */}
-            <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
-              <label
-                className="w-full font-bold lg:w-1/3"
-                htmlFor="profileEmailDescription"
-              >
-                Profile Email Description
-              </label>
-              <Input
-                type="text"
-                name="profileEmailDescription"
-                placeholder="Profile Email Description"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.profileEmailDescription}
-              />
-            </div>
-            <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
-              <label
-                className="w-full font-bold lg:w-1/3"
-                htmlFor="emailDescription"
-              >
-                Email Description
-              </label>
-              <Input
-                type="text"
-                name="emailDescription"
-                placeholder="Email Description"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.emailDescription}
-              />
-            </div>
-            <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
-              <label
-                className="w-full font-bold lg:w-1/3"
-                htmlFor="alertMessageENG"
-              >
-                Alert Message ENG
-              </label>
-              <Input
-                type="text"
-                name="alertMessageENG"
-                placeholder="Alert Message ENG"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.alertMessageENG}
-              />
-            </div>
-            <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
-              <label
-                className="w-full font-bold lg:w-1/3"
-                htmlFor="clearMessageENG"
-              >
-                Clear Message ENG
-              </label>
-              <Input
-                type="text"
-                name="clearMessageENG"
-                placeholder="Clear Message ENG"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.clearMessageENG}
-              />
-            </div>
-            <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
-              <label
-                className="w-full font-bold lg:w-1/3"
-                htmlFor="alertMessagePTB"
-              >
-                Alert Message PTB
-              </label>
-              <Input
-                type="text"
-                name="alertMessagePTB"
-                placeholder="Alert Message PTB"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.alertMessagePTB}
-              />
-            </div>
-            <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
-              <label
-                className="w-full font-bold lg:w-1/3"
-                htmlFor="clearMessagePTB"
-              >
-                Clear Message PTB
-              </label>
-              <Input
-                type="text"
-                name="clearMessagePTB"
-                placeholder="Clear Message PTB"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.clearMessagePTB}
-              />
-            </div>
-            <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
-              <label
-                className="w-full font-bold lg:w-1/3"
-                htmlFor="emailInformation1ENG"
-              >
-                Email Information ENG 1
-              </label>
-              <Input
-                type="text"
-                name="emailInformation1ENG"
-                placeholder="Email Information ENG 1"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.emailInformation1ENG}
-              />
-            </div>
-            <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
-              <label
-                className="w-full font-bold lg:w-1/3"
-                htmlFor="emailInformation2ENG"
-              >
-                Email Information ENG 2
-              </label>
-              <Input
-                type="text"
-                name="emailInformation2ENG"
-                placeholder="Email Information ENG 2"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.emailInformation2ENG}
-              />
-            </div>
-            <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
-              <label
-                className="w-full font-bold lg:w-1/3"
-                htmlFor="emailInformation1PTB"
-              >
-                Email information PTB 1
-              </label>
-              <Input
-                type="text"
-                name="emailInformation1PTB"
-                placeholder="Email information PTB 1"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.emailInformation1PTB}
-              />
-            </div>
-            <div className="col-span-2 flex flex-col space-y-2 md:col-span-12 lg:flex-row lg:space-y-0 lg:items-center">
-              <label
-                className="w-full font-bold lg:w-1/3"
-                htmlFor="emailInformation2PTB"
-              >
-                Email information PTB 2
-              </label>
-              <Input
-                type="text"
-                name="emailInformation2PTB"
-                placeholder="Email information PTB 2"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.emailInformation2PTB}
-              />
-            </div>
-          </Grid>
-        </form>
-      </div>
+            <Row
+              gutter={16}
+              className={classNames({ 'opacity-0 invisible': isLoading })}
+            >
+              <Col span={6}>
+                <Form.Item label="Alert Name" name="alertName">
+                  <Input placeholder="Alert Name" />
+                </Form.Item>
+              </Col>
+              <Col span={4}>
+                <Form.Item label="Procedure Name" name="procedureName">
+                  <Input placeholder="Procedure Name" />
+                </Form.Item>
+              </Col>
+              <Col span={4}>
+                <Form.Item label="Frequency (MIN)" name="frequencyMinutes">
+                  <Select
+                    options={frequencyOptions}
+                    style={{ width: '100%' }}
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={4}>
+                <Form.Item
+                  label="Start Hour Execution"
+                  name="hourStartExecution"
+                >
+                  <Input type="number" placeholder="Start Hour Execution" />
+                </Form.Item>
+              </Col>
+              <Col span={6}>
+                <Form.Item label="End Hour Execution" name="hourEndExecution">
+                  <Input type="number" placeholder="End Hour Execution" />
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item
+                  label="Clear Flag"
+                  name="clearFlag"
+                  valuePropName="checked"
+                >
+                  <Checkbox />
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item
+                  label="Enable Flag"
+                  name="enableFlag"
+                  valuePropName="checked"
+                >
+                  <Checkbox />
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item
+                  label="Language Flag"
+                  name="languageFlag"
+                  valuePropName="checked"
+                >
+                  <Checkbox />
+                </Form.Item>
+              </Col>
+              <Col span={6}>
+                <Form.Item label="Parameter Value" name="parameterValue">
+                  <Input type="number" placeholder="Parameter Value" />
+                </Form.Item>
+              </Col>
+              <Col span={6}>
+                <Form.Item label="Metric Description" name="metricDescription">
+                  <Input placeholder="Metric Description" />
+                </Form.Item>
+              </Col>
+              <Col span={6}>
+                <Form.Item label="Parameter Value 2" name="parameterValue2">
+                  <Input type="number" placeholder="Parameter Value 2" />
+                </Form.Item>
+              </Col>
+              <Col span={6}>
+                <Form.Item
+                  label="Metric Description 2"
+                  name="metricDescription2"
+                >
+                  <Input placeholder="Metric Description 2" />
+                </Form.Item>
+              </Col>
+              {/* Campos adicionais */}
+              <Col span={12}>
+                <Form.Item
+                  label="Profile Email Description"
+                  name="profileEmailDescription"
+                >
+                  <Input placeholder="Profile Email Description" />
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item label="Email Description" name="emailDescription">
+                  <Input placeholder="Email Description" />
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item label="Alert Message ENG" name="alertMessageENG">
+                  <Input placeholder="Alert Message ENG" />
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item label="Clear Message ENG" name="clearMessageENG">
+                  <Input placeholder="Clear Message ENG" />
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item label="Alert Message PTB" name="alertMessagePTB">
+                  <Input placeholder="Alert Message PTB" />
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item label="Clear Message PTB" name="clearMessagePTB">
+                  <Input placeholder="Clear Message PTB" />
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item
+                  label="Email Information ENG 1"
+                  name="emailInformation1ENG"
+                >
+                  <Input placeholder="Email Information ENG 1" />
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item
+                  label="Email Information ENG 2"
+                  name="emailInformation2ENG"
+                >
+                  <Input placeholder="Email Information ENG 2" />
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item
+                  label="Email Information PTB 1"
+                  name="emailInformation1PTB"
+                >
+                  <Input placeholder="Email Information PTB 1" />
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item
+                  label="Email Information PTB 2"
+                  name="emailInformation2PTB"
+                >
+                  <Input placeholder="Email Information PTB 2" />
+                </Form.Item>
+              </Col>
+            </Row>
+          </Form>
+        </div>
+      </Spin>
     </Modal>
   )
 }
