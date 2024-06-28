@@ -10,12 +10,12 @@ import { toast } from 'react-toastify'
 import { ApexChart, defaultChartOptions } from '~/components/chart'
 import Loading from '~/components/loading/loading'
 import { getBackupsFromDatabase } from '~/services/states'
-import { calculateMinutesFromDate, minutesToHours } from '~/utils/time'
+import { formatDuration, formatTimestamp } from '~/utils/time'
 
 const chartData = (data) =>
   data.map((item) => [
     item.backup_start_date,
-    calculateMinutesFromDate(item.backup_start_date),
+    new Date(item.backup_start_date).getTime(),
     undefined,
     item,
   ])
@@ -58,7 +58,7 @@ function DatabaseBackupsModal({ modal, onSetModalData }) {
     }
   }
 
-  useEffect(fetch, [modal?.databaseName])
+  useEffect(fetch, [modal?.databaseName, startDate, endDate])
 
   function getMostAmountOfArrayBackups() {
     let arrayBackupsAmount = 0
@@ -193,7 +193,6 @@ function DatabaseBackupsModal({ modal, onSetModalData }) {
                     // text: `y`,
                     style: {
                       fontFamily: 'Arial, sans-serif',
-
                       fontWeight: 'bold',
                     },
                   },
@@ -224,13 +223,18 @@ function DatabaseBackupsModal({ modal, onSetModalData }) {
                   },
 
                   yaxis: {
+                    forceNiceScale: true,
+
+                    reversed: true,
                     labels: {
-                      formatter: (value) => minutesToHours(value),
+                      formatter: (value) => formatTimestamp(value),
                     },
                   },
 
                   xaxis: {
                     type: 'datetime',
+                    max: new Date(endDate).getTime(),
+                    min: new Date(startDate).getTime(),
                     labels: {
                       formatter: (value) => moment(value).format('DD/MM/YYYY'),
                     },
@@ -269,11 +273,11 @@ function DatabaseBackupsModal({ modal, onSetModalData }) {
           </div>
           <div style="margin-bottom: 5px;">
             <strong>Date:</strong> ${moment(backup_start_date).format(
-              'DD/MM/YYYY'
+              'DD/MM/YYYY HH:mm'
             )}
           </div>
           <div style="margin-bottom: 5px;">
-            <strong>Duration:</strong> ${duration} ms
+            <strong>Duration:</strong> ${formatDuration(duration)}
           </div>
           <div>
             <strong>Path:</strong> ${physical_device_name}
