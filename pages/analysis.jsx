@@ -199,7 +199,7 @@ const AnalysisPage = () => {
       form.setFieldsValue({
         metric: 'Log_Full_Scans_Count',
         param: 'count',
-        server: servers[0].id,
+        server: servers[0]?.id,
       })
       firstFetch.current = true
       form.submit()
@@ -509,8 +509,8 @@ const AnalysisPage = () => {
                       stroke: { width: 1, curve: 'straight' },
                       xaxis: {
                         type: 'datetime',
-                        min: dayjs(dataRange[0]).valueOf(), // Valor mínimo no eixo X usando dayjs
-                        max: dayjs(dataRange[data.length - 1]).valueOf(),
+                        min: dayjs(dataRange?.[0]).valueOf(),
+                        max: dayjs(dataRange?.[data.length - 1]).valueOf(),
                       },
                       yaxis: {
                         tickAmount: 5,
