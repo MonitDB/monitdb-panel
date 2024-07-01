@@ -46,7 +46,10 @@ const MyAccountPage = () => {
           <Card style={{ marginTop: 16 }}>
             <Meta
               avatar={
-                <Avatar size={'large'}>
+                <Avatar
+                  size={{ xs: 24, sm: 32, md: 40, lg: 64, xl: 80, xxl: 100 }}
+                  shape="circle"
+                >
                   {userState.loginName[0].toUpperCase()}
                 </Avatar>
               }
