@@ -12,9 +12,10 @@ import {
 import React, { useEffect, useState } from 'react'
 
 import useUser from '~/hooks/use-user'
+import { updateMe } from '~/services/user'
 
 const MyAccount = () => {
-  const { userState } = useUser()
+  const { userState, setUserState, getUserData } = useUser()
 
   const [form] = Form.useForm()
   const [changePassword, setChangePassword] = useState(false)
@@ -30,10 +31,14 @@ const MyAccount = () => {
   const onFinish = async (values) => {
     setLoading(true)
     try {
-      await new Promise((resolve) => setTimeout(resolve, 2000))
+      delete values.confirmPassword
+      await updateMe(values)
+      setUserState(values)
+      getUserData()
 
       message.success('Data updated successfully')
     } catch {
+      // console.error(error)
       message.error('An error occurred, please try again later.')
     } finally {
       setLoading(false)
@@ -41,7 +46,7 @@ const MyAccount = () => {
   }
 
   const validatePassword = (_, value) => {
-    const password = form.getFieldValue('password')
+    const password = form.getFieldValue('loginPassword')
     if (value && password !== value) {
       return Promise.reject(
         new Error('The two passwords that you entered do not match!')
@@ -54,8 +59,8 @@ const MyAccount = () => {
     setChangePassword(checked)
     if (!checked) {
       form.setFieldsValue({
-        password: '', // Limpa o campo de senha se o usuário desativar a mudança de senha
-        confirmPassword: '', // Limpa o campo de confirmação de senha também
+        loginPassword: '',
+        confirmPassword: '',
       })
     }
   }
@@ -67,7 +72,7 @@ const MyAccount = () => {
           <Col span={12}>
             <Form.Item
               label="Name"
-              name="name"
+              name="loginName"
               rules={[{ required: true, message: 'Please input your name!' }]}
             >
               <Input placeholder="Name" />
@@ -76,7 +81,7 @@ const MyAccount = () => {
           <Col span={12}>
             <Form.Item
               label="Email"
-              name="email"
+              name="loginEmail"
               rules={[
                 { required: true, message: 'Please input your email!' },
                 { type: 'email', message: 'Please enter a valid email!' },
@@ -105,7 +110,7 @@ const MyAccount = () => {
               <Col span={24}>
                 <Form.Item
                   label="New Password"
-                  name="password"
+                  name="loginPassword"
                   rules={[
                     {
                       required: true,
@@ -120,7 +125,7 @@ const MyAccount = () => {
                 <Form.Item
                   label="Confirm Password"
                   name="confirmPassword"
-                  dependencies={['password']}
+                  dependencies={['loginPassword']}
                   rules={[
                     {
                       required: true,

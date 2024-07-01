@@ -70,6 +70,7 @@ export const UserContextProvider = ({ children }) => {
     <UserContext.Provider
       value={{
         userState,
+        getUserData: getUserData,
         setUserState: handleChangeUserState,
         unsetUserState,
         hasPermissions: userState.hasPermissions,

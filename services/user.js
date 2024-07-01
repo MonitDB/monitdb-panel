@@ -20,6 +20,10 @@ export const update = async (data) => {
   return apiV2().put(`/user/${data.id}`, data)
 }
 
+export const updateMe = async (data) => {
+  return apiV2().put(`/user`, data)
+}
+
 export const getUserById = async (id) => {
   return apiV2().get(`/user/${id}`)
 }
