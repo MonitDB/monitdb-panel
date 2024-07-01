@@ -107,7 +107,7 @@ const MyAccount = () => {
           </Col>
           {changePassword && (
             <>
-              <Col span={24}>
+              <Col span={12}>
                 <Form.Item
                   label="New Password"
                   name="loginPassword"
@@ -121,7 +121,7 @@ const MyAccount = () => {
                   <Input.Password placeholder="New Password" />
                 </Form.Item>
               </Col>
-              <Col span={24}>
+              <Col span={12}>
                 <Form.Item
                   label="Confirm Password"
                   name="confirmPassword"

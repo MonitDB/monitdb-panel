@@ -1,7 +1,6 @@
 /* eslint-disable no-console */
 
 import { Tabs } from 'antd'
-import classNames from 'classnames'
 import faker from 'faker'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
@@ -58,7 +57,7 @@ const SingleDashboard = () => {
   const { userState: user } = useUser()
 
   const [activeTabId, setActiveTabId] = useState('0')
-  const [activeSectionIndex, setActiveSectionIndex] = useState(0)
+  const [, setActiveSectionIndex] = useState(0)
 
   const router = useRouter()
 
@@ -139,9 +138,6 @@ const SingleDashboard = () => {
                           scrollToSection(`#${section.slug}`)
                           setActiveSectionIndex(sectionIndex)
                         }}
-                        className={classNames({
-                          active: activeSectionIndex === sectionIndex, // Alterado para comparar com activeSectionIndex
-                        })}
                       >
                         {section.name}
                       </button>

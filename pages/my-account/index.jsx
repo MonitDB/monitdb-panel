@@ -1,7 +1,6 @@
 import { faUserGear } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Avatar, Card, Descriptions } from 'antd'
-import Meta from 'antd/es/card/Meta'
 import React from 'react'
 
 import MyAccountForm from '~/components/forms/my-account'
@@ -44,34 +43,27 @@ const MyAccountPage = () => {
 
         <PageContent>
           <Card style={{ marginTop: 16 }}>
-            <Meta
+            <Card.Meta
               avatar={
                 <Avatar
                   size={{ xs: 24, sm: 32, md: 40, lg: 64, xl: 80, xxl: 100 }}
                   shape="circle"
                 >
-                  {userState.loginName[0].toUpperCase()}
+                  {userState?.loginName}
                 </Avatar>
               }
               description={
                 <>
                   <Descriptions title="User Info">
                     <Descriptions.Item label="User Name">
-                      {userState.loginName}
+                      {typeof userState?.loginName === 'string'
+                        ? userState?.loginName[0].toUpperCase()
+                        : ''}
                     </Descriptions.Item>
-                    {/* <Descriptions.Item label="Telephone">
-                      1810000000
-                    </Descriptions.Item> */}
-                    {/* <Descriptions.Item label="Live">
-                      Hangzhou, Zhejiang
-                    </Descriptions.Item> */}
+
                     <Descriptions.Item label="Email">
-                      {userState.loginEmail}
+                      {userState?.loginEmail}
                     </Descriptions.Item>
-                    {/* <Descriptions.Item label="Address">
-                      No. 18, Wantang Road, Xihu District, Hangzhou, Zhejiang,
-                      China
-                    </Descriptions.Item> */}
                   </Descriptions>
                 </>
               }

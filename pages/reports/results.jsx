@@ -1,7 +1,6 @@
 /* eslint-disable unicorn/prefer-number-properties */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { Button, Select } from 'antd'
-import classNames from 'classnames'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
@@ -169,7 +168,7 @@ const ResultReportsPage = () => {
   const { executeQueryComponent } = useComponentContext()
 
   const [isLoading, setIsLoading] = useState(true)
-  const [typeActive, setTypeActive] = useState()
+  const [, setTypeActive] = useState()
   const [reports, setReports] = useState({})
 
   const serversOptions = useMemo(
@@ -266,9 +265,6 @@ const ResultReportsPage = () => {
                           setTypeActive(type.slug)
                           scrollToSection(`#${type.slug}`)
                         }}
-                        className={classNames({
-                          active: typeActive?.slug === type.slug,
-                        })}
                       >
                         {type.name}
                       </Link>
