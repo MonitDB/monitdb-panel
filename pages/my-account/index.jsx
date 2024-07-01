@@ -1,5 +1,7 @@
 import { faUserGear } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { Avatar, Card, Descriptions } from 'antd'
+import Meta from 'antd/es/card/Meta'
 import React from 'react'
 
 import MyAccountForm from '~/components/forms/my-account'
@@ -11,9 +13,12 @@ import {
   PageSidebarTitle,
   PageWrapper,
 } from '~/components/page'
+import { useUser } from '~/hooks/index'
 import Layout from '~/layouts/default'
 
 const MyAccountPage = () => {
+  const { userState } = useUser()
+
   return (
     <Layout>
       <PageWrapper>
@@ -28,16 +33,48 @@ const MyAccountPage = () => {
             <li>
               <Link href="/my-account/">Personal data</Link>
             </li>
-            <li>
+            {/* <li>
               <Link href="/my-account/">Preferences</Link>
-            </li>
+            </li> */}
             <li>
-              <Link href="/my-account/">Logout</Link>
+              <Link href="/logout/">Logout</Link>
             </li>
           </PageSidebarLinksList>
         </PageSidebar>
 
         <PageContent>
+          <Card style={{ marginTop: 16 }}>
+            <Meta
+              avatar={
+                <Avatar size={'large'}>
+                  {userState.loginName[0].toUpperCase()}
+                </Avatar>
+              }
+              description={
+                <>
+                  <Descriptions title="User Info">
+                    <Descriptions.Item label="User Name">
+                      {userState.loginName}
+                    </Descriptions.Item>
+                    {/* <Descriptions.Item label="Telephone">
+                      1810000000
+                    </Descriptions.Item> */}
+                    {/* <Descriptions.Item label="Live">
+                      Hangzhou, Zhejiang
+                    </Descriptions.Item> */}
+                    <Descriptions.Item label="Email">
+                      {userState.loginEmail}
+                    </Descriptions.Item>
+                    {/* <Descriptions.Item label="Address">
+                      No. 18, Wantang Road, Xihu District, Hangzhou, Zhejiang,
+                      China
+                    </Descriptions.Item> */}
+                  </Descriptions>
+                </>
+              }
+            />
+          </Card>
+          <br></br>
           <MyAccountForm />
         </PageContent>
       </PageWrapper>

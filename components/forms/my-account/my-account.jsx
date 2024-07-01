@@ -1,98 +1,149 @@
-import { useFormik } from 'formik'
+import {
+  Button,
+  Card,
+  Col,
+  Form,
+  Input,
+  message,
+  Row,
+  Space,
+  Switch,
+} from 'antd'
 import React, { useEffect, useState } from 'react'
-import * as Yup from 'yup'
 
-import { Field, Input, Submit } from '~/components/form'
 import useUser from '~/hooks/use-user'
-
-const MyAccountFormSchema = Yup.object().shape({
-  name: Yup.string().required(),
-  email: Yup.string().required(),
-})
 
 const MyAccount = () => {
   const { userState } = useUser()
-  const [error, setError] = useState('')
-  const formik = useFormik({
-    initialValues: {
-      name: '',
-      email: '',
-    },
-    validationSchema: MyAccountFormSchema,
-    onSubmit: async () => {
-      try {
-        console.log('update data') // eslint-disable-line no-console
-      } catch {
-        setError('Algum erro aconteceu, tente novamente mais tarde.')
 
-        setTimeout(() => {
-          setError('')
-        }, 4000)
-      }
-    },
-  })
+  const [form] = Form.useForm()
+  const [changePassword, setChangePassword] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    formik.setFieldValue('name', userState?.name)
-    formik.setFieldValue('email', userState?.email)
-  }, [userState]) // eslint-disable-line react-hooks/exhaustive-deps
+    form.setFieldsValue({
+      name: userState?.loginName,
+      email: userState?.loginEmail,
+    })
+  }, [userState, form])
+
+  const onFinish = async (values) => {
+    setLoading(true)
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 2000))
+
+      message.success('Data updated successfully')
+    } catch {
+      message.error('An error occurred, please try again later.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const validatePassword = (_, value) => {
+    const password = form.getFieldValue('password')
+    if (value && password !== value) {
+      return Promise.reject(
+        new Error('The two passwords that you entered do not match!')
+      )
+    }
+    return Promise.resolve()
+  }
+
+  const handleSwitchChange = (checked) => {
+    setChangePassword(checked)
+    if (!checked) {
+      form.setFieldsValue({
+        password: '', // Limpa o campo de senha se o usuário desativar a mudança de senha
+        confirmPassword: '', // Limpa o campo de confirmação de senha também
+      })
+    }
+  }
 
   return (
-    <form
-      className="grid grid-cols-2 gap-x-4 w-full md:w-2/3 md:grid-cols-12"
-      onSubmit={formik.handleSubmit}
-    >
-      <div className="col-span-2 mb-5 space-y-4 md:col-span-12">
-        <h2 className="text-2xl font-bold">Your data</h2>
-        <p className="w-full text-sm md:w-2/3"></p>
-      </div>
-      <Field
-        htmlFor="name"
-        className="col-span-2 md:col-span-6"
-        hasError={!!(formik.errors.name && formik.touched.name)}
-        error={formik.errors.name}
-      >
-        <Input
-          id="name"
-          name="name"
-          type="text"
-          placeholder="Name"
-          onChange={formik.handleChange}
-          value={formik.values.name}
-          hasError={!!(formik.errors.name && formik.touched.name)}
-        />
-      </Field>
-      <Field
-        htmlFor="email"
-        className="col-span-2 md:col-span-6"
-        hasError={!!(formik.errors.email && formik.touched.email)}
-        error={formik.errors.email}
-      >
-        <Input
-          id="email"
-          name="email"
-          type="text"
-          placeholder="E-mail"
-          onChange={formik.handleChange}
-          value={formik.values.email}
-          hasError={!!(formik.errors.email && formik.touched.email)}
-        />
-      </Field>
-      <div className="mt-2 col-span-2 md:col-span-12 md:flex md:justify-between md:items-center">
-        <Submit
-          disabled={formik.isSubmitting}
-          loading={formik.isSubmitting}
-          loadingText="Loading..."
-        >
-          Save
-        </Submit>
-      </div>
-      {error && (
-        <div className="col-span-2 w-full text-right text-danger text-sm md:col-span-12">
-          <p>{error}</p>
-        </div>
-      )}
-    </form>
+    <Card title="Your Account Information" style={{ marginTop: 16 }}>
+      <Form form={form} layout="vertical" onFinish={onFinish}>
+        <Row gutter={16}>
+          <Col span={12}>
+            <Form.Item
+              label="Name"
+              name="name"
+              rules={[{ required: true, message: 'Please input your name!' }]}
+            >
+              <Input placeholder="Name" />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item
+              label="Email"
+              name="email"
+              rules={[
+                { required: true, message: 'Please input your email!' },
+                { type: 'email', message: 'Please enter a valid email!' },
+              ]}
+            >
+              <Input placeholder="E-mail" type="email" />
+            </Form.Item>
+          </Col>
+          <Col span={24}>
+            <Form.Item>
+              <Row justify="space-between" align="middle">
+                <Col>
+                  <Space>
+                    <span>Change Password</span>
+                    <Switch
+                      checked={changePassword}
+                      onChange={handleSwitchChange}
+                    />
+                  </Space>
+                </Col>
+              </Row>
+            </Form.Item>
+          </Col>
+          {changePassword && (
+            <>
+              <Col span={24}>
+                <Form.Item
+                  label="New Password"
+                  name="password"
+                  rules={[
+                    {
+                      required: true,
+                      message: 'Please input your new password!',
+                    },
+                  ]}
+                >
+                  <Input.Password placeholder="New Password" />
+                </Form.Item>
+              </Col>
+              <Col span={24}>
+                <Form.Item
+                  label="Confirm Password"
+                  name="confirmPassword"
+                  dependencies={['password']}
+                  rules={[
+                    {
+                      required: true,
+                      message: 'Please confirm your new password!',
+                    },
+                    { validator: validatePassword },
+                  ]}
+                >
+                  <Input.Password placeholder="Confirm Password" />
+                </Form.Item>
+              </Col>
+            </>
+          )}
+          <Col span={24}>
+            <Form.Item>
+              <Button type="primary" htmlType="submit" loading={loading}>
+                {loading ? 'Saving...' : 'Save'}
+              </Button>
+            </Form.Item>
+          </Col>
+        </Row>
+      </Form>
+    </Card>
   )
 }
 

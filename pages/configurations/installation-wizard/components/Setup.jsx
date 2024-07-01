@@ -40,6 +40,9 @@ const SetUpNewServerStep = ({
 
   useEffect(() => {
     if (eventSource) {
+      eventSource?.addEventListener('connection', () => {
+        handleSocketMessage('Connected')
+      })
       eventSource?.addEventListener('message', (event) => {
         handleSocketMessage(event.data)
       })
@@ -58,7 +61,7 @@ const SetUpNewServerStep = ({
       eventSource?.removeEventListener('message')
       eventSource?.removeEventListener('error')
     }
-  }, [eventSource])
+  }, [])
 
   useEffect(async () => {
     try {
