@@ -1,6 +1,9 @@
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable no-console */
 
-import { Tabs } from 'antd'
+import { ExclamationCircleOutlined } from '@ant-design/icons'
+import { FloatButton, Modal, Tabs } from 'antd'
 import faker from 'faker'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
@@ -15,6 +18,7 @@ import {
 } from '~/components/page'
 import CurrentActivity from '~/components/page/dashboard/current-activity'
 import HistoryInfo from '~/components/page/dashboard/history-info'
+import { ServerProperties } from '~/components/page/dashboard/history-info/components/server-host-metrics/server-metrics/server-properties'
 import QueryWindow from '~/components/page/dashboard/query-window'
 import { TuningAdvisor } from '~/components/page/dashboard/tuning-advisor'
 import { ServerInfo } from '~/components/page/server-info'
@@ -42,10 +46,11 @@ export const tableDataItems = labels.map(() => ({
 
 const dashboardSections = [
   { name: 'Server/host metrics', slug: 'allinstancemetrics' },
+  { name: 'Permissions', slug: 'permissions' },
+  { name: 'SQL Server metrics', slug: 'sql-server-metrics' },
   { name: 'TEMPDB', slug: 'tempdb' },
   { name: 'Blocking processes', slug: 'blocking-processes' },
   { name: 'SQL user processes', slug: 'sqlprocesses' },
-  { name: 'Permissions', slug: 'permissions' },
   { name: 'Error log', slug: 'error-log' },
   { name: 'Databases', slug: 'databases' },
 ]
@@ -57,7 +62,6 @@ const SingleDashboard = () => {
   const { userState: user } = useUser()
 
   const [activeTabId, setActiveTabId] = useState('0')
-  const [, setActiveSectionIndex] = useState(0)
 
   const router = useRouter()
 
@@ -131,16 +135,15 @@ const SingleDashboard = () => {
               <LatestAlertsSidebar />
               {activeTabId === '0' && (
                 <PageSidebarLinksList className="mt-5">
-                  {dashboardSections.map((section, sectionIndex) => (
-                    <li key={section.slug}>
-                      <button
-                        onClick={() => {
-                          scrollToSection(`#${section.slug}`)
-                          setActiveSectionIndex(sectionIndex)
-                        }}
-                      >
-                        {section.name}
-                      </button>
+                  {dashboardSections.map((section) => (
+                    <li
+                      key={section.slug}
+                      style={{ width: '100%' }}
+                      onClick={() => {
+                        scrollToSection(`#${section.slug}`)
+                      }}
+                    >
+                      <button>{section.name}</button>
                     </li>
                   ))}
                 </PageSidebarLinksList>
@@ -176,6 +179,30 @@ const SingleDashboard = () => {
                       />
                     </div>
                   </>
+                )}
+
+                {hasPermission(
+                  user,
+                  FeatureFunction.SQL_PROPERTIES,
+                  TypeGrant.READ
+                ) && (
+                  <FloatButton
+                    icon={<ExclamationCircleOutlined />}
+                    tooltip={'Server Properties'}
+                    type="primary"
+                    style={{ right: 24 }}
+                    onClick={() => {
+                      Modal.info({
+                        title: 'Server Properties',
+                        width: '80vw',
+                        content: (
+                          <>
+                            <ServerProperties />
+                          </>
+                        ),
+                      })
+                    }}
+                  />
                 )}
               </div>
             </PageContent>

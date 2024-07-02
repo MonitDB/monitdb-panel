@@ -55,22 +55,33 @@ export const PageSidebarTitle = ({ children }) => {
 import styled from 'styled-components'
 
 const StyledList = styled(List)`
-  .sidebar-list-item {
-    color: white;
-    transition: background-color 0.3s;
-    padding: 8px;
-    padding-left: 20px;
-    border-radius: 10px;
+  .sidebar-list-item-wrapper {
+    display: flex;
+    flex-direction: column;
     margin-top: 2px;
+    border-radius: 10px;
+    transition: background-color 0.3s;
+    li {
+      width: 100%;
+    }
 
-    &:hover {
+    &:hover .sidebar-list-item {
       background-color: rgba(255, 255, 255, 0.1);
       cursor: pointer;
     }
+  }
 
-    &.visited {
-      background-color: rgba(255, 255, 255, 0.1); /* Estilo de visitado */
-    }
+  .sidebar-list-item {
+    color: white;
+    width: 100%;
+    padding: 8px;
+    padding-left: 20px;
+    border-radius: 10px;
+    /* background-color: transparent; */
+  }
+
+  .visited {
+    background-color: rgba(255, 255, 255, 0.1); /* Estilo de visitado */
   }
 `
 
@@ -86,14 +97,15 @@ export const PageSidebarLinksList = ({ children }) => {
       itemLayout="vertical"
       dataSource={React.Children.toArray(children)}
       renderItem={(item, index) => (
-        <List.Item
-          className={`sidebar-list-item ${
+        // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
+        <div
+          className={`sidebar-list-item-wrapper ${
             index === lastClickedIndex ? 'visited' : ''
           }`}
           onClick={() => handleItemClick(index)}
         >
-          {item}
-        </List.Item>
+          <div className="sidebar-list-item">{item}</div>
+        </div>
       )}
     />
   )

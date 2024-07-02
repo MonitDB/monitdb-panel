@@ -1,8 +1,9 @@
+/* eslint-disable sonarjs/cognitive-complexity */
+import { Col, Row } from 'antd'
 import { useRouter } from 'next/router'
 import { memo, useCallback, useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 
-import Grid from '~/components/grid'
 import { useSingleDashboard, useUser } from '~/hooks/index'
 import useLogContext from '~/services/state-manager/logs'
 import {
@@ -18,7 +19,6 @@ import LockTimeoutsSec from './lock-timeouts-sec'
 import LockWaitsSec from './lock-waits-sec'
 import PageSplitsBatchRequests from './page-splits-batch-requests'
 import PageSplitsSec from './page-splits-sec'
-import { ServerProperties } from './server-properties'
 import SqlCompilationsBatchRequests from './sql-compilations-batch-requests'
 import SqlCompilationsSec from './sql-compilations-sec'
 import UserConnections from './user-connections'
@@ -28,7 +28,6 @@ const formatData = (item) => [
   item?.count === 'Infinity' ? '99999999' : Number(item?.count),
 ]
 
-// eslint-disable-next-line sonarjs/cognitive-complexity
 const ServerMetrics = ({ key }) => {
   const { currentServer } = useSingleDashboard()
   const { getSQLServerMetrics } = useLogContext()
@@ -57,30 +56,30 @@ const ServerMetrics = ({ key }) => {
   useEffect(fetchData, [fetchData])
 
   return (
-    <div className="mt-6" key={key}>
+    <div className="mt-6" key={key} id="sql-server-metrics">
       <h3 className="font-bold mb-6">SQL Server metrics</h3>
       <div>
         <h4 className="mb-6 text-sm">General</h4>
-        <Grid>
-          <div className="cols-span-2 md:col-span-4">
-            {hasPermission(
-              user,
-              FeatureFunction.SQL_SERVER_METRICS_BATCH_REQUESTS,
-              TypeGrant.READ
-            ) && (
+        <Row gutter={[16, 16]}>
+          {hasPermission(
+            user,
+            FeatureFunction.SQL_SERVER_METRICS_BATCH_REQUESTS,
+            TypeGrant.READ
+          ) && (
+            <Col xs={24} md={12} lg={8}>
               <BatchRequests
                 isLoading={isLoading}
                 seriesData={data?.batchRequest?.map(formatData) ?? []}
                 group={'opa'}
               />
-            )}
-          </div>
-          <div className="cols-span-2 md:col-span-4">
-            {hasPermission(
-              user,
-              FeatureFunction.SQL_SERVER_METRICS_SQLCOMPILATIONS_BATCH_REQUESTS,
-              TypeGrant.READ
-            ) && (
+            </Col>
+          )}
+          {hasPermission(
+            user,
+            FeatureFunction.SQL_SERVER_METRICS_SQLCOMPILATIONS_BATCH_REQUESTS,
+            TypeGrant.READ
+          ) && (
+            <Col xs={24} md={12} lg={8}>
               <SqlCompilationsBatchRequests
                 isLoading={isLoading}
                 seriesData={
@@ -88,96 +87,98 @@ const ServerMetrics = ({ key }) => {
                 }
                 group={'opa'}
               />
-            )}
-          </div>
-          <div className="cols-span-2 md:col-span-4">
-            {hasPermission(
-              user,
-              FeatureFunction.SQL_SERVER_METRICS_PAGE_SPLITS_BATCH_REQUESTS,
-              TypeGrant.READ
-            ) && (
+            </Col>
+          )}
+          {hasPermission(
+            user,
+            FeatureFunction.SQL_SERVER_METRICS_PAGE_SPLITS_BATCH_REQUESTS,
+            TypeGrant.READ
+          ) && (
+            <Col xs={24} md={12} lg={8}>
               <PageSplitsBatchRequests
                 isLoading={isLoading}
                 seriesData={
                   data?.pageSplitsDataPerBatchRequests?.map(formatData) ?? []
                 }
               />
-            )}
-          </div>
-          <div className="cols-span-2 md:col-span-4">
-            {hasPermission(
-              user,
-              FeatureFunction.SQL_SERVER_METRICS_SQLCOMPILATIONS_SEC,
-              TypeGrant.READ
-            ) && (
+            </Col>
+          )}
+          {hasPermission(
+            user,
+            FeatureFunction.SQL_SERVER_METRICS_SQLCOMPILATIONS_SEC,
+            TypeGrant.READ
+          ) && (
+            <Col xs={24} md={12} lg={8}>
               <SqlCompilationsSec
                 isLoading={isLoading}
                 seriesData={data?.sqlCompilations?.map(formatData) ?? []}
               />
-            )}
-          </div>
-          <div className="cols-span-2 md:col-span-4">
-            {hasPermission(
-              user,
-              FeatureFunction.SQL_SERVER_METRICS_PAGE_SPLITS_SEC,
-              TypeGrant.READ
-            ) && (
+            </Col>
+          )}
+          {hasPermission(
+            user,
+            FeatureFunction.SQL_SERVER_METRICS_PAGE_SPLITS_SEC,
+            TypeGrant.READ
+          ) && (
+            <Col xs={24} md={12} lg={8}>
               <PageSplitsSec
                 isLoading={isLoading}
                 seriesData={data?.pageSplits?.map(formatData) ?? []}
               />
-            )}
-          </div>
-          <div className="cols-span-2 md:col-span-4">
-            {hasPermission(
-              user,
-              FeatureFunction.SQL_SERVER_METRICS_FULL_SCANS_SEC,
-              TypeGrant.READ
-            ) && (
+            </Col>
+          )}
+          {hasPermission(
+            user,
+            FeatureFunction.SQL_SERVER_METRICS_FULL_SCANS_SEC,
+            TypeGrant.READ
+          ) && (
+            <Col xs={24} md={12} lg={8}>
               <FullScansSec
                 isLoading={isLoading}
                 seriesData={data?.fullScans?.map(formatData) ?? []}
               />
-            )}
-          </div>
-          <div className="cols-span-2 md:col-span-4">
-            {hasPermission(
-              user,
-              FeatureFunction.SQL_SERVER_METRICS_USER_CONNECTIONS,
-              TypeGrant.READ
-            ) && (
+            </Col>
+          )}
+          {hasPermission(
+            user,
+            FeatureFunction.SQL_SERVER_METRICS_USER_CONNECTIONS,
+            TypeGrant.READ
+          ) && (
+            <Col xs={24} md={12} lg={8}>
               <UserConnections
                 isLoading={isLoading}
                 seriesData={data?.userConnections?.map(formatData) ?? []}
               />
-            )}
-          </div>
-        </Grid>
+            </Col>
+          )}
+        </Row>
       </div>
 
-      <Grid className="mt-6">
-        <div className="col-span-2 space-y-4 md:col-span-6">
-          <h4 className="mb-4 text-sm">Latches and locks</h4>
+      <Row>
+        <h4 className="mb-4 mt-8 text-sm">Latches and locks</h4>
+      </Row>
+
+      <Row gutter={[16, 16]} className="mt-6">
+        <Col xs={24} md={12} lg={8}>
           <AvgLatchWait
             isLoading={isLoading}
             seriesData={data?.averageLatchWaitTime?.map(formatData) ?? []}
           />
+        </Col>
+        <Col xs={24} md={12} lg={8}>
           <LockTimeoutsSec
             isLoading={isLoading}
             seriesData={data?.lockTimeout?.map(formatData) ?? []}
           />
+        </Col>
+        <Col xs={24} md={12} lg={8}>
           <LockWaitsSec
             key={key}
             isLoading={isLoading}
             seriesData={data?.lockWaits?.map(formatData) ?? []}
           />
-        </div>
-        {hasPermission(
-          user,
-          FeatureFunction.SQL_PROPERTIES,
-          TypeGrant.READ
-        ) && <ServerProperties />}
-      </Grid>
+        </Col>
+      </Row>
     </div>
   )
 }

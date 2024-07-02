@@ -132,27 +132,8 @@ const HistoryInfo = ({ currentServer }) => {
           )}
         </Row>
 
-        {/* <Server /> */}
-        <ServerMetrics key={lastFetch} />
         <Permissions currentServer={currentServer} />
-        <div>
-          <br />
-          <h4 className="mb-4 text-sm">OS Properties</h4>
-          <div className="w-full mb-4 prose max-w-full prose-p:m-0 prose-td:align-top prose-tr:border-gray-light prose-headings:m-0">
-            <table className="m-0 py-4 prose-tr:last:!border-b">
-              <tbody>
-                <tr>
-                  <td>Edition</td>
-                  <td>{serverMetrics?.osProperties?.['OS_Version']}</td>
-                </tr>
-                <tr>
-                  <td>Version</td>
-                  <td> {serverMetrics?.osProperties?.['OS_Release']}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
+        <ServerMetrics key={lastFetch} />
 
         <Temppdb />
         {hasPermission(

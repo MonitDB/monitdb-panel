@@ -1,7 +1,11 @@
+import { LoadingOutlined } from '@ant-design/icons'
+import { Avatar, Col, Row, Spin, Typography } from 'antd'
 import { useEffect, useState } from 'react'
 
 import DatabaseIcons from '~/helpers/database-icons'
 import { getServerMetrics } from '~/services/servers'
+
+const { Title, Text } = Typography
 
 export const ServerInfo = ({ currentServer }) => {
   const [serverMetrics, setServerMetrics] = useState()
@@ -23,23 +27,47 @@ export const ServerInfo = ({ currentServer }) => {
 
   const memoryMB = serverMetrics?.osProperties?.['Memory MB']
   const logicProcessors = serverMetrics?.osProperties?.['Logic Processors']
+  const osVersion = serverMetrics?.osProperties?.['OS_Version']
+  const osRelease = serverMetrics?.osProperties?.['OS_Release']
 
-  const memoryInfo = memoryMB
-    ? `${Math.round(memoryMB / 1024)}GB Memory / ${logicProcessors} CPUs`
-    : 'Memory information not available'
+  const serverInfo = serverMetrics ? (
+    <>
+      <Text>
+        OS Version: {osVersion} - Release: {osRelease}
+      </Text>
+      <br />
+      <Text>
+        Memory: {memoryMB ? `${Math.round(memoryMB / 1024)} GB` : 'N/A'}
+      </Text>
+      <br />
+      <Text>CPUs: {logicProcessors ? logicProcessors : 'N/A'}</Text>
+    </>
+  ) : (
+    <Spin indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />} />
+  )
 
   return (
-    <div className="w-full flex items-center gap-4">
-      <div className="flex items-center justify-center w-16 h-16 rounded-full border border-gray-light">
-        <DatabaseIcons
-          name={currentServer.type.typeServerName}
-          className="w-9 h-9"
-        />
-      </div>
-      <div>
-        <h4 className="heading-md">{currentServer.serverName}</h4>
-        <p className="text-sm">{serverMetrics ? memoryInfo : 'Loading...'}</p>
-      </div>
-    </div>
+    <Row align="middle" gutter={[16, 16]}>
+      <Col>
+        <Avatar
+          size={128}
+          style={{
+            backgroundColor: '#f0f0f0',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <DatabaseIcons
+            name={currentServer.type.typeServerName}
+            className="w-24 h-24"
+          />
+        </Avatar>
+      </Col>
+      <Col>
+        <Title level={4}>{currentServer.serverName}</Title>
+        {serverInfo}
+      </Col>
+    </Row>
   )
 }

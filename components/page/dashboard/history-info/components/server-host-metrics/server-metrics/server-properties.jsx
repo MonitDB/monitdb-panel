@@ -1,5 +1,6 @@
+import { Card, Descriptions, Spin } from 'antd'
 import moment from 'moment'
-import { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 
 import { useSingleDashboard } from '~/hooks/index'
@@ -12,7 +13,7 @@ export const ServerProperties = () => {
   const { currentServer } = useSingleDashboard()
   const { executeQueryComponent } = useComponentContext()
 
-  const [data, setDate] = useState()
+  const [data, setData] = useState()
   const [loading, setLoading] = useState(false)
 
   const fetchData = useCallback(async () => {
@@ -23,7 +24,7 @@ export const ServerProperties = () => {
         currentServer?.id || undefined
       )
 
-      setDate(result)
+      setData(result)
     } catch {
       toast.error('Error to get ServerProperties')
     } finally {
@@ -37,33 +38,35 @@ export const ServerProperties = () => {
 
   return (
     <div className="col-span-2 md:col-span-6">
-      <h4 className="mb-4 text-sm text-gray-dark">Server properties</h4>
-      <div
-        style={{ height: '674px' }}
-        className="w-full mb-4 prose max-w-full prose-p:m-0 prose-td:align-top prose-tr:border-gray-light prose-headings:m-0"
-      >
+      {/* <h4 className="mb-4 text-sm text-gray-dark">Server properties</h4> */}
+
+      <Card>
         {loading ? (
-          loadingText
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexDirection: 'column',
+            }}
+          >
+            <Spin tip={loadingText} />
+          </div>
         ) : (
-          <table className="m-0 py-4 prose-tr:last:!border-b">
-            <tbody>
-              {Object.keys(data ?? {}).map(
-                (key, index) =>
-                  data[key] && (
-                    <tr key={index}>
-                      <td>{key}</td>{' '}
-                      <td>
-                        {moment(data[key]).isValid()
-                          ? moment(data[key]).format('DD/MM/YYYY HH:mm:ss')
-                          : String(data[key])}
-                      </td>
-                    </tr>
-                  )
-              )}
-            </tbody>
-          </table>
+          <Descriptions size="small" column={2} bordered>
+            {Object.keys(data ?? {}).map(
+              (key, index) =>
+                data[key] && (
+                  <Descriptions.Item label={key} key={index}>
+                    {moment(data[key]).isValid()
+                      ? moment(data[key]).format('DD/MM/YYYY HH:mm:ss')
+                      : String(data[key])}
+                  </Descriptions.Item>
+                )
+            )}
+          </Descriptions>
         )}
-      </div>
+      </Card>
     </div>
   )
 }

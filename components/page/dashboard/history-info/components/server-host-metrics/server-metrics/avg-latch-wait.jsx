@@ -1,13 +1,14 @@
 import React, { memo } from 'react'
 
 import Chart, { tooltipFormatter } from '~/components/chart'
+import Loading from '~/components/loading'
 import { formatter } from '~/utils/date'
 
 function AvgLatchWait({ isLoading, seriesData, group }) {
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-full">
-        {isLoading ? 'Loading...' : 'Error'}
+      <div className="col-span-2 bg-white lg:col-span-6 h-200 flex items-center justify-center h-[140px]">
+        <Loading />
       </div>
     )
   }
