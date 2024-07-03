@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 // utils/EventSourceContext.js
-import { message, notification } from 'antd'
+import { message } from 'antd'
 import { EventSourcePolyfill } from 'event-source-polyfill'
 import { createContext, useContext, useEffect, useState } from 'react'
 
@@ -34,7 +34,7 @@ export const EventSourceProvider = ({ children }) => {
 
     es.addEventListener('connection', function (event) {
       const data = JSON.parse(event.data)
-      message.info(data.id)
+      message.info('Listening Events')
       setConnectionId(data.id)
     })
 

@@ -46,13 +46,13 @@ export const tableDataItems = labels.map(() => ({
 
 const dashboardSections = [
   { name: 'Server/host metrics', slug: 'allinstancemetrics' },
-  { name: 'Permissions', slug: 'permissions' },
   { name: 'SQL Server metrics', slug: 'sql-server-metrics' },
+  { name: 'Databases', slug: 'databases' },
+  { name: 'Permissions', slug: 'permissions' },
   { name: 'TEMPDB', slug: 'tempdb' },
   { name: 'Blocking processes', slug: 'blocking-processes' },
   { name: 'SQL user processes', slug: 'sqlprocesses' },
   { name: 'Error log', slug: 'error-log' },
-  { name: 'Databases', slug: 'databases' },
 ]
 
 const SingleDashboard = () => {

@@ -132,9 +132,15 @@ const HistoryInfo = ({ currentServer }) => {
           )}
         </Row>
 
-        <Permissions currentServer={currentServer} />
         <ServerMetrics key={lastFetch} />
 
+        {hasPermission(user, FeatureFunction.DATABASES, TypeGrant.READ) && (
+          <Databases
+            key={router.query.lastMinutes}
+            currentServer={currentServer}
+          />
+        )}
+        <Permissions currentServer={currentServer} />
         <Temppdb />
         {hasPermission(
           user,
@@ -150,13 +156,6 @@ const HistoryInfo = ({ currentServer }) => {
 
         {hasPermission(user, FeatureFunction.ERROR_LOG, TypeGrant.READ) && (
           <ErrorLog currentServer={currentServer} />
-        )}
-
-        {hasPermission(user, FeatureFunction.DATABASES, TypeGrant.READ) && (
-          <Databases
-            key={router.query.lastMinutes}
-            currentServer={currentServer}
-          />
         )}
       </div>
     </div>
