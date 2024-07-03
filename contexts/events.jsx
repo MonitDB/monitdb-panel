@@ -1,3 +1,4 @@
+/* eslint-disable unicorn/prefer-add-event-listener */
 /* eslint-disable no-console */
 // utils/EventSourceContext.js
 import { message } from 'antd'
@@ -18,36 +19,48 @@ const EventSourceContext = createContext({ eventSource: undefined })
 export const EventSourceProvider = ({ children }) => {
   const [eventSource, setEventSource] = useState()
   const [connectionId, setConnectionId] = useState()
-  console.log(getUserToken())
+  const token = getUserToken()
+
+  const initializeEventSource = () => {
+    if (token && !eventSource) {
+      const url = APIV2 + '/events'
+      const headers = {
+        Authorization: `Bearer ${token}`,
+        'x-api-key': process.env.apiKey,
+      }
+
+      const es = new EventSourcePolyfill(url, {
+        headers: headers,
+      })
+
+      setEventSource(es)
+
+      es.addEventListener('connection', function (event) {
+        const data = JSON.parse(event.data)
+        message.info('Listening Events')
+        setConnectionId(data.id)
+      })
+
+      es.onerror = (error) => {
+        message.error('EventSource disconnected, attempting to reconnect...')
+        console.error('EventSource failed:', error)
+        es.close()
+        // Tentar reconectar após 5 segundos
+        setTimeout(() => {
+          initializeEventSource()
+        }, 5000)
+      }
+    }
+  }
+
   useEffect(() => {
-    const url = APIV2 + '/events'
-    const headers = {
-      Authorization: `Bearer ${getUserToken()}`,
-      'x-api-key': process.env.apiKey,
-    }
-
-    const es = new EventSourcePolyfill(url, {
-      headers: headers,
-    })
-
-    setEventSource(es)
-
-    es.addEventListener('connection', function (event) {
-      const data = JSON.parse(event.data)
-      message.info('Listening Events')
-      setConnectionId(data.id)
-    })
-
-    // eslint-disable-next-line unicorn/prefer-add-event-listener
-    es.onerror = (error) => {
-      message.error('EventSource disconnected')
-      console.error('EventSource failed:', error)
-    }
+    initializeEventSource()
 
     return () => {
-      es.close()
+      eventSource?.close()
     }
-  }, [])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token])
 
   return (
     <EventSourceContext.Provider value={{ eventSource, connectionId }}>
