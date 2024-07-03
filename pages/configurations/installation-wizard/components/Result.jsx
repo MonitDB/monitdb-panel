@@ -3,6 +3,8 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
+import { useEventSource } from '~/contexts/events'
+
 import StepContainer from './StepContainer'
 
 const ResultContainer = styled.div`
@@ -22,7 +24,8 @@ const ResultMessage = styled.div`
  * @param {EventSource | undefined} props.eventSource - Objeto EventSource ou undefined.
  * @param {Function} props.handlePreviusStep - Função para voltar para o passo anterior.
  */
-const ResultStep = ({ eventSource, handlePreviusStep }) => {
+const ResultStep = ({ handlePreviusStep }) => {
+  const { eventSource } = useEventSource()
   const [result, setResult] = useState({ status: '', message: '' })
 
   const router = useRouter()

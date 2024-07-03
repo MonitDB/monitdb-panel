@@ -3,6 +3,7 @@ import { Button, Col, Row, Select, Space } from 'antd'
 import { useEffect, useState } from 'react'
 
 import TerminalWindow from '~/components/terminal'
+import { useEventSource } from '~/contexts/events'
 import { getAvailableVersions, installNewServer } from '~/services/servers'
 
 import StepContainer from './StepContainer'
@@ -24,8 +25,6 @@ const SetUpNewServerStep = ({
   handlePreviusStep,
   form,
   step,
-  eventSource,
-  connectionId,
 }) => {
   const [terminalOutput, setTerminalOutput] = useState([])
 
@@ -33,6 +32,8 @@ const SetUpNewServerStep = ({
   const [version, setVersion] = useState()
   const [installing, setInstalling] = useState(false)
   const [installResult, setInstallResult] = useState()
+
+  const { eventSource, connectionId } = useEventSource()
 
   const handleSocketMessage = (event) => {
     setTerminalOutput((previousOutput) => [...previousOutput, event])

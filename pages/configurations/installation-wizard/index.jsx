@@ -1,12 +1,9 @@
 import { Form, Steps } from 'antd'
-import { EventSourcePolyfill } from 'event-source-polyfill'
 import { NextSeo } from 'next-seo'
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 
 import { PageContent, PageHeader } from '~/components/page'
 import Layout from '~/layouts/default'
-import { APIV2 } from '~/utils/client-api'
-import { getUserToken } from '~/utils/cookies'
 
 import DetailsStep from './components/DetailsStep'
 import ResultStep from './components/Result'
@@ -33,39 +30,7 @@ const steps = [
 
 const InstallationWizard = () => {
   const [step, setStep] = useState(0)
-  const [connectionId, setConnectionId] = useState()
-
   const [form] = Form.useForm()
-  const eventSource = useRef()
-
-  useEffect(() => {
-    eventSource.current = new EventSourcePolyfill(APIV2 + '/events', {
-      headers: {
-        Authorization: `Bearer ${getUserToken()}`,
-        'x-api-key': process.env.apiKey,
-      },
-    })
-
-    eventSource.current.addEventListener('connection', function (event) {
-      const data = JSON.parse(event.data)
-      setConnectionId(data.id)
-    })
-
-    setInterval(() => {
-      if (eventSource.current.readyState == EventSource.CLOSED) {
-        eventSource.current = new EventSourcePolyfill(APIV2 + '/events', {
-          headers: {
-            Authorization: `Bearer ${getUserToken()}`,
-            'x-api-key': process.env.apiKey,
-          },
-        })
-      }
-    }, 3000)
-
-    return () => {
-      eventSource.current.close()
-    }
-  }, [])
 
   return (
     <>
@@ -107,16 +72,11 @@ const InstallationWizard = () => {
                 step={step}
                 handleNextStep={() => setStep(step + 1)}
                 handlePreviusStep={() => setStep(step - 1)}
-                connectionId={connectionId}
-                eventSource={eventSource.current}
                 form={form}
               />
             </div>
             <div style={{ display: step === 3 ? 'inherit' : 'none' }}>
-              <ResultStep
-                eventSource={eventSource.current}
-                handlePreviusStep={() => setStep(step - 1)}
-              />
+              <ResultStep handlePreviusStep={() => setStep(step - 1)} />
             </div>
           </Form>
         </PageContent>
