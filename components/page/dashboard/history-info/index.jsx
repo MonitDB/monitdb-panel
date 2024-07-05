@@ -1,12 +1,9 @@
 import { Button, Col, Row, Select } from 'antd'
 import { useFormik } from 'formik'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
-import RdpButton from '~/components/rdpButton'
-import SshButon from '~/components/sshButton'
 import { useUser } from '~/hooks/index'
-import { getServerMetrics } from '~/services/servers'
 import {
   FeatureFunction,
   hasPermission,
@@ -30,21 +27,6 @@ const HistoryInfo = ({ currentServer }) => {
   const router = useRouter()
 
   const [lastFetch, setLastFetch] = useState(Date.now())
-  const [serverMetrics, setServerMetrics] = useState()
-  useEffect(() => {
-    if (router?.query?.id) {
-      const fetch = async () => {
-        try {
-          const { data } = await getServerMetrics({ id: router?.query?.id })
-          setServerMetrics(data)
-        } catch {
-          /* empty */
-        }
-      }
-
-      fetch()
-    }
-  }, [router?.query?.id])
 
   const lastMinutesOptions = [
     { value: HOUR, label: '1 hour' },
@@ -69,23 +51,7 @@ const HistoryInfo = ({ currentServer }) => {
       className="w-full flex flex-col gap-y-6 mt-6"
       style={{ overflow: 'hidden' }}
     >
-      <div className="w-full flex gap-x-8 p-4 border border-gray-light bg-white text-sm">
-        <div className="flex gap-2 mr-auto">
-          {serverMetrics?.osProperties?.['host_platform'] === 'Windows' && (
-            <RdpButton
-              serverName={currentServer.serverName}
-              address={currentServer.serverHost}
-            />
-          )}
-
-          {serverMetrics?.osProperties?.['host_platform'] === 'Linux' && (
-            <SshButon
-              serverName={currentServer.serverName}
-              address={currentServer.serverHost}
-            />
-          )}
-        </div>
-
+      <div className="w-full flex gap-x-8 p-4 text-sm">
         <div className="flex gap-2 ml-auto">
           <Select
             className="w-40"
@@ -140,8 +106,9 @@ const HistoryInfo = ({ currentServer }) => {
             currentServer={currentServer}
           />
         )}
-        <Permissions currentServer={currentServer} />
+
         <Temppdb />
+        <Permissions currentServer={currentServer} />
         {hasPermission(
           user,
           FeatureFunction.BLOCKING_PROCESS_TOP_10_BY_TIME,

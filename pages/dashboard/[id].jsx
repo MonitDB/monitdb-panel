@@ -3,7 +3,7 @@
 /* eslint-disable no-console */
 
 import { ExclamationCircleOutlined } from '@ant-design/icons'
-import { FloatButton, Modal, Tabs } from 'antd'
+import { Col, FloatButton, Modal, Row, Tabs } from 'antd'
 import faker from 'faker'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
@@ -48,8 +48,8 @@ const dashboardSections = [
   { name: 'Server/host metrics', slug: 'allinstancemetrics' },
   { name: 'SQL Server metrics', slug: 'sql-server-metrics' },
   { name: 'Databases', slug: 'databases' },
-  { name: 'Permissions', slug: 'permissions' },
   { name: 'TEMPDB', slug: 'tempdb' },
+  { name: 'Permissions', slug: 'permissions' },
   { name: 'Blocking processes', slug: 'blocking-processes' },
   { name: 'SQL user processes', slug: 'sqlprocesses' },
   { name: 'Error log', slug: 'error-log' },
@@ -155,19 +155,27 @@ const SingleDashboard = () => {
                 {!currentServer && <Loading />}
                 {currentServer && (
                   <>
-                    <div className="w-full flex flex-col">
-                      <header className="w-full">
-                        <h2 className="heading-lg mb-6">
-                          Dashboard - Overview
-                        </h2>
-                      </header>
-
-                      {hasPermission(
-                        user,
-                        FeatureFunction.SERVER_INFORMATION,
-                        TypeGrant.READ
-                      ) && <ServerInfo currentServer={currentServer} />}
-                    </div>
+                    <Row gutter={14}>
+                      <Col sm={12}>
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            height: '100%',
+                          }}
+                        >
+                          <h2 className="heading-lg">Dashboard - Overview</h2>
+                        </div>
+                      </Col>
+                      <Col sm={12}>
+                        {hasPermission(
+                          user,
+                          FeatureFunction.SERVER_INFORMATION,
+                          TypeGrant.READ
+                        ) && <ServerInfo currentServer={currentServer} />}
+                      </Col>
+                    </Row>
 
                     <div className="flex items-center border-b-gray-light">
                       <Tabs

@@ -197,7 +197,7 @@ const AlertsDetailsPage = () => {
               )}
 
               <Select
-                name="time"
+                name="lastMinutes"
                 style={{ width: '150px' }}
                 containerClass="w-full md:w-1/3 bg-white border-white md:min-w-1/3"
                 options={timeOptions}

@@ -84,7 +84,7 @@ enablerdsaadauth:i:0`
 
   return (
     <StyledButton onClick={handleExport}>
-      <Image src={rdpImage} alt="Imagem" height={32} width={32} />
+      <Image src={rdpImage} alt="Imagem" height={24} width={24} />
     </StyledButton>
   )
 }

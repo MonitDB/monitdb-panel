@@ -2,6 +2,8 @@ import { LoadingOutlined } from '@ant-design/icons'
 import { Avatar, Col, Row, Spin, Typography } from 'antd'
 import { useEffect, useState } from 'react'
 
+import RdpButton from '~/components/rdpButton'
+import SshButon from '~/components/sshButton'
 import DatabaseIcons from '~/helpers/database-icons'
 import { getServerMetrics } from '~/services/servers'
 
@@ -41,33 +43,49 @@ export const ServerInfo = ({ currentServer }) => {
       </Text>
       <br />
       <Text>CPUs: {logicProcessors ? logicProcessors : 'N/A'}</Text>
+      <br />
+
+      {serverMetrics?.osProperties?.['host_platform'] === 'Windows' && (
+        <RdpButton
+          serverName={currentServer.serverName}
+          address={currentServer.serverHost}
+        />
+      )}
+      {serverMetrics?.osProperties?.['host_platform'] === 'Linux' && (
+        <SshButon
+          serverName={currentServer.serverName}
+          address={currentServer.serverHost}
+        />
+      )}
     </>
   ) : (
     <Spin indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />} />
   )
 
   return (
-    <Row align="middle" gutter={[16, 16]}>
-      <Col>
-        <Avatar
-          size={128}
-          style={{
-            backgroundColor: '#f0f0f0',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <DatabaseIcons
-            name={currentServer.type.typeServerName}
-            className="w-24 h-24"
-          />
-        </Avatar>
-      </Col>
-      <Col>
-        <Title level={4}>{currentServer.serverName}</Title>
-        {serverInfo}
-      </Col>
-    </Row>
+    <>
+      <Row align="middle" gutter={[16, 16]}>
+        <Col>
+          <Avatar
+            size={128}
+            style={{
+              backgroundColor: '#f0f0f0',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <DatabaseIcons
+              name={currentServer.type.typeServerName}
+              className="w-24 h-24"
+            />
+          </Avatar>
+        </Col>
+        <Col>
+          <Title level={4}>{currentServer.serverName}</Title>
+          {serverInfo}
+        </Col>
+      </Row>
+    </>
   )
 }

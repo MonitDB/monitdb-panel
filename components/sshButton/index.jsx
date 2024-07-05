@@ -22,7 +22,7 @@ const SshButon = () => {
 
   return (
     <StyledButton>
-      <Image src={sshImage} alt="Imagem" height={32} width={32} />
+      <Image src={sshImage} alt="Imagem" height={24} width={24} />
     </StyledButton>
   )
 }
