@@ -45,7 +45,6 @@ export const EventSourceProvider = ({ children }) => {
         message.error('EventSource disconnected, attempting to reconnect...')
         console.error('EventSource failed:', error)
         es.close()
-        // Tentar reconectar após 5 segundos
         setTimeout(() => {
           initializeEventSource()
         }, 5000)

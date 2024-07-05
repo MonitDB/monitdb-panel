@@ -1,9 +1,9 @@
 import { faAdd } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Button, Col, Row, Table, Tag } from 'antd'
+import { Button, message, Popconfirm, Row, Space, Table, Tag } from 'antd'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import React from 'react'
 
 import Link from '~/components/link'
@@ -11,6 +11,8 @@ import { PageContent, PageHeader, PageWrapper } from '~/components/page'
 import { useUser } from '~/hooks/index'
 import useGlobal from '~/hooks/use-global'
 import Layout from '~/layouts/default'
+import { deleteServer } from '~/services/servers'
+import { handleException } from '~/utils/exceptions'
 import {
   FeatureFunction,
   hasPermission,
@@ -20,9 +22,12 @@ import {
 const ConfigurationsServersPage = () => {
   const {
     globalState: { servers },
+    refreshData,
   } = useGlobal()
 
   const { userState: user } = useUser()
+  const [loading, setLoading] = useState([])
+
   const router = useRouter()
   useEffect(() => {
     if (
@@ -36,6 +41,26 @@ const ConfigurationsServersPage = () => {
       router.push('/403')
     }
   }, [router, user])
+
+  const handleDeleteServer = async (id) => {
+    const server = servers.find((server) => server.id === id)
+
+    try {
+      setLoading((previousLoading) => [...previousLoading, id])
+      const response = await deleteServer(id)
+      await refreshData()
+      if (response?.status === 200) {
+        message.success(`Server ${server.serverName} deleted!`)
+      }
+    } catch (error) {
+      message.error(handleException(error))
+    } finally {
+      setLoading((previousLoading) =>
+        previousLoading.filter((loadingId) => loadingId !== id)
+      )
+    }
+  }
+
   return (
     <>
       <NextSeo title="Servers - Configurations - MonitDB" />
@@ -91,7 +116,7 @@ const ConfigurationsServersPage = () => {
                       title: 'Actions',
                       render: (value, record) => (
                         <Row>
-                          <Col>
+                          <Space>
                             <Button type="default">
                               {' '}
                               <Link
@@ -101,7 +126,24 @@ const ConfigurationsServersPage = () => {
                                 Edit Credentials
                               </Link>
                             </Button>
-                          </Col>
+                            <Popconfirm
+                              title={`Delete the server ${record.serverName}`}
+                              description="Are you sure to delete this server?"
+                              okText="Yes"
+                              cancelText="No"
+                              onConfirm={() => {
+                                handleDeleteServer(record.id)
+                              }}
+                            >
+                              <Button
+                                type="dashed"
+                                danger
+                                loading={loading.includes(record.id)}
+                              >
+                                Delete Server
+                              </Button>
+                            </Popconfirm>
+                          </Space>
                         </Row>
                       ),
                     },

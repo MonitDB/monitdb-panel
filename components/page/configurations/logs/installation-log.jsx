@@ -2,7 +2,6 @@
 import { DatePicker, notification, Select, Space, Table } from 'antd'
 import { format, parseISO } from 'date-fns'
 import dayjs from 'dayjs'
-import { useFormik } from 'formik'
 import { useEffect, useState } from 'react'
 
 import { getInstallationLogs, getInstallationServers } from '~/services/logs'
@@ -15,42 +14,43 @@ export const InstallationLog = () => {
   const [data, setData] = useState([])
   const [loading, setLoading] = useState(false)
   const [servers, setServers] = useState(['0'])
+  const [pageNumber, setPageNumber] = useState(1)
+  const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE)
+  const [totalResults, setTotalResults] = useState(0)
+  const [serverName, setServerName] = useState('0')
+  const [dateRange, setDateRange] = useState([
+    dayjs().subtract(1, 'month').toDate(),
+    dayjs().toDate(),
+  ])
 
-  const formik = useFormik({
-    initialValues: {
-      PageNumber: 1,
-      ServerName: '0',
-      DateRange: [dayjs().subtract(1, 'month').toDate(), dayjs().toDate()],
-    },
-    onSubmit: async (values) => {
-      setLoading(true)
-      try {
-        const response = await getInstallationLogs({
-          page: values.PageNumber,
-          pageSize: DEFAULT_PAGE_SIZE,
-          serverName: values.ServerName,
-          startDate: values.DateRange[0],
-          endDate: values.DateRange[1],
-        })
+  const fetchLogs = async () => {
+    setLoading(true)
+    try {
+      const response = await getInstallationLogs({
+        page: pageNumber,
+        pageSize: pageSize,
+        serverName: serverName,
+        startDate: dateRange[0],
+        endDate: dateRange[1],
+      })
 
-        setData(response?.data?.logs || [])
-        formik.setFieldValue('totalResults', response?.data?.totalResults || 0)
-      } catch {
-        notification.error({
-          message: 'Error to load the logs',
-          description: 'Please verify manually the errors at db.',
-        })
-      }
-      setLoading(false)
-    },
-  })
+      setData(response?.data?.logs || [])
+      setTotalResults(response?.data?.totalResults || 0)
+    } catch {
+      notification.error({
+        message: 'Error to load the logs',
+        description: 'Please verify manually the errors at db.',
+      })
+    }
+    setLoading(false)
+  }
 
   useEffect(() => {
     const fetchServers = async () => {
       try {
         const { data } = await getInstallationServers()
         setServers(['0', ...data])
-        formik.setFieldValue('ServerName', '0')
+        setServerName('0')
       } catch {
         /* empty */
       }
@@ -60,16 +60,12 @@ export const InstallationLog = () => {
   }, [])
 
   useEffect(() => {
-    formik.submitForm()
-  }, [
-    formik.values.PageNumber,
-    formik.values.ServerName,
-    formik.values.DateRange,
-  ])
+    fetchLogs()
+  }, [pageNumber, pageSize, serverName, dateRange])
 
-  const handleTableChange = (page, pageSize) => {
-    formik.setFieldValue('PageNumber', page)
-    formik.setFieldValue('pageSize', pageSize)
+  const handleTableChange = (pageNumber, pageSize) => {
+    setPageNumber(pageNumber)
+    setPageSize(pageSize)
   }
 
   return (
@@ -82,13 +78,13 @@ export const InstallationLog = () => {
             value: server,
           }))}
           defaultValue="0"
-          value={formik.values.ServerName}
-          onChange={(value) => formik.setFieldValue('ServerName', value)}
+          value={serverName}
+          onChange={(value) => setServerName(value)}
           style={{ marginBottom: '15px', width: '200px' }}
         />
         <DatePicker.RangePicker
-          value={formik.values.DateRange.map((date) => dayjs(date))}
-          onChange={(dates) => formik.setFieldValue('DateRange', dates)}
+          value={dateRange.map((date) => dayjs(date))}
+          onChange={(dates) => setDateRange(dates.map((date) => date.toDate()))}
           style={{ marginBottom: '15px' }}
         />
       </Space>
@@ -118,9 +114,9 @@ export const InstallationLog = () => {
           },
         ]}
         pagination={{
-          pageSize: DEFAULT_PAGE_SIZE,
-          total: formik.values.totalResults,
-          current: formik.values.PageNumber,
+          pageSize: pageSize,
+          total: totalResults,
+          current: pageNumber,
           showSizeChanger: true,
           pageSizeOptions: ['10', '20', '50', '100'],
           onChange: handleTableChange,
