@@ -34,29 +34,34 @@ export const ServerInfo = ({ currentServer }) => {
 
   const serverInfo = serverMetrics ? (
     <>
-      <Text>
-        OS Version: {osVersion} - Release: {osRelease}
-      </Text>
-      <br />
-      <Text>
-        Memory: {memoryMB ? `${Math.round(memoryMB / 1024)} GB` : 'N/A'}
-      </Text>
-      <br />
-      <Text>CPUs: {logicProcessors ? logicProcessors : 'N/A'}</Text>
-      <br />
-
-      {serverMetrics?.osProperties?.['host_platform'] === 'Windows' && (
-        <RdpButton
-          serverName={currentServer.serverName}
-          address={currentServer.serverHost}
-        />
-      )}
-      {serverMetrics?.osProperties?.['host_platform'] === 'Linux' && (
-        <SshButon
-          serverName={currentServer.serverName}
-          address={currentServer.serverHost}
-        />
-      )}
+      <Row gutter={24}>
+        <Col>
+          <Text>
+            OS Version: {osVersion} - Release: {osRelease}
+          </Text>
+          <br />
+          <Text>
+            Memory: {memoryMB ? `${Math.round(memoryMB / 1024)} GB` : 'N/A'}
+          </Text>
+          <br />
+          <Text>CPUs: {logicProcessors ? logicProcessors : 'N/A'}</Text>
+          <br />
+        </Col>
+        <Col>
+          {serverMetrics?.osProperties?.['host_platform'] === 'Windows' && (
+            <RdpButton
+              serverName={currentServer.serverName}
+              address={currentServer.serverHost}
+            />
+          )}
+          {serverMetrics?.osProperties?.['host_platform'] === 'Linux' && (
+            <SshButon
+              serverName={currentServer.serverName}
+              address={currentServer.serverHost}
+            />
+          )}
+        </Col>
+      </Row>
     </>
   ) : (
     <Spin indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />} />
