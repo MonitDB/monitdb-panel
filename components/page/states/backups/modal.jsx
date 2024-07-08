@@ -10,7 +10,7 @@ import { toast } from 'react-toastify'
 import { ApexChart, defaultChartOptions } from '~/components/chart'
 import Loading from '~/components/loading/loading'
 import { getBackupsFromDatabase } from '~/services/states'
-import { formatDuration, formatTimestamp } from '~/utils/time'
+import { formatDuration } from '~/utils/time'
 
 const chartData = (data) =>
   data.map((item) => [
