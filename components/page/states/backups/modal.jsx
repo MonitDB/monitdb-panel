@@ -224,13 +224,11 @@ function DatabaseBackupsModal({ modal, onSetModalData }) {
 
                   yaxis: {
                     forceNiceScale: true,
-
-                    reversed: true,
+                    // reversed: true,
                     labels: {
-                      formatter: (value) => formatTimestamp(value),
+                      formatter: (value) => moment(value).format('HH:mm'),
                     },
                   },
-
                   xaxis: {
                     type: 'datetime',
                     max: new Date(endDate).getTime(),
