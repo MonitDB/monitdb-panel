@@ -165,6 +165,34 @@ const ServerInformationStep = ({ handleNextStep, form }) => {
       <div className="flex justify-end">
         <Space>
           <Button
+            type="dashed"
+            disabled={loading}
+            onClick={async () => {
+              setLoading(true)
+              try {
+                await form.validateFields()
+              } catch {
+                setLoading(false)
+                return
+              }
+
+              try {
+                const response = await testServer(form.getFieldsValue())
+                if (response.data.status === 500) {
+                  notification.error({ message: response.data.message })
+                  return
+                }
+                notification.success({ message: 'Connection successful' })
+              } catch {
+                /* empty */
+              }
+              setLoading(false)
+            }}
+          >
+            {' '}
+            Test Connection
+          </Button>
+          <Button
             type="primary"
             loading={loading}
             onClick={async () => {

@@ -94,7 +94,7 @@ const ResultStep = ({ handlePreviusStep }) => {
             Previous
           </Button>
 
-          <Button type="primary" onClick={() => router.push('/configurations')}>
+          <Button type="primary" onClick={() => router.push('/dashboard')}>
             Finish
           </Button>
         </Space>

@@ -37,111 +37,6 @@ const ConfigurationsPage = () => {
             <Grid>
               <div className="col-span-2 space-y-10 md:col-span-6">
                 <div className="w-full">
-                  <h3 className="mb-5 heading-md">Monitoring</h3>
-                  <ul className="space-y-4 text-sm">
-                    {hasPermission(
-                      user,
-                      FeatureFunction.MONITORED_SERVERS,
-                      TypeGrant.OWNER
-                    ) && (
-                      <li>
-                        <Link
-                          href="/configurations/servers/"
-                          className="group block"
-                        >
-                          <strong className="block group-hover:text-blue">
-                            Monitored servers
-                          </strong>
-                          <span className="group-hover:opacity-75">
-                            Add servers to monitor; edit connection credentials;
-                            remove or suspend monitored servers.
-                          </span>
-                        </Link>
-                      </li>
-                    )}
-                    {hasPermission(
-                      user,
-                      FeatureFunction.INSTANCE_DISCOVERY,
-                      TypeGrant.EXECUTE
-                    ) && (
-                      <li className="opacity-25">
-                        <Link href="/configurations/" className="group block">
-                          <strong className="block group-hover:text-blue">
-                            Instance discovery
-                          </strong>
-                          <span className="group-hover:opacity-75">
-                            Discover new instances across your estate.
-                          </span>
-                        </Link>
-                      </li>
-                    )}
-
-                    {hasPermission(
-                      user,
-                      FeatureFunction.HOSTS_AND_VMWARE,
-                      TypeGrant.DELETE
-                    ) && (
-                      <li className="opacity-25">
-                        <Link href="/configurations/" className="group block">
-                          <strong className="block group-hover:text-blue">
-                            VMware hosts
-                          </strong>
-                          <span className="group-hover:opacity-75">
-                            Configure VMware hosts for monitoring.
-                          </span>
-                        </Link>
-                      </li>
-                    )}
-
-                    <li className="opacity-25">
-                      <Link href="/configurations/" className="group block">
-                        <strong className="block group-hover:text-blue">
-                          Trace
-                        </strong>
-                        <span className="group-hover:opacity-75">
-                          Enable or disable Profiler trace on selected servers.
-                        </span>
-                      </Link>
-                    </li>
-
-                    {hasPermission(
-                      user,
-                      FeatureFunction.EXTENDED_EVENTS,
-                      TypeGrant.WRITE
-                    ) && (
-                      <li className="opacity-25">
-                        <Link href="/configurations/" className="group block">
-                          <strong className="block group-hover:text-blue">
-                            Extended Events
-                          </strong>
-                          <span className="group-hover:opacity-75">
-                            Enable or disable extended events for advanced
-                            alerting.
-                          </span>
-                        </Link>
-                      </li>
-                    )}
-
-                    {hasPermission(
-                      user,
-                      FeatureFunction.GROUPS,
-                      TypeGrant.DELETE
-                    ) && (
-                      <li className="opacity-25">
-                        <Link href="/configurations/" className="group block">
-                          <strong className="block group-hover:text-blue">
-                            Groups
-                          </strong>
-                          <span className="group-hover:opacity-75">
-                            Organize your monitored servers into groups.
-                          </span>
-                        </Link>
-                      </li>
-                    )}
-                  </ul>
-                </div>
-
-                <div className="w-full">
                   <h3 className="mb-5 heading-md">Application options</h3>
                   <ul className="space-y-4 text-sm">
                     <li>
@@ -170,6 +65,27 @@ const ConfigurationsPage = () => {
                         </span>
                       </Link>
                     </li>
+
+                    {hasPermission(
+                      user,
+                      FeatureFunction.MONITORED_SERVERS,
+                      TypeGrant.OWNER
+                    ) && (
+                      <li>
+                        <Link
+                          href="/configurations/servers/"
+                          className="group block"
+                        >
+                          <strong className="block group-hover:text-blue">
+                            Monitored servers
+                          </strong>
+                          <span className="group-hover:opacity-75">
+                            Add servers to monitor; edit connection credentials;
+                            remove or suspend monitored servers.
+                          </span>
+                        </Link>
+                      </li>
+                    )}
                     <li>
                       <Link
                         href="/configurations/profiles"
@@ -254,69 +170,7 @@ const ConfigurationsPage = () => {
                     )}
                   </ul>
                 </div>
-                {existsSomePermissions(user, [
-                  FeatureFunction.AUTHENTICATION_TOKENS,
-                  FeatureFunction.DOWNLOAD_POWERSHELL_MODULE,
-                  FeatureFunction.SEE_POWERSHELL_SCRIPT_EXAMPLES,
-                ]) && (
-                  <div className="w-full">
-                    <h3 className="mb-5 heading-md">API</h3>
 
-                    <ul className="space-y-4 text-sm">
-                      {hasPermission(
-                        user,
-                        FeatureFunction.AUTHENTICATION_TOKENS,
-                        TypeGrant.OWNER
-                      ) && (
-                        <li className="opacity-25">
-                          <Link href="/configurations/" className="group block">
-                            <strong className="block group-hover:text-blue">
-                              Authentication tokens
-                            </strong>
-                            <span className="group-hover:opacity-75">
-                              Manage authentication tokens for MonitDB.
-                            </span>
-                          </Link>
-                        </li>
-                      )}
-                      {hasPermission(
-                        user,
-                        FeatureFunction.DOWNLOAD_POWERSHELL_MODULE,
-                        TypeGrant.EXECUTE
-                      ) && (
-                        <li className="opacity-25">
-                          <Link href="/configurations/" className="group block">
-                            <strong className="block group-hover:text-blue">
-                              Download PowerShell Module
-                            </strong>
-                            <span className="group-hover:opacity-75">
-                              Configure MonitDB via PowerShell.
-                            </span>
-                          </Link>
-                        </li>
-                      )}
-
-                      {hasPermission(
-                        user,
-                        FeatureFunction.SEE_POWERSHELL_SCRIPT_EXAMPLES,
-                        TypeGrant.READ
-                      ) && (
-                        <li className="opacity-25">
-                          <Link href="/configurations/" className="group block">
-                            <strong className="block group-hover:text-blue">
-                              View example PowerShell scripts
-                            </strong>
-                            <span className="group-hover:opacity-75">
-                              Download example PowerShell scripts for the API.
-                            </span>
-                          </Link>
-                        </li>
-                      )}
-                    </ul>
-                  </div>
-                )}
-              </div>
-              <div className="col-span-2 space-y-10 md:col-span-6">
                 {existsSomePermissions(user, [
                   FeatureFunction.ALERT_SETTINGS,
                   FeatureFunction.NOTIFICATION_SETTINGS,
@@ -401,6 +255,69 @@ const ConfigurationsPage = () => {
                 )}
 
                 {existsSomePermissions(user, [
+                  FeatureFunction.AUTHENTICATION_TOKENS,
+                  FeatureFunction.DOWNLOAD_POWERSHELL_MODULE,
+                  FeatureFunction.SEE_POWERSHELL_SCRIPT_EXAMPLES,
+                ]) && (
+                  <div className="w-full">
+                    <h3 className="mb-5 heading-md">API</h3>
+
+                    <ul className="space-y-4 text-sm">
+                      {hasPermission(
+                        user,
+                        FeatureFunction.AUTHENTICATION_TOKENS,
+                        TypeGrant.OWNER
+                      ) && (
+                        <li className="opacity-25">
+                          <Link href="/configurations/" className="group block">
+                            <strong className="block group-hover:text-blue">
+                              Authentication tokens
+                            </strong>
+                            <span className="group-hover:opacity-75">
+                              Manage authentication tokens for MonitDB.
+                            </span>
+                          </Link>
+                        </li>
+                      )}
+                      {hasPermission(
+                        user,
+                        FeatureFunction.DOWNLOAD_POWERSHELL_MODULE,
+                        TypeGrant.EXECUTE
+                      ) && (
+                        <li className="opacity-25">
+                          <Link href="/configurations/" className="group block">
+                            <strong className="block group-hover:text-blue">
+                              Download PowerShell Module
+                            </strong>
+                            <span className="group-hover:opacity-75">
+                              Configure MonitDB via PowerShell.
+                            </span>
+                          </Link>
+                        </li>
+                      )}
+
+                      {hasPermission(
+                        user,
+                        FeatureFunction.SEE_POWERSHELL_SCRIPT_EXAMPLES,
+                        TypeGrant.READ
+                      ) && (
+                        <li className="opacity-25">
+                          <Link href="/configurations/" className="group block">
+                            <strong className="block group-hover:text-blue">
+                              View example PowerShell scripts
+                            </strong>
+                            <span className="group-hover:opacity-75">
+                              Download example PowerShell scripts for the API.
+                            </span>
+                          </Link>
+                        </li>
+                      )}
+                    </ul>
+                  </div>
+                )}
+              </div>
+              <div className="col-span-2 space-y-10 md:col-span-6">
+                {existsSomePermissions(user, [
                   FeatureFunction.CUSTOM_METRICS,
                 ]) && (
                   <div className="w-full">
@@ -441,6 +358,91 @@ const ConfigurationsPage = () => {
                     </ul>
                   </div>
                 )}
+
+                <div className="w-full">
+                  <h3 className="mb-5 heading-md">Monitoring</h3>
+                  <ul className="space-y-4 text-sm">
+                    {hasPermission(
+                      user,
+                      FeatureFunction.INSTANCE_DISCOVERY,
+                      TypeGrant.EXECUTE
+                    ) && (
+                      <li className="opacity-25">
+                        <Link href="/configurations/" className="group block">
+                          <strong className="block group-hover:text-blue">
+                            Instance discovery
+                          </strong>
+                          <span className="group-hover:opacity-75">
+                            Discover new instances across your estate.
+                          </span>
+                        </Link>
+                      </li>
+                    )}
+
+                    {hasPermission(
+                      user,
+                      FeatureFunction.HOSTS_AND_VMWARE,
+                      TypeGrant.DELETE
+                    ) && (
+                      <li className="opacity-25">
+                        <Link href="/configurations/" className="group block">
+                          <strong className="block group-hover:text-blue">
+                            VMware hosts
+                          </strong>
+                          <span className="group-hover:opacity-75">
+                            Configure VMware hosts for monitoring.
+                          </span>
+                        </Link>
+                      </li>
+                    )}
+
+                    <li className="opacity-25">
+                      <Link href="/configurations/" className="group block">
+                        <strong className="block group-hover:text-blue">
+                          Trace
+                        </strong>
+                        <span className="group-hover:opacity-75">
+                          Enable or disable Profiler trace on selected servers.
+                        </span>
+                      </Link>
+                    </li>
+
+                    {hasPermission(
+                      user,
+                      FeatureFunction.EXTENDED_EVENTS,
+                      TypeGrant.WRITE
+                    ) && (
+                      <li className="opacity-25">
+                        <Link href="/configurations/" className="group block">
+                          <strong className="block group-hover:text-blue">
+                            Extended Events
+                          </strong>
+                          <span className="group-hover:opacity-75">
+                            Enable or disable extended events for advanced
+                            alerting.
+                          </span>
+                        </Link>
+                      </li>
+                    )}
+
+                    {hasPermission(
+                      user,
+                      FeatureFunction.GROUPS,
+                      TypeGrant.DELETE
+                    ) && (
+                      <li className="opacity-25">
+                        <Link href="/configurations/" className="group block">
+                          <strong className="block group-hover:text-blue">
+                            Groups
+                          </strong>
+                          <span className="group-hover:opacity-75">
+                            Organize your monitored servers into groups.
+                          </span>
+                        </Link>
+                      </li>
+                    )}
+                  </ul>
+                </div>
 
                 <div className="w-full">
                   <h3 className="mb-5 heading-md">Data Management</h3>
