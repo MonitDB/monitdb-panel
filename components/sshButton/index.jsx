@@ -5,7 +5,6 @@ import sshImage from '~/icons/ssh.png'
 
 const SshButon = () => {
   const StyledButton = styled.button`
-    border: 1px solid #0000001f;
     padding: 8px;
     border-radius: 4px;
     cursor: pointer;
@@ -21,7 +20,7 @@ const SshButon = () => {
   `
 
   return (
-    <StyledButton>
+    <StyledButton style={{ transform: 'translateY(5px)' }}>
       <Image src={sshImage} alt="Imagem" height={24} width={24} />
     </StyledButton>
   )

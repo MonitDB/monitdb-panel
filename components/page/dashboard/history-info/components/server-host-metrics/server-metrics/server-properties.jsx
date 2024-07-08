@@ -9,7 +9,7 @@ import useComponentContext from '~/services/state-manager/components'
 const componentCode = 'LTINSPRP'
 const loadingText = 'Loading...'
 
-export const ServerProperties = () => {
+export const InstanceProperties = () => {
   const { currentServer } = useSingleDashboard()
   const { executeQueryComponent } = useComponentContext()
 

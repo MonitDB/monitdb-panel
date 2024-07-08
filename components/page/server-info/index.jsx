@@ -1,16 +1,35 @@
-import { LoadingOutlined } from '@ant-design/icons'
-import { Avatar, Col, Row, Spin, Typography } from 'antd'
+import { ExclamationCircleOutlined, LoadingOutlined } from '@ant-design/icons'
+import {
+  Avatar,
+  Button,
+  Col,
+  Modal,
+  Row,
+  Space,
+  Spin,
+  Tooltip,
+  Typography,
+} from 'antd'
 import { useEffect, useState } from 'react'
 
 import RdpButton from '~/components/rdpButton'
 import SshButon from '~/components/sshButton'
 import DatabaseIcons from '~/helpers/database-icons'
+import { useUser } from '~/hooks/index'
 import { getServerMetrics } from '~/services/servers'
+import {
+  FeatureFunction,
+  hasPermission,
+  TypeGrant,
+} from '~/utils/hasPermission'
+
+import { InstanceProperties } from '../dashboard/history-info/components/server-host-metrics/server-metrics/server-properties'
 
 const { Title, Text } = Typography
 
 export const ServerInfo = ({ currentServer }) => {
   const [serverMetrics, setServerMetrics] = useState()
+  const { userState } = useUser()
 
   useEffect(() => {
     if (currentServer.id) {
@@ -34,8 +53,8 @@ export const ServerInfo = ({ currentServer }) => {
 
   const serverInfo = serverMetrics ? (
     <>
-      <Row gutter={24}>
-        <Col>
+      <Row gutter={16}>
+        <Col sm={18}>
           <Text>
             OS Version: {osVersion} - Release: {osRelease}
           </Text>
@@ -46,20 +65,6 @@ export const ServerInfo = ({ currentServer }) => {
           <br />
           <Text>CPUs: {logicProcessors ? logicProcessors : 'N/A'}</Text>
           <br />
-        </Col>
-        <Col>
-          {serverMetrics?.osProperties?.['host_platform'] === 'Windows' && (
-            <RdpButton
-              serverName={currentServer.serverName}
-              address={currentServer.serverHost}
-            />
-          )}
-          {serverMetrics?.osProperties?.['host_platform'] === 'Linux' && (
-            <SshButon
-              serverName={currentServer.serverName}
-              address={currentServer.serverHost}
-            />
-          )}
         </Col>
       </Row>
     </>
@@ -87,7 +92,47 @@ export const ServerInfo = ({ currentServer }) => {
           </Avatar>
         </Col>
         <Col>
-          <Title level={4}>{currentServer.serverName}</Title>
+          <Title level={4}>
+            {currentServer.serverName}{' '}
+            {hasPermission(
+              userState,
+              FeatureFunction.SQL_PROPERTIES,
+              TypeGrant.READ
+            ) && (
+              <Tooltip title={'Instance Properties'}>
+                <Button
+                  icon={<ExclamationCircleOutlined />}
+                  style={{ transform: 'translateY(-1px)' }}
+                  type="outlined"
+                  onClick={() => {
+                    Modal.info({
+                      title: 'Instance Properties',
+                      width: '80vw',
+                      content: (
+                        <>
+                          <InstanceProperties />
+                        </>
+                      ),
+                    })
+                  }}
+                />
+              </Tooltip>
+            )}
+            <Space>
+              {serverMetrics?.osProperties?.['host_platform'] === 'Windows' && (
+                <RdpButton
+                  serverName={currentServer.serverName}
+                  address={currentServer.serverHost}
+                />
+              )}
+              {serverMetrics?.osProperties?.['host_platform'] === 'Linux' && (
+                <SshButon
+                  serverName={currentServer.serverName}
+                  address={currentServer.serverHost}
+                />
+              )}
+            </Space>
+          </Title>
           {serverInfo}
         </Col>
       </Row>

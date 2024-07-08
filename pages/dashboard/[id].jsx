@@ -2,8 +2,7 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable no-console */
 
-import { ExclamationCircleOutlined } from '@ant-design/icons'
-import { Col, FloatButton, Modal, Row, Tabs } from 'antd'
+import { Col, Row, Tabs } from 'antd'
 import faker from 'faker'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
@@ -18,7 +17,6 @@ import {
 } from '~/components/page'
 import CurrentActivity from '~/components/page/dashboard/current-activity'
 import HistoryInfo from '~/components/page/dashboard/history-info'
-import { ServerProperties } from '~/components/page/dashboard/history-info/components/server-host-metrics/server-metrics/server-properties'
 import QueryWindow from '~/components/page/dashboard/query-window'
 import { TuningAdvisor } from '~/components/page/dashboard/tuning-advisor'
 import { ServerInfo } from '~/components/page/server-info'
@@ -187,30 +185,6 @@ const SingleDashboard = () => {
                       />
                     </div>
                   </>
-                )}
-
-                {hasPermission(
-                  user,
-                  FeatureFunction.SQL_PROPERTIES,
-                  TypeGrant.READ
-                ) && (
-                  <FloatButton
-                    icon={<ExclamationCircleOutlined />}
-                    tooltip={'Server Properties'}
-                    type="primary"
-                    style={{ right: 24 }}
-                    onClick={() => {
-                      Modal.info({
-                        title: 'Server Properties',
-                        width: '80vw',
-                        content: (
-                          <>
-                            <ServerProperties />
-                          </>
-                        ),
-                      })
-                    }}
-                  />
                 )}
               </div>
             </PageContent>

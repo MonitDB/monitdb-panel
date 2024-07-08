@@ -6,7 +6,6 @@ import rdpImage from '~/icons/rdp.png'
 
 const RdpButton = ({ address, port, serverName }) => {
   const StyledButton = styled.button`
-    border: 1px solid #0000001f;
     padding: 8px;
     border-radius: 4px;
     cursor: pointer;
@@ -83,7 +82,10 @@ enablerdsaadauth:i:0`
   }
 
   return (
-    <StyledButton onClick={handleExport}>
+    <StyledButton
+      onClick={handleExport}
+      style={{ transform: 'translateY(5px)' }}
+    >
       <Image src={rdpImage} alt="Imagem" height={24} width={24} />
     </StyledButton>
   )
