@@ -109,13 +109,13 @@ function Servers({ environmentServers, serversJobs, expand }) {
                   dataSource={serverJobs}
                   columns={[
                     { dataIndex: 'jobName', title: 'Job Name' },
-
                     {
-                      dataIndex: 'LastRunDateTime',
-                      title: 'Last Execution',
+                      dataIndex: 'createdAt',
+                      title: 'Created At',
                       render: (value) =>
-                        value ? moment(value).format('DD/MM/YYYY HH:mm') : '-',
+                        moment(value).format('DD/MM/YYYY HH:mm'),
                     },
+
                     {
                       dataIndex: 'enabled',
                       title: 'Enabled',
@@ -126,11 +126,24 @@ function Servers({ environmentServers, serversJobs, expand }) {
                       ),
                     },
                     {
-                      dataIndex: 'createdAt',
-                      title: 'Created At',
+                      dataIndex: 'LastRunDateTime',
+                      title: 'Last Execution',
                       render: (value) =>
-                        moment(value).format('DD/MM/YYYY HH:mm'),
+                        value ? moment(value).format('DD/MM/YYYY HH:mm') : '-',
                     },
+                    {
+                      dataIndex: 'LastRunStatus',
+                      title: 'Status',
+                      render: (value) =>
+                        value ? (
+                          <Tag color={value === 'Succeeded' ? 'green' : 'red'}>
+                            {value}
+                          </Tag>
+                        ) : (
+                          '-'
+                        ),
+                    },
+
                     {
                       dataIndex: 'frequency',
                       title: 'Frequency',
