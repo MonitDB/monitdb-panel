@@ -141,8 +141,11 @@ const ConfigurationsPage = () => {
                       FeatureFunction.DISPLAY_SETTINGS,
                       TypeGrant.EXECUTE
                     ) && (
-                      <li className="opacity-25">
-                        <Link href="/configurations/" className="group block">
+                      <li className="">
+                        <Link
+                          href="/configurations/display-settings"
+                          className="group block"
+                        >
                           <strong className="block group-hover:text-blue">
                             Display settings
                           </strong>

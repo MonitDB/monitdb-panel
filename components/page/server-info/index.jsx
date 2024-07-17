@@ -54,7 +54,7 @@ export const ServerInfo = ({ currentServer }) => {
   const serverInfo = serverMetrics ? (
     <>
       <Row gutter={16}>
-        <Col sm={18}>
+        <Col sm={24}>
           <Text>
             OS Version: {osVersion} - Release: {osRelease}
           </Text>
