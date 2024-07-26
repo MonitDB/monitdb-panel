@@ -18,7 +18,7 @@ const HomePage = () => {
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   if (userToken) return ''
-  // Commit Abimael
+
   return (
     <Layout>
       <div

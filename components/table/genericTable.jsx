@@ -18,7 +18,7 @@ export const GenericTable = ({
 
   const filteredColumns = (data) => {
     if (!Array.isArray(data) || data.length === 0) return []
-    const columns = Object.keys(data[0])
+    const columns = Object?.keys(data[0])
     return columns.filter((col) => !omitColumns.includes(col))
   }
 

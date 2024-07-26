@@ -10,14 +10,12 @@ import Main from '~/helpers/main'
 
 setLocale(pt)
 
+// token: { colorPrimary: '#5046e5' },
+
 export default function MyApp({ Component, pageProps }) {
   return (
     <>
-      <ConfigProvider
-        theme={{
-          token: { colorPrimary: '#5046e5' },
-        }}
-      >
+      <ConfigProvider>
         <DefaultSeo
           defaultTitle="MonitDB"
           openGraph={{
