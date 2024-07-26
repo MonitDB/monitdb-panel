@@ -1,6 +1,6 @@
 // context/ThemeContext.js
 import { darkTheme, defaultTheme, lightTheme } from 'const/themes'
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useEffect, useState } from 'react'
 import styled, { ThemeProvider as StyledThemeProvider } from 'styled-components'
 
 import { useUser } from '../hooks'
