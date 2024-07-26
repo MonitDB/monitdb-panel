@@ -32,6 +32,9 @@ const MyAccountPage = () => {
             <li>
               <Link href="/my-account/">Personal data</Link>
             </li>
+            <li>
+              <Link href="/my-account/preferences">Preferences</Link>
+            </li>
             {/* <li>
               <Link href="/my-account/">Preferences</Link>
             </li> */}

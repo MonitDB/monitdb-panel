@@ -2,6 +2,7 @@ import React, { createContext, useCallback, useEffect, useState } from 'react'
 
 import { getMe } from '~/services/user'
 import * as Cookies from '~/utils/cookies'
+import { safeJsonParse } from '~/utils/json'
 
 export const userInitialState = {
   logged: false,
@@ -34,6 +35,7 @@ export const UserContextProvider = ({ children }) => {
           name: dataResult?.loginname,
           email: dataResult?.loginemail,
           ...dataResult,
+          preferences: safeJsonParse(dataResult.loginPreferences),
           hasPermissions: (permissions) => {
             return dataResult?.permissions?.some((permission) =>
               permissions?.includes(permission)

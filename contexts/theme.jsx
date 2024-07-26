@@ -3,32 +3,29 @@ import { darkTheme, defaultTheme, lightTheme } from 'const/themes'
 import { createContext, useContext, useEffect, useState } from 'react'
 import styled, { ThemeProvider as StyledThemeProvider } from 'styled-components'
 
+import { useUser } from '../hooks'
+
 const ThemeContext = createContext()
 
 export const ThemeProvider = ({ children }) => {
-  const [theme, setTheme] = useState(defaultTheme) // Tema padrão
+  const [theme, setTheme] = useState(defaultTheme)
+  const { userState } = useUser()
+
+  const userPreferences = userState.preferences
 
   useEffect(() => {
-    const fetchTheme = async () => {
-      try {
-        // switch (data.theme) {
-        //   case 'dark':
-        //     setTheme(darkTheme)
-        //     break
-        //   case 'light':
-        //     setTheme(lightTheme)
-        //     break
-        //   default:
-        //     setTheme(defaultTheme)
-        //     break
-        // }
-      } catch {
-        // setTheme(darkTheme) // Fallback para o tema padrão em caso de erro
-      }
+    switch (userPreferences?.theme) {
+      case 'dark':
+        setTheme(darkTheme)
+        break
+      case 'light':
+        setTheme(lightTheme)
+        break
+      default:
+        setTheme(defaultTheme)
+        break
     }
-
-    fetchTheme()
-  }, [])
+  }, [userPreferences?.theme])
 
   const Container = styled.div`
     background-color: ${(properties) => properties.theme.background} !important;
@@ -46,5 +43,3 @@ export const ThemeProvider = ({ children }) => {
     </ThemeContext.Provider>
   )
 }
-
-export const useTheme = () => useContext(ThemeContext)
