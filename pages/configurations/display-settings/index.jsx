@@ -5,7 +5,7 @@ import { UploadOutlined } from '@ant-design/icons'
 import {
   Button,
   Col,
-  ColorPicker,
+  // ColorPicker,
   Form,
   Input,
   message,
@@ -13,7 +13,7 @@ import {
   Spin,
   Upload,
 } from 'antd'
-import ImgCrop from 'antd-img-crop'
+// import ImgCrop from 'antd-img-crop'
 import { NextSeo } from 'next-seo'
 import React, { useEffect, useState } from 'react'
 
@@ -60,20 +60,16 @@ const CustomerPage = () => {
   }, [form])
 
   const handleUpload = ({ file, fileList }) => {
-    // if (file.size > 500 * 1024) {
-    //   message.error('Image must be smaller than 500KB')
-    //   return
-    // }
-    const reader = new FileReader()
-    // eslint-disable-next-line unicorn/prevent-abbreviations
-    reader.addEventListener('load', (e) => {
-      setImageUrl(e.target.result)
-      form.setFieldsValue({ customerImageBlob: e.target.result })
-    })
     if (file instanceof Blob) {
+      const reader = new FileReader()
+      // eslint-disable-next-line unicorn/prevent-abbreviations
+      reader.addEventListener('load', (e) => {
+        setImageUrl(e.target.result)
+        form.setFieldsValue({ customerImageBlob: e.target.result })
+      })
       reader.readAsDataURL(file)
-      setFileList(fileList)
     }
+    setFileList(fileList)
   }
 
   const onFinish = async (values) => {
@@ -191,7 +187,7 @@ const CustomerPage = () => {
                     </Form.Item>
                   </Col>
                 </Row>
-                <Row gutter={16}>
+                {/* <Row gutter={16}>
                   <Col span={24}>
                     <Form.Item label="Customer Configurations">
                       <Row gutter={16}>
@@ -238,39 +234,39 @@ const CustomerPage = () => {
                       </Row>
                     </Form.Item>
                   </Col>
-                </Row>
+                </Row> */}
                 <Row gutter={16}>
                   <Col span={12}>
                     <Form.Item name={'customerImageBlob'} hidden />
                     <Form.Item label="Customer Image">
-                      <ImgCrop>
-                        <Upload
-                          beforeUpload={() => false}
-                          fileList={fileList}
-                          onChange={handleUpload}
-                          listType="picture"
-                          onRemove={() => {
-                            form.setFieldsValue({
-                              customerImageBlob: undefined,
-                            })
-                            setImageUrl()
-                            setFileList([])
-                          }}
-                        >
-                          {fileList.length === 0 && (
-                            <Button icon={<UploadOutlined />}>
-                              Upload Image
-                            </Button>
-                          )}
-                          {imageUrl && (
-                            <img
-                              src={imageUrl}
-                              alt="Customer Image"
-                              style={{ maxWidth: '100%', maxHeight: 200 }}
-                            />
-                          )}
-                        </Upload>
-                      </ImgCrop>
+                      {/* <ImgCrop onModalOk={(value) => console.log(value)}> */}
+                      <Upload
+                        beforeUpload={() => false}
+                        fileList={fileList}
+                        onChange={handleUpload}
+                        listType="picture"
+                        onRemove={() => {
+                          form.setFieldsValue({
+                            customerImageBlob: undefined,
+                          })
+                          setImageUrl()
+                          setFileList([])
+                        }}
+                      >
+                        {fileList.length === 0 && (
+                          <Button icon={<UploadOutlined />}>
+                            Upload Image
+                          </Button>
+                        )}
+                        {imageUrl && (
+                          <img
+                            src={imageUrl}
+                            alt="Customer Image"
+                            style={{ maxWidth: '100%', maxHeight: 200 }}
+                          />
+                        )}
+                      </Upload>
+                      {/* </ImgCrop> */}
                     </Form.Item>
                   </Col>
                 </Row>
