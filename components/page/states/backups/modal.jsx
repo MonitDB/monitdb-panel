@@ -223,8 +223,6 @@ function DatabaseBackupsModal({ modal, onSetModalData }) {
                   },
 
                   yaxis: {
-                    forceNiceScale: true,
-                    // reversed: true,
                     labels: {
                       formatter: (value) => moment(value).format('HH:mm'),
                     },
