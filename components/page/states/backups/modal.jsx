@@ -6,11 +6,12 @@ import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 
-import { ApexChart, defaultChartOptions } from '~/components/chart'
+import { ApexChart } from '~/components/chart'
 import Loading from '~/components/loading/loading'
 import { getBackupsFromDatabase } from '~/services/states'
 import { formatDuration } from '~/utils/time'
 
+// Helper function to get the total minutes of a day from a date object
 function getMinutesOfDay(input) {
   const date = new Date(input)
   const hours = date.getHours()
@@ -18,6 +19,7 @@ function getMinutesOfDay(input) {
   return hours * 60 + minutes
 }
 
+// Helper function to convert total minutes into HH:mm format
 function convertMinutesToHHmm(totalMinutes) {
   const hours = Math.floor(totalMinutes / 60)
   const minutes = totalMinutes % 60
@@ -28,13 +30,37 @@ function convertMinutesToHHmm(totalMinutes) {
 
 const dayInMinutes = 60 * 24
 
-const chartData = (data) =>
-  data.map((item) => [
+function combineDataByCoordinates(data) {
+  // eslint-disable-next-line unicorn/no-array-reduce
+  const groupedData = data.reduce((accumulator, item) => {
+    const key = `${item.backup_start_date}_${getMinutesOfDay(
+      item.backup_start_date
+    )}`
+
+    // If the key doesn't exist, create a new entry
+    if (!accumulator[key]) {
+      accumulator[key] = {
+        ...item,
+        backup_size: item.backup_size,
+        backup_types: [item.backup_type],
+      }
+    } else {
+      // Combine sizes and backup types for the same coordinate
+      accumulator[key].backup_size += item.backup_size
+      accumulator[key].backup_types.push(item.backup_type)
+    }
+
+    return accumulator
+  }, {})
+
+  // Return the combined data in the chart's expected format
+  return Object.values(groupedData).map((item) => [
     item.backup_start_date,
     getMinutesOfDay(item.backup_start_date),
     undefined,
     item,
   ])
+}
 
 // eslint-disable-next-line sonarjs/cognitive-complexity
 function DatabaseBackupsModal({ modal, onSetModalData }) {
@@ -182,26 +208,25 @@ function DatabaseBackupsModal({ modal, onSetModalData }) {
                   {
                     name: 'FULL',
                     color: 'rgba(80, 70, 229, 0.85)',
-                    data: chartData(full),
+                    data: combineDataByCoordinates(full),
                   },
 
                   {
                     color: 'rgba(254, 176, 25, 0.85)',
                     name: 'LOG',
 
-                    data: chartData(log),
+                    data: combineDataByCoordinates(log),
                   },
                   {
                     name: 'DIFFERENTIAL',
                     color: 'rgba(0, 227, 150, 0.85)',
 
-                    data: chartData(differential),
+                    data: combineDataByCoordinates(differential),
                   },
                 ]}
                 height={'90%'}
                 options={{
                   chart: {
-                    ...defaultChartOptions.chart,
                     type: 'scatter',
                   },
 
@@ -248,10 +273,16 @@ function DatabaseBackupsModal({ modal, onSetModalData }) {
                   },
                   xaxis: {
                     type: 'datetime',
-                    max: new Date(endDate).getTime(),
-                    min: new Date(startDate).getTime(),
+
+                    max: new Date(
+                      new Date(endDate).setHours(23, 59, 59, 999)
+                    ).getTime(),
+                    min: new Date(
+                      new Date(startDate).setHours(0, 0, 0, 0)
+                    ).getTime(),
                     labels: {
-                      formatter: (value) => moment(value).format('DD/MM/YYYY'),
+                      formatter: (value) =>
+                        moment(value).format('DD/MM/YYYY HH:mm'),
                     },
                   },
                   tooltip: {
@@ -259,15 +290,12 @@ function DatabaseBackupsModal({ modal, onSetModalData }) {
                       const serie = w?.config.series[seriesIndex]
                       const data = serie.data[dataPointIndex][3]
                       const {
-                        backup_type,
-                        // backupset_name,
-                        // database_name,
+                        backup_types,
                         backup_size,
                         physical_device_name,
                         backup_start_date,
                         backup_finish_date,
                       } = data
-                      // const serverName = data['Server Name']
                       const backupSizeMB = (
                         backup_size /
                         1024 /
@@ -281,10 +309,10 @@ function DatabaseBackupsModal({ modal, onSetModalData }) {
       <div style="background-color: rgba(255, 255, 255, 0.9); border: 1px solid #ccc; border-radius: 5px; padding: 10px;">
         <div style="font-family: Helvetica, Arial, sans-serif; font-size: 14px; color: #333; text-align: left;">
           <div style="margin-bottom: 5px;">
-            <strong>Backup Type:</strong> ${backup_type}
+            <strong>Backup Types:</strong> ${backup_types.join(', ')}
           </div>
           <div style="margin-bottom: 5px;">
-            <strong>Size:</strong> ${backupSizeMB} GB
+            <strong>Total Size:</strong> ${backupSizeMB} GB
           </div>
           <div style="margin-bottom: 5px;">
             <strong>Date:</strong> ${moment(backup_start_date).format(
