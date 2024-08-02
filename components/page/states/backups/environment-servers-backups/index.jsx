@@ -75,8 +75,8 @@ const EnvironmentServersBackups = ({
               key: index,
               children: DATABASES.map((DATABASE, index) => {
                 const fullBackup = DATABASE.Full ? DATABASE.Full[0] : {}
-                const diferentialBackup = DATABASE.Diferencial
-                  ? DATABASE.Diferencial[0]
+                const differentialBackup = DATABASE.Differential
+                  ? DATABASE.Differential[0]
                   : {}
                 const logBackup = DATABASE.Log ? DATABASE.Log[0] : {}
 
@@ -98,20 +98,20 @@ const EnvironmentServersBackups = ({
                     },
                     allBackups: DATABASE.Full || [],
                   },
-                  Diferential: {
+                  Differential: {
                     lastBackup: {
-                      backup_start_date: diferentialBackup.backup_start_date,
-                      backup_size: diferentialBackup.backup_size,
+                      backup_start_date: differentialBackup.backup_start_date,
+                      backup_size: differentialBackup.backup_size,
                       intervalTime:
-                        diferentialBackup.backup_start_date &&
-                        diferentialBackup.backup_finish_date
+                        differentialBackup.backup_start_date &&
+                        differentialBackup.backup_finish_date
                           ? getIntervalTime(
-                              diferentialBackup.backup_start_date,
-                              diferentialBackup.backup_finish_date
+                              differentialBackup.backup_start_date,
+                              differentialBackup.backup_finish_date
                             ).trim() || '0s'
                           : '',
                     },
-                    allBackups: DATABASE.Diferencial || [],
+                    allBackups: DATABASE.Differential || [],
                   },
                   Log: {
                     lastBackup: {

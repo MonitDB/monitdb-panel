@@ -1,6 +1,3 @@
-/* eslint-disable sonarjs/no-duplicate-string */
-/* eslint-disable react-hooks/exhaustive-deps */
-
 import { Button, Col, DatePicker, Modal, Row } from 'antd'
 import dayjs from 'dayjs'
 import moment from 'moment'
@@ -12,10 +9,27 @@ import Loading from '~/components/loading/loading'
 import { getBackupsFromDatabase } from '~/services/states'
 import { formatDuration } from '~/utils/time'
 
+function getMinutesOfDay(input) {
+  const date = new Date(input)
+  const hours = date.getHours()
+  const minutes = date.getMinutes()
+  return hours * 60 + minutes
+}
+
+function convertMinutesToHHmm(totalMinutes) {
+  const hours = Math.floor(totalMinutes / 60)
+  const minutes = totalMinutes % 60
+  const formattedHours = String(hours).padStart(2, '0')
+  const formattedMinutes = String(minutes).padStart(2, '0')
+  return `${formattedHours}:${formattedMinutes}`
+}
+
+const dayInMinutes = 60 * 24
+
 const chartData = (data) =>
   data.map((item) => [
     item.backup_start_date,
-    new Date(item.backup_start_date).getTime(),
+    getMinutesOfDay(item.backup_start_date),
     undefined,
     item,
   ])
@@ -223,8 +237,11 @@ function DatabaseBackupsModal({ modal, onSetModalData }) {
                   },
 
                   yaxis: {
+                    min: 0,
+                    max: dayInMinutes,
+                    tickAmount: 24,
                     labels: {
-                      formatter: (value) => moment(value).format('HH:mm'),
+                      formatter: convertMinutesToHHmm,
                     },
                   },
                   xaxis: {
