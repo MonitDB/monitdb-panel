@@ -1,3 +1,5 @@
+/* eslint-disable sonarjs/no-duplicate-string */
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Button, Col, DatePicker, Modal, Row } from 'antd'
 import dayjs from 'dayjs'
 import moment from 'moment'
