@@ -178,6 +178,7 @@ const EnvironmentServersBackups = ({
                         dataIndex={'Full'}
                         title="Start Date"
                         align="left"
+                        width={200} // Largura fixa
                         render={(value) =>
                           value?.lastBackup?.backup_start_date &&
                           moment(value?.lastBackup?.backup_start_date).format(
@@ -189,6 +190,7 @@ const EnvironmentServersBackups = ({
                         dataIndex={'Full'}
                         title="Duration"
                         align="left"
+                        width={100} // Largura fixa
                         render={(value) => (
                           <>{value?.lastBackup?.intervalTime}</>
                         )}
@@ -197,6 +199,7 @@ const EnvironmentServersBackups = ({
                         dataIndex={'Full'}
                         title="Size"
                         align="left"
+                        width={100} // Largura fixa
                         render={(value) => (
                           <>
                             {value?.lastBackup?.backup_size &&
@@ -224,6 +227,7 @@ const EnvironmentServersBackups = ({
                       <Table.Column
                         dataIndex={'Differential'}
                         title="Start Date"
+                        width={200} // Largura fixa
                         render={(value) =>
                           value?.lastBackup?.backup_start_date &&
                           moment(value?.lastBackup?.backup_start_date).format(
@@ -235,6 +239,7 @@ const EnvironmentServersBackups = ({
                       <Table.Column
                         dataIndex={'Differential'}
                         title="Duration"
+                        width={100} // Largura fixa
                         render={(value) => (
                           <>{value?.lastBackup?.intervalTime}</>
                         )}
@@ -244,6 +249,7 @@ const EnvironmentServersBackups = ({
                         dataIndex={'Differential'}
                         title="Size"
                         align="left"
+                        width={100} // Largura fixa
                         render={(value) => (
                           <>
                             {value?.lastBackup?.backup_size &&
@@ -272,6 +278,7 @@ const EnvironmentServersBackups = ({
                         dataIndex={'Log'}
                         title="Start Date"
                         align="left"
+                        width={200} // Largura fixa
                         render={(value) =>
                           value?.lastBackup?.backup_start_date &&
                           moment(value?.lastBackup?.backup_start_date).format(
@@ -283,6 +290,7 @@ const EnvironmentServersBackups = ({
                         dataIndex={'Log'}
                         title="Duration"
                         align="left"
+                        width={100} // Largura fixa
                         render={(value) => (
                           <>{value?.lastBackup?.intervalTime}</>
                         )}
@@ -291,6 +299,7 @@ const EnvironmentServersBackups = ({
                         dataIndex={'Log'}
                         title="Size"
                         align="left"
+                        width={100} // Largura fixa
                         render={(value) => (
                           <>
                             {value?.lastBackup?.backup_size &&
