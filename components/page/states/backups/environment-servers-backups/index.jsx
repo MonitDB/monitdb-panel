@@ -159,7 +159,10 @@ const EnvironmentServersBackups = ({
                       align="left"
                       dataIndex={'database_name'}
                       key={'dbName'}
-                      width={200}
+                      width={180}
+                      render={(value) => (
+                        <div style={{ width: '180px' }}>{value}</div>
+                      )}
                     />
                     <Table.ColumnGroup
                       title={
@@ -173,6 +176,7 @@ const EnvironmentServersBackups = ({
                           Full
                         </>
                       }
+                      width={'200px'}
                     >
                       <Table.Column
                         dataIndex={'Full'}

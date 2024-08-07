@@ -70,11 +70,11 @@ function DatabaseBackupsModal({ modal, onSetModalData }) {
 
   const [loading, setLoading] = useState(false)
   const [startDate, setStartDate] = useState(
-    moment(new Date()).subtract(1, 'months').format('YYYY-MM-DD')
+    moment(new Date()).subtract(1, 'M').startOf('day').format('YYYY-MM-DD')
   )
 
   const [endDate, setEndDate] = useState(
-    moment(new Date()).format('YYYY-MM-DD')
+    moment(new Date()).endOf('day').format('YYYY-MM-DD')
   )
 
   const fetch = async () => {
@@ -158,7 +158,7 @@ function DatabaseBackupsModal({ modal, onSetModalData }) {
           <Row gutter={12}>
             <Col>
               <DatePicker.RangePicker
-                defaultValue={[dayjs(), dayjs()]}
+                defaultValue={[dayjs(startDate), dayjs(endDate)]}
                 onChange={(value) => {
                   setStartDate(dayjs(value[0]).format('YYYY-MM-DD'))
                   setEndDate(dayjs(value[1]).format('YYYY-MM-DD'))

@@ -1,3 +1,4 @@
+/* eslint-disable unicorn/no-nested-ternary */
 /* eslint-disable sonarjs/cognitive-complexity */
 /* eslint-disable sonarjs/no-duplicate-string */
 /* eslint-disable react-hooks/exhaustive-deps */
@@ -28,7 +29,7 @@ function Servers({ environmentServers, serversJobs, expand }) {
   const getData = useCallback(async () => {
     try {
       const serverId = jobModal.jobData?.ServerId
-      const jobName = jobModal.jobData?.jobName
+      const jobName = jobModal.jobData?.JobName
       if (serverId) {
         setIsLoading(true)
         toggleActiveTableRowIndex(-1)
@@ -73,12 +74,12 @@ function Servers({ environmentServers, serversJobs, expand }) {
         console.log(error)
       }
     },
-    [jobModal.jobData?.jobName]
+    [jobModal.jobData?.JobName]
   )
 
   useEffect(() => {
     getData()
-  }, [jobModal.jobData?.jobName, currentPage])
+  }, [jobModal.jobData?.JobName, currentPage])
 
   useEffect(() => {
     if (expand) {
@@ -108,16 +109,18 @@ function Servers({ environmentServers, serversJobs, expand }) {
                   size="small"
                   dataSource={serverJobs}
                   columns={[
-                    { dataIndex: 'jobName', title: 'Job Name' },
+                    { dataIndex: 'JobName', title: 'Job Name' },
+                    { dataIndex: 'JobCategory', title: 'Category' },
+                    { dataIndex: 'JobOwner', title: 'Owner' },
+
                     {
                       dataIndex: 'createdAt',
                       title: 'Created At',
                       render: (value) =>
                         moment(value).format('DD/MM/YYYY HH:mm'),
                     },
-
                     {
-                      dataIndex: 'enabled',
+                      dataIndex: 'Enabled',
                       title: 'Enabled',
                       render: (value) => (
                         <Tag color={value === 'Yes' ? 'green' : 'red'}>
@@ -129,7 +132,11 @@ function Servers({ environmentServers, serversJobs, expand }) {
                       dataIndex: 'LastRunDateTime',
                       title: 'Last Execution',
                       render: (value) =>
-                        value ? moment(value).format('DD/MM/YYYY HH:mm') : '-',
+                        value
+                          ? value[1]
+                            ? moment(value[1]).format('DD/MM/YYYY HH:mm')
+                            : moment(value[0]).format('DD/MM/YYYY HH:mm')
+                          : '-',
                     },
                     {
                       dataIndex: 'LastRunStatus',
@@ -143,9 +150,21 @@ function Servers({ environmentServers, serversJobs, expand }) {
                           '-'
                         ),
                     },
+                    {
+                      dataIndex: 'IsScheduled',
+                      title: 'Scheduled',
+                      render: (value) =>
+                        value ? (
+                          <Tag color={value === 'Yes' ? 'green' : 'red'}>
+                            {value}
+                          </Tag>
+                        ) : (
+                          '-'
+                        ),
+                    },
 
                     {
-                      dataIndex: 'frequency',
+                      dataIndex: 'Frequency',
                       title: 'Frequency',
                     },
                   ]}
@@ -174,28 +193,28 @@ function Servers({ environmentServers, serversJobs, expand }) {
         cancelButtonProps={{ style: { display: 'none' } }}
       >
         <div style={{ height: '75vh', overflowY: 'auto' }}>
-          <h2 className="heading-md">Job</h2>
+          {/* <h2 className="heading-md">Job</h2>
           <br />
           <Table size="small" dataSource={[jobModal.jobData]}>
-            <Table.Column dataIndex="jobName" title="Job Name" />
+            <Table.Column dataIndex="JobName" title="Job Name" />
             <Table.Column
               dataIndex="LastRunDateTime"
               title="Last Execution"
               render={(value) =>
-                value ? moment(value).format('DD/MM/YYYY HH:mm') : '-'
+                value ? moment(value[0]).format('DD/MM/YYYY HH:mm') : '-'
               }
             />
-            <Table.Column dataIndex="enabled" title="Enabled" />
+            <Table.Column dataIndex="Enabled" title="Enabled" />
 
             <Table.Column
-              dataIndex="createdAt"
+              dataIndex="CreatedAt"
               title="Job Created Date"
               render={(value) => moment(value).format('DD/MM/YYYY HH:mm')}
             />
             <Table.Column dataIndex="frequency" title="Frequency" />
-          </Table>
-          <br />
-          <br />
+          </Table> */}
+          {/* <br />  <br /> */}
+
           <h2 className="heading-md">Jobs Exe</h2>
           <br />
           <Table
