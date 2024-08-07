@@ -47,7 +47,7 @@ function Servers({ environmentServers, serversJobs, expand }) {
       // eslint-disable-next-line no-console
       console.log(error)
     }
-  }, [jobModal.jobData?.jobName])
+  }, [jobModal.jobData?.JobName])
 
   const getExecutions = useCallback(
     async (runDateTime, rowIndex) => {
