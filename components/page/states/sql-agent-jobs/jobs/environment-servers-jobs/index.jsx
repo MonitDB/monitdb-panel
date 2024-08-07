@@ -132,11 +132,7 @@ function Servers({ environmentServers, serversJobs, expand }) {
                       dataIndex: 'LastRunDateTime',
                       title: 'Last Execution',
                       render: (value) =>
-                        value
-                          ? value[1]
-                            ? moment(value[1]).format('DD/MM/YYYY HH:mm')
-                            : moment(value[0]).format('DD/MM/YYYY HH:mm')
-                          : '-',
+                        moment(value).format('DD/MM/YYYY HH:mm') ?? '-',
                     },
                     {
                       dataIndex: 'LastRunStatus',
