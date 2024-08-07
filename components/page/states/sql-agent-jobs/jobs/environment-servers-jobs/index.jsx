@@ -53,7 +53,7 @@ function Servers({ environmentServers, serversJobs, expand }) {
     async (runDateTime, rowIndex) => {
       try {
         const serverId = jobModal.jobData?.ServerId
-        const jobName = jobModal.jobData?.jobName
+        const jobName = jobModal.jobData?.JobName
         toggleActiveTableRowIndex(-1)
         if (serverId) {
           setJobsExecutions([])
