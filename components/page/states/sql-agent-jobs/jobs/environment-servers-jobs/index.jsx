@@ -114,10 +114,10 @@ function Servers({ environmentServers, serversJobs, expand }) {
                     { dataIndex: 'JobOwner', title: 'Owner' },
 
                     {
-                      dataIndex: 'createdAt',
+                      dataIndex: 'CreatedAt',
                       title: 'Created At',
                       render: (value) =>
-                        moment(value).format('DD/MM/YYYY HH:mm'),
+                        value ? moment(value).format('DD/MM/YYYY HH:mm') : '-',
                     },
                     {
                       dataIndex: 'Enabled',
@@ -132,7 +132,12 @@ function Servers({ environmentServers, serversJobs, expand }) {
                       dataIndex: 'LastRunDateTime',
                       title: 'Last Execution',
                       render: (value) =>
-                        moment(value).format('DD/MM/YYYY HH:mm') ?? '-',
+                        value ? moment(value).format('DD/MM/YYYY HH:mm') : '-',
+                    },
+                    {
+                      dataIndex: 'LastRunDuration (HH:MM:SS)',
+                      title: 'Duration',
+                      render: (value) => value ?? '-',
                     },
                     {
                       dataIndex: 'LastRunStatus',
