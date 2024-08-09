@@ -343,6 +343,11 @@ const InstalledVersions = ({ tabName }) => {
                                       width: 150,
                                     },
                                     {
+                                      dataIndex: 'productVersion',
+                                      title: 'Product Version',
+                                      width: 150,
+                                    },
+                                    {
                                       dataIndex: 'processors',
                                       title: 'Processors',
                                       width: 150,
