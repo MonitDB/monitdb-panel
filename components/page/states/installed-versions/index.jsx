@@ -1,6 +1,6 @@
 import { faDownload } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Collapse, Table } from 'antd'
+import { Collapse, Table, Tag } from 'antd'
 import {
   ArcElement,
   CategoryScale,
@@ -333,8 +333,13 @@ const InstalledVersions = ({ tabName }) => {
                                       width: 150,
                                     },
                                     {
-                                      dataIndex: 'supportEndDate',
-                                      title: 'Support End Date',
+                                      dataIndex: 'edition',
+                                      title: 'Edition',
+                                      width: 150,
+                                    },
+                                    {
+                                      dataIndex: 'productLevel',
+                                      title: 'Product Level',
                                       width: 150,
                                     },
                                     {
@@ -343,18 +348,29 @@ const InstalledVersions = ({ tabName }) => {
                                       width: 150,
                                     },
                                     {
-                                      dataIndex: 'alwaysOn',
-                                      title: 'Always-On',
-                                      width: 150,
-                                    },
-                                    {
-                                      dataIndex: 'coresPerProcessor',
+                                      dataIndex: 'logicalProcessors',
                                       title: 'Cores',
                                       width: 150,
                                     },
                                     {
-                                      dataIndex: 'productLevel',
-                                      title: 'Product Level',
+                                      dataIndex: 'alwaysOn',
+                                      title: 'Always-On',
+                                      width: 150,
+                                      render: (value) => (
+                                        <Tag
+                                          color={
+                                            value === 'DISABLED'
+                                              ? 'red'
+                                              : 'green'
+                                          }
+                                        >
+                                          {value}
+                                        </Tag>
+                                      ),
+                                    },
+                                    {
+                                      dataIndex: 'supportEndDate',
+                                      title: 'Support End Date',
                                       width: 150,
                                     },
                                   ]}
