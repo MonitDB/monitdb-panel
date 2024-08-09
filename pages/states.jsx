@@ -51,14 +51,14 @@ const tabsData = [
     component: dynamic(() => import('~/components/page/states/sql-agent-jobs')),
     featureFuntion: FeatureFunction.JOBS,
   },
-  {
-    name: 'SQL Server Licensing',
-    slug: 'sql-server-licensing',
-    component: dynamic(() =>
-      import('~/components/page/states/sql-server-licensing')
-    ),
-    featureFuntion: FeatureFunction.LICENSING_INFORMATION,
-  },
+  // {
+  //   name: 'SQL Server Licensing',
+  //   slug: 'sql-server-licensing',
+  //   component: dynamic(() =>
+  //     import('~/components/page/states/sql-server-licensing')
+  //   ),
+  //   featureFuntion: FeatureFunction.LICENSING_INFORMATION,
+  // },
 ]
 
 const EstatePage = () => {

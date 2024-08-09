@@ -338,6 +338,21 @@ const InstalledVersions = ({ tabName }) => {
                                       width: 150,
                                     },
                                     {
+                                      dataIndex: 'processors',
+                                      title: 'Processors',
+                                      width: 150,
+                                    },
+                                    {
+                                      dataIndex: 'alwaysOn',
+                                      title: 'Always-On',
+                                      width: 150,
+                                    },
+                                    {
+                                      dataIndex: 'coresPerProcessor',
+                                      title: 'Cores',
+                                      width: 150,
+                                    },
+                                    {
                                       dataIndex: 'productLevel',
                                       title: 'Product Level',
                                       width: 150,
