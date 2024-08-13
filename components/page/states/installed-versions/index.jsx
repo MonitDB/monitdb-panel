@@ -338,12 +338,18 @@ const InstalledVersions = ({ tabName }) => {
                                       width: 150,
                                     },
                                     {
+                                      dataIndex: 'collation',
+                                      title: 'Collation',
+                                      width: 150,
+                                    },
+                                    {
                                       dataIndex: 'productLevel',
                                       title: 'Product Level',
                                       width: 150,
                                       render: (_, record) =>
                                         `${record.productLevel} ${record.productUpdateLevel}`,
                                     },
+
                                     {
                                       dataIndex: 'productVersion',
                                       title: 'Product Version',
