@@ -349,7 +349,6 @@ const InstalledVersions = ({ tabName }) => {
                                       render: (_, record) =>
                                         `${record.productLevel} ${record.productUpdateLevel}`,
                                     },
-
                                     {
                                       dataIndex: 'productVersion',
                                       title: 'Product Version',
