@@ -12,6 +12,7 @@ import Link from '~/components/link'
 import Loading from '~/components/loading/loading'
 import { PageContent, PageWrapper } from '~/components/page'
 import MonitoredServersSidebar from '~/components/sidebar/monitored-servers'
+import DatabaseIcons from '~/helpers/database-icons'
 // import DatabaseIcons from '~/helpers/database-icons'
 import { useUser } from '~/hooks/index'
 import useGlobal from '~/hooks/use-global'
@@ -194,17 +195,23 @@ const AlertsPage = () => {
                             columns={[
                               {
                                 dataIndex: 'serverName',
-                                render: (value) => (
+                                width: 250,
+                                render: (value, record) => (
                                   <>
                                     <h4 className="flex items-center text-sm space-x-2">
                                       <FontAwesomeIcon
                                         icon={faDatabase}
                                         className="text-base"
                                       />
-                                      <span className="truncate">{value}</span>
-                                      {/* <DatabaseIcons
-                                        name={record.type.typeServerName}
-                                      /> */}
+                                      <span className="truncate">
+                                        {value}{' '}
+                                        <div className="absolute top-1/2 right-0 transform -translate-y-1/2 rounded-full border-gray-light p-4 transition-all duration-200 ease-in-out opacity-50 lg:group-hover:opacity-100">
+                                          <DatabaseIcons
+                                            name={record.type.typeServerName}
+                                            className="w-8 h-8"
+                                          />
+                                        </div>
+                                      </span>
                                     </h4>
                                   </>
                                 ),

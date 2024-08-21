@@ -227,7 +227,7 @@ const AnalysisPage = () => {
     setLoading(false)
   }
 
-  const dataRange = Form.useWatch('rangeDate', form)
+  // const dataRange = Form.useWatch('rangeDate', form)
 
   const handleSubmit = (values) => {
     const { rangeDate, metric, server, interval, param } = values
@@ -509,8 +509,8 @@ const AnalysisPage = () => {
                       stroke: { width: 1, curve: 'straight' },
                       xaxis: {
                         type: 'datetime',
-                        min: dayjs(dataRange?.[0]).valueOf(),
-                        max: dayjs(dataRange?.[data.length - 1]).valueOf(),
+                        // min: dayjs(dataRange?.[0]).valueOf(),
+                        // max: dayjs(dataRange?.[data.length - 1]).valueOf(),
                       },
                       yaxis: {
                         tickAmount: 5,

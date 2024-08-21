@@ -1,12 +1,11 @@
+/* eslint-disable unicorn/no-array-reduce */
 import { faDatabase } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Input } from 'antd'
+import { Collapse, Input, Table } from 'antd'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
-import Grid from '~/components/grid'
-import Link from '~/components/link'
 import Loading from '~/components/loading/loading'
 import { PageContent, PageWrapper } from '~/components/page'
 import DatabaseIcons from '~/helpers/database-icons'
@@ -37,6 +36,18 @@ const AlertsPage = () => {
     () => formattedServers.filter(({ active }) => active).length,
     [formattedServers]
   )
+
+  const serversByEnvironment = formattedServers.reduce((previous, current) => {
+    if (!previous[current.typeServerEnvironment.typeServerEnvironmentName]) {
+      previous[current.typeServerEnvironment.typeServerEnvironmentName] = []
+    }
+
+    previous[current.typeServerEnvironment.typeServerEnvironmentName].push(
+      current
+    )
+
+    return previous
+  }, {})
 
   const handleSubmit = useCallback((event) => {
     event.preventDefault()
@@ -121,39 +132,48 @@ const AlertsPage = () => {
             {activeServersCount >= 0 ? (
               <div className="w-full">
                 <h2 className="mb-10 heading-md">Report Servers</h2>
-                <Grid>
-                  {formattedServers.map(({ id, serverName, type, active }) =>
-                    active ? (
-                      <div
-                        key={`alerts-server-${id}`}
-                        className="group relative col-span-2 transition-all duration-200 md:col-span-3 lg:col-span-4 lg:hover:!opacity-100 xl:col-span-3"
-                      >
-                        <Link
-                          href={`/reports/results/?server=${id}`}
-                          className="relative block p-4 pr-14 border border-gray border-opacity-50 transition-all duration-200 ease-in-out bg-white lg:group-hover:bg-gray lg:group-hover:bg-opacity-25 lg:group-hover:border-opacity-25"
-                        >
-                          <h4 className="flex items-center text-sm space-x-2">
-                            <FontAwesomeIcon
-                              icon={faDatabase}
-                              className="text-base"
-                            />
-                            <span className="truncate">{serverName}</span>
-                          </h4>
-                          {type?.typeServerName && (
-                            <div className="absolute top-1/2 right-0 transform -translate-y-1/2 rounded-full border-gray-light p-4 transition-all duration-200 ease-in-out opacity-50 lg:group-hover:opacity-100">
-                              <DatabaseIcons
-                                name={type.typeServerName}
-                                className="w-8 h-8"
-                              />
-                            </div>
-                          )}
-                        </Link>
-                      </div>
-                    ) : (
-                      ''
-                    )
-                  )}
-                </Grid>
+
+                <Collapse>
+                  {Object.keys(serversByEnvironment).map((environment) => (
+                    <Collapse.Panel key={environment} header={environment}>
+                      <Table
+                        dataSource={serversByEnvironment[environment].filter(
+                          (value) => value.active
+                        )}
+                        showHeader={false}
+                        pagination={false}
+                        columns={[
+                          {
+                            dataIndex: 'serverName',
+                            render: (value, record) => (
+                              <>
+                                <h4 className="flex items-center text-sm space-x-2">
+                                  <FontAwesomeIcon
+                                    icon={faDatabase}
+                                    className="text-base"
+                                  />
+                                  <span className="truncate">{value}</span>
+                                </h4>
+                                <div className="absolute top-1/2 right-0 transform -translate-y-1/2 rounded-full border-gray-light p-4 transition-all duration-200 ease-in-out opacity-50 lg:group-hover:opacity-100">
+                                  <DatabaseIcons
+                                    name={record.type.typeServerName}
+                                    className="w-8 h-8"
+                                  />
+                                </div>
+                              </>
+                            ),
+                          },
+                        ]}
+                        onRow={(record) => ({
+                          onClick: () => {
+                            router.push(`/reports/results/?server=${record.id}`)
+                          },
+                          style: { cursor: 'pointer' },
+                        })}
+                      />
+                    </Collapse.Panel>
+                  ))}
+                </Collapse>
               </div>
             ) : (
               <Loading />
