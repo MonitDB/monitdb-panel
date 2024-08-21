@@ -5,11 +5,12 @@ import styled from 'styled-components'
 
 const StyledQueryPlanRendererContainer = styled.div`
   margin: 10px;
-
   div.qp-tt {
     display: flex;
     flex-direction: column;
     position: relative;
+    width: 10px;
+    height: 30px;
     z-index: 99999999999;
   }
 `

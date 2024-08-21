@@ -1,4 +1,4 @@
-import { Col, Result, Row, Select } from 'antd'
+import { Button, Col, Result, Row, Select } from 'antd'
 import { useEffect, useState } from 'react'
 import { useCallback } from 'react'
 import { toast } from 'react-toastify'
@@ -145,13 +145,9 @@ export const TuningAdvisor = ({ currentServer }) => {
           />
         </Col>
         <Col>
-          {/* <Button
-            type="primary"
-            loading={loading}
-            onClick={() => fetchData(false)}
-          >
+          <Button type="primary" loading={loading} onClick={() => fetchData()}>
             Refresh
-          </Button> */}
+          </Button>
         </Col>
       </Row>
       {error && (

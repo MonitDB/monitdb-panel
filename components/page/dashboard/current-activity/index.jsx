@@ -118,7 +118,7 @@ function CurrentActivity(properties) {
 
             <Modal
               open={modalData.open}
-              width={850}
+              width={'90%'}
               style={{ zIndex: 5, display: 'block' }}
               onOk={() => {
                 setModalData({ ...modalData, open: false })
@@ -126,7 +126,7 @@ function CurrentActivity(properties) {
               closable={false}
               cancelButtonProps={{ style: { display: 'none' } }}
             >
-              <div style={{ height: '500px', overflowY: 'auto' }}>
+              <div style={{ height: '70vh', overflowY: 'auto' }}>
                 <QueryPlanRenderer queryPlan={modalData.query_plan} />
                 <Descriptions column={2} layout="vertical">
                   <Descriptions.Text label="CPU">

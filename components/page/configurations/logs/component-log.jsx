@@ -111,7 +111,7 @@ export const ComponentLogs = () => {
         onChange={(value) => {
           handleChangeField([{ name: 'ServerName', value }])
         }}
-        style={{ marginBottom: '15px' }}
+        style={{ marginBottom: '15px', width: '300px' }}
       />
       <br />
       <Table

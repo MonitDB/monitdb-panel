@@ -1,17 +1,18 @@
+/* eslint-disable unicorn/no-array-reduce */
 /* eslint-disable unicorn/no-nested-ternary */
 import { faDatabase } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Input } from 'antd'
+import { Collapse, Input, Table } from 'antd'
+import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { toast } from 'react-toastify'
 
-import Grid from '~/components/grid'
 import Link from '~/components/link'
 import Loading from '~/components/loading/loading'
 import { PageContent, PageWrapper } from '~/components/page'
 import MonitoredServersSidebar from '~/components/sidebar/monitored-servers'
-import DatabaseIcons from '~/helpers/database-icons'
+// import DatabaseIcons from '~/helpers/database-icons'
 import { useUser } from '~/hooks/index'
 import useGlobal from '~/hooks/use-global'
 import Layout from '~/layouts/default'
@@ -24,14 +25,13 @@ import {
 } from '~/utils/hasPermission'
 import { formatServer } from '~/utils/server'
 
-import styles from './alerts.module.css'
-
 const AlertsPage = () => {
   const {
     globalState: { servers, serverTypes },
   } = useGlobal()
 
   const { userState: user } = useUser()
+  const router = useRouter()
 
   const { getAlertsCount } = useAlertContext()
 
@@ -88,6 +88,18 @@ const AlertsPage = () => {
       }))
     )
   }, [servers, serverTypes])
+
+  const serversByEnvironment = formattedServers.reduce((previous, current) => {
+    if (!previous[current.typeServerEnvironment.typeServerEnvironmentName]) {
+      previous[current.typeServerEnvironment.typeServerEnvironmentName] = []
+    }
+
+    previous[current.typeServerEnvironment.typeServerEnvironmentName].push(
+      current
+    )
+
+    return previous
+  }, {})
 
   useEffect(() => {
     setFormattedServers((oldFormattedServers) =>
@@ -169,61 +181,73 @@ const AlertsPage = () => {
               ) && (
                 <div className="w-full">
                   <h2 className="mb-10 heading-md">Alert Servers</h2>
-
-                  <Grid className={styles.serversList}>
-                    {formattedServers.map(({ id, serverName, type, active }) =>
-                      active ? (
-                        <div
-                          key={`alerts-server-${id}`}
-                          className="group relative col-span-2 transition-all duration-200 md:col-span-3 lg:col-span-4 lg:hover:!opacity-100 xl:col-span-3"
-                        >
-                          <Link
-                            href={`/alerts/results/?server=${id}`}
-                            className="relative block p-4 pr-14 border border-gray border-opacity-50 transition-all duration-200 ease-in-out bg-white lg:group-hover:bg-gray lg:group-hover:bg-opacity-25 lg:group-hover:border-opacity-25 "
-                          >
-                            <h4 className="flex items-center text-sm space-x-2">
-                              <FontAwesomeIcon
-                                icon={faDatabase}
-                                className="text-base"
-                              />
-                              <span className="truncate">{serverName}</span>
-                              <span
-                                className={`flex items-center justify-center rounded-full w-5 min-w-5 h-5 ml-auto text-xs ${
-                                  serverAlertsCount[id]?.count === 0
-                                    ? 'bg-green'
-                                    : 'bg-orange'
-                                } text-white`}
-                              >
-                                {serverAlertsCount[id]?.count}
-                              </span>
-                            </h4>
-                            {type?.typeServerName && (
-                              <div className="absolute top-1/2 right-0 transform -translate-y-1/2 rounded-full border-gray-light p-4 transition-all duration-200 ease-in-out opacity-50 lg:group-hover:opacity-100">
-                                <DatabaseIcons
-                                  name={type.typeServerName}
-                                  className="w-8 h-8"
-                                />
-                              </div>
-                            )}
-                          </Link>
-                          <div className="absolute top-full left-0 w-full text-xs z-10 bg-white border border-gray border-opacity-50 transition-all duration-150 ease-in-out invisible opacity-0 lg:group-hover:visible lg:group-hover:opacity-100">
-                            <ul>
-                              <li>
-                                <Link
-                                  href={`/alerts/metrics/?server=${id}`}
-                                  className="border-l-2 border-l-gray-dark block py-2 pl-2 underline lg:hover:text-blue lg:hover:border-l-4 lg:hover:border-l-blue"
-                                >
-                                  Edit metrics and custom alerts
-                                </Link>
-                              </li>
-                            </ul>
-                          </div>
-                        </div>
-                      ) : (
-                        ''
-                      )
-                    )}
-                  </Grid>
+                  {
+                    <Collapse>
+                      {Object.keys(serversByEnvironment).map((environment) => (
+                        <Collapse.Panel key={environment} header={environment}>
+                          <Table
+                            dataSource={serversByEnvironment[
+                              environment
+                            ].filter((value) => value.active)}
+                            showHeader={false}
+                            pagination={false}
+                            columns={[
+                              {
+                                dataIndex: 'serverName',
+                                render: (value) => (
+                                  <>
+                                    <h4 className="flex items-center text-sm space-x-2">
+                                      <FontAwesomeIcon
+                                        icon={faDatabase}
+                                        className="text-base"
+                                      />
+                                      <span className="truncate">{value}</span>
+                                      {/* <DatabaseIcons
+                                        name={record.type.typeServerName}
+                                      /> */}
+                                    </h4>
+                                  </>
+                                ),
+                              },
+                              {
+                                render: (_, record) => (
+                                  <span
+                                    className={`flex items-center justify-center rounded-full w-5 min-w-5 h-5 ml-auto text-xs ${
+                                      serverAlertsCount[0]?.count === 0
+                                        ? 'bg-green'
+                                        : 'bg-orange'
+                                    } text-white`}
+                                  >
+                                    {serverAlertsCount[record.id]?.count}
+                                  </span>
+                                ),
+                              },
+                              {
+                                width: '140px',
+                                render: (_, record) => (
+                                  <div>
+                                    <Link
+                                      href={`/alerts/metrics/?server=${record.id}`}
+                                    >
+                                      Edit metrics
+                                    </Link>
+                                  </div>
+                                ),
+                              },
+                            ]}
+                            onRow={(record) => ({
+                              onClick: () => {
+                                router.push(
+                                  `/alerts/results/?server=${record.id}}`
+                                )
+                              },
+                              style: { cursor: 'pointer' },
+                            })}
+                          />
+                        </Collapse.Panel>
+                      ))}
+                    </Collapse>
+                  }
                 </div>
               )
             ) : (
