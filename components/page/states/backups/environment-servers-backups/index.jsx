@@ -1,35 +1,153 @@
 /* eslint-disable sonarjs/no-duplicate-string */
-/* eslint-disable sonarjs/no-identical-functions */
-/* eslint-disable no-console */
+/* eslint-disable sonarjs/no-nested-template-literals */
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable sonarjs/cognitive-complexity */
 import { Collapse, Table } from 'antd'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
+import styled from 'styled-components'
 
 import { separeteBackups } from '~/utils/backups'
 import { getIntervalTimeBetweenDates } from '~/utils/global'
 
-export const dateFormat = "dd MMM yyyy kk':'mm"
+const StyledTable = styled(Table)`
+  .ant-table-tbody > tr:nth-child(odd) {
+    background-color: #ffffff;
+  }
+  .ant-table-tbody > tr:nth-child(even) {
+    background-color: #f7f7f7;
+  }
+`
 
-function getIntervalTime(backup_start_date, backup_finish_date) {
-  const intervalTimeBetweenDates = getIntervalTimeBetweenDates(
-    new Date(backup_start_date),
-    new Date(backup_finish_date)
+export const dateFormat = 'DD/MM/YYYY HH:mm:ss'
+
+const getIntervalTime = (start, finish) => {
+  if (!start || !finish) return ''
+  const interval = getIntervalTimeBetweenDates(
+    new Date(start),
+    new Date(finish)
   )
 
-  return `${
-    intervalTimeBetweenDates.hours ? `${intervalTimeBetweenDates.hours}h` : ''
-  } ${
-    intervalTimeBetweenDates.minutes
-      ? `${intervalTimeBetweenDates.minutes}m`
-      : ''
-  } ${
-    intervalTimeBetweenDates.seconds
-      ? `${intervalTimeBetweenDates.seconds}s`
-      : ``
-  }`
+  return `${interval.hours ? `${interval.hours}h ` : ''}${
+    interval.minutes ? `${interval.minutes}m ` : ''
+  }${`${interval.seconds}s`}`.trim()
 }
+
+const renderColumns = () => [
+  {
+    title: 'Database',
+    dataIndex: 'database_name',
+    key: 'database_name',
+    width: 180,
+  },
+  {
+    title: (
+      <>
+        <span
+          className="w-2.5 h-2.5 bg-gray-dark mr-1 inline-block relative top-[0.5px]"
+          style={{
+            backgroundColor: 'rgba(80, 70, 229, 0.85)',
+          }}
+        />
+        Full
+      </>
+    ),
+    children: [
+      {
+        title: 'Start Date',
+        dataIndex: ['Full', 'lastBackup', 'backup_start_date'],
+        key: 'fullStartDate',
+        width: 200,
+        render: (value) => value && moment(value).format(dateFormat),
+      },
+      {
+        title: 'Duration',
+        dataIndex: ['Full', 'lastBackup', 'intervalTime'],
+        key: 'fullDuration',
+        width: 100,
+      },
+      {
+        title: 'Size',
+        dataIndex: ['Full', 'lastBackup', 'backup_size'],
+        key: 'fullSize',
+        width: 100,
+        render: (size) =>
+          size ? `${(size / (1024 * 1024 * 1024)).toFixed(2)} GB` : '',
+      },
+    ],
+  },
+  {
+    title: (
+      <>
+        <span
+          className="w-2.5 h-2.5 mr-1 inline-block relative top-[0.5px]"
+          style={{
+            backgroundColor: 'rgba(0, 227, 150, 0.85)',
+          }}
+        />
+        Differential
+      </>
+    ),
+    children: [
+      {
+        title: 'Start Date',
+        dataIndex: ['Differential', 'lastBackup', 'backup_start_date'],
+        key: 'diffStartDate',
+        width: 200,
+        render: (value) => value && moment(value).format(dateFormat),
+      },
+      {
+        title: 'Duration',
+        dataIndex: ['Differential', 'lastBackup', 'intervalTime'],
+        key: 'diffDuration',
+        width: 100,
+      },
+      {
+        title: 'Size',
+        dataIndex: ['Differential', 'lastBackup', 'backup_size'],
+        key: 'diffSize',
+        width: 100,
+        render: (size) =>
+          size ? `${(size / (1024 * 1024 * 1024)).toFixed(2)} GB` : '',
+      },
+    ],
+  },
+  {
+    title: (
+      <>
+        <span
+          className="w-2.5 h-2.5  mr-1 inline-block relative top-[0.5px]"
+          style={{
+            backgroundColor: 'rgba(254, 176, 25, 0.85)',
+          }}
+        />
+        Log
+      </>
+    ),
+    children: [
+      {
+        title: 'Start Date',
+        dataIndex: ['Log', 'lastBackup', 'backup_start_date'],
+        key: 'logStartDate',
+        width: 200,
+        render: (value) => value && moment(value).format(dateFormat),
+      },
+      {
+        title: 'Duration',
+        dataIndex: ['Log', 'lastBackup', 'intervalTime'],
+        key: 'logDuration',
+        width: 100,
+      },
+      {
+        title: 'Size',
+        dataIndex: ['Log', 'lastBackup', 'backup_size'],
+        key: 'logSize',
+        width: 100,
+        render: (size) =>
+          size ? `${(size / (1024 * 1024 * 1024)).toFixed(2)} GB` : '',
+      },
+    ],
+  },
+]
 
 const EnvironmentServersBackups = ({
   servers,
@@ -37,290 +155,112 @@ const EnvironmentServersBackups = ({
   backups,
   expand,
 }) => {
-  const [serverExpandedIndices, setServerExpandedIndices] = useState(new Set())
+  const [serverExpandedIndices, setServerExpandedIndices] = useState([])
 
   useEffect(() => {
-    if (expand) {
-      const allEnvironmentIndices = servers.map((_, index) => index)
-      setServerExpandedIndices(allEnvironmentIndices)
-    } else setServerExpandedIndices(new Set())
-  }, [expand])
+    setServerExpandedIndices(expand ? servers.map((_, index) => index) : [])
+  }, [expand, servers])
+
+  const handleRowClick = (serverId, serverName, databaseName, data) => {
+    onSetBackupsModal({
+      isOpen: true,
+      data,
+      id: serverId,
+      serverName,
+      databaseName,
+    })
+  }
 
   return (
     <div className="p-3 pb-0 space-y-3">
       <Collapse
         activeKey={serverExpandedIndices}
         onChange={setServerExpandedIndices}
-        items={servers
-          .map(({ id, serverName }, index) => {
-            const serverBackups = backups.filter(
-              (backup) => backup.ServerId === id
-            )
+        items={servers.map(({ id, serverName }, index) => {
+          const serverBackups = backups.filter(
+            (backup) => backup.ServerId === id
+          )
+          if (serverBackups.length === 0) return
 
-            if (serverBackups.length === 0) return
+          const separatedBackups = separeteBackups(serverBackups)
+          const databases = Object.keys(separatedBackups).map(
+            (databaseName) => {
+              const fullBackup = separatedBackups[databaseName].Full?.[0] || {}
+              const diffBackup =
+                separatedBackups[databaseName].Differential?.[0] || {}
+              const logBackup = separatedBackups[databaseName].Log?.[0] || {}
 
-            const separetedBackups = separeteBackups(serverBackups)
-
-            const DATABASES = []
-
-            for (let backup in separetedBackups) {
-              DATABASES.push({
-                database_name: backup,
-                ...separetedBackups[backup],
-              })
-            }
-
-            return {
-              label: serverName,
-              key: index,
-              children: DATABASES.map((DATABASE, index) => {
-                const fullBackup = DATABASE.Full ? DATABASE.Full[0] : {}
-                const differentialBackup = DATABASE.Differential
-                  ? DATABASE.Differential[0]
-                  : {}
-                const logBackup = DATABASE.Log ? DATABASE.Log[0] : {}
-
-                const DATA = {
-                  database_name: DATABASE.database_name,
-
-                  Full: {
-                    lastBackup: {
-                      backup_start_date: fullBackup.backup_start_date,
-                      backup_size: fullBackup.backup_size,
-                      intervalTime:
-                        fullBackup.backup_start_date &&
+              return {
+                database_name: databaseName,
+                Full: {
+                  lastBackup: {
+                    backup_start_date: fullBackup.backup_start_date,
+                    backup_size: fullBackup.backup_size,
+                    intervalTime:
+                      getIntervalTime(
+                        fullBackup.backup_start_date,
                         fullBackup.backup_finish_date
-                          ? getIntervalTime(
-                              fullBackup.backup_start_date,
-                              fullBackup.backup_finish_date
-                            ).trim() || '0s'
-                          : '',
-                    },
-                    allBackups: DATABASE.Full || [],
+                      ) ?? '0s',
                   },
-                  Differential: {
-                    lastBackup: {
-                      backup_start_date: differentialBackup.backup_start_date,
-                      backup_size: differentialBackup.backup_size,
-                      intervalTime:
-                        differentialBackup.backup_start_date &&
-                        differentialBackup.backup_finish_date
-                          ? getIntervalTime(
-                              differentialBackup.backup_start_date,
-                              differentialBackup.backup_finish_date
-                            ).trim() || '0s'
-                          : '',
-                    },
-                    allBackups: DATABASE.Differential || [],
+                },
+                Differential: {
+                  lastBackup: {
+                    backup_start_date: diffBackup.backup_start_date,
+                    backup_size: diffBackup.backup_size,
+                    intervalTime:
+                      getIntervalTime(
+                        diffBackup.backup_start_date,
+                        diffBackup.backup_finish_date
+                      ) ?? '0s',
                   },
-                  Log: {
-                    lastBackup: {
-                      backup_start_date: logBackup.backup_start_date,
-                      backup_size: logBackup.backup_size,
-                      intervalTime:
-                        logBackup.backup_start_date &&
+                },
+                Log: {
+                  lastBackup: {
+                    backup_start_date: logBackup.backup_start_date,
+                    backup_size: logBackup.backup_size,
+                    intervalTime:
+                      getIntervalTime(
+                        logBackup.backup_start_date,
                         logBackup.backup_finish_date
-                          ? getIntervalTime(
-                              logBackup.backup_start_date,
-                              logBackup.backup_finish_date
-                            ).trim() || '0s'
-                          : '',
-                    },
-                    allBackups: DATABASE.Log || [],
+                      ) ?? '0s',
                   },
-                }
-
-                return (
-                  <Table
-                    size="middle"
-                    dataSource={[DATA]}
-                    key={index}
-                    pagination={false}
-                    bordered
-                    onRow={(data) => {
-                      return {
-                        style: {
-                          cursor: 'pointer',
-                        },
-                        onClick: () => {
-                          onSetBackupsModal({
-                            isOpen: true,
-                            data,
-                            id,
-                            serverName,
-                            databaseName: DATABASE.database_name,
-                          })
-                        },
-                      }
-                    }}
-                  >
-                    <Table.Column
-                      title="Database"
-                      align="left"
-                      dataIndex={'database_name'}
-                      key={'dbName'}
-                      width={180}
-                      render={(value) => (
-                        <div style={{ width: '180px' }}>{value}</div>
-                      )}
-                    />
-                    <Table.ColumnGroup
-                      title={
-                        <>
-                          <span
-                            className="w-2.5 h-2.5 bg-gray-dark mr-1 inline-block relative top-[0.5px]"
-                            style={{
-                              backgroundColor: 'rgba(80, 70, 229, 0.85)',
-                            }}
-                          />
-                          Full
-                        </>
-                      }
-                      width={'200px'}
-                    >
-                      <Table.Column
-                        dataIndex={'Full'}
-                        title="Start Date"
-                        align="left"
-                        width={200} // Largura fixa
-                        render={(value) =>
-                          value?.lastBackup?.backup_start_date &&
-                          moment(value?.lastBackup?.backup_start_date).format(
-                            'DD/MM/YYYY HH:mm:ss'
-                          )
-                        }
-                      />
-                      <Table.Column
-                        dataIndex={'Full'}
-                        title="Duration"
-                        align="left"
-                        width={100} // Largura fixa
-                        render={(value) => (
-                          <>{value?.lastBackup?.intervalTime}</>
-                        )}
-                      />
-                      <Table.Column
-                        dataIndex={'Full'}
-                        title="Size"
-                        align="left"
-                        width={100} // Largura fixa
-                        render={(value) => (
-                          <>
-                            {value?.lastBackup?.backup_size &&
-                              `${(
-                                value.lastBackup.backup_size /
-                                (1024 * 1024 * 1024)
-                              ).toFixed(2)} GB`}
-                          </>
-                        )}
-                      />
-                    </Table.ColumnGroup>
-                    <Table.ColumnGroup
-                      title={
-                        <>
-                          <span
-                            className="w-2.5 h-2.5 mr-1 inline-block relative top-[0.5px]"
-                            style={{
-                              backgroundColor: 'rgba(0, 227, 150, 0.85)',
-                            }}
-                          />
-                          Differential
-                        </>
-                      }
-                    >
-                      <Table.Column
-                        dataIndex={'Differential'}
-                        title="Start Date"
-                        width={200} // Largura fixa
-                        render={(value) =>
-                          value?.lastBackup?.backup_start_date &&
-                          moment(value?.lastBackup?.backup_start_date).format(
-                            'DD/MM/YYYY HH:mm:ss'
-                          )
-                        }
-                        align="left"
-                      />
-                      <Table.Column
-                        dataIndex={'Differential'}
-                        title="Duration"
-                        width={100} // Largura fixa
-                        render={(value) => (
-                          <>{value?.lastBackup?.intervalTime}</>
-                        )}
-                        align="left"
-                      />
-                      <Table.Column
-                        dataIndex={'Differential'}
-                        title="Size"
-                        align="left"
-                        width={100} // Largura fixa
-                        render={(value) => (
-                          <>
-                            {value?.lastBackup?.backup_size &&
-                              `${(
-                                value.lastBackup.backup_size /
-                                (1024 * 1024 * 1024)
-                              ).toFixed(2)} GB`}
-                          </>
-                        )}
-                      />
-                    </Table.ColumnGroup>
-                    <Table.ColumnGroup
-                      title={
-                        <>
-                          <span
-                            className="w-2.5 h-2.5  mr-1 inline-block relative top-[0.5px]"
-                            style={{
-                              backgroundColor: 'rgba(254, 176, 25, 0.85)',
-                            }}
-                          />
-                          Log
-                        </>
-                      }
-                    >
-                      <Table.Column
-                        dataIndex={'Log'}
-                        title="Start Date"
-                        align="left"
-                        width={200} // Largura fixa
-                        render={(value) =>
-                          value?.lastBackup?.backup_start_date &&
-                          moment(value?.lastBackup?.backup_start_date).format(
-                            'DD/MM/YYYY HH:mm:ss'
-                          )
-                        }
-                      />
-                      <Table.Column
-                        dataIndex={'Log'}
-                        title="Duration"
-                        align="left"
-                        width={100} // Largura fixa
-                        render={(value) => (
-                          <>{value?.lastBackup?.intervalTime}</>
-                        )}
-                      />
-                      <Table.Column
-                        dataIndex={'Log'}
-                        title="Size"
-                        align="left"
-                        width={100} // Largura fixa
-                        render={(value) => (
-                          <>
-                            {value?.lastBackup?.backup_size &&
-                              `${(
-                                value.lastBackup.backup_size /
-                                (1024 * 1024 * 1024)
-                              ).toFixed(2)} GB`}
-                          </>
-                        )}
-                      />
-                    </Table.ColumnGroup>
-                  </Table>
-                )
-              }),
+                },
+              }
             }
-          })
-          .filter((item) => item?.children)}
+          )
+
+          return {
+            label: serverName,
+            key: index,
+            children: (
+              <StyledTable
+                dataSource={databases}
+                columns={renderColumns()}
+                pagination={false}
+                bordered
+                onRow={(record) => ({
+                  onClick: () =>
+                    handleRowClick(
+                      id,
+                      serverName,
+                      record.database_name,
+                      record
+                    ),
+                  style: {
+                    cursor: 'pointer',
+                  },
+                })}
+                style={{
+                  '--table-zebra-odd-bg': '#f5f5f5', // Tonalidade mais escura para linhas ímpares
+                  '--table-zebra-even-bg': '#ffffff', // Cor normal para linhas pares
+                }}
+                rowClassName={(record, index) =>
+                  index % 2 === 1 ? 'zebra-odd' : 'zebra-even'
+                }
+              />
+            ),
+          }
+        })}
       />
     </div>
   )
