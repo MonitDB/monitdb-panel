@@ -1,12 +1,11 @@
-import { Button } from 'antd'
-import { useFormik } from 'formik'
+/* eslint-disable no-console */
+import { Button, Form, Input, Select } from 'antd'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { toast } from 'react-toastify'
-import * as Yup from 'yup'
 
-import { Input, Label, Select } from '~/components/form'
+import { Label } from '~/components/form'
 import Loading from '~/components/loading'
 import { PageContent, PageHeader, PageWrapper } from '~/components/page'
 import { useUser } from '~/hooks/index'
@@ -21,19 +20,12 @@ import {
 
 const usersPagePath = '/configurations/users'
 
-const FormSchema = Yup.object().shape({
-  idRole: Yup.string().required(),
-  loginEmail: Yup.string().email().required(),
-  loginName: Yup.string().required(),
-  loginPassword: Yup.string(),
-  loginEnable: Yup.string().required(),
-})
-
 const UserSinglePage = () => {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [roles, setRoles] = useState([])
   const [userData, setUserData] = useState()
+  const [form] = Form.useForm()
 
   const { userState: user } = useUser()
 
@@ -46,41 +38,17 @@ const UserSinglePage = () => {
     }
   }, [router, user])
 
-  const formik = useFormik({
-    initialValues: {
-      id: router?.query?.id,
-      idRole: '',
-      loginEmail: '',
-      loginName: '',
-      loginPassword: '',
-      loginEnable: '',
-    },
-    validationSchema: FormSchema,
-    onSubmit: async (values) => {
-      setIsLoading(true)
-
-      try {
-        const response = await UserServices.update({
-          ...values,
-          loginEnable: values.loginEnable === '1' ? true : false,
-        })
-
-        if (response?.status === 200) {
-          toast.success(`User ${values.loginName} edited!`)
-          router.push(usersPagePath)
-        }
-      } catch (error) {
-        toast.error(handleException(error))
-        setIsLoading(false)
-      }
-    },
-  })
-
   const getUserData = useCallback(async () => {
     try {
       const response = await UserServices.getUserById(router?.query?.id)
-
       setUserData(response?.data)
+      form.setFieldsValue({
+        id: router?.query?.id,
+        idRole: response?.data?.idRole,
+        loginEmail: response?.data?.loginEmail,
+        loginName: response?.data?.loginName,
+        loginEnable: response?.data?.loginEnable ? '1' : '0',
+      })
     } catch (error) {
       toast.error(handleException(error))
       setIsLoading(false)
@@ -90,10 +58,8 @@ const UserSinglePage = () => {
   const getRoles = useCallback(async () => {
     try {
       const response = await UserServices.listRoles()
-
       setRoles(response?.data || [])
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.error(error)
     }
   }, [])
@@ -121,44 +87,44 @@ const UserSinglePage = () => {
   }, [userData]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const rolesOptions = useMemo(() => {
-    return [
-      {
-        label: 'Select...',
-        value: '',
-      },
-      ...roles.map((role) => ({
-        label: role.roleName,
-        value: role.idRole,
-      })),
-    ]
+    return roles.map((role) => ({
+      label: role.roleName,
+      value: role.idRole,
+    }))
   }, [roles])
 
   const statusOptions = useMemo(
     () => [
-      { value: '', label: 'Select...' },
       { value: '1', label: 'Active' },
       { value: '0', label: 'Inactive' },
     ],
     []
   )
 
-  useEffect(() => {
-    if (!userData?.id) return
+  const handleSubmit = async (values) => {
+    setIsLoading(true)
+    try {
+      const response = await UserServices.update({
+        ...values,
+        loginEnable: values.loginEnable === '1' ? true : false,
+      })
 
-    formik.setFieldValue('id', router?.query?.id)
-    formik.setFieldValue('idRole', userData.idRole)
-    formik.setFieldValue('loginEmail', userData.loginEmail)
-    formik.setFieldValue('loginName', userData.loginName)
-    formik.setFieldValue('loginEnable', userData.loginEnable ? '1' : '0')
-  }, [userData]) // eslint-disable-line react-hooks/exhaustive-deps
+      if (response?.status === 200) {
+        toast.success(`User ${values.loginName} edited!`)
+        router.push(usersPagePath)
+      }
+    } catch (error) {
+      toast.error(handleException(error))
+      setIsLoading(false)
+    }
+  }
 
   useEffect(() => {
     getRoles()
-  }, [getUserData, getRoles])
+  }, [getRoles])
 
   useEffect(() => {
     if (!router?.query?.id) return
-
     getUserData()
   }, [getUserData, router?.query?.id])
 
@@ -188,85 +154,70 @@ const UserSinglePage = () => {
 
             {!userData && <Loading />}
 
-            <form
-              onSubmit={formik.handleSubmit}
+            <Form
+              form={form}
+              onFinish={handleSubmit}
               className="grid grid-cols-2 gap-4 md:max-w-[50%]"
             >
               <Label text="Name" className="col-span-1">
-                <Input
-                  type="text"
+                <Form.Item
                   name="loginName"
-                  className="w-full px-4 h-10 bg-white leading-10 rounded outline-none text-sm"
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  value={formik.values.loginName}
-                  hasError={formik.touched.loginName && formik.errors.loginName}
-                />
+                  rules={[
+                    { required: true, message: 'Please input your name!' },
+                  ]}
+                >
+                  <Input type="text" />
+                </Form.Item>
               </Label>
               <Label text="E-mail" className="col-span-1">
-                <Input
-                  type="text"
+                <Form.Item
                   name="loginEmail"
-                  className="w-full px-4 h-10 bg-white leading-10 rounded outline-none text-sm"
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  value={formik.values.loginEmail}
-                  hasError={
-                    formik.touched.loginEmail && formik.errors.loginEmail
-                  }
-                />
+                  rules={[
+                    {
+                      required: true,
+                      message: 'Please input your email!',
+                      type: 'email',
+                    },
+                  ]}
+                >
+                  <Input type="email" />
+                </Form.Item>
               </Label>
               <Label text="Password" className="col-span-1">
-                <Input
-                  type="password"
-                  name="loginPassword"
-                  className="w-full px-4 h-10 bg-white leading-10 rounded outline-none text-sm"
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  value={formik.values.loginPassword}
-                  hasError={
-                    formik.touched.loginPassword && formik.errors.loginPassword
-                  }
-                />
+                <Form.Item name="loginPassword">
+                  <Input type="password" />
+                </Form.Item>
               </Label>
               <Label text="Role" className="col-span-1">
-                <Select
+                <Form.Item
                   name="idRole"
-                  containerClass="bg-white"
-                  placeholder="Selecione a função"
-                  options={rolesOptions}
-                  value={formik.values.idRole}
-                  onChange={(value) => {
-                    formik.setFieldValue('idRole', value)
-                  }}
-                />
+                  rules={[{ required: true, message: 'Please select a role!' }]}
+                >
+                  <Select options={rolesOptions} placeholder="Select a role" />
+                </Form.Item>
               </Label>
               <Label text="Status" className="col-span-1">
-                <Select
+                <Form.Item
                   name="loginEnable"
-                  containerClass="bg-white"
-                  placeholder="Selecione o status"
-                  options={statusOptions}
-                  value={formik.values.loginEnable}
-                  onChange={(value) => {
-                    formik.setFieldValue('loginEnable', value)
-                  }}
-                />
+                  rules={[
+                    { required: true, message: 'Please select a status!' },
+                  ]}
+                >
+                  <Select
+                    options={statusOptions}
+                    placeholder="Select a status"
+                  />
+                </Form.Item>
               </Label>
               <div className="col-span-2 flex justify-between items-center">
-                <Button type="primary" danger onClick={() => handleDelete()}>
+                <Button type="primary" danger onClick={handleDelete}>
                   Delete
                 </Button>
-                <Button
-                  type="primary"
-                  typeof="submit"
-                  onClick={() => formik.submitForm()}
-                  loading={isLoading}
-                >
+                <Button type="primary" htmlType="submit" loading={isLoading}>
                   {isLoading ? 'Saving...' : 'Save'}
                 </Button>
               </div>
-            </form>
+            </Form>
           </PageContent>
         </PageWrapper>
       </Layout>

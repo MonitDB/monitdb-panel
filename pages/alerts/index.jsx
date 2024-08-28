@@ -195,7 +195,7 @@ const AlertsPage = () => {
                             columns={[
                               {
                                 dataIndex: 'serverName',
-                                width: 250,
+                                width: '30%',
                                 render: (value, record) => (
                                   <>
                                     <h4 className="flex items-center text-sm space-x-2">
@@ -205,7 +205,7 @@ const AlertsPage = () => {
                                       />
                                       <span className="truncate">
                                         {value}{' '}
-                                        <div className="absolute top-1/2 right-0 transform -translate-y-1/2 rounded-full border-gray-light p-4 transition-all duration-200 ease-in-out opacity-50 lg:group-hover:opacity-100">
+                                        <div className="absolute top-1/2 right-0 transform -translate-y-1/2 rounded-full border-gray-light transition-all duration-200 ease-in-out opacity-50 lg:group-hover:opacity-100">
                                           <DatabaseIcons
                                             name={record.type.typeServerName}
                                             className="w-8 h-8"
@@ -217,6 +217,7 @@ const AlertsPage = () => {
                                 ),
                               },
                               {
+                                width: '5%',
                                 render: (_, record) => (
                                   <span
                                     className={`flex items-center justify-center rounded-full w-5 min-w-5 h-5 ml-auto text-xs ${
@@ -230,7 +231,6 @@ const AlertsPage = () => {
                                 ),
                               },
                               {
-                                width: '140px',
                                 render: (_, record) => (
                                   <div>
                                     <Link
@@ -245,7 +245,7 @@ const AlertsPage = () => {
                             onRow={(record) => ({
                               onClick: () => {
                                 router.push(
-                                  `/alerts/results/?server=${record.id}}`
+                                  `/alerts/results/?server=${record.id}`
                                 )
                               },
                               style: { cursor: 'pointer' },

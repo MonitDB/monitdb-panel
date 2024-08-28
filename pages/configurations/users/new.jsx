@@ -1,11 +1,10 @@
-import { useFormik } from 'formik'
+/* eslint-disable no-console */
+import { Button, Form, Input, Select } from 'antd'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { toast } from 'react-toastify'
-import * as Yup from 'yup'
 
-import { Input, Label, Select } from '~/components/form'
 import { PageContent, PageHeader, PageWrapper } from '~/components/page'
 import { useUser } from '~/hooks/index'
 import Layout from '~/layouts/default'
@@ -16,14 +15,6 @@ import {
   hasPermission,
   TypeGrant,
 } from '~/utils/hasPermission'
-
-const FormSchema = Yup.object().shape({
-  idRole: Yup.string().required(),
-  loginEmail: Yup.string().email().required(),
-  loginName: Yup.string().required(),
-  loginPassword: Yup.string().required(),
-  loginEnable: Yup.string().required(),
-})
 
 const UsersSinglePage = () => {
   const router = useRouter()
@@ -41,62 +32,45 @@ const UsersSinglePage = () => {
     }
   }, [router, user])
 
-  const formik = useFormik({
-    initialValues: {
-      idRole: '',
-      loginEmail: '',
-      loginName: '',
-      loginPassword: '',
-      loginEnable: '',
-    },
-    validationSchema: FormSchema,
-    onSubmit: async (values) => {
-      setIsLoading(true)
+  const [form] = Form.useForm()
 
-      try {
-        const response = await UserServices.create({
-          ...values,
-          loginEnable: values.loginEnable === '1',
-        })
+  const onFinish = async (values) => {
+    setIsLoading(true)
 
-        if (response?.status === 200) {
-          toast.success(`User ${values.loginName} created!`)
-          router.push('/configurations/users')
-        }
-      } catch (error) {
-        toast.error(handleException(error))
-        setIsLoading(false)
+    try {
+      const response = await UserServices.create({
+        ...values,
+        loginEnable: values.loginEnable === '1',
+      })
+
+      if (response?.status === 200) {
+        toast.success(`User ${values.loginName} created!`)
+        router.push('/configurations/users')
       }
-    },
-  })
+    } catch (error) {
+      toast.error(handleException(error))
+      setIsLoading(false)
+    }
+  }
 
   const getRoles = useCallback(async () => {
     try {
       const response = await UserServices.listRoles()
-
       setRoles(response?.data || [])
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.error(error)
     }
   }, [])
 
   const rolesOptions = useMemo(() => {
-    return [
-      {
-        label: 'Select...',
-        value: '',
-      },
-      ...roles.map((role) => ({
-        label: role.roleName,
-        value: role.id,
-      })),
-    ]
+    return roles.map((role) => ({
+      label: role.roleName,
+      value: role.id,
+    }))
   }, [roles])
 
   const statusOptions = useMemo(
     () => [
-      { value: '', label: 'Select...' },
       { value: '1', label: 'Active' },
       { value: '0', label: 'Inactive' },
     ],
@@ -132,80 +106,76 @@ const UsersSinglePage = () => {
             />
 
             <div>
-              <form
-                onSubmit={formik.handleSubmit}
-                className="grid grid-cols-2 gap-4 md:max-w-[50%]"
+              <Form
+                form={form}
+                layout="vertical"
+                onFinish={onFinish}
+                initialValues={{
+                  idRole: '',
+                  loginEmail: '',
+                  loginName: '',
+                  loginPassword: '',
+                  loginEnable: '',
+                }}
               >
-                <Label text="Name" className="col-span-1">
-                  <Input
-                    type="text"
-                    name="loginName"
-                    className="w-full px-4 h-10 bg-white leading-10 rounded outline-none text-sm"
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    value={formik.values.loginName}
-                    hasError={
-                      formik.touched.loginName && formik.errors.loginName
-                    }
-                  />
-                </Label>
-                <Label text="E-mail" className="col-span-1">
-                  <Input
-                    type="text"
-                    name="loginEmail"
-                    className="w-full px-4 h-10 bg-white leading-10 rounded outline-none text-sm"
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    value={formik.values.loginEmail}
-                    hasError={
-                      formik.touched.loginEmail && formik.errors.loginEmail
-                    }
-                  />
-                </Label>
-                <Label text="Password" className="col-span-1">
-                  <Input
-                    type="password"
-                    name="loginPassword"
-                    className="w-full px-4 h-10 bg-white leading-10 rounded outline-none text-sm"
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    value={formik.values.loginPassword}
-                    hasError={
-                      formik.touched.loginPassword &&
-                      formik.errors.loginPassword
-                    }
-                  />
-                </Label>
-                <Label text="Role" className="col-span-1">
+                <Form.Item
+                  label="Name"
+                  name="loginName"
+                  rules={[
+                    { required: true, message: 'Please enter your name' },
+                  ]}
+                >
+                  <Input placeholder="Enter name" />
+                </Form.Item>
+
+                <Form.Item
+                  label="E-mail"
+                  name="loginEmail"
+                  rules={[
+                    { required: true, message: 'Please enter your email' },
+                    { type: 'email', message: 'Please enter a valid email' },
+                  ]}
+                >
+                  <Input placeholder="Enter email" />
+                </Form.Item>
+
+                <Form.Item
+                  label="Password"
+                  name="loginPassword"
+                  rules={[
+                    { required: true, message: 'Please enter your password' },
+                  ]}
+                >
+                  <Input.Password placeholder="Enter password" />
+                </Form.Item>
+
+                <Form.Item
+                  label="Role"
+                  name="idRole"
+                  rules={[{ required: true, message: 'Please select a role' }]}
+                >
+                  <Select placeholder="Select a role" options={rolesOptions} />
+                </Form.Item>
+
+                <Form.Item
+                  label="Status"
+                  name="loginEnable"
+                  rules={[
+                    { required: true, message: 'Please select a status' },
+                  ]}
+                >
                   <Select
-                    name="idRole"
-                    containerClass="bg-white"
-                    placeholder="Selecione a função"
-                    options={rolesOptions}
-                    value={formik.values.idRole}
-                    onChange={(value) => {
-                      formik.setFieldValue('idRole', value)
-                    }}
-                  />
-                </Label>
-                <Label text="Status" className="col-span-1">
-                  <Select
-                    name="loginEnable"
-                    containerClass="bg-white"
-                    placeholder="Selecione o status"
+                    placeholder="Select a status"
                     options={statusOptions}
-                    value={formik.values.loginEnable}
-                    onChange={(value) => {
-                      formik.setFieldValue('loginEnable', value)
-                    }}
                   />
-                </Label>
-                <div className="col-span-2">
-                  <button type="submit" className="btn" disabled={isLoading}>
+                </Form.Item>
+
+                <Form.Item>
+                  <Button type="primary" htmlType="submit" loading={isLoading}>
                     {isLoading ? 'Creating...' : 'Create'}
-                  </button>
-                </div>
-              </form>
+                  </Button>
+                </Form.Item>
+              </Form>
             </div>
           </PageContent>
         </PageWrapper>
