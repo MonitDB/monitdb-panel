@@ -1,11 +1,10 @@
 /* eslint-disable no-console */
-import { Button, Form, Input, Select } from 'antd'
+import { Form, notification } from 'antd'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { toast } from 'react-toastify'
 
-import { Label } from '~/components/form'
+import UserForm from '~/components/forms/userForm'
 import Loading from '~/components/loading'
 import { PageContent, PageHeader, PageWrapper } from '~/components/page'
 import { useUser } from '~/hooks/index'
@@ -50,7 +49,7 @@ const UserSinglePage = () => {
         loginEnable: response?.data?.loginEnable ? '1' : '0',
       })
     } catch (error) {
-      toast.error(handleException(error))
+      notification.error({ description: handleException(error) })
       setIsLoading(false)
     }
   }, [router?.query?.id]) // eslint-disable-line react-hooks/exhaustive-deps
@@ -77,21 +76,16 @@ const UserSinglePage = () => {
       const response = await UserServices.remove(userData.id)
 
       if (response?.status === 200) {
-        toast.success(`User ${userData.loginName} deleted!`)
+        notification.success({
+          description: `User ${userData.loginName} deleted!`,
+        })
         router.push(usersPagePath)
       }
     } catch (error) {
-      toast.error(handleException(error))
+      notification.error({ description: handleException(error) })
       setIsLoading(false)
     }
   }, [userData]) // eslint-disable-line react-hooks/exhaustive-deps
-
-  const rolesOptions = useMemo(() => {
-    return roles.map((role) => ({
-      label: role.roleName,
-      value: role.idRole,
-    }))
-  }, [roles])
 
   const statusOptions = useMemo(
     () => [
@@ -104,17 +98,16 @@ const UserSinglePage = () => {
   const handleSubmit = async (values) => {
     setIsLoading(true)
     try {
-      const response = await UserServices.update({
+      await UserServices.update({
+        id: router?.query?.id,
         ...values,
         loginEnable: values.loginEnable === '1' ? true : false,
       })
 
-      if (response?.status === 200) {
-        toast.success(`User ${values.loginName} edited!`)
-        router.push(usersPagePath)
-      }
+      notification.success({ description: `User ${values.loginName} edited!` })
+      router.push(usersPagePath)
     } catch (error) {
-      toast.error(handleException(error))
+      notification.error({ description: handleException(error) })
       setIsLoading(false)
     }
   }
@@ -154,69 +147,14 @@ const UserSinglePage = () => {
 
             {!userData && <Loading />}
 
-            <Form
-              form={form}
-              onFinish={handleSubmit}
-              className="grid grid-cols-2 gap-4 md:max-w-[50%]"
-            >
-              <Label text="Name" className="col-span-1">
-                <Form.Item
-                  name="loginName"
-                  rules={[
-                    { required: true, message: 'Please input your name!' },
-                  ]}
-                >
-                  <Input type="text" />
-                </Form.Item>
-              </Label>
-              <Label text="E-mail" className="col-span-1">
-                <Form.Item
-                  name="loginEmail"
-                  rules={[
-                    {
-                      required: true,
-                      message: 'Please input your email!',
-                      type: 'email',
-                    },
-                  ]}
-                >
-                  <Input type="email" />
-                </Form.Item>
-              </Label>
-              <Label text="Password" className="col-span-1">
-                <Form.Item name="loginPassword">
-                  <Input type="password" />
-                </Form.Item>
-              </Label>
-              <Label text="Role" className="col-span-1">
-                <Form.Item
-                  name="idRole"
-                  rules={[{ required: true, message: 'Please select a role!' }]}
-                >
-                  <Select options={rolesOptions} placeholder="Select a role" />
-                </Form.Item>
-              </Label>
-              <Label text="Status" className="col-span-1">
-                <Form.Item
-                  name="loginEnable"
-                  rules={[
-                    { required: true, message: 'Please select a status!' },
-                  ]}
-                >
-                  <Select
-                    options={statusOptions}
-                    placeholder="Select a status"
-                  />
-                </Form.Item>
-              </Label>
-              <div className="col-span-2 flex justify-between items-center">
-                <Button type="primary" danger onClick={handleDelete}>
-                  Delete
-                </Button>
-                <Button type="primary" htmlType="submit" loading={isLoading}>
-                  {isLoading ? 'Saving...' : 'Save'}
-                </Button>
-              </div>
+            <Form form={form} onFinish={handleSubmit}>
+              <UserForm
+                handleDelete={handleDelete}
+                roles={roles}
+                statusOptions={statusOptions}
+                isLoading={isLoading}
+                isEdit={true}
+              />
             </Form>
           </PageContent>
         </PageWrapper>
