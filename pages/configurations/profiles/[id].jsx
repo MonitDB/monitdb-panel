@@ -23,12 +23,13 @@ import Loading from '~/components/loading'
 import { PageContent, PageHeader, PageWrapper } from '~/components/page'
 import Layout from '~/layouts/default'
 import {
-  createProfile,
+  // createProfile,
   getPermissions,
   getProfileById,
   getTypesGrants,
-  updateProfile,
+  // updateProfile,
 } from '~/services/permissions'
+
 const EditProfilePage = () => {
   const router = useRouter()
   const { id: profileId } = router.query
@@ -36,9 +37,6 @@ const EditProfilePage = () => {
   const [loading, setLoading] = useState(false)
   const [permissions, setPermissions] = useState([])
   const [typesGrants, setTypesGrants] = useState([])
-
-  const [typeGrant, setTypeGrant] = useState({})
-  const [fetureFunctions, setFetureFunctions] = useState([])
 
   const [form] = Form.useForm()
 
@@ -57,17 +55,24 @@ const EditProfilePage = () => {
             roleName: profileData.roleName,
             roleDescription: profileData.roleDescription,
           })
-
-          for (const data of profileData.featureFunctions) {
-            setTypeGrant((oldState) => ({
-              ...oldState,
-              [data.idFeatureFunction]: data.idTypeGrant,
-            }))
-            setFetureFunctions((oldState) => [
-              ...oldState,
-              String(data.idFeatureFunction),
-            ])
+        } else {
+          const defaultGrant = typesGrantsData[1]
+          const featureFunctions = []
+          for (const data of permissionsData) {
+            for (const item of data.featureFunction) {
+              featureFunctions.push({
+                featureFunctionId: item.idFeatureFunction,
+                typeGrantId: defaultGrant.idTypeGrant,
+                featureFunction: item,
+              })
+            }
           }
+
+          form.setFieldsValue({
+            featureFunctions,
+            hiddenFeatureFunctions: featureFunctions,
+          })
+          console.log(form.getFieldsValue())
         }
       } catch (error) {
         console.error(error)
@@ -104,30 +109,30 @@ const EditProfilePage = () => {
   }
 
   const handleSubmit = async (values) => {
-    const payload = {
-      ...values,
-      featureFunctions: fetureFunctions.map((item) => ({
-        featureFunctionId: item,
-        typeGrantId: typeGrant[item],
-      })),
-    }
+    console.log(values)
+    // const payload = {
+    //   ...values,
+    //   featureFunctions: permissions.flatMap((permission) =>
+    //     permission.featureFunction.map((featureFunction) => ({
+    //       featureFunctionId: featureFunction.idFeatureFunction,
+    //       typeGrantId: typeGrant[featureFunction.idFeatureFunction],
+    //     }))
+    //   ),
+    // }
 
     setLoading(true)
     try {
-      await (profileId === 'new-profile'
-        ? createProfile(payload)
-        : updateProfile(profileId, payload))
-      if (profileId === 'new-profile') {
-        notification.success({
-          message: 'Profile created successfully',
-        })
-      } else {
-        notification.success({
-          message: 'Profile updated successfully',
-        })
-      }
+      // await (profileId === 'new-profile'
+      //   ? createProfile(payload)
+      //   : updateProfile(profileId, payload))
+      notification.success({
+        message:
+          profileId === 'new-profile'
+            ? 'Profile created successfully'
+            : 'Profile updated successfully',
+      })
 
-      router.push('/configurations/profiles')
+      // router.push('/configurations/profiles')
     } catch (error) {
       console.error(error)
       notification.error({
@@ -170,10 +175,12 @@ const EditProfilePage = () => {
                   </Form.Item>
                   <h2 className="text-lg font-semibold">Permissions</h2>
                   <p className="text-gray-500">
-                    Select the permissions that this profile will have
+                    Select the permission level for each feature function
                   </p>
                   <br />
                   <br />
+
+                  <Form.Item name={`featureFunctions`} hidden />
 
                   <Table
                     loading={fetching}
@@ -184,58 +191,68 @@ const EditProfilePage = () => {
                       {
                         title: 'Level',
                         width: 300,
-                        render: (record) =>
-                          Number(record.key) ? (
-                            <div>
-                              <Select
-                                onChange={(value) => {
-                                  setTypeGrant((previous) => ({
-                                    ...previous,
-                                    [record.key]: value,
-                                  }))
-                                }}
-                                value={typeGrant[record.key]}
-                                defaultValue={typesGrants[1]?.idTypeGrant}
-                                options={typesGrants.map((typeGrant) => ({
-                                  label: typeGrant.typeGrantName,
-                                  value: typeGrant.idTypeGrant,
-                                }))}
-                              />
-                            </div>
-                          ) : (
-                            <Select
-                              status="warning"
-                              onChange={(value) => {
-                                for (const featureFunction of record.featureFunction) {
-                                  setTypeGrant((previous) => ({
-                                    ...previous,
-                                    [featureFunction.idFeatureFunction]: value,
-                                  }))
-                                }
-
-                                setTypeGrant((previous) => ({
-                                  ...previous,
-                                  [record.key]: value,
-                                }))
-                              }}
-                              value={typeGrant[record.key]}
-                              defaultValue={typesGrants[1]?.idTypeGrant}
-                              options={typesGrants.map((typeGrant) => ({
-                                label: typeGrant.typeGrantName,
-                                value: typeGrant.idTypeGrant,
-                              }))}
+                        render: (value, record, index) => (
+                          <>
+                            <Form.Item
+                              hidden
+                              name={[
+                                'hiddenFeatureFunctions',
+                                index,
+                                'grantId',
+                              ]}
+                              initialValue={value.key}
                             />
-                          ),
+                            {!Number.isNaN(Number(value.key)) && (
+                              <Form.Item
+                                hidden
+                                name={[
+                                  'hiddenFeatureFunctions',
+                                  index,
+                                  'featureFunctionId',
+                                ]}
+                                initialValue={value.key}
+                              />
+                            )}
+
+                            {Number.isNaN(Number(value.key)) ? (
+                              <></>
+                            ) : (
+                              <Form.Item
+                                name={[
+                                  'hiddenFeatureFunctions',
+                                  index,
+                                  'typeGrantId',
+                                ]}
+                              >
+                                <Select
+                                  onChange={(v) => {
+                                    console.log(value.key)
+                                    form.setFieldValue(
+                                      [
+                                        'hiddenFeatureFunctions',
+                                        index,
+                                        'typeGrantId',
+                                      ],
+                                      v
+                                    )
+                                    form.setFieldValue(
+                                      'featureFunctions',
+                                      form.getFieldValue(
+                                        'hiddenFeatureFunctions'
+                                      )
+                                    )
+                                  }}
+                                  options={typesGrants.map((typeGrant) => ({
+                                    label: typeGrant.typeGrantName,
+                                    value: typeGrant.idTypeGrant,
+                                  }))}
+                                />
+                              </Form.Item>
+                            )}
+                          </>
+                        ),
                       },
                     ]}
-                    rowSelection={{
-                      checkStrictly: false,
-                      onChange: (selectedRows) => {
-                        const rows = selectedRows.filter(Number)
-                        setFetureFunctions(rows)
-                      },
-                      selectedRowKeys: fetureFunctions,
-                    }}
                     dataSource={permissions.map((permission) => ({
                       ...permission,
                       key: `permission-${permission.id}`,
