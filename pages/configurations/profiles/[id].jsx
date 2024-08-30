@@ -23,11 +23,11 @@ import Loading from '~/components/loading'
 import { PageContent, PageHeader, PageWrapper } from '~/components/page'
 import Layout from '~/layouts/default'
 import {
-  // createProfile,
+  createProfile,
   getPermissions,
   getProfileById,
   getTypesGrants,
-  // updateProfile,
+  updateProfile,
 } from '~/services/permissions'
 
 const EditProfilePage = () => {
@@ -51,9 +51,18 @@ const EditProfilePage = () => {
 
         if (profileId !== 'new-profile') {
           const { data: profileData } = await getProfileById(profileId)
+
+          const featureFunctions = profileData.featureFunctions.map((item) => ({
+            featureFunctionId: item?.idFeatureFunction,
+            typeGrantId: item?.idTypeGrant,
+            featureFunction: item?.featureFunction,
+          }))
+
           form.setFieldsValue({
             roleName: profileData.roleName,
             roleDescription: profileData.roleDescription,
+            featureFunctions,
+            hiddenFeatureFunctions: featureFunctions,
           })
         } else {
           const defaultGrant = typesGrantsData[1]
@@ -72,7 +81,6 @@ const EditProfilePage = () => {
             featureFunctions,
             hiddenFeatureFunctions: featureFunctions,
           })
-          console.log(form.getFieldsValue())
         }
       } catch (error) {
         console.error(error)
@@ -109,22 +117,20 @@ const EditProfilePage = () => {
   }
 
   const handleSubmit = async (values) => {
-    console.log(values)
-    // const payload = {
-    //   ...values,
-    //   featureFunctions: permissions.flatMap((permission) =>
-    //     permission.featureFunction.map((featureFunction) => ({
-    //       featureFunctionId: featureFunction.idFeatureFunction,
-    //       typeGrantId: typeGrant[featureFunction.idFeatureFunction],
-    //     }))
-    //   ),
-    // }
+    delete values.hiddenFeatureFunctions
+
+    const payload = {
+      ...values,
+      featureFunction: values?.featureFunction?.filter((value) =>
+        value?.grantId ? !Number.isNan(value?.grantId) : true
+      ),
+    }
 
     setLoading(true)
     try {
-      // await (profileId === 'new-profile'
-      //   ? createProfile(payload)
-      //   : updateProfile(profileId, payload))
+      await (profileId === 'new-profile'
+        ? createProfile(payload)
+        : updateProfile(profileId, payload))
       notification.success({
         message:
           profileId === 'new-profile'
@@ -132,7 +138,7 @@ const EditProfilePage = () => {
             : 'Profile updated successfully',
       })
 
-      // router.push('/configurations/profiles')
+      router.push('/configurations/profiles')
     } catch (error) {
       console.error(error)
       notification.error({
@@ -226,7 +232,6 @@ const EditProfilePage = () => {
                               >
                                 <Select
                                   onChange={(v) => {
-                                    console.log(value.key)
                                     form.setFieldValue(
                                       [
                                         'hiddenFeatureFunctions',
