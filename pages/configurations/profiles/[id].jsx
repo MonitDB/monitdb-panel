@@ -1,23 +1,18 @@
-/* eslint-disable unicorn/no-array-callback-reference */
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable jsx-a11y/label-has-associated-control */
-/* eslint-disable unicorn/consistent-function-scoping */
-/* eslint-disable no-console */
-/* eslint-disable sonarjs/no-duplicate-string */
-
 import {
   Button,
+  Card,
+  Col,
+  Collapse,
   Form,
   Input,
   notification,
   Row,
   Select,
   Space,
-  Table,
 } from 'antd'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
 import Loading from '~/components/loading'
 import { PageContent, PageHeader, PageWrapper } from '~/components/page'
@@ -30,6 +25,8 @@ import {
   updateProfile,
 } from '~/services/permissions'
 
+const { Panel } = Collapse
+
 const EditProfilePage = () => {
   const router = useRouter()
   const { id: profileId } = router.query
@@ -37,6 +34,9 @@ const EditProfilePage = () => {
   const [loading, setLoading] = useState(false)
   const [permissions, setPermissions] = useState([])
   const [typesGrants, setTypesGrants] = useState([])
+
+  const [permission, setPermission] = useState()
+  const [typeGrant, setTypeGrant] = useState()
 
   const [form] = Form.useForm()
 
@@ -62,7 +62,6 @@ const EditProfilePage = () => {
             roleName: profileData.roleName,
             roleDescription: profileData.roleDescription,
             featureFunctions,
-            hiddenFeatureFunctions: featureFunctions,
           })
         } else {
           const defaultGrant = typesGrantsData[1]
@@ -79,7 +78,6 @@ const EditProfilePage = () => {
 
           form.setFieldsValue({
             featureFunctions,
-            hiddenFeatureFunctions: featureFunctions,
           })
         }
       } catch (error) {
@@ -90,7 +88,7 @@ const EditProfilePage = () => {
     }
 
     fetchData()
-  }, [profileId])
+  }, [form, profileId])
 
   const renderBreadcrumb = () => {
     const breadcrumbs = [
@@ -117,13 +115,8 @@ const EditProfilePage = () => {
   }
 
   const handleSubmit = async (values) => {
-    delete values.hiddenFeatureFunctions
-
     const payload = {
       ...values,
-      featureFunction: values?.featureFunction?.filter((value) =>
-        value?.grantId ? !Number.isNan(value?.grantId) : true
-      ),
     }
 
     setLoading(true)
@@ -149,6 +142,24 @@ const EditProfilePage = () => {
       setLoading(false)
     }
   }
+
+  const onApply = () => {
+    const selectedPermission = permission ?? permissions[0]?.id
+    const selectedTypeGrant = typeGrant ?? typesGrants[0]?.idTypeGrant
+
+    const featureFunctions = form.getFieldValue('featureFunctions')
+
+    for (const [index, featureFunction] of featureFunctions.entries()) {
+      if (featureFunction?.featureFunction?.idFeature == selectedPermission) {
+        form.setFieldValue(
+          ['featureFunctions', index, 'typeGrantId'],
+          selectedTypeGrant
+        )
+      }
+    }
+  }
+
+  const featureFunctionIndex = useRef(0)
 
   return (
     <>
@@ -185,95 +196,94 @@ const EditProfilePage = () => {
                   </p>
                   <br />
                   <br />
+                  <Card style={{ marginBottom: '15px', marginTop: '15px' }}>
+                    <p className="text-gray-800">Bulk Change</p>
+                    <br />
+                    <Row gutter={16} align="middle">
+                      <Col>
+                        <Select
+                          style={{ width: '200px' }}
+                          defaultValue={permissions[0]?.id}
+                          options={permissions.map((permission) => ({
+                            label: permission.featureName,
+                            value: permission.id,
+                          }))}
+                          onChange={setPermission}
+                        />
+                      </Col>
+                      <Col>
+                        <Select
+                          style={{ width: '200px' }}
+                          defaultValue={typesGrants[0]?.idTypeGrant}
+                          options={typesGrants.map((typeGrant) => ({
+                            label: typeGrant.typeGrantName,
+                            value: typeGrant.idTypeGrant,
+                          }))}
+                          onChange={setTypeGrant}
+                        />
+                      </Col>
+                      <Col flex="auto" style={{ textAlign: 'right' }}>
+                        <Button
+                          type="primary"
+                          style={{ width: '200px' }}
+                          onClick={onApply}
+                        >
+                          Apply
+                        </Button>
+                      </Col>
+                    </Row>
+                  </Card>
 
-                  <Form.Item name={`featureFunctions`} hidden />
+                  <Collapse>
+                    {permissions.map((permission, permissionIndex) => {
+                      if (permissionIndex === 0)
+                        featureFunctionIndex.current = -1
+                      return (
+                        <Panel
+                          header={permission.featureName}
+                          key={`permission-${permission.id}`}
+                        >
+                          {permission.featureFunction.map((featureFunction) => {
+                            featureFunctionIndex.current++
 
-                  <Table
-                    loading={fetching}
-                    columns={[
-                      { title: 'Name', dataIndex: 'featureName' },
-                      { title: 'Description', dataIndex: 'featureDescription' },
-                      { title: 'Version', dataIndex: 'featureVersion' },
-                      {
-                        title: 'Level',
-                        width: 300,
-                        render: (value, record, index) => (
-                          <>
-                            <Form.Item
-                              hidden
-                              name={[
-                                'hiddenFeatureFunctions',
-                                index,
-                                'grantId',
-                              ]}
-                              initialValue={value.key}
-                            />
-                            {!Number.isNaN(Number(value.key)) && (
-                              <Form.Item
-                                hidden
-                                name={[
-                                  'hiddenFeatureFunctions',
-                                  index,
-                                  'featureFunctionId',
-                                ]}
-                                initialValue={value.key}
-                              />
-                            )}
-
-                            {Number.isNaN(Number(value.key)) ? (
-                              <></>
-                            ) : (
-                              <Form.Item
-                                name={[
-                                  'hiddenFeatureFunctions',
-                                  index,
-                                  'typeGrantId',
-                                ]}
+                            return (
+                              <Row
+                                gutter={16}
+                                key={`featureFunction-${featureFunction.idFeatureFunction}`}
                               >
-                                <Select
-                                  onChange={(v) => {
-                                    form.setFieldValue(
-                                      [
-                                        'hiddenFeatureFunctions',
-                                        index,
-                                        'typeGrantId',
-                                      ],
-                                      v
-                                    )
-                                    form.setFieldValue(
+                                <Col span={8}>
+                                  <span>
+                                    {featureFunction.featureFunctionName}
+                                  </span>
+                                </Col>
+                                <Col span={8}>
+                                  <span>
+                                    {featureFunction.featureFunctionDescription}
+                                  </span>
+                                </Col>
+                                <Col span={8}>
+                                  <Form.Item
+                                    name={[
                                       'featureFunctions',
-                                      form.getFieldValue(
-                                        'hiddenFeatureFunctions'
-                                      )
-                                    )
-                                  }}
-                                  options={typesGrants.map((typeGrant) => ({
-                                    label: typeGrant.typeGrantName,
-                                    value: typeGrant.idTypeGrant,
-                                  }))}
-                                />
-                              </Form.Item>
-                            )}
-                          </>
-                        ),
-                      },
-                    ]}
-                    dataSource={permissions.map((permission) => ({
-                      ...permission,
-                      key: `permission-${permission.id}`,
-                      featureName: permission.featureName,
-                      children: permission.featureFunction.map(
-                        (featureFunction) => ({
-                          featureName: featureFunction.featureFunctionName,
-                          featureDescription:
-                            featureFunction.featureFunctionDescription,
-                          featureVersion:
-                            featureFunction.featureFunctionVersion,
-                          key: `${featureFunction.idFeatureFunction}`,
-                        })
-                      ),
-                    }))}
-                  />
+                                      featureFunctionIndex.current,
+                                      'typeGrantId',
+                                    ]}
+                                  >
+                                    <Select
+                                      options={typesGrants.map((typeGrant) => ({
+                                        label: typeGrant.typeGrantName,
+                                        value: typeGrant.idTypeGrant,
+                                      }))}
+                                    />
+                                  </Form.Item>
+                                </Col>
+                              </Row>
+                            )
+                          })}
+                        </Panel>
+                      )
+                    })}
+                  </Collapse>
                 </Form>
 
                 <Row justify={'end'}>
