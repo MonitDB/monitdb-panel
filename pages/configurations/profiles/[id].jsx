@@ -1,3 +1,4 @@
+/* eslint-disable sonarjs/no-duplicate-string */
 import {
   Button,
   Card,
@@ -49,7 +50,23 @@ const EditProfilePage = () => {
         setTypesGrants(typesGrantsData)
         setPermissions(permissionsData)
 
-        if (profileId !== 'new-profile') {
+        const defaultGrant = typesGrantsData[1]
+        const featureFunctions = []
+        for (const data of permissionsData) {
+          for (const item of data.featureFunction) {
+            featureFunctions.push({
+              featureFunctionId: item.idFeatureFunction,
+              typeGrantId: defaultGrant.idTypeGrant,
+              featureFunction: item,
+            })
+          }
+        }
+
+        form.setFieldsValue({
+          featureFunctions,
+        })
+
+        if (profileId !== 'new-profile' && profileId) {
           const { data: profileData } = await getProfileById(profileId)
 
           const featureFunctions = profileData.featureFunctions.map((item) => ({
@@ -57,31 +74,19 @@ const EditProfilePage = () => {
             typeGrantId: item?.idTypeGrant,
             featureFunction: item?.featureFunction,
           }))
-
           form.setFieldsValue({
             roleName: profileData.roleName,
             roleDescription: profileData.roleDescription,
-            featureFunctions,
-          })
-        } else {
-          const defaultGrant = typesGrantsData[1]
-          const featureFunctions = []
-          for (const data of permissionsData) {
-            for (const item of data.featureFunction) {
-              featureFunctions.push({
-                featureFunctionId: item.idFeatureFunction,
-                typeGrantId: defaultGrant.idTypeGrant,
-                featureFunction: item,
-              })
-            }
-          }
-
-          form.setFieldsValue({
-            featureFunctions,
+            featureFunctions: [
+              ...new Set(
+                featureFunctions
+                // ...permissionsData.featureFunctions,
+              ),
+            ],
           })
         }
-      } catch (error) {
-        console.error(error)
+      } catch {
+        /* empty */
       } finally {
         setIsFetching(false)
       }
@@ -133,7 +138,6 @@ const EditProfilePage = () => {
 
       router.push('/configurations/profiles')
     } catch (error) {
-      console.error(error)
       notification.error({
         message: 'Error',
         description: error.message,
@@ -154,6 +158,10 @@ const EditProfilePage = () => {
         form.setFieldValue(
           ['featureFunctions', index, 'typeGrantId'],
           selectedTypeGrant
+        )
+        form.setFieldValue(
+          ['featureFunctions', index, 'featureFunction'],
+          featureFunction?.featureFunction
         )
       }
     }
@@ -208,6 +216,7 @@ const EditProfilePage = () => {
                             label: permission.featureName,
                             value: permission.id,
                           }))}
+                          value={permission}
                           onChange={setPermission}
                         />
                       </Col>
@@ -219,6 +228,7 @@ const EditProfilePage = () => {
                             label: typeGrant.typeGrantName,
                             value: typeGrant.idTypeGrant,
                           }))}
+                          value={typeGrant}
                           onChange={setTypeGrant}
                         />
                       </Col>
@@ -233,7 +243,7 @@ const EditProfilePage = () => {
                       </Col>
                     </Row>
                   </Card>
-
+                  <Form.Item name={'featureFunctions'} hidden />
                   <Collapse>
                     {permissions.map((permission, permissionIndex) => {
                       if (permissionIndex === 0)
@@ -261,6 +271,22 @@ const EditProfilePage = () => {
                                     {featureFunction.featureFunctionDescription}
                                   </span>
                                 </Col>
+                                <Form.Item
+                                  name={[
+                                    'featureFunctions',
+                                    featureFunctionIndex.current,
+                                    'featureFunctionId',
+                                  ]}
+                                  hidden
+                                />
+                                <Form.Item
+                                  name={[
+                                    'featureFunctions',
+                                    featureFunctionIndex.current,
+                                    'grantId',
+                                  ]}
+                                  hidden
+                                />
                                 <Col span={8}>
                                   <Form.Item
                                     name={[
