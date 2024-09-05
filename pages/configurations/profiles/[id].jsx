@@ -49,7 +49,6 @@ const EditProfilePage = () => {
         const { data: typesGrantsData } = await getTypesGrants()
         setTypesGrants(typesGrantsData)
         setPermissions(permissionsData)
-
         const defaultGrant = typesGrantsData[1]
         const featureFunctions = []
         for (const data of permissionsData) {
@@ -66,27 +65,29 @@ const EditProfilePage = () => {
           featureFunctions,
         })
 
-        if (profileId !== 'new-profile' && profileId) {
+        if (profileId !== 'new-profile') {
           const { data: profileData } = await getProfileById(profileId)
 
-          const featureFunctions = profileData.featureFunctions.map((item) => ({
-            featureFunctionId: item?.idFeatureFunction,
-            typeGrantId: item?.idTypeGrant,
-            featureFunction: item?.featureFunction,
-          }))
+          const previousFeatureFunctions = profileData.featureFunctions.map(
+            (item) => ({
+              featureFunctionId: item?.idFeatureFunction,
+              typeGrantId: item?.idTypeGrant,
+              featureFunction: featureFunctions?.find(
+                (f) => f.idFeature === item?.idFeature
+              ),
+            })
+          )
+
           form.setFieldsValue({
             roleName: profileData.roleName,
             roleDescription: profileData.roleDescription,
-            featureFunctions: [
-              ...new Set(
-                featureFunctions
-                // ...permissionsData.featureFunctions,
-              ),
-            ],
+            ...previousFeatureFunctions,
           })
         }
-      } catch {
+      } catch (error) {
         /* empty */
+        // eslint-disable-next-line no-console
+        console.error(error)
       } finally {
         setIsFetching(false)
       }
@@ -159,10 +160,6 @@ const EditProfilePage = () => {
           ['featureFunctions', index, 'typeGrantId'],
           selectedTypeGrant
         )
-        form.setFieldValue(
-          ['featureFunctions', index, 'featureFunction'],
-          featureFunction?.featureFunction
-        )
       }
     }
   }
@@ -179,9 +176,9 @@ const EditProfilePage = () => {
           <PageContent removeSidebarMargin={true}>
             {renderBreadcrumb()}
             {fetching && <Loading />}
-            {!fetching && (
-              <>
-                <Form layout="vertical" form={form} onFinish={handleSubmit}>
+            <Form layout="vertical" form={form} onFinish={handleSubmit}>
+              {!fetching && (
+                <>
                   <Form.Item
                     label="Profile Name"
                     name="roleName"
@@ -283,6 +280,14 @@ const EditProfilePage = () => {
                                   name={[
                                     'featureFunctions',
                                     featureFunctionIndex.current,
+                                    'featureFunction',
+                                  ]}
+                                  hidden
+                                />
+                                <Form.Item
+                                  name={[
+                                    'featureFunctions',
+                                    featureFunctionIndex.current,
                                     'grantId',
                                   ]}
                                   hidden
@@ -310,22 +315,22 @@ const EditProfilePage = () => {
                       )
                     })}
                   </Collapse>
-                </Form>
 
-                <Row justify={'end'}>
-                  <Space>
-                    <Button
-                      type="primary"
-                      style={{ marginTop: '15px' }}
-                      onClick={form.submit}
-                      loading={loading}
-                    >
-                      Salvar
-                    </Button>
-                  </Space>
-                </Row>
-              </>
-            )}
+                  <Row justify={'end'}>
+                    <Space>
+                      <Button
+                        type="primary"
+                        style={{ marginTop: '15px' }}
+                        onClick={form.submit}
+                        loading={loading}
+                      >
+                        Salvar
+                      </Button>
+                    </Space>
+                  </Row>
+                </>
+              )}
+            </Form>
           </PageContent>
         </PageWrapper>
       </Layout>
