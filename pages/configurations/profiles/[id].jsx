@@ -50,12 +50,14 @@ const EditProfilePage = () => {
         setTypesGrants(typesGrantsData)
         setPermissions(permissionsData)
         const defaultGrant = typesGrantsData[1]
+        const mapIdFeature = new Map()
         const featureFunctions = []
         for (const data of permissionsData) {
           for (const item of data.featureFunction) {
+            mapIdFeature.set(item.idFeatureFunction, item.idFeature)
             featureFunctions.push({
-              featureFunctionId: item.idFeatureFunction,
-              typeGrantId: defaultGrant.idTypeGrant,
+              idFeatureFunction: item.idFeatureFunction,
+              idTypeGrant: defaultGrant.idTypeGrant,
               featureFunction: item,
             })
           }
@@ -70,18 +72,18 @@ const EditProfilePage = () => {
 
           const previousFeatureFunctions = profileData.featureFunctions.map(
             (item) => ({
-              featureFunctionId: item?.idFeatureFunction,
-              typeGrantId: item?.idTypeGrant,
-              featureFunction: featureFunctions?.find(
-                (f) => f.idFeature === item?.idFeature
-              ),
+              idFeatureFunction: item?.idFeatureFunction,
+              idTypeGrant: item?.idTypeGrant,
+              featureFunction: {
+                idFeature: mapIdFeature.get(item?.idFeatureFunction),
+              },
             })
           )
 
           form.setFieldsValue({
             roleName: profileData.roleName,
             roleDescription: profileData.roleDescription,
-            ...previousFeatureFunctions,
+            featureFunctions: previousFeatureFunctions,
           })
         }
       } catch (error) {
@@ -157,7 +159,7 @@ const EditProfilePage = () => {
     for (const [index, featureFunction] of featureFunctions.entries()) {
       if (featureFunction?.featureFunction?.idFeature == selectedPermission) {
         form.setFieldValue(
-          ['featureFunctions', index, 'typeGrantId'],
+          ['featureFunctions', index, 'idTypeGrant'],
           selectedTypeGrant
         )
       }
@@ -272,7 +274,7 @@ const EditProfilePage = () => {
                                   name={[
                                     'featureFunctions',
                                     featureFunctionIndex.current,
-                                    'featureFunctionId',
+                                    'idFeatureFunction',
                                   ]}
                                   hidden
                                 />
@@ -297,7 +299,7 @@ const EditProfilePage = () => {
                                     name={[
                                       'featureFunctions',
                                       featureFunctionIndex.current,
-                                      'typeGrantId',
+                                      'idTypeGrant',
                                     ]}
                                   >
                                     <Select
