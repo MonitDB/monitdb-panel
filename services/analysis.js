@@ -11,3 +11,9 @@ export const getWhoIs = ({ serverId, filter }) => {
     params: { serverId, filter },
   })
 }
+
+export const getQueriesProfile = ({ serverId, filter }) => {
+  return apiV2().get('/analysis/queries-profile', {
+    params: { serverId, filter },
+  })
+}

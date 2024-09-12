@@ -8,12 +8,15 @@ import {
   Col,
   DatePicker,
   Descriptions,
+  Divider,
   Form,
   Modal,
   notification,
   Row,
   Select,
+  Spin,
   Table,
+  Typography,
 } from 'antd'
 import dayjs from 'dayjs'
 import moment from 'moment'
@@ -24,12 +27,12 @@ import React, { useEffect, useMemo, useRef, useState } from 'react'
 
 import Highlighter from '~/components/highlighter'
 import Link from '~/components/link'
-import Loading from '~/components/loading'
 import { PageContent, PageWrapper } from '~/components/page'
 import QueryPlanRenderer from '~/components/qp-render'
 import Layout from '~/layouts/default'
-import { getAnalysis, getWhoIs } from '~/services/analysis'
+import { getAnalysis, getQueriesProfile, getWhoIs } from '~/services/analysis'
 import { Feature, hasFeature } from '~/utils/hasPermission'
+import { truncateString } from '~/utils/truncateString'
 
 import { useGlobal, useUser } from '../hooks'
 
@@ -140,12 +143,14 @@ const AnalysisPage = () => {
   const { userState: user } = useUser()
   const [data, setData] = useState([])
   const [whoIs, setWhoIs] = useState([])
+  const [queriesProfile, setQueriesProfile] = useState([])
   const [options, setOptions] = useState([{ label: 'Count', value: 'count' }])
 
   const [highlightedDate, setHighlightedDate] = useState()
   const [highlightedWhoIs] = useState([])
 
-  const [modalData, setModalData] = useState()
+  const [modalWhoData, setModalWhoData] = useState()
+  const [modalQueryProfileData, setModalQueryProfileData] = useState()
 
   const firstFetch = useRef(false)
 
@@ -209,18 +214,24 @@ const AnalysisPage = () => {
   const fetchData = async (metric, serverId, filter) => {
     setLoading(true)
     try {
-      const [whoIsResult, analysisResult] = await Promise.allSettled([
-        getWhoIs({ serverId, filter }),
-        getAnalysis({ metric, serverId, filter }),
-      ])
+      const [whoIsResult, analysisResult, queryProfileResult] =
+        await Promise.allSettled([
+          getWhoIs({ serverId, filter }),
+          getAnalysis({ metric, serverId, filter }),
+          getQueriesProfile({ serverId, filter }),
+        ])
 
       const whoIs =
         whoIsResult.status === 'fulfilled' ? whoIsResult.value.data : []
       const analysisData =
         analysisResult.status === 'fulfilled' ? analysisResult.value.data : []
-
+      const queryProfileData =
+        queryProfileResult.status === 'fulfilled'
+          ? queryProfileResult.value.data
+          : []
       setWhoIs(whoIs)
       setData(analysisData)
+      setQueriesProfile(queryProfileData)
     } catch (error) {
       notification.error({ message: error.message })
     }
@@ -249,8 +260,9 @@ const AnalysisPage = () => {
           <Form form={form} onFinish={handleSubmit} layout="vertical">
             <PageContent
               removeSidebarMargin={true}
-              className="border-b border-gray-light"
+              // className="border-b border-gray-light"
             >
+              <Divider />
               <Row gutter={12}>
                 <Col>
                   <Form.Item
@@ -486,12 +498,13 @@ const AnalysisPage = () => {
 
             <PageContent
               removeSidebarMargin={true}
-              className="border-b border-gray-light"
+              // className="border-b border-gray-light"
             >
+              <Divider />
               <div className=" mb-10 bg-white">
                 {loading && (
                   <div className="col-span-2 bg-white lg:col-span-6 h-200 flex items-center justify-center h-[215px]">
-                    <Loading />
+                    <Spin />
                   </div>
                 )}
                 {!loading && (
@@ -509,8 +522,6 @@ const AnalysisPage = () => {
                       stroke: { width: 1, curve: 'straight' },
                       xaxis: {
                         type: 'datetime',
-                        // min: dayjs(dataRange?.[0]).valueOf(),
-                        // max: dayjs(dataRange?.[data.length - 1]).valueOf(),
                       },
                       yaxis: {
                         tickAmount: 5,
@@ -525,11 +536,7 @@ const AnalysisPage = () => {
                           },
                         },
                       },
-                      // tooltip: {
-                      //   x: {
-                      //     format: 'dd MMM yyyy HH:mm',
-                      //   },
-                      // },
+
                       chart: {
                         toolbar: false,
                         events: {
@@ -561,26 +568,21 @@ const AnalysisPage = () => {
                     ]}
                   />
                 )}
-              </div>{' '}
-              <div className="w-full flex flex-col md:flex-row">
-                <div className="flex flex-col md:flex-row md:space-x-4 md:w-4/5">
-                  <div className="w-60"></div>
-                  <div className="w-60"></div>
-                </div>
-                <div className="w-full md:w-1/5"></div>
               </div>
             </PageContent>
-            <PageContent
-              removeSidebarMargin={true}
-              className="border-b border-gray-light"
-            >
+            <PageContent removeSidebarMargin={true}>
+              <Divider />
+              <Typography.Title level={5}> Who is active</Typography.Title>
               <Table
                 loading={loading}
                 dataSource={highlightedDate ? highlightedWhoIs : whoIs}
+                pagination={
+                  (highlightedDate ? highlightedWhoIs : whoIs).length > 10
+                }
                 rowKey={'dtLog'}
                 onRow={(record) => ({
                   onClick: () => {
-                    setModalData(record)
+                    setModalWhoData(record)
                   },
                   style: { cursor: 'pointer' },
                 })}
@@ -589,6 +591,7 @@ const AnalysisPage = () => {
                     title: 'Date',
                     dataIndex: 'dtLog',
                     render: (value) => {
+                      // eslint-disable-next-line sonarjs/no-duplicate-string
                       return moment(value).format('YYYY/MM/DD HH:mm:ss')
                     },
                   },
@@ -600,27 +603,92 @@ const AnalysisPage = () => {
                     title: 'Login Name',
                     dataIndex: 'loginName',
                   },
+                  { title: 'Host Name', dataIndex: 'hostName' },
                   {
                     title: 'Program Name',
                     dataIndex: 'programName',
                   },
                 ]}
               />
+              <Divider />
+              <Typography.Title level={5}> Queries Profile</Typography.Title>
+              <Table
+                loading={loading}
+                dataSource={queriesProfile}
+                onRow={(record) => ({
+                  onClick: () => {
+                    setModalQueryProfileData(record)
+                  },
+                  style: { cursor: 'pointer' },
+                })}
+                pagination={queriesProfile.length > 10}
+                columns={[
+                  {
+                    title: 'Text data',
+                    dataIndex: 'textData',
+                    render: (value) =>
+                      value.length > 25 ? truncateString(value, 25) : value,
+                  },
+                  {
+                    title: 'Login Name',
+                    dataIndex: 'loginName',
+                  },
+                  {
+                    title: 'Host Name',
+                    dataIndex: 'hostName',
+                  },
+                  {
+                    title: 'Database Name',
+                    dataIndex: 'dataBaseName',
+                  },
+                  {
+                    title: 'Duration',
+                    dataIndex: 'duration',
+                    render: (value) => {
+                      return `${value} s`
+                    },
+                    defaultSortOrder: 'descend',
+                    sorter: (a, b) => a.duration - b.duration,
+                  },
+                  {
+                    title: 'Start Time',
+                    dataIndex: 'startTime',
+                    render: (value) => {
+                      return moment(value).format('YYYY/MM/DD HH:mm:ss')
+                    },
+                    defaultSortOrder: 'descend',
+                    sorter: (a, b) =>
+                      new Date(a.startTime).getTime() -
+                      new Date(b.startTime).getTime(),
+                  },
+                  {
+                    title: 'End Time',
+                    dataIndex: 'endTime',
+                    render: (value) => {
+                      return moment(value).format('YYYY/MM/DD HH:mm:ss')
+                    },
+                    defaultSortOrder: 'descend',
+                    sorter: (a, b) =>
+                      new Date(a.endTime).getTime() -
+                      new Date(b.endTime).getTime(),
+                  },
+                ]}
+              />
             </PageContent>
-            {modalData && (
+            {modalWhoData && (
               <Modal
                 open={true}
                 width={'90vw'}
                 style={{ zIndex: 5, display: 'absolute' }}
                 onOk={() => {
-                  setModalData()
+                  setModalWhoData()
                 }}
                 closable={false}
                 cancelButtonProps={{ style: { display: 'none' } }}
               >
                 <div style={{ height: '70vh', overflowY: 'auto' }}>
-                  {modalData.queryPlan && (
-                    <QueryPlanRenderer queryPlan={modalData.queryPlan} />
+                  {modalWhoData.queryPlan && (
+                    <QueryPlanRenderer queryPlan={modalWhoData.queryPlan} />
                   )}
                   <Descriptions
                     column={4}
@@ -629,64 +697,133 @@ const AnalysisPage = () => {
                     size="small"
                   >
                     <Descriptions.Text label="CPU">
-                      {modalData.cpu ?? '-'}
+                      {modalWhoData.cpu ?? '-'}
                     </Descriptions.Text>
                     <Descriptions.Text label="CPU Delta">
-                      {modalData.cpuDelta ?? '-'}
+                      {modalWhoData.cpuDelta ?? '-'}
                     </Descriptions.Text>
                     <Descriptions.Text label="Blocking Session ID">
-                      {modalData.blockingSessionId || '-'}
+                      {modalWhoData.blockingSessionId || '-'}
                     </Descriptions.Text>
-
                     <Descriptions.Text label="Database Name">
-                      {modalData.databaseName ?? '-'}
+                      {modalWhoData.databaseName ?? '-'}
                     </Descriptions.Text>
                     <Descriptions.Text label="Time">
-                      {modalData['ddHhMmSsMss'] ?? '-'}
+                      {modalWhoData['ddHhMmSsMss'] ?? '-'}
                     </Descriptions.Text>
                     <Descriptions.Text label="Host Name">
-                      {modalData.hostName ?? '-'}
+                      {modalWhoData.hostName ?? '-'}
                     </Descriptions.Text>
                     <Descriptions.Text label="Login Name">
-                      {modalData.loginName ?? '-'}
+                      {modalWhoData.loginName ?? '-'}
                     </Descriptions.Text>
                     <Descriptions.Text label="Open transactions count">
-                      {modalData.openTranCount ?? '-'}
+                      {modalWhoData.openTranCount ?? '-'}
                     </Descriptions.Text>
                     <Descriptions.Text label="Percent Complete">
-                      {modalData.percentComplete ?? '-'}
+                      {modalWhoData.percentComplete ?? '-'}
                     </Descriptions.Text>
                     <Descriptions.Text label="Program Name">
-                      {modalData.programName}
+                      {modalWhoData.programName}
                     </Descriptions.Text>
                     <Descriptions.Text label="Reads">
-                      {modalData.reads ?? '-'}
+                      {modalWhoData.reads ?? '-'}
                     </Descriptions.Text>
                     <Descriptions.Text label="Reads Delta">
-                      {modalData.readsDelta ?? '-'}
+                      {modalWhoData.readsDelta ?? '-'}
                     </Descriptions.Text>
-
-                    {/* <Descriptions.Text label="SQL Command">
-                      {modalData.sqlCommand ?? '-'}
-                    </Descriptions.Text> */}
 
                     <Descriptions.Text label="Status">
-                      {modalData.status ?? '-'}
+                      {modalWhoData.status ?? '-'}
                     </Descriptions.Text>
                     <Descriptions.Text label="Wait Information">
-                      {modalData.waitInfo ?? '-'}
+                      {modalWhoData.waitInfo ?? '-'}
                     </Descriptions.Text>
                     <Descriptions.Text label="writes">
-                      {modalData.writes ?? '-'}
+                      {modalWhoData.writes ?? '-'}
                     </Descriptions.Text>
                   </Descriptions>
                   <br />
                   <Highlighter
-                    code={modalData.sqlText}
+                    code={modalWhoData.sqlText}
                     showLineNumbers={true}
                     language={'sql'}
                     maxHeight={'350px'}
                   />
+                </div>
+              </Modal>
+            )}
+
+            {modalQueryProfileData && (
+              <Modal
+                open={true}
+                width={'90vw'}
+                style={{ zIndex: 5, display: 'absolute' }}
+                onOk={() => {
+                  setModalQueryProfileData()
+                }}
+                closable={false}
+                cancelButtonProps={{ style: { display: 'none' } }}
+              >
+                <div style={{ overflowY: 'auto' }}>
+                  <Descriptions
+                    column={3}
+                    layout="vertical"
+                    bordered
+                    size="small"
+                  >
+                    <Descriptions.Text label="TextData">
+                      {modalQueryProfileData.textData ?? '-'}
+                    </Descriptions.Text>
+                    <Descriptions.Text label="Login Name">
+                      {modalQueryProfileData.loginName ?? '-'}
+                    </Descriptions.Text>
+                    <Descriptions.Text label="Server Name">
+                      {modalQueryProfileData.serverName ?? '-'}
+                    </Descriptions.Text>
+
+                    <Descriptions.Text label="Host Name">
+                      {modalQueryProfileData.hostName ?? '-'}
+                    </Descriptions.Text>
+                    <Descriptions.Text label="Database Name">
+                      {modalQueryProfileData.dataBaseName ?? '-'}
+                    </Descriptions.Text>
+                    <Descriptions.Text label="Agent Name">
+                      {modalQueryProfileData.ntUserName ?? '-'}
+                    </Descriptions.Text>
+                    <Descriptions.Text label="Application Name">
+                      {modalQueryProfileData.applicationName ?? '-'}
+                    </Descriptions.Text>
+                    <Descriptions.Text label="CPU">
+                      {modalQueryProfileData.cpu ?? '-'}
+                    </Descriptions.Text>
+                    <Descriptions.Text label="Writes">
+                      {modalQueryProfileData.writes ?? '-'}
+                    </Descriptions.Text>
+
+                    <Descriptions.Text label="Row Counts">
+                      {modalQueryProfileData.rowCounts ?? '-'}
+                    </Descriptions.Text>
+                    <Descriptions.Text label="SPID">
+                      {modalQueryProfileData.spid ?? '-'}
+                    </Descriptions.Text>
+                    <Descriptions.Text label="Reads">
+                      {modalQueryProfileData.reads ?? '-'}
+                    </Descriptions.Text>
+                    <Descriptions.Text label="Duration">
+                      {`${modalQueryProfileData.duration} s` ?? '-'}
+                    </Descriptions.Text>
+                    <Descriptions.Text label="Start Time">
+                      {`${moment(modalQueryProfileData.startTime).format(
+                        'DD/MM/YYYY HH:mm:ss'
+                      )}` ?? '-'}
+                    </Descriptions.Text>
+                    <Descriptions.Text label="End Time">
+                      {`${moment(modalQueryProfileData.endTime).format(
+                        'DD/MM/YYYY HH:mm:ss'
+                      )}` ?? '-'}
+                    </Descriptions.Text>
+                  </Descriptions>
                 </div>
               </Modal>
             )}

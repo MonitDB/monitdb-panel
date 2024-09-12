@@ -309,7 +309,7 @@ const ServerCard = ({
               return (
                 <AntdTooltip
                   key={index}
-                  title={`${agent?.servicename} - agent.status_desc`}
+                  title={`${agent?.servicename} - ${agent.status_desc}`}
                 >
                   <Badge
                     style={{ margin: 0, height: '5px' }}
