@@ -6,7 +6,6 @@ import { Button, Select } from 'antd'
 import classNames from 'classnames'
 import { useRouter } from 'next/router'
 import React, { useCallback, useEffect, useState } from 'react'
-import { toast } from 'react-toastify'
 
 import Link from '~/components/link'
 import Loading from '~/components/loading'
@@ -41,7 +40,7 @@ const LatestAlerts = () => {
 
       setAlerts(responseAlerts)
     } catch (error) {
-      toast.error('Error to get the Alerts')
+      // toast.error('Error to get the Alerts')
       console.error(error)
     } finally {
       setLoading(false)
@@ -119,8 +118,8 @@ const LatestAlerts = () => {
                     className="py-2 border-b border-gray-light border-opacity-25"
                   >
                     <Link
-                      href={`/alerts/results/?types=[${id}]&${
-                        router?.query?.id && `server=${router?.query?.id}`
+                      href={`/alerts/results/?types=[${id}]${
+                        router?.query?.id ? `&server=${router.query.id}` : ''
                       }`}
                       className={classNames(
                         `flex items-center space-x-2 border-l-2 pl-2 text-sm transition-all

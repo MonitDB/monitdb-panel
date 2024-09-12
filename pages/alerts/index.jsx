@@ -2,13 +2,13 @@
 /* eslint-disable unicorn/no-nested-ternary */
 import { faDatabase } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Collapse, Input, Table } from 'antd'
+import { Button, Collapse, Input, Table } from 'antd'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { toast } from 'react-toastify'
 
-import Link from '~/components/link'
+// import Link from '~/components/link'
 import Loading from '~/components/loading/loading'
 import { PageContent, PageWrapper } from '~/components/page'
 import MonitoredServersSidebar from '~/components/sidebar/monitored-servers'
@@ -232,13 +232,17 @@ const AlertsPage = () => {
                               },
                               {
                                 render: (_, record) => (
-                                  <div>
-                                    <Link
-                                      href={`/alerts/metrics/?server=${record.id}`}
-                                    >
-                                      Edit metrics
-                                    </Link>
-                                  </div>
+                                  <Button
+                                    type="link"
+                                    onClick={(event) => {
+                                      event.stopPropagation()
+                                      router.push(
+                                        `/alerts/metrics/?server=${record.id}`
+                                      )
+                                    }}
+                                  >
+                                    Edit metrics
+                                  </Button>
                                 ),
                               },
                             ]}

@@ -622,7 +622,12 @@ const AnalysisPage = () => {
                   {modalData.queryPlan && (
                     <QueryPlanRenderer queryPlan={modalData.queryPlan} />
                   )}
-                  <Descriptions column={2} layout="vertical">
+                  <Descriptions
+                    column={4}
+                    layout="vertical"
+                    bordered
+                    size="small"
+                  >
                     <Descriptions.Text label="CPU">
                       {modalData.cpu ?? '-'}
                     </Descriptions.Text>
@@ -661,9 +666,9 @@ const AnalysisPage = () => {
                       {modalData.readsDelta ?? '-'}
                     </Descriptions.Text>
 
-                    <Descriptions.Text label="SQL Command">
+                    {/* <Descriptions.Text label="SQL Command">
                       {modalData.sqlCommand ?? '-'}
-                    </Descriptions.Text>
+                    </Descriptions.Text> */}
 
                     <Descriptions.Text label="Status">
                       {modalData.status ?? '-'}
@@ -675,6 +680,7 @@ const AnalysisPage = () => {
                       {modalData.writes ?? '-'}
                     </Descriptions.Text>
                   </Descriptions>
+                  <br />
                   <Highlighter
                     code={modalData.sqlText}
                     showLineNumbers={true}

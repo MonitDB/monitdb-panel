@@ -2,7 +2,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { faDatabase } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Card } from 'antd'
+import { Badge, Card, Space, Tooltip as AntdTooltip } from 'antd'
 import { ArcElement, Chart as ChartJS, Legend, Tooltip } from 'chart.js'
 import classNames from 'classnames'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
@@ -78,6 +78,7 @@ const ServerCard = ({
     cpu: undefined,
     memory: undefined,
     disks: [],
+    agents: [],
   })
 
   const {
@@ -117,8 +118,7 @@ const ServerCard = ({
         }
 
         if (response?.data) {
-          const { cpu, memory, disks, serverStatus } = response.data
-
+          const { cpu, memory, disks, serverStatus, agents } = response.data
           setMetrics({
             cpu,
             memory: {
@@ -128,6 +128,7 @@ const ServerCard = ({
             },
             disks,
             serverStatus,
+            agents,
           })
           return
         }
@@ -158,8 +159,9 @@ const ServerCard = ({
     <Style>
       <Card
         ref={elementReference}
+        // style={{ height: '300px' }}
         className={classNames(
-          `group border bg-white transition-all duration-300
+          `group border bg-white border-4 transition-all duration-300
           ease-in-out relative border-opacity-75 lg:hover:border-opacity-100`,
           className,
           showStatus &&
@@ -185,9 +187,9 @@ const ServerCard = ({
             serverEnable && server.online ? `/dashboard/${id}` : '/dashboard'
           }
           className={classNames(
-            `card-link block p-2 h-full relative before:content-[""] before:absolute before:w-1
-            before:top-0 before:left-0 before:h-full lg:p-4 lg:hover:before:w-2
-            before:transition-all before:duration-300 before:ease-in-out before:border-radius`,
+            // `card-link block p-2 h-full relative before:content-[""] before:absolute before:w-1
+            // before:top-0 before:left-0 before:h-full lg:p-4 lg:hover:before:w-2
+            // before:transition-all before:duration-300 before:ease-in-out before:border-radius`,
             showStatus && {
               'before:bg-orange':
                 serverEnable && server?.status === SERVER_STATUS.CRITICAL,
@@ -299,6 +301,25 @@ const ServerCard = ({
           </div>
           <dt className="block text-gray mt-2">Last Updated</dt>
           <dd className="mt-1  text-gray">{lastUpdated.toLocaleString()}</dd>
+          {!metrics.agents === 0 && (
+            <Badge style={{ margin: 0, height: '5px' }} status="default" />
+          )}
+          <Space style={{ margin: 0, transform: 'translateY(12px)' }}>
+            {metrics.agents?.map((agent, index) => {
+              return (
+                <AntdTooltip
+                  key={index}
+                  title={`${agent?.servicename} - agent.status_desc`}
+                >
+                  <Badge
+                    style={{ margin: 0, height: '5px' }}
+                    status="processing"
+                    color={agent.status_desc === 'Running' ? 'green' : 'red'}
+                  />
+                </AntdTooltip>
+              )
+            })}
+          </Space>
         </Link>
 
         {metrics.disks?.length > 0 && showDisks ? (
