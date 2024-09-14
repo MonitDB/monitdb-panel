@@ -57,7 +57,7 @@ const DashboardPage = () => {
   })
 
   const hasAnyFilter = useMemo(
-    () => Object.values(formik.values).some((value) => value.length > 0),
+    () => Object.values(formik.values)?.some((value) => value.length > 0),
     [formik.values]
   )
 

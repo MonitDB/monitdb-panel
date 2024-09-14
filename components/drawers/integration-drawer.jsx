@@ -9,9 +9,16 @@ import {
   Space,
   Typography,
 } from 'antd'
+import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
-import ReactJson from 'react-json-view'
+
+export const ReactJson = dynamic(
+  () => {
+    return import('react-json-view')
+  },
+  { ssr: false }
+)
 
 const IntegrationDrawer = () => {
   const router = useRouter()

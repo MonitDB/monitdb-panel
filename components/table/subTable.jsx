@@ -319,8 +319,8 @@ export const AlertHtmlSubTable = ({ serverId, idSeq, id }) => {
               <Comment
                 avatar={
                   <Avatar
-                    children={userState.loginName[0]}
-                    alt={userState.loginName}
+                    children={userState?.loginName[0]}
+                    alt={userState?.loginName}
                   />
                 }
                 content={<Editor />}

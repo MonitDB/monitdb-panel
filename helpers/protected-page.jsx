@@ -38,7 +38,7 @@ const ProtectedPage = ({ children }) => {
     }
   }, [validateToken, userState?.token])
 
-  if (!userState.token) {
+  if (!userState?.token) {
     return ''
   }
 
