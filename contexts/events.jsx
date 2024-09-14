@@ -1,7 +1,7 @@
 /* eslint-disable unicorn/prefer-add-event-listener */
 /* eslint-disable no-console */
 // utils/EventSourceContext.js
-import { message } from 'antd'
+// import { message } from 'antd'
 import { EventSourcePolyfill } from 'event-source-polyfill'
 import { createContext, useContext, useEffect, useState } from 'react'
 
@@ -37,12 +37,12 @@ export const EventSourceProvider = ({ children }) => {
 
       es.addEventListener('connection', function (event) {
         const data = JSON.parse(event.data)
-        message.info('Listening Events')
+        // message.info('Listening Events')
         setConnectionId(data.id)
       })
 
       es.onerror = (error) => {
-        message.error('EventSource disconnected, attempting to reconnect...')
+        // message.error('EventSource disconnected, attempting to reconnect...')
         console.error('EventSource failed:', error)
         es.close()
         setTimeout(() => {

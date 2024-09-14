@@ -3,10 +3,13 @@ import React, { Fragment } from 'react'
 
 import Link from '~/components/link'
 
-const PageHeader = ({ title, breadcrumbs = [] }) => {
+const PageHeader = ({ title, breadcrumbs = [], extra = [] }) => {
   return (
     <header className="mb-10 text-black">
-      {title && <h1 className="heading-lg mb-2">{title}</h1>}
+      <div className="flex items-center justify-between">
+        {title && <h1 className="heading-lg mb-2">{title}</h1>}
+        <div>{extra}</div>
+      </div>
       {breadcrumbs.length > 0 ? (
         <ul className="flex items-center space-x-2 text-sm">
           {breadcrumbs.map((breadcrumb, index) => {

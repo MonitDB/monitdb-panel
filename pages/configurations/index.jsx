@@ -266,6 +266,21 @@ const ConfigurationsPage = () => {
                     <h3 className="mb-5 heading-md">API</h3>
 
                     <ul className="space-y-4 text-sm">
+                      {
+                        <li className="opacity-100">
+                          <Link
+                            href="/configurations/integrations"
+                            className="group block"
+                          >
+                            <strong className="block group-hover:text-blue">
+                              Integrations
+                            </strong>
+                            <span className="group-hover:opacity-75">
+                              Add or edit integrations
+                            </span>
+                          </Link>
+                        </li>
+                      }
                       {hasPermission(
                         user,
                         FeatureFunction.AUTHENTICATION_TOKENS,
