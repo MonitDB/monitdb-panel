@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /* eslint-disable sonarjs/no-duplicate-string */
 import {
   Button,
@@ -5,13 +6,16 @@ import {
   Drawer,
   Form,
   Input,
+  message,
   Select,
   Space,
   Typography,
 } from 'antd'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+
+import { createIntegration, updateIntegration } from '~/services/integration' // Supondo que você tenha essas funções
 
 export const ReactJson = dynamic(
   () => {
@@ -47,12 +51,71 @@ const IntegrationDrawer = () => {
   }
 
   const [form] = Form.useForm()
-
   const [method, setMethod] = useState('GET')
   const [body, setBody] = useState({})
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    if (isEdit) {
+      const fetchIntegration = async () => {
+        try {
+          const data = await getIntegration(query['integration-id'])
+          form.setFieldsValue({
+            name: data.name,
+            url: data.url,
+            type: data.type,
+            method: data.method,
+            headers: Object.entries(data.headers).map(([key, value]) => ({
+              key,
+              value,
+            })),
+            body: data.body,
+          })
+          setMethod(data.method)
+          setBody(data.body)
+        } catch {
+          message.error('Failed to load integration data')
+        }
+      }
+
+      fetchIntegration()
+    }
+  }, [isEdit, form, query])
 
   const handleJsonChange = (updatedJson) => {
     setBody(updatedJson.updated_src)
+  }
+
+  const handleSubmit = async () => {
+    try {
+      setLoading(true)
+      const values = await form.validateFields()
+      // eslint-disable-next-line unicorn/no-array-reduce
+      const headers = values.headers.reduce((accumulator, header) => {
+        accumulator[header.key] = header.value
+        return accumulator
+      }, {})
+
+      const data = {
+        ...values,
+        headers: JSON.stringify(headers),
+        body: JSON.stringify(body),
+      }
+
+      if (isEdit) {
+        await updateIntegration(query['integration-id'], data)
+        message.success('Integration updated successfully')
+      } else {
+        await createIntegration(data)
+        message.success('Integration created successfully')
+      }
+
+      closeDrawer()
+    } catch {
+      message.error('Failed to save integration')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -81,20 +144,25 @@ const IntegrationDrawer = () => {
           </Form.Item>
           <Form.Item
             name="type"
+            initialValue={'zabbix'}
             label="Integration Type"
             rules={[{ required: true }]}
           >
             <Select
-              defaultValue={'GET'}
+              defaultValue={'zabbix'}
               options={[
                 { label: 'Zabbix', value: 'zabbix' },
                 { label: 'Rundeck', value: 'rundeck' },
               ]}
             />
           </Form.Item>
-          <Form.Item name="method" label="Method" rules={[{ required: true }]}>
+          <Form.Item
+            name="method"
+            label="Method"
+            rules={[{ required: true }]}
+            initialValue={'GET'}
+          >
             <Select
-              defaultValue={'GET'}
               onChange={(value) => setMethod(value)}
               options={[
                 { label: 'GET', value: 'GET' },
@@ -154,7 +222,6 @@ const IntegrationDrawer = () => {
 
           {method !== 'GET' && (
             <>
-              {' '}
               <Typography.Title level={5}>Body</Typography.Title>
               <Form.Item name="body" label="Body" style={{ marginBottom: 0 }}>
                 <ReactJson
@@ -179,9 +246,8 @@ const IntegrationDrawer = () => {
         }}
       >
         <Space>
-          {' '}
           <Button onClick={closeDrawer}>Cancel</Button>
-          <Button onClick={form.submit} type="primary">
+          <Button onClick={handleSubmit} type="primary" loading={loading}>
             {!isEdit ? 'Create' : 'Save'}
           </Button>
         </Space>
