@@ -22,18 +22,17 @@ const IntegrationsPage = () => {
     const fetchIntegrations = async () => {
       setLoading(true)
       try {
-        const data = await listIntegrations({ page: currentPage, pageSize })
-        setIntegrations(data.result)
-        setTotal(data.total) // Assumindo que a API retorna o total de registros
+        const data = await listIntegrations(currentPage, pageSize)
+        setIntegrations(data.data)
+        setTotal(data.total)
       } catch {
         /* empty */
       } finally {
         setLoading(false)
       }
     }
-
-    fetchIntegrations()
-  }, [currentPage])
+    if (Object.keys(query).length === 0) fetchIntegrations()
+  }, [currentPage, query])
 
   const addNewIntegration = () => {
     router.push(
@@ -109,7 +108,7 @@ const IntegrationsPage = () => {
                 href: '/configurations/',
               },
               {
-                title: 'Display Settings',
+                title: 'Integrations',
                 href: '/configurations/integrations/',
               },
             ]}
@@ -119,27 +118,22 @@ const IntegrationsPage = () => {
               </Button>
             }
           />
-
-          {loading ? (
-            <Spin size="large" />
-          ) : (
-            <Table
-              dataSource={integrations}
-              columns={columns}
-              rowKey="id"
-              onRow={(record) => ({
-                onClick: () => openIntegration(record.id),
-              })}
-              pagination={{
-                current: currentPage,
-                pageSize: pageSize,
-                total: total,
-                showSizeChanger: false, // Opcional, exibe ou esconde o seletor de tamanho de página
-              }}
-              onChange={handleTableChange}
-            />
-          )}
-
+          <Table
+            loading={loading}
+            dataSource={integrations}
+            columns={columns}
+            rowKey="id"
+            onRow={(record) => ({
+              onClick: () => openIntegration(record.id),
+            })}
+            pagination={{
+              current: currentPage,
+              pageSize: pageSize,
+              total: total,
+              showSizeChanger: false,
+            }}
+            onChange={handleTableChange}
+          />
           <IntegrationDrawer />
         </PageContent>
       </Layout>

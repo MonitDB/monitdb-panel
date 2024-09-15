@@ -9,13 +9,18 @@ import {
   message,
   Select,
   Space,
+  Spin,
   Typography,
 } from 'antd'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 
-import { createIntegration, updateIntegration } from '~/services/integration' // Supondo que você tenha essas funções
+import {
+  createIntegration,
+  getIntegration,
+  updateIntegration,
+} from '~/services/integration' // Supondo que você tenha essas funções
 
 export const ReactJson = dynamic(
   () => {
@@ -55,17 +60,23 @@ const IntegrationDrawer = () => {
   const [body, setBody] = useState({})
   const [loading, setLoading] = useState(false)
 
+  const [fetching, setFetching] = useState(false)
+
   useEffect(() => {
+    form.resetFields()
+
     if (isEdit) {
+      setFetching(true)
       const fetchIntegration = async () => {
         try {
           const data = await getIntegration(query['integration-id'])
+          const headers = JSON.parse(data.headers)
           form.setFieldsValue({
             name: data.name,
             url: data.url,
             type: data.type,
             method: data.method,
-            headers: Object.entries(data.headers).map(([key, value]) => ({
+            headers: Object.entries(headers).map(([key, value]) => ({
               key,
               value,
             })),
@@ -76,11 +87,11 @@ const IntegrationDrawer = () => {
         } catch {
           message.error('Failed to load integration data')
         }
+        setFetching(false)
       }
-
       fetchIntegration()
     }
-  }, [isEdit, form, query])
+  }, [isEdit, form, query, open])
 
   const handleJsonChange = (updatedJson) => {
     setBody(updatedJson.updated_src)
@@ -90,12 +101,11 @@ const IntegrationDrawer = () => {
     try {
       setLoading(true)
       const values = await form.validateFields()
-      // eslint-disable-next-line unicorn/no-array-reduce
-      const headers = values.headers.reduce((accumulator, header) => {
+
+      const headers = values.headers?.reduce((accumulator, header) => {
         accumulator[header.key] = header.value
         return accumulator
       }, {})
-
       const data = {
         ...values,
         headers: JSON.stringify(headers),
@@ -111,8 +121,8 @@ const IntegrationDrawer = () => {
       }
 
       closeDrawer()
-    } catch {
-      message.error('Failed to save integration')
+    } catch (error) {
+      message.error(error, 'Failed to save integration')
     } finally {
       setLoading(false)
     }
@@ -127,131 +137,159 @@ const IntegrationDrawer = () => {
       bodyStyle={{ display: 'flex', flexDirection: 'column', height: '100%' }}
       width={600}
     >
-      <div>
-        <Typography.Title level={4}>Integration</Typography.Title>
-        <Divider></Divider>
-      </div>
+      {fetching && (
+        <div
+          style={{
+            display: 'flex',
+            height: '100%',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          {' '}
+          <Spin />
+        </div>
+      )}
+      {!fetching && (
+        <>
+          <div>
+            <Typography.Title level={4}>Integration</Typography.Title>
+            <Divider></Divider>
+          </div>
 
-      <div style={{ padding: '16px', flex: 1, overflowY: 'auto' }}>
-        <Form layout="vertical" form={form}>
-          <Typography.Title level={5}>Informations</Typography.Title>
+          <div style={{ padding: '16px', flex: 1, overflowY: 'auto' }}>
+            <Form layout="vertical" form={form}>
+              <Typography.Title level={5}>Informations</Typography.Title>
 
-          <Form.Item name="name" label="Name" rules={[{ required: true }]}>
-            <Input />
-          </Form.Item>
-          <Form.Item name="url" label="URL" rules={[{ required: true }]}>
-            <Input type="url" />
-          </Form.Item>
-          <Form.Item
-            name="type"
-            initialValue={'zabbix'}
-            label="Integration Type"
-            rules={[{ required: true }]}
-          >
-            <Select
-              defaultValue={'zabbix'}
-              options={[
-                { label: 'Zabbix', value: 'zabbix' },
-                { label: 'Rundeck', value: 'rundeck' },
-              ]}
-            />
-          </Form.Item>
-          <Form.Item
-            name="method"
-            label="Method"
-            rules={[{ required: true }]}
-            initialValue={'GET'}
-          >
-            <Select
-              onChange={(value) => setMethod(value)}
-              options={[
-                { label: 'GET', value: 'GET' },
-                { label: 'POST', value: 'POST' },
-                { label: 'PUT', value: 'PUT' },
-                { label: 'DELETE', value: 'DELETE' },
-                { label: 'PATCH', value: 'PATCH' },
-              ]}
-            />
-          </Form.Item>
+              <Form.Item name="name" label="Name" rules={[{ required: true }]}>
+                <Input />
+              </Form.Item>
+              <Form.Item name="url" label="URL" rules={[{ required: true }]}>
+                <Input type="url" />
+              </Form.Item>
+              <Form.Item
+                name="type"
+                initialValue={'zabbix'}
+                label="Integration Type"
+                rules={[{ required: true }]}
+              >
+                <Select
+                  defaultValue={'zabbix'}
+                  options={[
+                    { label: 'Zabbix', value: 'zabbix' },
+                    { label: 'Rundeck', value: 'rundeck' },
+                  ]}
+                />
+              </Form.Item>
+              <Form.Item
+                name="method"
+                label="Method"
+                rules={[{ required: true }]}
+                initialValue={'GET'}
+              >
+                <Select
+                  onChange={(value) => setMethod(value)}
+                  options={[
+                    { label: 'GET', value: 'GET' },
+                    { label: 'POST', value: 'POST' },
+                    { label: 'PUT', value: 'PUT' },
+                    { label: 'DELETE', value: 'DELETE' },
+                    { label: 'PATCH', value: 'PATCH' },
+                  ]}
+                />
+              </Form.Item>
 
-          <Typography.Title level={5}>Headers</Typography.Title>
-          <Form.Item name="headers" valuePropName="code">
-            <Form.List name="headers" initialValue={[{ key: '', value: '' }]}>
-              {(fields, { add, remove }) => (
+              <Typography.Title level={5}>Headers</Typography.Title>
+              <Form.Item name="headers" valuePropName="code">
+                <Form.List
+                  name="headers"
+                  initialValue={[{ key: '', value: '' }]}
+                >
+                  {(fields, { add, remove }) => (
+                    <>
+                      {fields.map(({ key, name, fieldKey, ...restField }) => (
+                        <Space
+                          key={key}
+                          style={{ display: 'flex', marginBottom: 8 }}
+                          align="baseline"
+                        >
+                          <Form.Item
+                            {...restField}
+                            name={[name, 'key']}
+                            fieldKey={[fieldKey, 'key']}
+                            rules={[
+                              { required: true, message: 'Missing header key' },
+                            ]}
+                          >
+                            <Input placeholder="Header Key" />
+                          </Form.Item>
+                          <Form.Item
+                            {...restField}
+                            name={[name, 'value']}
+                            fieldKey={[fieldKey, 'value']}
+                            rules={[
+                              {
+                                required: true,
+                                message: 'Missing header value',
+                              },
+                            ]}
+                          >
+                            <Input placeholder="Header Value" />
+                          </Form.Item>
+                          <Button type="link" onClick={() => remove(name)}>
+                            Remove
+                          </Button>
+                        </Space>
+                      ))}
+                      <Form.Item>
+                        <Button type="dashed" onClick={() => add()} block>
+                          Add Header
+                        </Button>
+                      </Form.Item>
+                    </>
+                  )}
+                </Form.List>
+              </Form.Item>
+
+              {method !== 'GET' && (
                 <>
-                  {fields.map(({ key, name, fieldKey, ...restField }) => (
-                    <Space
-                      key={key}
-                      style={{ display: 'flex', marginBottom: 8 }}
-                      align="baseline"
-                    >
-                      <Form.Item
-                        {...restField}
-                        name={[name, 'key']}
-                        fieldKey={[fieldKey, 'key']}
-                        rules={[
-                          { required: true, message: 'Missing header key' },
-                        ]}
-                      >
-                        <Input placeholder="Header Key" />
-                      </Form.Item>
-                      <Form.Item
-                        {...restField}
-                        name={[name, 'value']}
-                        fieldKey={[fieldKey, 'value']}
-                        rules={[
-                          { required: true, message: 'Missing header value' },
-                        ]}
-                      >
-                        <Input placeholder="Header Value" />
-                      </Form.Item>
-                      <Button type="link" onClick={() => remove(name)}>
-                        Remove
-                      </Button>
-                    </Space>
-                  ))}
-                  <Form.Item>
-                    <Button type="dashed" onClick={() => add()} block>
-                      Add Header
-                    </Button>
+                  <Typography.Title level={5}>Body</Typography.Title>
+                  <Form.Item
+                    name="body"
+                    label="Body"
+                    style={{ marginBottom: 0 }}
+                  >
+                    <ReactJson
+                      src={body}
+                      onEdit={handleJsonChange}
+                      onAdd={handleJsonChange}
+                      onDelete={handleJsonChange}
+                      theme="monokai"
+                      style={{ height: '300px', overflowY: 'auto' }}
+                    />
                   </Form.Item>
                 </>
               )}
-            </Form.List>
-          </Form.Item>
+            </Form>
+          </div>
 
-          {method !== 'GET' && (
-            <>
-              <Typography.Title level={5}>Body</Typography.Title>
-              <Form.Item name="body" label="Body" style={{ marginBottom: 0 }}>
-                <ReactJson
-                  src={body}
-                  onEdit={handleJsonChange}
-                  onAdd={handleJsonChange}
-                  onDelete={handleJsonChange}
-                  theme="monokai"
-                  style={{ height: '300px', overflowY: 'auto' }}
-                />
-              </Form.Item>
-            </>
-          )}
-        </Form>
-      </div>
-
-      <div
-        style={{
-          paddingTop: '16px',
-          borderTop: '1px solid #f0f0f0',
-          textAlign: 'right',
-        }}
-      >
-        <Space>
-          <Button onClick={closeDrawer}>Cancel</Button>
-          <Button onClick={handleSubmit} type="primary" loading={loading}>
-            {!isEdit ? 'Create' : 'Save'}
-          </Button>
-        </Space>
-      </div>
+          <div
+            style={{
+              paddingTop: '16px',
+              borderTop: '1px solid #f0f0f0',
+              textAlign: 'right',
+            }}
+          >
+            <Space>
+              <Button onClick={closeDrawer}>Cancel</Button>
+              <Button onClick={handleSubmit} type="primary" loading={loading}>
+                {!isEdit ? 'Create' : 'Save'}
+              </Button>
+            </Space>
+          </div>
+        </>
+      )}
     </Drawer>
   )
 }

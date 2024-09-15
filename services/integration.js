@@ -47,3 +47,21 @@ export const execIntegration = async (id) => {
     console.error(`Error executing integration with ID ${id}:`, error)
   }
 }
+
+export const updateIntegration = async (id, integrationData) => {
+  try {
+    const response = await apiV2().put(`/integration/${id}`, integrationData)
+    return response.data
+  } catch (error) {
+    console.error(`Error updating integration with ID ${id}:`, error)
+  }
+}
+
+export const deleteIntegration = async (id) => {
+  try {
+    const response = await apiV2().delete(`/integration/${id}`)
+    return response.data
+  } catch (error) {
+    console.error(`Error deleting integration with ID ${id}:`, error)
+  }
+}
