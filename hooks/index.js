@@ -15,3 +15,5 @@ export { default as useUserConnections } from './dashboard/use-user-connections'
 export { default as useLatchWaits } from './dashboard/use-latch-waits'
 export { default as useLockTimeouts } from './dashboard/use-lock-timeouts'
 export { default as useLockWaits } from './dashboard/use-lock-waits'
+
+export { default as useIntegration } from './use-integration'

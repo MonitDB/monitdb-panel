@@ -50,11 +50,11 @@ const Header = () => {
       href: '/states/',
       requiredPermissions: Feature.STATES,
     },
-    // {
-    //   title: 'Configurations',
-    //   href: '/configurations/',
-    //   requiredPermissions: Feature.CONFIGURATION,
-    // },
+    {
+      title: 'Integrations',
+      href: '/integrations/',
+      //  requiredPermissions: Feature.CONFIGURATION,
+    },
   ]
 
   const navMenuList = navMenuListData.filter((item) => {
