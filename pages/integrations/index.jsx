@@ -21,8 +21,8 @@ const Integrations = () => {
       try {
         const data = await listAllIntegrations()
         setIntegrations(data)
-      } catch (error) {
-        console.error('Error fetching integrations:', error)
+      } catch {
+        /* empty */
       }
     }
 
@@ -34,13 +34,7 @@ const Integrations = () => {
       <NextSeo title="Integrations - Configurations - MonitDB" />
       <Layout>
         <PageContent removeSidebarMargin={true}>
-          <PageHeader
-            title="Integrations"
-            breadcrumbs={[
-              { title: 'Configurations', href: '/configurations/' },
-              { title: 'Integrations', href: '/configurations/integrations/' },
-            ]}
-          />
+          <PageHeader title="Integrations" />
           <Tabs
             defaultActiveKey="1"
             tabPosition="left"

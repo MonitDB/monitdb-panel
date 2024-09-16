@@ -1,4 +1,4 @@
-import { Button, Spin, Table } from 'antd'
+import { Button, Table } from 'antd'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
 import { useEffect, useState } from 'react'
