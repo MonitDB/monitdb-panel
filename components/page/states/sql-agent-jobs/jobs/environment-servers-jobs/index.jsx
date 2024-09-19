@@ -280,9 +280,8 @@ function Servers({ environmentServers, serversJobs, expand }) {
                 dataIndex: 'RunDateTime',
                 title: 'Run date time',
                 render: (value) => moment(value).format('DD/MM/YYYY HH:mm:ss'),
-                width: '100px',
               },
-              { dataIndex: 'Job', title: 'Job', width: '100px' },
+              { dataIndex: 'Job', title: 'Job' },
               { dataIndex: 'Enabled', title: 'Enabled' },
               { dataIndex: 'Status', title: 'Status' },
               {
