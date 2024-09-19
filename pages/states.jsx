@@ -79,8 +79,7 @@ const EstatePage = () => {
     const filteredTab = tabs.find((tab) => tab.slug === router?.query?.tab)
 
     filteredTab ? setTabActive(filteredTab) : setTabActive(tabs[0])
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [router.asPath, router.query])
+  }, [router, router.asPath, router?.query, tabs, user])
 
   return (
     <>
