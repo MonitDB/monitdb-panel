@@ -155,6 +155,8 @@ const ServerCard = ({
     getMetrics()
   }, [])
 
+  const cpu = 100 - metrics.cpu?.SystemIdle
+
   return (
     <Style>
       <Card
@@ -265,14 +267,12 @@ const ServerCard = ({
                   <dd>
                     <span
                       className={classNames({
-                        'text-blue': metrics.cpu.otherProcessPercent <= 85,
-                        'text-orange':
-                          metrics.cpu.otherProcessPercent > 85 &&
-                          metrics.cpu.otherProcessPercent < 95,
-                        'text-danger': metrics.cpu.otherProcessPercent >= 95,
+                        'text-blue': cpu <= 85,
+                        'text-orange': cpu > 85 && cpu < 95,
+                        'text-danger': cpu >= 95,
                       })}
                     >
-                      {metrics.cpu.otherProcessPercent}%
+                      {cpu}%
                     </span>
                     <span> - In use</span>
                   </dd>
@@ -280,16 +280,7 @@ const ServerCard = ({
                     <span
                       className="absolute top-0 h-full bg-orange"
                       style={{
-                        width: `${metrics.cpu.otherProcessPercent}%`,
-                        left: `${metrics.cpu.instanceProcessPercent}%`,
-                      }}
-                    />
-                    <span
-                      className={classNames(
-                        'absolute top-0 left-0 h-full bg-blue'
-                      )}
-                      style={{
-                        width: `${metrics.cpu.instanceProcessPercent}%`,
+                        width: `${cpu}%`,
                       }}
                     />
                   </dd>
