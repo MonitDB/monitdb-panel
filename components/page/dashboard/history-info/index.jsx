@@ -113,16 +113,18 @@ const HistoryInfo = ({ currentServer }) => {
           user,
           FeatureFunction.BLOCKING_PROCESS_TOP_10_BY_TIME,
           TypeGrant.READ
-        ) && <BlockingProcesses currentServer={currentServer} />}
+        ) && (
+          <BlockingProcesses currentServer={currentServer} key={lastFetch} />
+        )}
 
         {hasPermission(
           user,
           FeatureFunction.SQL_USER_PROCESSES_TOP_10_BY_CPU,
           TypeGrant.READ
-        ) && <SqlUserProcesses currentServer={currentServer} />}
+        ) && <SqlUserProcesses currentServer={currentServer} key={lastFetch} />}
 
         {hasPermission(user, FeatureFunction.ERROR_LOG, TypeGrant.READ) && (
-          <ErrorLog currentServer={currentServer} />
+          <ErrorLog currentServer={currentServer} key={lastFetch} />
         )}
       </div>
     </div>

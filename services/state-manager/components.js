@@ -30,11 +30,12 @@ const useComponentContext = create((set) => ({
       `/api/typecomponent?${formatObjectToQuery(parameters)}`
     )
   },
-  executeQueryComponent: async (componentId, serverId) => {
+  executeQueryComponent: async (componentId, serverId, lastMinutes) => {
     try {
       set({ loading: true })
       const { data } = await apiV2().get(
-        `/component/execute-component/${componentId}/${serverId || ''}`
+        `/component/execute-component/${componentId}/${serverId || ''}`,
+        { params: { lastMinutes } }
       )
       return data
     } catch {

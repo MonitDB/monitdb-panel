@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router'
 import React, { useCallback, useEffect, useState } from 'react'
 
 import Image from '~/components/image'
@@ -9,6 +10,7 @@ const COMPONENT_CODE = 'LTBLPR'
 
 function BlockingProcesses(properties) {
   const { currentServer } = properties
+  const router = useRouter()
 
   const [loading, setLoading] = useState(false)
   const [data, setData] = useState([])
@@ -23,14 +25,15 @@ function BlockingProcesses(properties) {
       setLoading(true)
       const data = await executeQueryComponent(
         COMPONENT_CODE,
-        currentServer?.id || undefined
+        currentServer?.id || undefined,
+        Number(router.query.lastMinutes ?? 60)
       )
       setData(data)
       setLoading(false)
     } catch {
       setLoading(false)
     }
-  }, [currentServer?.id, executeQueryComponent])
+  }, [currentServer?.id, executeQueryComponent, router.query.lastMinutes])
 
   return (
     <div id="blocking-processes" className="mt-4">

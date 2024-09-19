@@ -1,4 +1,5 @@
 import { Table, Tooltip } from 'antd'
+import { useRouter } from 'next/router'
 import React, { useCallback, useEffect, useState } from 'react'
 
 import ExportButton from '~/components/export-button'
@@ -14,6 +15,7 @@ function SqlUserProcesses(properties) {
   const [loading, setLoading] = useState(false)
   const [data, setData] = useState([])
   const { executeQueryComponent } = useComponentContext()
+  const router = useRouter()
 
   useEffect(() => {
     fetchData()
@@ -24,14 +26,15 @@ function SqlUserProcesses(properties) {
       setLoading(true)
       const data = await executeQueryComponent(
         COMPONENT_CODE,
-        currentServer?.id || undefined
+        currentServer?.id || undefined,
+        Number(router.query.lastMinutes ?? 60)
       )
       setData(data)
       setLoading(false)
     } catch {
       setLoading(false)
     }
-  }, [currentServer?.id, executeQueryComponent])
+  }, [currentServer?.id, executeQueryComponent, router.query.lastMinutes])
 
   return (
     <div id="sqlprocesses" className="mt-4">
