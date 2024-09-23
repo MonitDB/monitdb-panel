@@ -327,6 +327,14 @@ const AlertsDetailsPage = () => {
                   },
                 }
               }
+              pagination={{
+                total: alertsResult.count,
+                current: currentPage,
+                onChange: (page) => {
+                  setCurrentPage(page)
+                  window.scrollTo(0, 0)
+                },
+              }}
               onRow={() => ({ style: { cursor: 'pointer' } })}
             />
           </PageContent>

@@ -221,7 +221,7 @@ const AlertsPage = () => {
                                 render: (_, record) => (
                                   <span
                                     className={`flex items-center justify-center rounded-full w-5 min-w-5 h-5 ml-auto text-xs ${
-                                      serverAlertsCount[0]?.count === 0
+                                      serverAlertsCount[record.id]?.count === 0
                                         ? 'bg-green'
                                         : 'bg-orange'
                                     } text-white`}
