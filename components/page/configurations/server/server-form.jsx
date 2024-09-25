@@ -96,7 +96,7 @@ const ServerForm = () => {
             <Input />
           </Form.Item>
         </Col>
-        <Col span={6}>
+        <Col span={4}>
           <Form.Item
             label="User"
             name="serverUser"
@@ -124,7 +124,21 @@ const ServerForm = () => {
             <Input.Password />
           </Form.Item>
         </Col>
-        <Col span={4}>
+        <Col span={3}>
+          <Form.Item
+            label="IP"
+            name="serverIP"
+            rules={[
+              {
+                required: true,
+                message: 'Please enter the server port',
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+        </Col>
+        <Col span={3}>
           <Form.Item
             label="Port"
             name="serverPort"
@@ -138,6 +152,7 @@ const ServerForm = () => {
             <Input />
           </Form.Item>
         </Col>
+
         <Col span={4}>
           <Form.Item
             label="Status"
@@ -212,12 +227,12 @@ const ServerForm = () => {
             </Form.Item>
           </Col>
           <Col sm={18}>
-            <Form.Item name={['serverDetail', 'serverDetailSo']} label="SO">
+            <Form.Item name={['serverDetail', 'serverDetailSO']} label="SO">
               <Input />
             </Form.Item>
           </Col>
         </Row>
-        <Form.List name="services">
+        <Form.List name={['serverDetail', 'serverService']}>
           {(fields, { add, remove }) => (
             <>
               {fields.map(({ name, fieldKey, ...restField }) => (
@@ -257,7 +272,7 @@ const ServerForm = () => {
                       <Form.Item
                         {...restField}
                         label={'Service IP'}
-                        name={[name, 'serverServiceIp']}
+                        name={[name, 'serverServiceIP']}
                         fieldKey={[fieldKey, 'field']}
                       >
                         <Input />
@@ -311,7 +326,7 @@ const ServerForm = () => {
             </>
           )}
         </Form.List>
-        <Form.List name={['serviceIP']}>
+        <Form.List name={['serverDetail', 'serverIp']}>
           {(serviceIP, { add, remove }) => (
             <>
               {serviceIP.map(({ key, name, fieldKey }) => (
@@ -319,7 +334,7 @@ const ServerForm = () => {
                   <Col>
                     <Form.Item
                       label="Server IP Name"
-                      name={[name, 'serverIpName']}
+                      name={[name, 'serverIPName']}
                       fieldKey={[fieldKey, 'serverIpName']}
                     >
                       <Input />
@@ -328,7 +343,7 @@ const ServerForm = () => {
                   <Col>
                     <Form.Item
                       label="Server IP Description"
-                      name={[name, 'serverIpDescription']}
+                      name={[name, 'serverIPDescription']}
                       fieldKey={[fieldKey, 'serverIpDescription']}
                     >
                       <Input />
@@ -337,7 +352,7 @@ const ServerForm = () => {
                   <Col>
                     <Form.Item
                       label="IP Host"
-                      name={[name, 'serverIpHost']}
+                      name={[name, 'serverIPHost']}
                       fieldKey={[fieldKey, 'serverIpHost']}
                     >
                       <Input />
