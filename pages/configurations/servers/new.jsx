@@ -1,4 +1,4 @@
-import { Button, Col, Form, Input, Row, Space } from 'antd'
+import { Button, Form, Space } from 'antd'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
 import React, { useEffect, useState } from 'react'
@@ -6,7 +6,6 @@ import { toast } from 'react-toastify'
 
 import { PageContent, PageHeader, PageWrapper } from '~/components/page'
 import ServerForm from '~/components/page/configurations/server/server-form'
-import DatabaseIcons from '~/helpers/database-icons'
 import { useUser } from '~/hooks/index'
 import useGlobal from '~/hooks/use-global'
 import Layout from '~/layouts/default'
@@ -19,10 +18,7 @@ import {
 } from '~/utils/hasPermission'
 
 const ConfigurationsServersSinglePage = () => {
-  const {
-    globalState: { serverTypes, serverEnvironments },
-    refreshData,
-  } = useGlobal()
+  const { refreshData } = useGlobal()
 
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)

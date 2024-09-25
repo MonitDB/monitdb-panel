@@ -29,6 +29,7 @@ const { Title, Text } = Typography
 
 export const ServerInfo = ({ currentServer }) => {
   const [serverMetrics, setServerMetrics] = useState()
+  const [isModalVisible, setIsModalVisible] = useState(false) // Controle do modal
   const { userState } = useUser()
 
   useEffect(() => {
@@ -72,6 +73,14 @@ export const ServerInfo = ({ currentServer }) => {
     <Spin indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />} />
   )
 
+  const handleModalOpen = () => {
+    setIsModalVisible(true)
+  }
+
+  const handleModalClose = () => {
+    setIsModalVisible(false)
+  }
+
   return (
     <>
       <Row align="middle" gutter={[16, 16]}>
@@ -104,17 +113,7 @@ export const ServerInfo = ({ currentServer }) => {
                   icon={<ExclamationCircleOutlined />}
                   style={{ transform: 'translateY(-1px)' }}
                   type="outlined"
-                  onClick={() => {
-                    Modal.info({
-                      title: 'Instance Properties',
-                      width: '80vw',
-                      content: (
-                        <>
-                          <InstanceProperties />
-                        </>
-                      ),
-                    })
-                  }}
+                  onClick={handleModalOpen} // Abrir o modal
                 />
               </Tooltip>
             )}
@@ -136,6 +135,20 @@ export const ServerInfo = ({ currentServer }) => {
           {serverInfo}
         </Col>
       </Row>
+
+      <Modal
+        title="Instance Properties"
+        visible={isModalVisible} // Controla a visibilidade
+        onCancel={handleModalClose} // Fecha o modal
+        footer={[
+          <Button key="close" onClick={handleModalClose}>
+            Close
+          </Button>,
+        ]}
+        width="80vw"
+      >
+        <InstanceProperties />
+      </Modal>
     </>
   )
 }

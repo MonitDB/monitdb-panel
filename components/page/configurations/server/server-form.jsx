@@ -157,12 +157,13 @@ const ServerForm = () => {
           <Form.Item
             label="Status"
             name="serverEnable"
+            initialValue={true}
             rules={[{ required: true, message: 'Please select the status' }]}
           >
             <Select
               options={[
-                { value: '1', label: 'Ativo' },
-                { value: '0', label: 'Inativo' },
+                { value: true, label: 'Active' },
+                { value: false, label: 'Inactive' },
               ]}
             />
           </Form.Item>

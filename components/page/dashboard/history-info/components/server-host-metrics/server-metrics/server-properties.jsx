@@ -6,13 +6,14 @@ import { toast } from 'react-toastify'
 import { useSingleDashboard } from '~/hooks/index'
 import useComponentContext from '~/services/state-manager/components'
 
+import ServerDetails from './server-details'
+
 const componentCode = 'LTINSPRP'
 const loadingText = 'Loading...'
 
 export const InstanceProperties = () => {
   const { currentServer } = useSingleDashboard()
   const { executeQueryComponent } = useComponentContext()
-
   const [data, setData] = useState()
   const [loading, setLoading] = useState(false)
 
@@ -53,18 +54,22 @@ export const InstanceProperties = () => {
             <Spin tip={loadingText} />
           </div>
         ) : (
-          <Descriptions size="small" column={2} bordered>
-            {Object.keys(data ?? {}).map(
-              (key, index) =>
-                data[key] && (
-                  <Descriptions.Item label={key} key={index}>
-                    {moment(data[key]).isValid()
-                      ? moment(data[key]).format('DD/MM/YYYY HH:mm:ss')
-                      : String(data[key])}
-                  </Descriptions.Item>
-                )
-            )}
-          </Descriptions>
+          <>
+            <Descriptions size="small" column={2} bordered>
+              {Object.keys(data ?? {}).map(
+                (key, index) =>
+                  data[key] && (
+                    <Descriptions.Item label={key} key={index}>
+                      {moment(data[key]).isValid()
+                        ? moment(data[key]).format('DD/MM/YYYY HH:mm:ss')
+                        : String(data[key])}
+                    </Descriptions.Item>
+                  )
+              )}
+            </Descriptions>
+            <br />
+            <ServerDetails currentServer={currentServer} />
+          </>
         )}
       </Card>
     </div>

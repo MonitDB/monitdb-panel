@@ -233,7 +233,6 @@ const AlertsPage = () => {
                               {
                                 render: (_, record) => (
                                   <Button
-                                    type="link"
                                     onClick={(event) => {
                                       event.stopPropagation()
                                       router.push(

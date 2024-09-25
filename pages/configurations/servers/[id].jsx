@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Button, Form, Row, Space } from 'antd'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
@@ -45,7 +46,7 @@ const ConfigurationsServersSinglePage = () => {
 
   const currentServer = useMemo(
     () => servers.find((server) => server.id === +router?.query?.id),
-    [servers, router?.query?.id]
+    [router?.query?.id]
   )
 
   const handleSubmit = async (values) => {
@@ -53,7 +54,8 @@ const ConfigurationsServersSinglePage = () => {
     try {
       const response = await updateServer({
         ...values,
-        serverEnable: values.serverEnable === '1',
+        serverEnable: values.serverEnable,
+        id: Number(router?.query?.id),
       })
       if (response?.status === 200) {
         toast.success(`Server ${values.serverName} edited!`)
@@ -113,7 +115,11 @@ const ConfigurationsServersSinglePage = () => {
             </Form>
             <Row>
               <Space>
-                <Button type="primary" htmlType="submit" loading={isLoading}>
+                <Button
+                  type="primary"
+                  onClick={form.submit}
+                  loading={isLoading}
+                >
                   Save
                 </Button>
                 <Button
