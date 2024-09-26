@@ -5,7 +5,7 @@ import { execIntegration, getIntegration } from '~/services/integration'
 const useIntegrations = ({ id }) => {
   const [data, setData] = useState()
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState()
+  const [error, setError] = useState(false)
 
   useEffect(() => {
     const fetchIntegration = async () => {
@@ -14,8 +14,8 @@ const useIntegrations = ({ id }) => {
         setError()
         const result = await execIntegration(id)
         setData(result)
-      } catch (error_) {
-        setError(error_)
+      } catch {
+        setError(true)
       } finally {
         setLoading(false)
       }
