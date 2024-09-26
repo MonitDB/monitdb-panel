@@ -93,9 +93,9 @@ const IntegrationDrawer = () => {
     }
   }, [isEdit, form, query, open])
 
-  const handleJsonChange = (updatedJson) => {
-    setBody(updatedJson.updated_src)
-  }
+  // const handleJsonChange = (updatedJson) => {
+  //   setBody(updatedJson.updated_src)
+  // }
 
   const handleSubmit = async () => {
     try {
@@ -260,14 +260,15 @@ const IntegrationDrawer = () => {
                     label="Body"
                     style={{ marginBottom: 0 }}
                   >
-                    <ReactJson
+                    <Input.TextArea />
+                    {/* <ReactJson
                       src={body}
                       onEdit={handleJsonChange}
                       onAdd={handleJsonChange}
                       onDelete={handleJsonChange}
                       theme="monokai"
                       style={{ height: '300px', overflowY: 'auto' }}
-                    />
+                    /> */}
                   </Form.Item>
                 </>
               )}
