@@ -87,8 +87,7 @@ const IntegrationDrawer = () => {
             body: data.body,
           })
           setMethod(data.method)
-        } catch (error) {
-          console.log(error)
+        } catch {
           message.error('Failed to load integration data')
         }
         setFetching(false)
