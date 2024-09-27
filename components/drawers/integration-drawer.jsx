@@ -1,5 +1,8 @@
 /* eslint-disable no-undef */
 /* eslint-disable sonarjs/no-duplicate-string */
+import { json } from '@codemirror/lang-json'
+import { dracula } from '@uiw/codemirror-theme-dracula'
+import CodeMirror from '@uiw/react-codemirror'
 import {
   Button,
   Divider,
@@ -57,7 +60,6 @@ const IntegrationDrawer = () => {
 
   const [form] = Form.useForm()
   const [method, setMethod] = useState('GET')
-  const [body, setBody] = useState({})
   const [loading, setLoading] = useState(false)
 
   const [fetching, setFetching] = useState(false)
@@ -70,7 +72,9 @@ const IntegrationDrawer = () => {
       const fetchIntegration = async () => {
         try {
           const data = await getIntegration(query['integration-id'])
-          const headers = JSON.parse(data.headers)
+          const headers = JSON.parse(
+            data?.headers.length ? data?.headers : '{}'
+          )
           form.setFieldsValue({
             name: data.name,
             url: data.url,
@@ -83,8 +87,8 @@ const IntegrationDrawer = () => {
             body: data.body,
           })
           setMethod(data.method)
-          setBody(data.body)
-        } catch {
+        } catch (error) {
+          console.log(error)
           message.error('Failed to load integration data')
         }
         setFetching(false)
@@ -109,7 +113,6 @@ const IntegrationDrawer = () => {
       const data = {
         ...values,
         headers: JSON.stringify(headers),
-        body: JSON.stringify(body),
       }
 
       if (isEdit) {
@@ -119,6 +122,7 @@ const IntegrationDrawer = () => {
         await createIntegration(data)
         message.success('Integration created successfully')
       }
+      form.resetFields()
 
       closeDrawer()
     } catch (error) {
@@ -189,7 +193,6 @@ const IntegrationDrawer = () => {
                 initialValue={'GET'}
               >
                 <Select
-                  onChange={(value) => setMethod(value)}
                   options={[
                     { label: 'GET', value: 'GET' },
                     { label: 'POST', value: 'POST' },
@@ -258,17 +261,19 @@ const IntegrationDrawer = () => {
                   <Form.Item
                     name="body"
                     label="Body"
+                    initialValue={'{}'}
                     style={{ marginBottom: 0 }}
                   >
-                    <Input.TextArea />
-                    {/* <ReactJson
-                      src={body}
-                      onEdit={handleJsonChange}
-                      onAdd={handleJsonChange}
-                      onDelete={handleJsonChange}
-                      theme="monokai"
-                      style={{ height: '300px', overflowY: 'auto' }}
-                    /> */}
+                    <CodeMirror
+                      theme={dracula}
+                      height="300px"
+                      extensions={[json()]}
+                      basicSetup={{
+                        completionKeymap: true,
+                        autocompletion: true,
+                        closeBrackets: true,
+                      }}
+                    />
                   </Form.Item>
                 </>
               )}

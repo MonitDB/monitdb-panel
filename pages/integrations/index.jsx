@@ -1,9 +1,10 @@
-import { Tabs } from 'antd'
+import { Result, Tabs } from 'antd'
 import { NextSeo } from 'next-seo'
 import { useEffect, useState } from 'react'
 
 import RenderRundeck from '~/components/integration/RenderRundeck'
 import RenderZabbix from '~/components/integration/RenderZabbix'
+import Loading from '~/components/loading'
 import { PageContent, PageHeader } from '~/components/page'
 import Layout from '~/layouts/default'
 import { listAllIntegrations } from '~/services/integration'
@@ -15,15 +16,19 @@ const RenderByType = {
 
 const Integrations = () => {
   const [integrationsList, setIntegrations] = useState([])
+  const [key, setKey] = useState()
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     const fetchAllIntegrations = async () => {
       try {
+        setLoading(true)
         const data = await listAllIntegrations()
         setIntegrations(data)
       } catch {
         /* empty */
       }
+      setLoading(false)
     }
 
     fetchAllIntegrations()
@@ -35,24 +40,35 @@ const Integrations = () => {
       <Layout>
         <PageContent removeSidebarMargin={true}>
           <PageHeader title="Integrations" />
-          <Tabs
-            defaultActiveKey="1"
-            tabPosition="left"
-            style={{ height: 220 }}
-            items={integrationsList.map((integration) => {
-              const IntegrationComponent =
-                RenderByType[integration.type] || undefined
-              return {
-                label: integration.name,
-                key: integration.id || integration.name,
-                children: IntegrationComponent ? (
-                  <IntegrationComponent id={integration.id} />
-                ) : (
-                  <div>Unknown integration type</div>
-                ),
-              }
-            })}
-          />
+          {loading && <Loading />}
+          {integrationsList.length > 0 && !loading && (
+            <Tabs
+              defaultActiveKey="1"
+              tabPosition="left"
+              onChange={setKey}
+              style={{ height: 220 }}
+              items={integrationsList.map((integration) => {
+                const IntegrationComponent =
+                  RenderByType[integration.type] || undefined
+                return {
+                  label: integration.name,
+                  key: integration.id || integration.name,
+                  children: IntegrationComponent ? (
+                    <IntegrationComponent id={integration.id} key={key} />
+                  ) : (
+                    <div>Unknown integration type</div>
+                  ),
+                }
+              })}
+            />
+          )}
+          {integrationsList.length === 0 && !loading && (
+            <Result
+              status="info"
+              title="No Integrations Found"
+              subTitle="There are currently no integrations available."
+            />
+          )}
         </PageContent>
       </Layout>
     </>

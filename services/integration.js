@@ -40,12 +40,8 @@ export const getIntegration = async (id) => {
 }
 
 export const execIntegration = async (id) => {
-  try {
-    const response = await apiV2().get(`/integration/${id}/execute`)
-    return response.data
-  } catch (error) {
-    console.error(`Error executing integration with ID ${id}:`, error)
-  }
+  const response = await apiV2().get(`/integration/${id}/execute`)
+  return response.data
 }
 
 export const updateIntegration = async (id, integrationData) => {

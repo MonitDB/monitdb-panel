@@ -57,11 +57,17 @@ const RenderZabbix = ({ id }) => {
 
   if (loading) return <Loading />
 
-  if (error)
-    return <Result status="error" title="Error to load the integration" />
+  if (data?.error || error)
+    return (
+      <Result
+        status="error"
+        title="Error to load the integration"
+        subTitle={data?.error?.data || error?.message}
+      />
+    )
   return (
     <>
-      <Typography.Title level={2}>Zabbix - Problems</Typography.Title>
+      <Typography.Title level={4}>Zabbix - Problems</Typography.Title>
       <Table size="small" dataSource={data.result} columns={columns} />
     </>
   )

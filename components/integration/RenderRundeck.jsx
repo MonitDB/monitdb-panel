@@ -5,12 +5,16 @@ import { useIntegration } from '~/hooks/index'
 import { default as Loading } from '../loading'
 
 const RenderRundeck = ({ id }) => {
-  const { data, error, loading } = useIntegration({ id })
-
+  const { data, loading, error } = useIntegration({ id })
   if (loading) return <Loading />
-
-  if (error)
-    return <Result status="error" title="Error to load the integration" />
+  if (data?.error || !!error)
+    return (
+      <Result
+        status="error"
+        title="Error to load the integration"
+        subTitle={error.message}
+      />
+    )
   return <h1>Rundeck information {data}</h1>
 }
 
