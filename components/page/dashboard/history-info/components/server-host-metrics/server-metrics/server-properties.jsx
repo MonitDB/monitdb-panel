@@ -1,4 +1,4 @@
-import { Card, Descriptions, Spin } from 'antd'
+import { Card, Descriptions, Spin, Typography } from 'antd'
 import moment from 'moment'
 import React, { useCallback, useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
@@ -55,6 +55,11 @@ export const InstanceProperties = () => {
           </div>
         ) : (
           <>
+            <ServerDetails currentServer={currentServer} />
+
+            <br />
+            <Typography.Title level={5}>Instance Properties</Typography.Title>
+
             <Descriptions size="small" column={2} bordered>
               {Object.keys(data ?? {}).map(
                 (key, index) =>
@@ -67,8 +72,6 @@ export const InstanceProperties = () => {
                   )
               )}
             </Descriptions>
-            <br />
-            <ServerDetails currentServer={currentServer} />
           </>
         )}
       </Card>

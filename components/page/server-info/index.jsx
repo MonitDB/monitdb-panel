@@ -108,7 +108,7 @@ export const ServerInfo = ({ currentServer }) => {
               FeatureFunction.SQL_PROPERTIES,
               TypeGrant.READ
             ) && (
-              <Tooltip title={'Instance Properties'}>
+              <Tooltip>
                 <Button
                   icon={<ExclamationCircleOutlined />}
                   style={{ transform: 'translateY(-1px)' }}
@@ -137,7 +137,7 @@ export const ServerInfo = ({ currentServer }) => {
       </Row>
 
       <Modal
-        title="Instance Properties"
+        title="Server details"
         visible={isModalVisible} // Controla a visibilidade
         onCancel={handleModalClose} // Fecha o modal
         footer={[

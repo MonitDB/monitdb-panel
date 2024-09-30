@@ -8,6 +8,8 @@ const ServerDetails = ({ currentServer }) => {
 
   return (
     <>
+      <Title level={5}>Server</Title>
+
       <Descriptions size="small" column={2} bordered>
         <Descriptions.Item label="Name">
           {currentServer?.serverName || 'N/A'}
@@ -51,7 +53,7 @@ const ServerDetails = ({ currentServer }) => {
       {/* IP Addresses Section */}
       {serverDetail?.serverIp && serverDetail.serverIp.length > 0 ? (
         <div style={{ marginTop: '20px' }}>
-          <Title level={4}>IP Addresses</Title>
+          <Title level={5}>IP Addresses</Title>
           {serverDetail.serverIp.map((ip) => (
             <Descriptions
               key={ip.idServerIP}
@@ -69,13 +71,13 @@ const ServerDetails = ({ currentServer }) => {
           ))}
         </div>
       ) : (
-        <p>No IPs available</p>
+        <></>
       )}
 
       {/* Services Section */}
       {serverDetail?.serverService && serverDetail.serverService.length > 0 ? (
         <div style={{ marginTop: '20px' }}>
-          <Title level={4}>Services</Title>
+          <Title level={5}>Services</Title>
           {serverDetail.serverService.map((service, index) => (
             <Descriptions
               label={`Service ${index + 1}`}
@@ -102,9 +104,7 @@ const ServerDetails = ({ currentServer }) => {
           ))}
         </div>
       ) : (
-        <Descriptions.Item label="Services">
-          No services available
-        </Descriptions.Item>
+        <></>
       )}
     </>
   )
