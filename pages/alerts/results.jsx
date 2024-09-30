@@ -244,6 +244,9 @@ const AlertsDetailsPage = () => {
                   <span>All</span>
                 </label>
               </div> */}
+              <Button onClick={getAlertsData} type="primary">
+                Refresh
+              </Button>
             </form>
           </PageContent>
 

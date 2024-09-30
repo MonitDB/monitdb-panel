@@ -772,9 +772,6 @@ const AnalysisPage = () => {
                     bordered
                     size="small"
                   >
-                    <Descriptions.Text label="TextData">
-                      {modalQueryProfileData.textData ?? '-'}
-                    </Descriptions.Text>
                     <Descriptions.Text label="Login Name">
                       {modalQueryProfileData.loginName ?? '-'}
                     </Descriptions.Text>
@@ -824,6 +821,11 @@ const AnalysisPage = () => {
                       )}` ?? '-'}
                     </Descriptions.Text>
                   </Descriptions>
+                  <Highlighter
+                    code={modalQueryProfileData.textData ?? '-'}
+                    showLineNumbers={true}
+                    maxHeight={'350px'}
+                  />
                 </div>
               </Modal>
             )}
