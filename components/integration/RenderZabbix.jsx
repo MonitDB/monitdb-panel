@@ -5,6 +5,7 @@ import { useIntegration } from '~/hooks/index'
 import { default as Loading } from '../loading'
 
 const columns = [
+  { title: 'Host Name', dataIndex: 'host', render: (value) => value.host },
   {
     title: 'Event ID',
     dataIndex: 'eventid',
