@@ -104,9 +104,16 @@ function CurrentActivity(properties) {
               dataSource={data[componentCode]}
               columns={[
                 { dataIndex: 'session_id', title: 'Session ID' },
+                { dataIndex: 'database_name', title: 'Database Name' },
                 { dataIndex: 'host_name', title: 'Host Name' },
                 { dataIndex: 'login_name', title: 'Login Name' },
                 { dataIndex: 'status', title: 'status' },
+                { dataIndex: 'collection_time', title: 'Collection Time' },
+                {
+                  dataIndex: 'blocking_session_id',
+                  title: 'Blocking Session ID',
+                },
+                { dataIndex: 'percent_complete', title: 'Percent Complete' },
               ]}
               onRow={(record) => ({
                 style: { cursor: 'pointer' },
