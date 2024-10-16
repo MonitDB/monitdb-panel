@@ -42,7 +42,14 @@ const DashboardPage = () => {
     const INITIAL_REFRESH_INTERVAL = Number(
       localStorage.getItem(REFRESH_INTERVAL_LOCAL_STORAGE_KEY) || 15 * SECOND
     )
-    setRefreshInterval(INITIAL_REFRESH_INTERVAL)
+
+    const intervalId = setInterval(() => {
+      setRefreshInterval(INITIAL_REFRESH_INTERVAL)
+    }, INITIAL_REFRESH_INTERVAL)
+
+    return () => {
+      clearInterval(intervalId)
+    }
   }, [])
 
   const [formattedEnvironments, setFormattedEnvironments] = useState([])

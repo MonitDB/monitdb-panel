@@ -26,7 +26,7 @@ export const GlobalContextProvider = ({ children }) => {
       const [responseServers, responseTypes, responseEnvironments] =
         await Promise.all(promises)
 
-      setInterval(async () => {
+      const intervalId = setInterval(async () => {
         const serversData = await getServers()
         setGlobalState((oldGlobalState) => ({
           ...oldGlobalState,
@@ -40,6 +40,10 @@ export const GlobalContextProvider = ({ children }) => {
         serverTypes: responseTypes?.data || [],
         serverEnvironments: responseEnvironments?.data || [],
       }))
+
+      return () => {
+        clearInterval(intervalId)
+      }
     } catch (error) {
       console.error(error) // eslint-disable-line no-console
     }
