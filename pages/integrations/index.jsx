@@ -54,13 +54,15 @@ const Integrations = () => {
       <Layout>
         <PageContent removeSidebarMargin={true}>
           <PageHeader title="Integrations" />
-          <Row style={{ marginBottom: 20 }}>
-            <Col offset={20}>
-              <Button type="primary" onClick={() => handleRefresh(activeKey)}>
-                Refresh
-              </Button>
-            </Col>
-          </Row>
+          {!loading && (
+            <Row style={{ marginBottom: 20 }}>
+              <Col offset={22}>
+                <Button type="primary" onClick={() => handleRefresh(activeKey)}>
+                  Refresh
+                </Button>
+              </Col>
+            </Row>
+          )}
           {loading && <Loading />}
           {integrationsList?.length > 0 && !loading && (
             <Tabs
