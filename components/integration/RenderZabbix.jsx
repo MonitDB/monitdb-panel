@@ -1,6 +1,8 @@
 import { Result, Typography } from 'antd'
+import { useEffect, useState } from 'react'
 
 import { useIntegration } from '~/hooks/index'
+import { execIntegration } from '~/services/integration'
 
 import { default as Loading } from '../loading'
 import { GenericTable } from '../table/genericTable'
@@ -16,7 +18,30 @@ const renderTable = (data) => {
 }
 
 const RenderZabbix = ({ id }) => {
-  const { data, error, loading } = useIntegration({ id })
+  const [data, setData] = useState()
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
+
+  useEffect(() => {
+    const fetchIntegration = async () => {
+      try {
+        setLoading(true)
+        setError()
+        const result = await execIntegration(id)
+        setData(result)
+      } catch (error) {
+        setError(error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    if (id) {
+      fetchIntegration()
+    } else {
+      setLoading(false)
+    }
+  }, [id])
 
   if (loading) return <Loading />
 
@@ -30,7 +55,7 @@ const RenderZabbix = ({ id }) => {
     )
   return (
     <>
-      <Typography.Title level={4}>Zabbix - Problems</Typography.Title>
+      <Typography.Title level={4}>Zabbix</Typography.Title>
       {renderTable(data)}
     </>
   )

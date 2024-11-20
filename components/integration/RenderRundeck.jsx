@@ -1,11 +1,37 @@
 import { Result } from 'antd'
+import { useEffect, useState } from 'react'
 
-import { useIntegration } from '~/hooks/index'
+import { execIntegration } from '~/services/integration'
 
 import { default as Loading } from '../loading'
 
 const RenderRundeck = ({ id }) => {
-  const { data, loading, error } = useIntegration({ id })
+  const [data, setData] = useState()
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
+
+  useEffect(() => {
+    const fetchIntegration = async () => {
+      try {
+        setLoading(true)
+        setError()
+        const result = await execIntegration(id)
+        setData(result)
+      } catch (error) {
+        console.log(error, 'aaa')
+        setError(error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    if (id) {
+      fetchIntegration()
+    } else {
+      setLoading(false)
+    }
+  }, [id])
+
   if (loading) return <Loading />
   if (data?.error || !!error)
     return (

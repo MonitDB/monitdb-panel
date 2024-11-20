@@ -1,6 +1,9 @@
 import { Table, Tag } from 'antd'
 import moment from 'moment'
 
+import ColumnSearch from '~/components/table/searchFilter'
+import useColumnSearch from '~/components/table/useColumnSearch'
+
 const severityMapping = {
   0: { label: 'Not Classified', color: 'default' },
   1: { label: 'Information', color: 'blue' },
@@ -26,84 +29,92 @@ const suppressedMapping = {
   1: { label: 'Suppressed', color: 'orange' },
 }
 
-const columns = [
-  {
-    title: 'Event ID',
-    dataIndex: 'eventid',
-    key: 'eventid',
-  },
-  {
-    title: 'Time',
-    dataIndex: 'clock',
-    key: 'clock',
-    render: (value) => {
-      return moment(Number(value)).format('HH:mm:ss')
-    },
-  },
-  { title: 'Host Name', dataIndex: 'host', render: (value) => value.host },
-  {
-    title: 'Severity',
-    dataIndex: 'severity',
-    key: 'severity',
-    render: (severity) => {
-      const { label, color } = severityMapping[severity] || {
-        label: 'Unknown',
-        color: 'default',
-      }
-      return <Tag color={color}>{label}</Tag>
-    },
-  },
+const ProblemsGetTable = (info) => {
+  const { data } = info
 
-  {
-    title: 'Source',
-    dataIndex: 'source',
-    key: 'source',
-    render: (source) => {
-      const { label, color } = sourceMapping[source] || {
-        label: 'Unknown',
-        color: 'default',
-      }
-      return <Tag color={color}>{label}</Tag>
-    },
-  },
-  {
-    title: 'Name',
-    dataIndex: 'name',
-    key: 'name',
-  },
-  {
-    title: 'Object ID',
-    dataIndex: 'objectid',
-    key: 'objectid',
-  },
+  const { getColumnSearchProps } = useColumnSearch('host') // Passar o dataIndex como 'host'
 
-  {
-    title: 'Acknowledged',
-    dataIndex: 'acknowledged',
-    key: 'acknowledged',
-    render: (acknowledged) => {
-      const { label, color } = acknowledgedMapping[acknowledged] || {
-        label: 'Unknown',
-        color: 'default',
-      }
-      return <Tag color={color}>{label}</Tag>
+  const columns = [
+    {
+      title: 'Event ID',
+      dataIndex: 'eventid',
+      key: 'eventid',
     },
-  },
-  {
-    title: 'Suppressed',
-    dataIndex: 'suppressed',
-    key: 'suppressed',
-    render: (suppressed) => {
-      const { label, color } = suppressedMapping[suppressed] || {
-        label: 'Unknown',
-        color: 'default',
-      }
-      return <Tag color={color}>{label}</Tag>
+    {
+      title: 'Time',
+      dataIndex: 'clock',
+      key: 'clock',
+      render: (value) => {
+        return moment(Number(value)).format('HH:mm:ss')
+      },
     },
-  },
-]
+    {
+      title: 'Host Name',
+      dataIndex: 'host',
+      render: (value) => value,
+      ...ColumnSearch({ dataIndex: 'host' }),
+    },
+    {
+      title: 'Severity',
+      dataIndex: 'severity',
+      key: 'severity',
+      render: (severity) => {
+        const { label, color } = severityMapping[severity] || {
+          label: 'Unknown',
+          color: 'default',
+        }
+        return <Tag color={color}>{label}</Tag>
+      },
+    },
 
-const ProblemsGetTable = (data) => {
+    {
+      title: 'Source',
+      dataIndex: 'source',
+      key: 'source',
+      render: (source) => {
+        const { label, color } = sourceMapping[source] || {
+          label: 'Unknown',
+          color: 'default',
+        }
+        return <Tag color={color}>{label}</Tag>
+      },
+    },
+    {
+      title: 'Name',
+      dataIndex: 'name',
+      key: 'name',
+    },
+    {
+      title: 'Object ID',
+      dataIndex: 'objectid',
+      key: 'objectid',
+    },
+
+    {
+      title: 'Acknowledged',
+      dataIndex: 'acknowledged',
+      key: 'acknowledged',
+      render: (acknowledged) => {
+        const { label, color } = acknowledgedMapping[acknowledged] || {
+          label: 'Unknown',
+          color: 'default',
+        }
+        return <Tag color={color}>{label}</Tag>
+      },
+    },
+    {
+      title: 'Suppressed',
+      dataIndex: 'suppressed',
+      key: 'suppressed',
+      render: (suppressed) => {
+        const { label, color } = suppressedMapping[suppressed] || {
+          label: 'Unknown',
+          color: 'default',
+        }
+        return <Tag color={color}>{label}</Tag>
+      },
+    },
+  ]
   return <Table size="small" dataSource={data.result} columns={columns} />
 }
 

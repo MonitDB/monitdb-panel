@@ -1,6 +1,6 @@
 import { Result, Tabs } from 'antd'
 import { NextSeo } from 'next-seo'
-import { useEffect, useState } from 'react'
+import { memo, useEffect, useState } from 'react'
 
 import RenderRundeck from '~/components/integration/RenderRundeck'
 import RenderZabbix from '~/components/integration/RenderZabbix'
@@ -9,9 +9,12 @@ import { PageContent, PageHeader } from '~/components/page'
 import Layout from '~/layouts/default'
 import { listAllIntegrations } from '~/services/integration'
 
+const MemoizedRenderRundeck = memo(RenderRundeck)
+const MemoizedRenderZabbix = memo(RenderZabbix)
+
 const RenderByType = {
-  zabbix: RenderZabbix,
-  rundeck: RenderRundeck,
+  zabbix: MemoizedRenderZabbix,
+  rundeck: MemoizedRenderRundeck,
 }
 
 const Integrations = () => {
@@ -47,6 +50,7 @@ const Integrations = () => {
               tabPosition="left"
               onChange={setKey}
               style={{ height: 220 }}
+              destroyInactiveTabPane={false}
               items={integrationsList.map((integration) => {
                 const IntegrationComponent =
                   RenderByType[integration.type] || undefined
@@ -54,7 +58,7 @@ const Integrations = () => {
                   label: integration.name,
                   key: integration.id || integration.name,
                   children: IntegrationComponent ? (
-                    <IntegrationComponent id={integration.id} key={key} />
+                    <IntegrationComponent id={integration.id} />
                   ) : (
                     <div>Unknown integration type</div>
                   ),
