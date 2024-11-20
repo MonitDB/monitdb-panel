@@ -1,4 +1,4 @@
-import { Result, Tabs } from 'antd'
+import { Button, Col, Result, Row, Tabs } from 'antd'
 import { NextSeo } from 'next-seo'
 import { memo, useEffect, useState } from 'react'
 
@@ -19,8 +19,9 @@ const RenderByType = {
 
 const Integrations = () => {
   const [integrationsList, setIntegrations] = useState([])
-  const [, setKey] = useState()
+  const [activeKey, setActiveKey] = useState(0)
   const [loading, setLoading] = useState(false)
+  const [refreshKeys, setRefreshKeys] = useState({})
 
   useEffect(() => {
     const fetchAllIntegrations = async () => {
@@ -28,6 +29,9 @@ const Integrations = () => {
         setLoading(true)
         const data = await listAllIntegrations()
         setIntegrations(data)
+        if (data.length > 0) {
+          setActiveKey(data[0].id)
+        }
       } catch {
         /* empty */
       }
@@ -37,28 +41,46 @@ const Integrations = () => {
     fetchAllIntegrations()
   }, [])
 
+  const handleRefresh = (key) => {
+    setRefreshKeys((previousKeys) => ({
+      ...previousKeys,
+      [key]: (previousKeys[key] || 0) + 1,
+    }))
+  }
+
   return (
     <>
       <NextSeo title="Integrations - Configurations - MonitDB" />
       <Layout>
         <PageContent removeSidebarMargin={true}>
           <PageHeader title="Integrations" />
+          <Row style={{ marginBottom: 20 }}>
+            <Col offset={20}>
+              <Button type="primary" onClick={() => handleRefresh(activeKey)}>
+                Refresh
+              </Button>
+            </Col>
+          </Row>
           {loading && <Loading />}
           {integrationsList?.length > 0 && !loading && (
             <Tabs
-              defaultActiveKey="1"
+              activeKey={activeKey}
+              onChange={setActiveKey}
               tabPosition="left"
-              onChange={setKey}
               style={{ height: 220 }}
               destroyInactiveTabPane={false}
               items={integrationsList.map((integration) => {
                 const IntegrationComponent =
                   RenderByType[integration.type] || undefined
+                const refreshKey = refreshKeys[integration.id] || 0
                 return {
                   label: integration.name,
                   key: integration.id || integration.name,
                   children: IntegrationComponent ? (
-                    <IntegrationComponent id={integration.id} />
+                    <IntegrationComponent
+                      id={integration.id}
+                      key={refreshKey}
+                    />
                   ) : (
                     <div>Unknown integration type</div>
                   ),
