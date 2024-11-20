@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable unicorn/prevent-abbreviations */
 import { SearchOutlined } from '@ant-design/icons'
 import { Button, Input, Space } from 'antd'
 import React, { useRef, useState } from 'react'
@@ -5,7 +7,7 @@ import Highlighter from 'react-highlight-words'
 
 const ColumnSearch = ({ dataIndex, setFilters }) => {
   const [searchText, setSearchText] = useState('')
-  const [searchedColumn, setSearchedColumn] = useState(null)
+  const [searchedColumn, setSearchedColumn] = useState()
   const searchInput = useRef(null)
 
   const handleSearch = (selectedKeys, confirm) => {
@@ -18,7 +20,7 @@ const ColumnSearch = ({ dataIndex, setFilters }) => {
   const handleReset = (clearFilters) => {
     clearFilters()
     setSearchText('')
-    setSearchedColumn(null)
+    setSearchedColumn()
   }
 
   return {
@@ -77,8 +79,7 @@ const ColumnSearch = ({ dataIndex, setFilters }) => {
     filterIcon: (filtered) => (
       <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
     ),
-    onFilter: (value, record, a) => {
-      console.log(dataIndex, record)
+    onFilter: (value, record) => {
       return record[dataIndex]
         ?.toString()
         .toLowerCase()

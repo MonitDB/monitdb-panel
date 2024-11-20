@@ -2,7 +2,6 @@ import { Table, Tag } from 'antd'
 import moment from 'moment'
 
 import ColumnSearch from '~/components/table/searchFilter'
-import useColumnSearch from '~/components/table/useColumnSearch'
 
 const severityMapping = {
   0: { label: 'Not Classified', color: 'default' },
@@ -31,8 +30,6 @@ const suppressedMapping = {
 
 const ProblemsGetTable = (info) => {
   const { data } = info
-
-  const { getColumnSearchProps } = useColumnSearch('host') // Passar o dataIndex como 'host'
 
   const columns = [
     {

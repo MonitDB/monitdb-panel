@@ -19,7 +19,7 @@ const RenderByType = {
 
 const Integrations = () => {
   const [integrationsList, setIntegrations] = useState([])
-  const [key, setKey] = useState()
+  const [, setKey] = useState()
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {

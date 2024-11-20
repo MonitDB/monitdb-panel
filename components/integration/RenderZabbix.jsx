@@ -1,7 +1,7 @@
+/* eslint-disable sonarjs/no-small-switch */
 import { Result, Typography } from 'antd'
 import { useEffect, useState } from 'react'
 
-import { useIntegration } from '~/hooks/index'
 import { execIntegration } from '~/services/integration'
 
 import { default as Loading } from '../loading'

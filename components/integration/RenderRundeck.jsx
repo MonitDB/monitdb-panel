@@ -18,7 +18,6 @@ const RenderRundeck = ({ id }) => {
         const result = await execIntegration(id)
         setData(result)
       } catch (error) {
-        console.log(error, 'aaa')
         setError(error)
       } finally {
         setLoading(false)

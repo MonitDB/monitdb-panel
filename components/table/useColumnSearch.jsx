@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable unicorn/prevent-abbreviations */
 // Hook para a busca de coluna
 import { SearchOutlined } from '@ant-design/icons'
 import { Button, Input, Space } from 'antd'
