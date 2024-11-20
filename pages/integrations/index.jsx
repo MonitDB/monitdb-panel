@@ -41,7 +41,7 @@ const Integrations = () => {
         <PageContent removeSidebarMargin={true}>
           <PageHeader title="Integrations" />
           {loading && <Loading />}
-          {integrationsList.length > 0 && !loading && (
+          {integrationsList?.length > 0 && !loading && (
             <Tabs
               defaultActiveKey="1"
               tabPosition="left"
@@ -62,7 +62,7 @@ const Integrations = () => {
               })}
             />
           )}
-          {integrationsList.length === 0 && !loading && (
+          {integrationsList?.length === 0 && !loading && (
             <Result
               status="info"
               title="No Integrations Found"
