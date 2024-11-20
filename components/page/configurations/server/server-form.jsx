@@ -70,7 +70,7 @@ const ServerForm = () => {
           >
             <Select
               options={serverTypes.map((type) => ({
-                label: type.typeServerName,
+                label: type?.typeServerName,
                 value: type.id,
               }))}
             />

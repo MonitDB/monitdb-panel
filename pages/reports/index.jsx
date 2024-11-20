@@ -156,7 +156,7 @@ const AlertsPage = () => {
                                 </h4>
                                 <div className="absolute top-1/2 right-0 transform -translate-y-1/2 rounded-full border-gray-light p-4 transition-all duration-200 ease-in-out opacity-50 lg:group-hover:opacity-100">
                                   <DatabaseIcons
-                                    name={record.type.typeServerName}
+                                    name={record.type?.typeServerName}
                                     className="w-8 h-8"
                                   />
                                 </div>

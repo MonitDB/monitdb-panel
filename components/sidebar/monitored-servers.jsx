@@ -113,7 +113,7 @@ const MonitoredServers = ({
                                   <span className="text-left text-xs">
                                     {server.serverName} -{' '}
                                     <span className="opacity-50">
-                                      {server.type.typeServerName}
+                                      {server.type?.typeServerName}
                                     </span>
                                   </span>
                                 </Link>

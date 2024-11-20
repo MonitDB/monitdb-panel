@@ -95,7 +95,7 @@ export const ServerInfo = ({ currentServer }) => {
             }}
           >
             <DatabaseIcons
-              name={currentServer.type.typeServerName}
+              name={currentServer.type?.typeServerName}
               className="w-24 h-24"
             />
           </Avatar>

@@ -93,7 +93,7 @@ const ServerInformationStep = ({ handleNextStep, form }) => {
                         placeholder="Server type"
                         options={serverTypes.map((type) => ({
                           value: type.id,
-                          label: type.typeServerName,
+                          label: type?.typeServerName,
                         }))}
                       />
                     </Form.Item>
