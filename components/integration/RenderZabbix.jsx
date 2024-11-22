@@ -6,14 +6,26 @@ import { execIntegration } from '~/services/integration'
 
 import { default as Loading } from '../loading'
 import { GenericTable } from '../table/genericTable'
+import HostsGetTable from './components/zabbix/HostsGet'
 import ProblemsGetTable from './components/zabbix/ProblemsGet'
 
 const renderTable = (data) => {
   switch (data?.method) {
     case 'problem.get':
       return <ProblemsGetTable data={data} />
+    case 'host.get':
+      return <HostsGetTable data={data} />
     default:
-      return <GenericTable data={data.result} />
+      return (
+        <GenericTable
+          data={data.result}
+          pagination={{
+            total: data.result.length,
+            showSizeChanger: true,
+            pageSizeOptions: ['10', '20', '50', '100'],
+          }}
+        />
+      )
   }
 }
 

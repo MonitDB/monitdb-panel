@@ -1,29 +1,27 @@
-/* eslint-disable jsx-a11y/no-static-element-interactions */
-/* eslint-disable unicorn/prevent-abbreviations */
-// Hook para a busca de coluna
 import { SearchOutlined } from '@ant-design/icons'
 import { Button, Input, Space } from 'antd'
 import React, { useRef, useState } from 'react'
 import Highlighter from 'react-highlight-words'
 
-const useColumnSearch = (dataIndex) => {
+const useColumnSearch = (dataIndex, setFilters) => {
   const [searchText, setSearchText] = useState('')
-  const [searchedColumn, setSearchedColumn] = useState()
+  const [searchedColumn, setSearchedColumn] = useState('')
   const searchInput = useRef(null)
 
   const handleSearch = (selectedKeys, confirm) => {
     confirm()
     setSearchText(selectedKeys[0])
     setSearchedColumn(dataIndex)
+    setFilters?.(selectedKeys[0])
   }
 
   const handleReset = (clearFilters) => {
     clearFilters()
     setSearchText('')
-    setSearchedColumn()
+    setSearchedColumn('')
   }
 
-  const getColumnSearchProperties = () => ({
+  return {
     filterDropdown: ({
       setSelectedKeys,
       selectedKeys,
@@ -31,6 +29,7 @@ const useColumnSearch = (dataIndex) => {
       clearFilters,
       close,
     }) => (
+      // eslint-disable-next-line jsx-a11y/no-static-element-interactions
       <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
         <Input
           ref={searchInput}
@@ -80,7 +79,7 @@ const useColumnSearch = (dataIndex) => {
       <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
     ),
     onFilter: (value, record) =>
-      record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
+      record[dataIndex]?.toString().toLowerCase().includes(value.toLowerCase()),
     onFilterDropdownOpenChange: (visible) => {
       if (visible) {
         setTimeout(() => searchInput.current?.select(), 100)
@@ -97,9 +96,7 @@ const useColumnSearch = (dataIndex) => {
       ) : (
         text
       ),
-  })
-
-  return { getColumnSearchProps: getColumnSearchProperties }
+  }
 }
 
 export default useColumnSearch

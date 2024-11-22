@@ -1,15 +1,19 @@
 /* eslint-disable sonarjs/no-identical-functions */
 import { Table, Tag } from 'antd'
 
-import ColumnSearch from '~/components/table/searchFilter'
+import useColumnSearch from '~/components/table/useColumnSearch'
 
 const statusMapping = {
   0: { label: 'Monitored', color: 'default' },
   1: { label: 'Unmonitored', color: 'blue' },
 }
+const maintenceStatusMapping = {
+  0: { label: 'No maintenance', color: 'default' },
+  1: { label: 'Maintenance in effect', color: 'blue' },
+}
 
 const flagsMapping = {
-  1: { label: 'Plain host', color: 'green' },
+  0: { label: 'Plain host', color: 'green' },
   3: { label: 'Discovered host', color: 'purple' },
 }
 
@@ -22,22 +26,26 @@ const tlsMapping = {
 const HostsGetTable = (info) => {
   const { data } = info
 
+  const hostSearch = useColumnSearch('host')
+  const nameSearch = useColumnSearch('name')
+
   const columns = [
     {
       title: 'Host ID',
-      dataIndex: 'hostId',
+      dataIndex: 'hostid',
       key: 'hostId',
     },
     {
       title: 'Host ',
       dataIndex: 'host',
       key: 'host',
+      ...hostSearch,
     },
     {
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
-      ...ColumnSearch('name'),
+      ...nameSearch,
     },
     {
       title: 'Description',
@@ -48,7 +56,18 @@ const HostsGetTable = (info) => {
       title: 'Status',
       dataIndex: 'status',
       render: (status) => {
-        const { label, color } = statusMapping[status] || {
+        const { label, color } = statusMapping[Number(status)] || {
+          label: 'Unknown',
+          color: 'default',
+        }
+        return <Tag color={color}>{label}</Tag>
+      },
+    },
+    {
+      title: 'Maintence Status',
+      dataIndex: 'maintenance_status',
+      render: (status) => {
+        const { label, color } = maintenceStatusMapping[Number(status)] || {
           label: 'Unknown',
           color: 'default',
         }
@@ -60,7 +79,7 @@ const HostsGetTable = (info) => {
       dataIndex: 'flags',
       key: 'flags',
       render: (flag) => {
-        const { label, color } = flagsMapping[flag] || {
+        const { label, color } = flagsMapping[Number(flag)] || {
           label: 'Unknown',
           color: 'default',
         }
@@ -76,10 +95,10 @@ const HostsGetTable = (info) => {
 
     {
       title: 'TLS Connect',
-      dataIndex: 'tlsconnect',
+      dataIndex: 'tls_connect',
       key: 'tlsconnect',
       render: (tls) => {
-        const { label, color } = tlsMapping[tls] || {
+        const { label, color } = tlsMapping[Number(tls)] || {
           label: 'Unknown',
           color: 'default',
         }
@@ -88,10 +107,10 @@ const HostsGetTable = (info) => {
     },
     {
       title: 'TLS Accept',
-      dataIndex: 'tlsaccept',
+      dataIndex: 'tls_accept',
       key: 'tlsaccept',
       render: (tls) => {
-        const { label, color } = tlsMapping[tls] || {
+        const { label, color } = tlsMapping[Number(tls)] || {
           label: 'Unknown',
           color: 'default',
         }
@@ -99,7 +118,18 @@ const HostsGetTable = (info) => {
       },
     },
   ]
-  return <Table size="small" dataSource={data.result} columns={columns} />
+  return (
+    <Table
+      size="small"
+      dataSource={data.result}
+      columns={columns}
+      pagination={{
+        total: data.result.length,
+        showSizeChanger: true,
+        pageSizeOptions: ['10', '20', '50', '100'],
+      }}
+    />
+  )
 }
 
 export default HostsGetTable

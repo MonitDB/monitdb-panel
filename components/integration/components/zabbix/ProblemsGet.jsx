@@ -1,7 +1,7 @@
 import { Table, Tag } from 'antd'
 import moment from 'moment'
 
-import ColumnSearch from '~/components/table/searchFilter'
+import useColumnSearch from '~/components/table/useColumnSearch'
 
 const severityMapping = {
   0: { label: 'Not Classified', color: 'default' },
@@ -31,6 +31,8 @@ const suppressedMapping = {
 const ProblemsGetTable = (info) => {
   const { data } = info
 
+  const hostSearch = useColumnSearch('host')
+
   const columns = [
     {
       title: 'Event ID',
@@ -49,7 +51,7 @@ const ProblemsGetTable = (info) => {
       title: 'Host Name',
       dataIndex: 'host',
       render: (value) => value,
-      ...ColumnSearch({ dataIndex: 'host' }),
+      ...hostSearch,
     },
     {
       title: 'Severity',
@@ -112,7 +114,18 @@ const ProblemsGetTable = (info) => {
       },
     },
   ]
-  return <Table size="small" dataSource={data.result} columns={columns} />
+  return (
+    <Table
+      size="small"
+      dataSource={data.result}
+      columns={columns}
+      pagination={{
+        total: data.result.length,
+        showSizeChanger: true,
+        pageSizeOptions: ['10', '20', '50', '100'],
+      }}
+    />
+  )
 }
 
 export default ProblemsGetTable
