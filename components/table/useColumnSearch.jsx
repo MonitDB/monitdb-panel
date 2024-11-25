@@ -1,3 +1,4 @@
+/* eslint-disable unicorn/prevent-abbreviations */
 import { SearchOutlined } from '@ant-design/icons'
 import { Button, Input, Space } from 'antd'
 import React, { useRef, useState } from 'react'
@@ -29,7 +30,7 @@ const useColumnSearch = (dataIndex, setFilters) => {
       clearFilters,
       close,
     }) => (
-      // eslint-disable-next-line jsx-a11y/no-static-element-interactions
+      // eslint-disable-next-line jsx-a11y/no-static-element-interactions, unicorn/prevent-abbreviations
       <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
         <Input
           ref={searchInput}
