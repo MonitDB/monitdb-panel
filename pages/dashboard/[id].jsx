@@ -118,7 +118,7 @@ const SingleDashboard = () => {
           FeatureFunction.SP_BLITZ_QUERY_STORE,
           FeatureFunction.SP_BLITZ_WHO,
         ],
-        TypeGrant.READ
+        TypeGrant.EXECUTE
       ),
     },
   ]

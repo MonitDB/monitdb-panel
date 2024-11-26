@@ -122,7 +122,7 @@ export const TuningAdvisor = ({ currentServer }) => {
   }, [executeQueryComponent, componentCode, id])
   useEffect(() => {
     const [firstOption] = Options
-    setComponentCode(firstOption.value)
+    setComponentCode(firstOption?.value)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 

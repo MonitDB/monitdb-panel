@@ -8,6 +8,7 @@ import {
   SECOND,
 } from 'const/time'
 import { useFormik } from 'formik'
+import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
@@ -21,7 +22,9 @@ import { useUser } from '~/hooks/index'
 import useGlobal from '~/hooks/use-global'
 import Layout from '~/layouts/default'
 import {
+  Feature,
   FeatureFunction,
+  hasFeature,
   hasPermission,
   TypeGrant,
 } from '~/utils/hasPermission'
@@ -37,8 +40,11 @@ const DashboardPage = () => {
   const [activeKey, setActiveKey] = useState([])
 
   const [refreshInterval, setRefreshInterval] = useState(HOUR)
+  const router = useRouter()
 
   useEffect(() => {
+    if (!hasFeature(user, Feature.DASHBOARD) && user.grants) router.push('/403')
+
     const INITIAL_REFRESH_INTERVAL = Number(
       localStorage.getItem(REFRESH_INTERVAL_LOCAL_STORAGE_KEY) || 15 * SECOND
     )
@@ -50,7 +56,7 @@ const DashboardPage = () => {
     return () => {
       clearInterval(intervalId)
     }
-  }, [])
+  }, [router, user])
 
   const [formattedEnvironments, setFormattedEnvironments] = useState([])
 
