@@ -7,6 +7,7 @@ import { useUser } from '~/hooks/index'
 import {
   FeatureFunction,
   hasPermission,
+  hasSomePermissions,
   TypeGrant,
 } from '~/utils/hasPermission'
 
@@ -106,8 +107,17 @@ const HistoryInfo = ({ currentServer }) => {
             currentServer={currentServer}
           />
         )}
-
-        <Temppdb />
+        {hasSomePermissions(
+          user,
+          [
+            FeatureFunction.TEMPDB_DATABASE,
+            FeatureFunction.TEMPDB_LOGIN,
+            FeatureFunction.TEMPDB_PROGRAM,
+            FeatureFunction.TEMPDB_SESSION,
+            FeatureFunction.TEMPDB_USAGE_SUMMARY,
+          ],
+          TypeGrant.READ
+        ) && <Temppdb />}
         <Permissions currentServer={currentServer} />
         {hasPermission(
           user,

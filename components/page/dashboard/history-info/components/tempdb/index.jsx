@@ -5,6 +5,12 @@ import { Tabs } from 'antd'
 import React from 'react'
 
 import Image from '~/components/image'
+import { useUser } from '~/hooks/index'
+import {
+  FeatureFunction,
+  hasPermission,
+  TypeGrant,
+} from '~/utils/hasPermission'
 
 import { TemporaryDBDatabase } from './components/Database'
 import { TemporaryDBLogin } from './components/Login'
@@ -13,6 +19,57 @@ import { TemporaryDBSession } from './components/Session'
 import { TemporaryDBSummary } from './components/Summary'
 
 const Temppdb = () => {
+  const { userState: user } = useUser()
+
+  const items = [
+    {
+      key: '1',
+      label: 'Usage Summary',
+      children: <TemporaryDBSummary />,
+      render: hasPermission(
+        user,
+        FeatureFunction.TEMPDB_USAGE_SUMMARY,
+        TypeGrant.READ
+      ),
+    },
+    {
+      key: '2',
+      label: 'Session',
+      children: <TemporaryDBSession />,
+      render: hasPermission(
+        user,
+        FeatureFunction.TEMPDB_SESSION,
+        TypeGrant.READ
+      ),
+    },
+    {
+      key: '3',
+      label: 'Login',
+      children: <TemporaryDBLogin />,
+      render: hasPermission(user, FeatureFunction.TEMPDB_LOGIN, TypeGrant.READ),
+    },
+    {
+      key: '4',
+      label: 'Program',
+      children: <TemporaryDBProgram />,
+      render: hasPermission(
+        user,
+        FeatureFunction.TEMPDB_PROGRAM,
+        TypeGrant.READ
+      ),
+    },
+    {
+      key: '5',
+      label: 'Database',
+      children: <TemporaryDBDatabase />,
+      render: hasPermission(
+        user,
+        FeatureFunction.TEMPDB_DATABASE,
+        TypeGrant.READ
+      ),
+    },
+  ]
+
   return (
     <div id="tempdb">
       <div className="grid grid-cols-[18px_auto_1fr] gap-2 items-center my-8">
@@ -27,33 +84,7 @@ const Temppdb = () => {
       <div>
         <Tabs
           defaultActiveKey="1"
-          items={[
-            {
-              key: '1',
-              label: 'Usage Summary',
-              children: <TemporaryDBSummary />,
-            },
-            {
-              key: '2',
-              label: 'Session',
-              children: <TemporaryDBSession />,
-            },
-            {
-              key: '3',
-              label: 'Login',
-              children: <TemporaryDBLogin />,
-            },
-            {
-              key: '4',
-              label: 'Program',
-              children: <TemporaryDBProgram />,
-            },
-            {
-              key: '5',
-              label: 'Database',
-              children: <TemporaryDBDatabase />,
-            },
-          ]}
+          items={items.filter((item) => item.render)}
           style={{ width: '100%' }}
         />
       </div>
