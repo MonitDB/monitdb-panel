@@ -9,6 +9,7 @@ import useLogContext from '~/services/state-manager/logs'
 import {
   FeatureFunction,
   hasPermission,
+  hasSomePermissions,
   TypeGrant,
 } from '~/utils/hasPermission'
 
@@ -59,126 +60,170 @@ const ServerMetrics = ({ key }) => {
     <div className="mt-6" key={key} id="sql-server-metrics">
       <h3 className="font-bold mb-6">SQL Server metrics</h3>
       <div>
-        <h4 className="mb-6 text-sm">General</h4>
-        <Row gutter={[16, 16]}>
-          {hasPermission(
-            user,
-            FeatureFunction.SQL_SERVER_METRICS_BATCH_REQUESTS,
-            TypeGrant.READ
-          ) && (
-            <Col xs={24} md={12} lg={8}>
-              <BatchRequests
-                isLoading={isLoading}
-                seriesData={data?.batchRequest?.map(formatData) ?? []}
-                group={'opa'}
-              />
-            </Col>
-          )}
-          {hasPermission(
-            user,
-            FeatureFunction.SQL_SERVER_METRICS_SQLCOMPILATIONS_BATCH_REQUESTS,
-            TypeGrant.READ
-          ) && (
-            <Col xs={24} md={12} lg={8}>
-              <SqlCompilationsBatchRequests
-                isLoading={isLoading}
-                seriesData={
-                  data?.sqlCompilationsPerBatchRequests?.map(formatData) ?? []
-                }
-                group={'opa'}
-              />
-            </Col>
-          )}
-          {hasPermission(
-            user,
-            FeatureFunction.SQL_SERVER_METRICS_PAGE_SPLITS_BATCH_REQUESTS,
-            TypeGrant.READ
-          ) && (
-            <Col xs={24} md={12} lg={8}>
-              <PageSplitsBatchRequests
-                isLoading={isLoading}
-                seriesData={
-                  data?.pageSplitsDataPerBatchRequests?.map(formatData) ?? []
-                }
-              />
-            </Col>
-          )}
-          {hasPermission(
-            user,
-            FeatureFunction.SQL_SERVER_METRICS_SQLCOMPILATIONS_SEC,
-            TypeGrant.READ
-          ) && (
-            <Col xs={24} md={12} lg={8}>
-              <SqlCompilationsSec
-                isLoading={isLoading}
-                seriesData={data?.sqlCompilations?.map(formatData) ?? []}
-              />
-            </Col>
-          )}
-          {hasPermission(
-            user,
-            FeatureFunction.SQL_SERVER_METRICS_PAGE_SPLITS_SEC,
-            TypeGrant.READ
-          ) && (
-            <Col xs={24} md={12} lg={8}>
-              <PageSplitsSec
-                isLoading={isLoading}
-                seriesData={data?.pageSplits?.map(formatData) ?? []}
-              />
-            </Col>
-          )}
-          {hasPermission(
-            user,
-            FeatureFunction.SQL_SERVER_METRICS_FULL_SCANS_SEC,
-            TypeGrant.READ
-          ) && (
-            <Col xs={24} md={12} lg={8}>
-              <FullScansSec
-                isLoading={isLoading}
-                seriesData={data?.fullScans?.map(formatData) ?? []}
-              />
-            </Col>
-          )}
-          {hasPermission(
-            user,
-            FeatureFunction.SQL_SERVER_METRICS_USER_CONNECTIONS,
-            TypeGrant.READ
-          ) && (
-            <Col xs={24} md={12} lg={8}>
-              <UserConnections
-                isLoading={isLoading}
-                seriesData={data?.userConnections?.map(formatData) ?? []}
-              />
-            </Col>
-          )}
-        </Row>
+        {hasSomePermissions(user, [
+          FeatureFunction.SQL_SERVER_METRICS_BATCH_REQUESTS,
+          FeatureFunction.SQL_SERVER_METRICS_SQLCOMPILATIONS_BATCH_REQUESTS,
+          FeatureFunction.SQL_SERVER_METRICS_PAGE_SPLITS_BATCH_REQUESTS,
+          FeatureFunction.SQL_SERVER_METRICS_SQLCOMPILATIONS_SEC,
+          FeatureFunction.SQL_SERVER_METRICS_PAGE_SPLITS_SEC,
+          FeatureFunction.SQL_SERVER_METRICS_FULL_SCANS_SEC,
+          FeatureFunction.SQL_SERVER_METRICS_USER_CONNECTIONS,
+        ]) && (
+          <>
+            <h4 className="mb-6 text-sm">General</h4>
+            <Row gutter={[16, 16]}>
+              {hasPermission(
+                user,
+                FeatureFunction.SQL_SERVER_METRICS_BATCH_REQUESTS,
+                TypeGrant.READ
+              ) && (
+                <Col xs={24} md={12} lg={8}>
+                  <BatchRequests
+                    isLoading={isLoading}
+                    seriesData={data?.batchRequest?.map(formatData) ?? []}
+                    group={'opa'}
+                  />
+                </Col>
+              )}
+              {hasPermission(
+                user,
+                FeatureFunction.SQL_SERVER_METRICS_SQLCOMPILATIONS_BATCH_REQUESTS,
+                TypeGrant.READ
+              ) && (
+                <Col xs={24} md={12} lg={8}>
+                  <SqlCompilationsBatchRequests
+                    isLoading={isLoading}
+                    seriesData={
+                      data?.sqlCompilationsPerBatchRequests?.map(formatData) ??
+                      []
+                    }
+                    group={'opa'}
+                  />
+                </Col>
+              )}
+              {hasPermission(
+                user,
+                FeatureFunction.SQL_SERVER_METRICS_PAGE_SPLITS_BATCH_REQUESTS,
+                TypeGrant.READ
+              ) && (
+                <Col xs={24} md={12} lg={8}>
+                  <PageSplitsBatchRequests
+                    isLoading={isLoading}
+                    seriesData={
+                      data?.pageSplitsDataPerBatchRequests?.map(formatData) ??
+                      []
+                    }
+                  />
+                </Col>
+              )}
+              {hasPermission(
+                user,
+                FeatureFunction.SQL_SERVER_METRICS_SQLCOMPILATIONS_SEC,
+                TypeGrant.READ
+              ) && (
+                <Col xs={24} md={12} lg={8}>
+                  <SqlCompilationsSec
+                    isLoading={isLoading}
+                    seriesData={data?.sqlCompilations?.map(formatData) ?? []}
+                  />
+                </Col>
+              )}
+              {hasPermission(
+                user,
+                FeatureFunction.SQL_SERVER_METRICS_PAGE_SPLITS_SEC,
+                TypeGrant.READ
+              ) && (
+                <Col xs={24} md={12} lg={8}>
+                  <PageSplitsSec
+                    isLoading={isLoading}
+                    seriesData={data?.pageSplits?.map(formatData) ?? []}
+                  />
+                </Col>
+              )}
+              {hasPermission(
+                user,
+                FeatureFunction.SQL_SERVER_METRICS_FULL_SCANS_SEC,
+                TypeGrant.READ
+              ) && (
+                <Col xs={24} md={12} lg={8}>
+                  <FullScansSec
+                    isLoading={isLoading}
+                    seriesData={data?.fullScans?.map(formatData) ?? []}
+                  />
+                </Col>
+              )}
+              {hasPermission(
+                user,
+                FeatureFunction.SQL_SERVER_METRICS_USER_CONNECTIONS,
+                TypeGrant.READ
+              ) && (
+                <Col xs={24} md={12} lg={8}>
+                  <UserConnections
+                    isLoading={isLoading}
+                    seriesData={data?.userConnections?.map(formatData) ?? []}
+                  />
+                </Col>
+              )}
+            </Row>
+          </>
+        )}
       </div>
 
-      <Row>
-        <h4 className="mb-4 mt-8 text-sm">Latches and locks</h4>
-      </Row>
+      {hasSomePermissions(
+        user,
+        [
+          FeatureFunction.LATCHES_AND_LOCKS_AVG_LATCH_WAIT,
+          FeatureFunction.LATCHES_AND_LOCKS_LOCKS_TIMEOUTS_SEC,
+          FeatureFunction.LATCHES_AND_LOCKS_LOCKS_WAITS_SEC,
+        ],
+        TypeGrant.READ
+      ) && (
+        <>
+          <Row>
+            <h4 className="mb-4 mt-8 text-sm">Latches and locks</h4>
+          </Row>
+          <Row gutter={[16, 16]} className="mt-6">
+            {hasPermission(
+              user,
+              FeatureFunction.LATCHES_AND_LOCKS_AVG_LATCH_WAIT,
+              TypeGrant.READ
+            ) && (
+              <Col xs={24} md={12} lg={8}>
+                <AvgLatchWait
+                  isLoading={isLoading}
+                  seriesData={data?.averageLatchWaitTime?.map(formatData) ?? []}
+                />
+              </Col>
+            )}
+            {hasPermission(
+              user,
+              FeatureFunction.LATCHES_AND_LOCKS_LOCKS_TIMEOUTS_SEC,
+              TypeGrant.READ
+            ) && (
+              <Col xs={24} md={12} lg={8}>
+                <LockTimeoutsSec
+                  isLoading={isLoading}
+                  seriesData={data?.lockTimeout?.map(formatData) ?? []}
+                />
+              </Col>
+            )}
 
-      <Row gutter={[16, 16]} className="mt-6">
-        <Col xs={24} md={12} lg={8}>
-          <AvgLatchWait
-            isLoading={isLoading}
-            seriesData={data?.averageLatchWaitTime?.map(formatData) ?? []}
-          />
-        </Col>
-        <Col xs={24} md={12} lg={8}>
-          <LockTimeoutsSec
-            isLoading={isLoading}
-            seriesData={data?.lockTimeout?.map(formatData) ?? []}
-          />
-        </Col>
-        <Col xs={24} md={12} lg={8}>
-          <LockWaitsSec
-            key={key}
-            isLoading={isLoading}
-            seriesData={data?.lockWaits?.map(formatData) ?? []}
-          />
-        </Col>
-      </Row>
+            {hasPermission(
+              user,
+              FeatureFunction.LATCHES_AND_LOCKS_LOCKS_WAITS_SEC,
+              TypeGrant.READ
+            ) && (
+              <Col xs={24} md={12} lg={8}>
+                <LockWaitsSec
+                  key={key}
+                  isLoading={isLoading}
+                  seriesData={data?.lockWaits?.map(formatData) ?? []}
+                />
+              </Col>
+            )}
+          </Row>
+        </>
+      )}
     </div>
   )
 }
