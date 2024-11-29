@@ -1,5 +1,6 @@
 /* eslint-disable sonarjs/no-identical-functions */
 import { Table, Tag } from 'antd'
+import { useState } from 'react'
 
 import useColumnSearch from '~/components/table/useColumnSearch'
 
@@ -28,6 +29,11 @@ const HostsGetTable = (info) => {
 
   const hostSearch = useColumnSearch('host')
   const nameSearch = useColumnSearch('name')
+
+  const [pagination, setPagination] = useState({
+    pageSize: 10,
+    current: 1,
+  })
 
   const columns = [
     {
@@ -127,6 +133,10 @@ const HostsGetTable = (info) => {
         total: data.result.length,
         showSizeChanger: true,
         pageSizeOptions: ['10', '20', '50', '100'],
+        ...pagination,
+        onChange: (page, pageSize) => {
+          setPagination({ pageSize, page })
+        },
       }}
     />
   )

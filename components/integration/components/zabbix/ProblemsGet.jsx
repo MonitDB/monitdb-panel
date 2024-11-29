@@ -1,5 +1,6 @@
 import { Table, Tag } from 'antd'
 import moment from 'moment'
+import { useState } from 'react'
 
 import useColumnSearch from '~/components/table/useColumnSearch'
 
@@ -30,6 +31,11 @@ const suppressedMapping = {
 
 const ProblemsGetTable = (info) => {
   const { data } = info
+
+  const [pagination, setPagination] = useState({
+    pageSize: 10,
+    current: 1,
+  })
 
   const hostSearch = useColumnSearch('host')
 
@@ -123,6 +129,10 @@ const ProblemsGetTable = (info) => {
         total: data.result.length,
         showSizeChanger: true,
         pageSizeOptions: ['10', '20', '50', '100'],
+        ...pagination,
+        onChange: (page, pageSize) => {
+          setPagination({ pageSize, page })
+        },
       }}
     />
   )
