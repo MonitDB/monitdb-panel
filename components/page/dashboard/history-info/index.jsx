@@ -118,7 +118,10 @@ const HistoryInfo = ({ currentServer }) => {
           ],
           TypeGrant.READ
         ) && <Temppdb />}
-        <Permissions currentServer={currentServer} />
+        {hasPermission(user, FeatureFunction.PERMISSIONS, TypeGrant.READ) && (
+          <Permissions currentServer={currentServer} />
+        )}
+
         {hasPermission(
           user,
           FeatureFunction.BLOCKING_PROCESS_TOP_10_BY_TIME,
