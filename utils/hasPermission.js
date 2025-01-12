@@ -121,6 +121,11 @@ export const FeatureFunction = {
   DATA_CONFIGURATION: 6500,
   LICENSING: 6600,
   ABOUT: 6700,
+
+  INTEGRATION: 7000,
+  LIST_INTEGRATIONS: 7001,
+  READ_INTEGRATIONS: 7002,
+  CRUD_INTEGRATIONS: 7003,
 }
 
 export const TypeGrant = {
@@ -139,6 +144,7 @@ export const Feature = {
   REPORTS: 4,
   STATES: 5,
   CONFIGURATION: 6,
+  INTEGRATION: 7,
 }
 
 export function hasFeature(user, feature) {

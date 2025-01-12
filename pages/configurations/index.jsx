@@ -21,7 +21,7 @@ const ConfigurationsPage = () => {
   const router = useRouter()
   const { userState: user } = useUser()
   useEffect(() => {
-    if (!hasFeature(user, Feature.REPORTS) && user) {
+    if (!hasFeature(user, Feature.CONFIGURATION) && user) {
       router.push('/403')
     }
   }, [router, user])

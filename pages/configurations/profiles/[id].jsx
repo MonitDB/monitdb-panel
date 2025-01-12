@@ -80,10 +80,24 @@ const EditProfilePage = () => {
             })
           )
 
+          const previousFeatureFunctionsSet = new Set(
+            previousFeatureFunctions.map((value) => value.idFeatureFunction)
+          )
+          const featureFunctionsSet = new Set(
+            featureFunctions.map((value) => value.idFeatureFunction)
+          )
+
+          const tapeA = previousFeatureFunctions.filter(
+            (element) => !featureFunctionsSet.has(element)
+          )
+          const tapeB = featureFunctions.filter(
+            (element) => !previousFeatureFunctionsSet.has(element)
+          )
+
           form.setFieldsValue({
             roleName: profileData.roleName,
             roleDescription: profileData.roleDescription,
-            featureFunctions: previousFeatureFunctions,
+            featureFunctions: [...tapeB, ...tapeA],
           })
         }
       } catch (error) {

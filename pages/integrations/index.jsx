@@ -1,4 +1,5 @@
 import { Button, Col, Result, Row, Tabs } from 'antd'
+import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
 import { memo, useEffect, useState } from 'react'
 
@@ -6,8 +7,16 @@ import RenderRundeck from '~/components/integration/RenderRundeck'
 import RenderZabbix from '~/components/integration/RenderZabbix'
 import Loading from '~/components/loading'
 import { PageContent, PageHeader } from '~/components/page'
+import { useUser } from '~/hooks/index'
 import Layout from '~/layouts/default'
 import { listAllIntegrations } from '~/services/integration'
+import {
+  Feature,
+  FeatureFunction,
+  hasFeature,
+  hasPermissions,
+  TypeGrant,
+} from '~/utils/hasPermission'
 
 const MemoizedRenderRundeck = memo(RenderRundeck)
 const MemoizedRenderZabbix = memo(RenderZabbix)
@@ -18,12 +27,29 @@ const RenderByType = {
 }
 
 const Integrations = () => {
+  const { userState: user } = useUser()
+
   const [integrationsList, setIntegrations] = useState([])
   const [activeKey, setActiveKey] = useState(0)
   const [loading, setLoading] = useState(false)
   const [refreshKeys, setRefreshKeys] = useState({})
 
+  const router = useRouter()
+
   useEffect(() => {
+    if (
+      (!hasFeature(user, Feature.INTEGRATION) ||
+        !hasPermissions(
+          user,
+          [FeatureFunction.READ_INTEGRATIONS],
+          TypeGrant.EXECUTE
+        )) &&
+      user
+    ) {
+      router.push('/403')
+      return
+    }
+
     const fetchAllIntegrations = async () => {
       try {
         setLoading(true)
@@ -39,7 +65,7 @@ const Integrations = () => {
     }
 
     fetchAllIntegrations()
-  }, [])
+  }, [router, user])
 
   const handleRefresh = (key) => {
     setRefreshKeys((previousKeys) => ({
