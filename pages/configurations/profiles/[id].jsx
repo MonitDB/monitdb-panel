@@ -1,3 +1,4 @@
+/* eslint-disable sonarjs/no-unused-collection */
 /* eslint-disable sonarjs/no-duplicate-string */
 import {
   Button,
@@ -80,24 +81,19 @@ const EditProfilePage = () => {
             })
           )
 
-          const previousFeatureFunctionsSet = new Set(
-            previousFeatureFunctions.map((value) => value.idFeatureFunction)
-          )
-          const featureFunctionsSet = new Set(
-            featureFunctions.map((value) => value.idFeatureFunction)
-          )
-
-          const tapeA = previousFeatureFunctions.filter(
-            (element) => !featureFunctionsSet.has(element)
-          )
-          const tapeB = featureFunctions.filter(
-            (element) => !previousFeatureFunctionsSet.has(element)
-          )
+          const previousFeatureFunctionsMap = new Map()
+          previousFeatureFunctions.map((value) => {
+            previousFeatureFunctionsMap.set(value.idFeatureFunction, value)
+          })
 
           form.setFieldsValue({
             roleName: profileData.roleName,
             roleDescription: profileData.roleDescription,
-            featureFunctions: [...tapeB, ...tapeA],
+            featureFunctions: featureFunctions.map((value) => {
+              if (previousFeatureFunctionsMap.has(value.idFeatureFunction))
+                return previousFeatureFunctionsMap.get(value.idFeatureFunction)
+              return value
+            }),
           })
         }
       } catch (error) {

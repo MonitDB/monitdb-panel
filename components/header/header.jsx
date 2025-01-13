@@ -53,15 +53,17 @@ const Header = () => {
     {
       title: 'Integrations',
       href: '/integrations/',
-      //  requiredPermissions: Feature.CONFIGURATION,
+      requiredPermissions: Feature.INTEGRATION,
     },
   ]
 
   const navMenuList = navMenuListData.filter((item) => {
     if (item.requiredPermissions) {
-      return userState?.grants?.some(
-        (grant) => grant.idFeature === item.requiredPermissions
-      )
+      return userState?.grants?.some((grant) => {
+        return (
+          grant.idFeature === item.requiredPermissions && grant.typeGrant != '0'
+        )
+      })
     }
     return true
   })

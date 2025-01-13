@@ -261,12 +261,15 @@ const ConfigurationsPage = () => {
                   FeatureFunction.AUTHENTICATION_TOKENS,
                   FeatureFunction.DOWNLOAD_POWERSHELL_MODULE,
                   FeatureFunction.SEE_POWERSHELL_SCRIPT_EXAMPLES,
+                  FeatureFunction.MANAGE_INTEGRATIONS,
                 ]) && (
                   <div className="w-full">
                     <h3 className="mb-5 heading-md">API</h3>
 
                     <ul className="space-y-4 text-sm">
-                      {
+                      {existsSomePermissions(user, [
+                        FeatureFunction.MANAGE_INTEGRATIONS,
+                      ]) && (
                         <li className="opacity-100">
                           <Link
                             href="/configurations/integrations"
@@ -280,7 +283,7 @@ const ConfigurationsPage = () => {
                             </span>
                           </Link>
                         </li>
-                      }
+                      )}
                       {hasPermission(
                         user,
                         FeatureFunction.AUTHENTICATION_TOKENS,
@@ -313,7 +316,6 @@ const ConfigurationsPage = () => {
                           </Link>
                         </li>
                       )}
-
                       {hasPermission(
                         user,
                         FeatureFunction.SEE_POWERSHELL_SCRIPT_EXAMPLES,
