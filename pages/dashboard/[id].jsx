@@ -17,7 +17,6 @@ import {
 } from '~/components/page'
 import CurrentActivity from '~/components/page/dashboard/current-activity'
 import HistoryInfo from '~/components/page/dashboard/history-info'
-import { TemporaryDBSession } from '~/components/page/dashboard/history-info/components/tempdb/components/Session'
 import QueryWindow from '~/components/page/dashboard/query-window'
 import { TuningAdvisor } from '~/components/page/dashboard/tuning-advisor'
 import { ServerInfo } from '~/components/page/server-info'
