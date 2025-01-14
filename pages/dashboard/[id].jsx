@@ -17,6 +17,7 @@ import {
 } from '~/components/page'
 import CurrentActivity from '~/components/page/dashboard/current-activity'
 import HistoryInfo from '~/components/page/dashboard/history-info'
+import { TemporaryDBSession } from '~/components/page/dashboard/history-info/components/tempdb/components/Session'
 import QueryWindow from '~/components/page/dashboard/query-window'
 import { TuningAdvisor } from '~/components/page/dashboard/tuning-advisor'
 import { ServerInfo } from '~/components/page/server-info'
@@ -42,26 +43,100 @@ export const tableDataItems = labels.map(() => ({
   title: `SELECT user_id FROM ${faker.random.word()} WHERE meta_key = '${faker.random.word()}'`,
 }))
 
-const dashboardSections = [
-  { name: 'Server/host metrics', slug: 'allinstancemetrics' },
-  { name: 'SQL Server metrics', slug: 'sql-server-metrics' },
-  { name: 'Databases', slug: 'databases' },
-  { name: 'TEMPDB', slug: 'tempdb' },
-  { name: 'Permissions', slug: 'permissions' },
-  { name: 'Blocking processes', slug: 'blocking-processes' },
-  { name: 'SQL user processes', slug: 'sqlprocesses' },
-  { name: 'Error log', slug: 'error-log' },
-]
-
 const SingleDashboard = () => {
   const {
     globalState: { servers, serverTypes },
   } = useGlobal()
+
+  const dashboardSections = []
+
   const { userState: user } = useUser()
 
   const [activeTabId, setActiveTabId] = useState('0')
 
   const router = useRouter()
+
+  hasPermission(
+    user,
+    FeatureFunction.BLOCKING_PROCESS_TOP_10_BY_TIME,
+    TypeGrant.READ
+  ) &&
+    dashboardSections.push({
+      name: 'Blocking processes',
+      slug: 'blocking-processes',
+      index: 5,
+    })
+
+  hasPermission(
+    user,
+    FeatureFunction.SQL_USER_PROCESSES_TOP_10_BY_CPU,
+    TypeGrant.READ
+  ) &&
+    dashboardSections.push({
+      name: 'SQL user processes',
+      slug: 'sqlprocesses',
+      index: 6,
+    })
+
+  hasPermission(user, FeatureFunction.ERROR_LOG, TypeGrant.READ) &&
+    dashboardSections.push({ name: 'Error log', slug: 'error-log', index: 7 })
+
+  hasPermission(user, FeatureFunction.PERMISSIONS, TypeGrant.READ) &&
+    dashboardSections.push({
+      name: 'Permissions',
+      slug: 'permissions',
+      index: 4,
+    })
+
+  hasSomePermissions(
+    user,
+    [
+      FeatureFunction.TEMPDB_DATABASE,
+      FeatureFunction.TEMPDB_LOGIN,
+      FeatureFunction.TEMPDB_PROGRAM,
+      FeatureFunction.TEMPDB_SESSION,
+      FeatureFunction.TEMPDB_USAGE_SUMMARY,
+    ],
+    TypeGrant.READ
+  ) && dashboardSections.push({ name: 'TEMPDB', slug: 'tempdb', index: 3 })
+
+  hasPermission(user, FeatureFunction.DATABASES, TypeGrant.READ) &&
+    dashboardSections.push({ name: 'Databases', slug: 'databases', index: 2 })
+
+  hasSomePermissions(
+    user,
+    [
+      FeatureFunction.SQL_SERVER_METRICS_BATCH_REQUESTS,
+      FeatureFunction.SQL_SERVER_METRICS_SQLCOMPILATIONS_BATCH_REQUESTS,
+      FeatureFunction.SQL_SERVER_METRICS_PAGE_SPLITS_BATCH_REQUESTS,
+      FeatureFunction.SQL_SERVER_METRICS_SQLCOMPILATIONS_SEC,
+      FeatureFunction.SQL_SERVER_METRICS_PAGE_SPLITS_SEC,
+      FeatureFunction.SQL_SERVER_METRICS_FULL_SCANS_SEC,
+      FeatureFunction.SQL_SERVER_METRICS_USER_CONNECTIONS,
+      FeatureFunction.LATCHES_AND_LOCKS_AVG_LATCH_WAIT,
+      FeatureFunction.LATCHES_AND_LOCKS_LOCKS_TIMEOUTS_SEC,
+      FeatureFunction.LATCHES_AND_LOCKS_LOCKS_WAITS_SEC,
+    ],
+    TypeGrant.READ
+  ) &&
+    dashboardSections.push({
+      name: 'SQL Server metrics',
+      slug: 'sql-server-metrics',
+      index: 1,
+    })
+
+  hasSomePermissions(
+    user,
+    [FeatureFunction.CPU, FeatureFunction.MEMORY],
+    TypeGrant.READ
+  ) &&
+    dashboardSections.push({
+      name: 'Server/host metrics',
+      slug: 'allinstancemetrics',
+      index: 0,
+    })
+
+  dashboardSections.sort((a, b) => a.index - b.index)
 
   useEffect(() => {
     if (!hasFeature(user, Feature.DASHBOARD) && user.grants) router.push('/403')
