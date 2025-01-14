@@ -180,7 +180,7 @@ const ServerMetrics = ({ key }) => {
       ) && (
         <>
           <Row>
-            <h4 className="mb-4 mt-8 text-sm">Latches and locks</h4>
+            <h4 className="mb-4 mt-6 text-sm">Latches and locks</h4>
           </Row>
           <Row gutter={[16, 16]} className="mt-6">
             {hasPermission(

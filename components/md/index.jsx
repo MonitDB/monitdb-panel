@@ -64,7 +64,7 @@ export const Markdown = ({ content }) => {
   return (
     <StyledMarkdown
       dangerouslySetInnerHTML={{
-        __html: md.render(content),
+        __html: md.render(content ?? 'Null'),
       }}
     />
   )

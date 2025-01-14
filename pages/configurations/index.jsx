@@ -267,9 +267,11 @@ const ConfigurationsPage = () => {
                     <h3 className="mb-5 heading-md">API</h3>
 
                     <ul className="space-y-4 text-sm">
-                      {existsSomePermissions(user, [
+                      {hasPermission(
+                        user,
                         FeatureFunction.MANAGE_INTEGRATIONS,
-                      ]) && (
+                        TypeGrant.WRITE
+                      ) && (
                         <li className="opacity-100">
                           <Link
                             href="/configurations/integrations"

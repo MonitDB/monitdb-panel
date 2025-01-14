@@ -42,7 +42,7 @@ const Integrations = () => {
         !hasPermissions(
           user,
           [FeatureFunction.READ_INTEGRATIONS],
-          TypeGrant.EXECUTE
+          TypeGrant.READ
         )) &&
       user
     ) {
