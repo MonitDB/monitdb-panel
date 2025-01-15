@@ -21,8 +21,6 @@ const renderTable = (data) => {
           data={data.result}
           pagination={{
             total: data.result.length,
-            showSizeChanger: true,
-            pageSizeOptions: ['10', '20', '50', '100'],
           }}
         />
       )

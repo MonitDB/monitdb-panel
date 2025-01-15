@@ -38,12 +38,11 @@ const Integrations = () => {
 
   useEffect(() => {
     if (
-      (!hasFeature(user, Feature.INTEGRATION) ||
-        !hasPermissions(
-          user,
-          [FeatureFunction.READ_INTEGRATIONS],
-          TypeGrant.READ
-        )) &&
+      !hasPermissions(
+        user,
+        [FeatureFunction.READ_INTEGRATIONS],
+        TypeGrant.READ
+      ) &&
       user
     ) {
       router.push('/403')

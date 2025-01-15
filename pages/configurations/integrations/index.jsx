@@ -5,12 +5,19 @@ import { useEffect, useState } from 'react'
 
 import IntegrationDrawer from '~/components/drawers/integration-drawer'
 import { PageContent, PageHeader } from '~/components/page'
+import { useUser } from '~/hooks/index'
 import Layout from '~/layouts/default'
 import { listIntegrations } from '~/services/integration'
+import {
+  FeatureFunction,
+  hasPermission,
+  TypeGrant,
+} from '~/utils/hasPermission'
 
 const IntegrationsPage = () => {
   const router = useRouter()
   const { query, pathname } = router
+  const { userState: user } = useUser()
 
   const [integrations, setIntegrations] = useState([])
   const [loading, setLoading] = useState(true)
@@ -19,6 +26,17 @@ const IntegrationsPage = () => {
   const pageSize = 10
 
   useEffect(() => {
+    if (
+      !hasPermission(
+        user,
+        [FeatureFunction.MANAGE_INTEGRATIONS],
+        TypeGrant.WRITE
+      ) &&
+      user.grants
+    ) {
+      router.push('/403')
+      return
+    }
     const fetchIntegrations = async () => {
       setLoading(true)
       try {
@@ -32,7 +50,7 @@ const IntegrationsPage = () => {
       }
     }
     if (Object.keys(query).length === 0) fetchIntegrations()
-  }, [currentPage, query])
+  }, [currentPage, query, router, user])
 
   const addNewIntegration = () => {
     router.push(
