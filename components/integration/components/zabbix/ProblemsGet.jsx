@@ -46,6 +46,14 @@ const ProblemsGetTable = (info) => {
       key: 'eventid',
     },
     {
+      title: 'Date',
+      dataIndex: 'clock',
+      key: 'date',
+      render: (value) => {
+        return moment(Number(value)).format('DD/MM/YYYY')
+      },
+    },
+    {
       title: 'Time',
       dataIndex: 'clock',
       key: 'clock',
