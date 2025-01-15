@@ -11,9 +11,7 @@ import { useUser } from '~/hooks/index'
 import Layout from '~/layouts/default'
 import { listAllIntegrations } from '~/services/integration'
 import {
-  Feature,
   FeatureFunction,
-  hasFeature,
   hasPermissions,
   TypeGrant,
 } from '~/utils/hasPermission'
