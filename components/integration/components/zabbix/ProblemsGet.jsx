@@ -20,8 +20,8 @@ const sourceMapping = {
 }
 
 const acknowledgedMapping = {
-  0: { label: 'Not Acknowledged', color: 'red' },
-  1: { label: 'Acknowledged', color: 'green' },
+  0: { label: 'Problem', color: 'red' },
+  1: { label: 'Solved', color: 'green' },
 }
 
 const suppressedMapping = {
