@@ -50,7 +50,7 @@ const ProblemsGetTable = (info) => {
       dataIndex: 'clock',
       key: 'date',
       render: (value) => {
-        return moment(Number(value)).format('DD/MM/YYYY')
+        return moment.unix(value).format('DD/MM/YYYY')
       },
     },
     {
@@ -58,7 +58,7 @@ const ProblemsGetTable = (info) => {
       dataIndex: 'clock',
       key: 'clock',
       render: (value) => {
-        return moment(Number(value)).format('HH:mm:ss')
+        return moment.unix(value).format('HH:mm:ss')
       },
     },
     {
