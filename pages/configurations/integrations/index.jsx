@@ -29,7 +29,7 @@ const IntegrationsPage = () => {
     if (
       !hasPermission(
         user,
-        [FeatureFunction.MANAGE_INTEGRATIONS],
+        FeatureFunction.MANAGE_INTEGRATIONS,
         TypeGrant.WRITE
       ) &&
       user.grants
