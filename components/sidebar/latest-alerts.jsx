@@ -10,13 +10,21 @@ import React, { useCallback, useEffect, useState } from 'react'
 import Link from '~/components/link'
 import Loading from '~/components/loading'
 import { PageSidebarTitle } from '~/components/page'
+import { useUser } from '~/hooks/index'
 import useGlobal from '~/hooks/use-global'
 import useAlertContext from '~/services/state-manager/alerts'
+import {
+  FeatureFunction,
+  hasPermission,
+  TypeGrant,
+} from '~/utils/hasPermission'
 
 const LatestAlerts = () => {
   const {
     globalState: { serverEnvironments },
   } = useGlobal()
+
+  const { userState: user } = useUser()
 
   const { getAlerts, getAlertsById } = useAlertContext()
   const router = useRouter()
@@ -29,21 +37,26 @@ const LatestAlerts = () => {
 
   const getAlertsData = useCallback(async () => {
     const serverId = router?.query?.id
-    try {
-      setLoading(true)
+    if (user) {
+      if (!hasPermission(user, FeatureFunction.ALERTS_LISTING, TypeGrant.READ))
+        return
 
-      const responseAlerts = serverId
-        ? await getAlertsById(serverId, {
-            lastMinutes,
-          })
-        : await getAlerts({ lastMinutes, serverEnvironmentId })
+      try {
+        setLoading(true)
 
-      setAlerts(responseAlerts)
-    } catch (error) {
-      // toast.error('Error to get the Alerts')
-      console.error(error)
-    } finally {
-      setLoading(false)
+        const responseAlerts = serverId
+          ? await getAlertsById(serverId, {
+              lastMinutes,
+            })
+          : await getAlerts({ lastMinutes, serverEnvironmentId })
+
+        setAlerts(responseAlerts)
+      } catch (error) {
+        // toast.error('Error to get the Alerts')
+        console.error(error)
+      } finally {
+        setLoading(false)
+      }
     }
   }, [
     getAlerts,
@@ -51,114 +64,117 @@ const LatestAlerts = () => {
     lastMinutes,
     router?.query?.id,
     serverEnvironmentId,
+    user,
   ])
 
   useEffect(getAlertsData, [getAlertsData])
+  if (hasPermission(user, FeatureFunction.ALERTS_LISTING, TypeGrant.READ))
+    return (
+      <div>
+        <header className="mb-4">
+          <PageSidebarTitle>
+            <FontAwesomeIcon icon={faBell} />
+            <span>Latest alerts</span>
+          </PageSidebarTitle>
+          <p className="text-sm">Alerts generated or updated recently</p>
+        </header>
 
-  return (
-    <div>
-      <header className="mb-4">
-        <PageSidebarTitle>
-          <FontAwesomeIcon icon={faBell} />
-          <span>Latest alerts</span>
-        </PageSidebarTitle>
-        <p className="text-sm">Alerts generated or updated recently</p>
-      </header>
-
-      <>
-        <form className="mb-4 flex items-center space-x-2">
-          <Select
-            name="hour"
-            containerClass="bg-white text-gray-dark w-100"
-            style={{ width: '100px' }}
-            options={[
-              { value: '1440', label: '24 hours' },
-              { value: '720', label: '12 hours' },
-              { value: '360', label: '6 hours' },
-              { value: '180', label: '3 hour' },
-              { value: '60', label: '1 hour' },
-              { value: '15', label: '15 minutes' },
-            ]}
-            value={lastMinutes}
-            onChange={setLastMinutes}
-          />
-          {!router?.query?.id && (
+        <>
+          <form className="mb-4 flex items-center space-x-2">
             <Select
-              name="group"
+              name="hour"
               containerClass="bg-white text-gray-dark w-100"
-              style={{ width: '150px' }}
-              defaultValue={-1}
+              style={{ width: '100px' }}
               options={[
-                { value: -1, label: 'All groups' },
-                ...serverEnvironments.map(
-                  ({ id, typeServerEnvironmentName }) => ({
-                    value: id,
-                    label: typeServerEnvironmentName,
-                  })
-                ),
+                { value: '1440', label: '24 hours' },
+                { value: '720', label: '12 hours' },
+                { value: '360', label: '6 hours' },
+                { value: '180', label: '3 hour' },
+                { value: '60', label: '1 hour' },
+                { value: '15', label: '15 minutes' },
               ]}
-              value={serverEnvironmentId}
-              onChange={setEnvironment}
+              value={lastMinutes}
+              onChange={setLastMinutes}
             />
-          )}
-        </form>
-        <ul>
-          {loading ? (
-            <div className="flex justify-center items-center w-full min-h-28">
-              <Loading />
-            </div>
-          ) : alerts.length > 0 ? (
-            <ul>
-              {alerts.map((alert) => {
-                const { id, alertName } = alert
+            {!router?.query?.id && (
+              <Select
+                name="group"
+                containerClass="bg-white text-gray-dark w-100"
+                style={{ width: '150px' }}
+                defaultValue={-1}
+                options={[
+                  { value: -1, label: 'All groups' },
+                  ...serverEnvironments.map(
+                    ({ id, typeServerEnvironmentName }) => ({
+                      value: id,
+                      label: typeServerEnvironmentName,
+                    })
+                  ),
+                ]}
+                value={serverEnvironmentId}
+                onChange={setEnvironment}
+              />
+            )}
+          </form>
+          <ul>
+            {loading ? (
+              <div className="flex justify-center items-center w-full min-h-28">
+                <Loading />
+              </div>
+            ) : alerts.length > 0 ? (
+              <ul>
+                {alerts.map((alert) => {
+                  const { id, alertName } = alert
 
-                return (
-                  <li
-                    key={`dashboard-group-${id}`}
-                    className="py-2 border-b border-gray-light border-opacity-25"
-                  >
-                    <Link
-                      href={`/alerts/results/?types=[${id}]${
-                        router?.query?.id ? `&server=${router.query.id}` : ''
-                      }`}
-                      className={classNames(
-                        `flex items-center space-x-2 border-l-2 pl-2 text-sm transition-all
-                  duration-150 ease-in-out border-orange lg:hover:border-l-8`
-                      )}
+                  return (
+                    <li
+                      key={`dashboard-group-${id}`}
+                      className="py-2 border-b border-gray-light border-opacity-25"
                     >
-                      <span className="w-6 min-w-6 text-lg">
-                        <FontAwesomeIcon icon={faWarning} />
-                      </span>
-                      <div className="w-full">
-                        <p>{alertName}</p>
-                        <p className="text-xs text-opacity-50 text-white">
-                          {alert.alerts.length} alertas ativos
-                        </p>
-                      </div>
-                      <span
+                      <Link
+                        href={`/alerts/results/?types=[${id}]${
+                          router?.query?.id ? `&server=${router.query.id}` : ''
+                        }`}
                         className={classNames(
-                          'flex items-center justify-center rounded-full w-6 min-w-6 h-6 ml-auto text-xs bg-orange'
+                          `flex items-center space-x-2 border-l-2 pl-2 text-sm transition-all
+                  duration-150 ease-in-out border-orange lg:hover:border-l-8`
                         )}
                       >
-                        {alert.alerts.length}
-                      </span>
-                    </Link>
-                  </li>
-                )
-              })}
-            </ul>
-          ) : (
-            <h1> No data!</h1>
-          )}
-        </ul>
-        <div className="py-4">
-          <Button type="primary">
-            <Link href="/alerts/">See all</Link>{' '}
-          </Button>
-        </div>
-      </>
-    </div>
-  )
+                        <span className="w-6 min-w-6 text-lg">
+                          <FontAwesomeIcon icon={faWarning} />
+                        </span>
+                        <div className="w-full">
+                          <p>{alertName}</p>
+                          <p className="text-xs text-opacity-50 text-white">
+                            {alert.alerts.length} alertas ativos
+                          </p>
+                        </div>
+                        <span
+                          className={classNames(
+                            'flex items-center justify-center rounded-full w-6 min-w-6 h-6 ml-auto text-xs bg-orange'
+                          )}
+                        >
+                          {alert.alerts.length}
+                        </span>
+                      </Link>
+                    </li>
+                  )
+                })}
+              </ul>
+            ) : (
+              <h1> No data!</h1>
+            )}
+          </ul>
+          <div className="py-4">
+            <Button type="primary">
+              <Link href="/alerts/">See all</Link>{' '}
+            </Button>
+          </div>
+        </>
+      </div>
+    )
+
+  return <></>
 }
 
 export default LatestAlerts

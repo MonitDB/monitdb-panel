@@ -205,21 +205,26 @@ const SingleDashboard = () => {
           <PageWrapper>
             <PageSidebar>
               <LatestAlertsSidebar />
-              {activeTabId === '0' && (
-                <PageSidebarLinksList className="mt-5">
-                  {dashboardSections.map((section) => (
-                    <li
-                      key={section.slug}
-                      style={{ width: '100%' }}
-                      onClick={() => {
-                        scrollToSection(`#${section.slug}`)
-                      }}
-                    >
-                      <button>{section.name}</button>
-                    </li>
-                  ))}
-                </PageSidebarLinksList>
-              )}
+              {activeTabId === '0' &&
+                hasPermission(
+                  user,
+                  FeatureFunction.SCROLL_BAR,
+                  TypeGrant.READ
+                ) && (
+                  <PageSidebarLinksList className="mt-5">
+                    {dashboardSections.map((section) => (
+                      <li
+                        key={section.slug}
+                        style={{ width: '100%' }}
+                        onClick={() => {
+                          scrollToSection(`#${section.slug}`)
+                        }}
+                      >
+                        <button>{section.name}</button>
+                      </li>
+                    ))}
+                  </PageSidebarLinksList>
+                )}
             </PageSidebar>
 
             <PageContent hideBreadcrumbs={true}>
