@@ -27,7 +27,7 @@ const HistoryInfo = ({ currentServer }) => {
   const { userState: user } = useUser()
   const router = useRouter()
 
-  const [lastFetch, setLastFetch] = useState(Date.now())
+  const [, setLastFetch] = useState(Date.now())
 
   const lastMinutesOptions = [
     { value: HOUR, label: '1 hour' },

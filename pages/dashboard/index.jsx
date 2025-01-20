@@ -1,12 +1,7 @@
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Button, Collapse, Input } from 'antd'
-import {
-  HOUR,
-  MINUTE,
-  REFRESH_INTERVAL_LOCAL_STORAGE_KEY,
-  SECOND,
-} from 'const/time'
+import { MINUTE, REFRESH_INTERVAL_LOCAL_STORAGE_KEY, SECOND } from 'const/time'
 import { useFormik } from 'formik'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
