@@ -17,7 +17,7 @@ function ErrorLog(properties) {
   const router = useRouter()
   useEffect(() => {
     fetchData()
-  }, [fetchData])
+  }, [fetchData, router.query.lastMinutes])
 
   const fetchData = useCallback(async () => {
     try {
@@ -25,7 +25,7 @@ function ErrorLog(properties) {
       const data = await executeQueryComponent(
         COMPONENT_CODE,
         currentServer?.id || undefined,
-        Number(router.query.lastMinutes ?? 60)
+        Number(router.query.lastMinutes) ?? 60
       )
       setData(data)
       setLoading(false)

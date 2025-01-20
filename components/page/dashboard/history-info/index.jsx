@@ -99,13 +99,10 @@ const HistoryInfo = ({ currentServer }) => {
           )}
         </Row>
 
-        <ServerMetrics key={lastFetch} />
+        <ServerMetrics />
 
         {hasPermission(user, FeatureFunction.DATABASES, TypeGrant.READ) && (
-          <Databases
-            key={router.query.lastMinutes}
-            currentServer={currentServer}
-          />
+          <Databases currentServer={currentServer} />
         )}
         {hasSomePermissions(
           user,
@@ -126,18 +123,16 @@ const HistoryInfo = ({ currentServer }) => {
           user,
           FeatureFunction.BLOCKING_PROCESS_TOP_10_BY_TIME,
           TypeGrant.READ
-        ) && (
-          <BlockingProcesses currentServer={currentServer} key={lastFetch} />
-        )}
+        ) && <BlockingProcesses currentServer={currentServer} />}
 
         {hasPermission(
           user,
           FeatureFunction.SQL_USER_PROCESSES_TOP_10_BY_CPU,
           TypeGrant.READ
-        ) && <SqlUserProcesses currentServer={currentServer} key={lastFetch} />}
+        ) && <SqlUserProcesses currentServer={currentServer} />}
 
         {hasPermission(user, FeatureFunction.ERROR_LOG, TypeGrant.READ) && (
-          <ErrorLog currentServer={currentServer} key={lastFetch} />
+          <ErrorLog currentServer={currentServer} />
         )}
       </div>
     </div>

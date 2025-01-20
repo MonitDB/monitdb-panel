@@ -39,14 +39,13 @@ const DashboardPage = () => {
 
   const [activeKey, setActiveKey] = useState([])
 
-  const [refreshInterval, setRefreshInterval] = useState(HOUR)
+  const [refreshInterval, setRefreshInterval] = useState(5 * SECOND)
   const router = useRouter()
 
   useEffect(() => {
     if (!hasFeature(user, Feature.DASHBOARD) && user.grants) router.push('/403')
-
     const INITIAL_REFRESH_INTERVAL = Number(
-      localStorage.getItem(REFRESH_INTERVAL_LOCAL_STORAGE_KEY) || 15 * SECOND
+      localStorage.getItem(REFRESH_INTERVAL_LOCAL_STORAGE_KEY) || 5 * SECOND
     )
 
     const intervalId = setInterval(() => {

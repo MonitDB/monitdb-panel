@@ -18,7 +18,7 @@ function Databases(properties) {
   const [data, setData] = useState([])
   const [loading, setLoading] = useState(false)
 
-  useEffect(() => fetchData(), [fetchData])
+  useEffect(() => fetchData(), [fetchData, lastMinutes])
 
   const fetchData = useCallback(async () => {
     try {

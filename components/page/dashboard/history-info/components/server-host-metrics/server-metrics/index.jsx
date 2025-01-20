@@ -54,7 +54,7 @@ const ServerMetrics = ({ key }) => {
     }
   }, [currentServer.id, getSQLServerMetrics, lastMinutes])
 
-  useEffect(fetchData, [fetchData])
+  useEffect(fetchData, [fetchData, lastMinutes])
 
   return (
     <div className="mt-6" key={key} id="sql-server-metrics">

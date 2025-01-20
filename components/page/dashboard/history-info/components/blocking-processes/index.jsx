@@ -18,7 +18,7 @@ function BlockingProcesses(properties) {
 
   useEffect(() => {
     fetchData()
-  }, [fetchData])
+  }, [fetchData, router.query.lastMinutes])
 
   const fetchData = useCallback(async () => {
     try {
