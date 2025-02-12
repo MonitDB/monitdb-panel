@@ -6,7 +6,7 @@ import { GenericTable } from '~/components/table/genericTable'
 
 import useComponentContext from '../../../../../../services/state-manager/components'
 
-const COMPONENT_CODE = 'LTBLPR'
+const COMPONENT_CODE = 'LTBLPR1'
 
 function BlockingProcesses(properties) {
   const { currentServer } = properties

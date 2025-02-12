@@ -7,7 +7,7 @@ import { GenericTable } from '~/components/table/genericTable'
 
 import useComponentContext from '../../../../../../services/state-manager/components'
 
-const COMPONENT_CODE = 'LTELG'
+const COMPONENT_CODE = 'LTELG1'
 
 function ErrorLog(properties) {
   const { currentServer } = properties

@@ -8,7 +8,7 @@ import Image from '~/components/image'
 
 import useComponentContext from '../../../../../../services/state-manager/components'
 
-const COMPONENT_CODE = 'LTTPPR'
+const COMPONENT_CODE = 'LTTPPR1'
 
 function SqlUserProcesses(properties) {
   const { currentServer } = properties
