@@ -49,7 +49,12 @@ function ErrorLog(properties) {
         </div>
       </div>
 
-      <GenericTable data={data} loading={loading} maxLength={150} />
+      <GenericTable
+        data={data}
+        loading={loading}
+        maxLength={150}
+        pagination={data.length > 10}
+      />
     </div>
   )
 }
