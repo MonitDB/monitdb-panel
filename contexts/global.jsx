@@ -23,18 +23,12 @@ export const GlobalContextProvider = ({ children }) => {
     try {
       const promises = [getServers(), getTypes(), getEnvironments()]
 
-      const [responseServers, responseTypes, responseEnvironments] =
+      const [serversData, responseTypes, responseEnvironments] =
         await Promise.all(promises)
 
-      const serversData = await getServers()
       setGlobalState((oldGlobalState) => ({
         ...oldGlobalState,
         servers: serversData?.data || [],
-      }))
-
-      setGlobalState((oldGlobalState) => ({
-        ...oldGlobalState,
-        servers: responseServers?.data || [],
         serverTypes: responseTypes?.data || [],
         serverEnvironments: responseEnvironments?.data || [],
       }))
