@@ -14,12 +14,12 @@ const ProtectedPage = ({ children }) => {
   const validateToken = useCallback(async () => {
     try {
       const response = await postTokenValidate(userState?.token)
-      const { data: me } = await getMe()
+      // const { data: me } = await getMe()
       const dataResult = response?.data
       if (dataResult?.token) {
         setUserState({
           ...userState,
-          ...me,
+          // ...me,
           logged: true,
           token: dataResult?.token,
         })
