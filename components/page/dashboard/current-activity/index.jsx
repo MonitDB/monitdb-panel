@@ -4,7 +4,15 @@
 // import 'ace-builds/src-noconflict/theme-github'
 import '@uiw/react-textarea-code-editor/dist.css'
 
-import { Button, Descriptions, Modal, notification, Table } from 'antd'
+import { QuestionCircleOutlined } from '@ant-design/icons'
+import {
+  Button,
+  Descriptions,
+  Modal,
+  notification,
+  Popconfirm,
+  Table,
+} from 'antd'
 import moment from 'moment'
 import React, { useCallback, useEffect, useState } from 'react'
 
@@ -12,6 +20,7 @@ import { Select } from '~/components/form'
 import Highlighter from '~/components/highlighter'
 import QueryPlanRenderer from '~/components/qp-render'
 import useComponentContext from '~/services/state-manager/components'
+import { useExecQueryContext } from '~/services/state-manager/execQuery'
 
 const componentsOption = [
   { value: 'LTWISACT', label: 'WHO IS ACTIVE' },
@@ -28,8 +37,13 @@ function CurrentActivity(properties) {
   const [data, setData] = useState({})
   const [componentCode, setComponentCode] = useState(WHO_IS_ACT.value)
   const { executeQueryComponent } = useComponentContext()
+  const { execQuery } = useExecQueryContext()
 
   const [modalData, setModalData] = useState({ open: false })
+  const handleDelete = async (id) => {
+    await execQuery(`KILL ${id}`, currentServer?.id || undefined)
+    fetchData()
+  }
 
   useEffect(() => {
     fetchData()
@@ -114,6 +128,25 @@ function CurrentActivity(properties) {
                   title: 'Blocking Session ID',
                 },
                 { dataIndex: 'percent_complete', title: 'Percent Complete' },
+                {
+                  title: 'Actions',
+                  render: (record) => (
+                    <Popconfirm
+                      onClick={(e) => e.stopPropagation()}
+                      title="Delete the task"
+                      description="Are you sure to kill this session?"
+                      icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
+                      onConfirm={async (e) => {
+                        e.stopPropagation()
+                        await handleDelete(record.session_id)
+                      }}
+                    >
+                      <Button danger type="text">
+                        Kill Session
+                      </Button>
+                    </Popconfirm>
+                  ),
+                },
               ]}
               onRow={(record) => ({
                 style: { cursor: 'pointer' },
