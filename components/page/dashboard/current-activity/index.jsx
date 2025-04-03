@@ -132,12 +132,12 @@ function CurrentActivity(properties) {
                   title: 'Actions',
                   render: (record) => (
                     <Popconfirm
-                      onClick={(e) => e.stopPropagation()}
+                      onClick={(event) => event.stopPropagation()}
                       title="Delete the task"
                       description="Are you sure to kill this session?"
                       icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
-                      onConfirm={async (e) => {
-                        e.stopPropagation()
+                      onConfirm={async (event) => {
+                        event.stopPropagation()
                         await handleDelete(record.session_id)
                       }}
                     >
