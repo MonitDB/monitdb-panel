@@ -99,6 +99,7 @@ const InstalledVersions = ({ tabName }) => {
         versionsGroup.push({
           version: version.version,
           lastUpdate: version.lastUpdate,
+          linkUpdate: version.linkUpdate,
           versionNumbers: 1,
           servers: [version],
         })
@@ -230,19 +231,21 @@ const InstalledVersions = ({ tabName }) => {
                         title: 'Last Update',
                         dataIndex: 'lastUpdate',
                         key: 'lastUpdate',
-                        render: (text, record) => (
-                          <a
-                            href={record.linkUpdate}
-                            className="inline-flex items-center space-x-2 text-blue no-underline"
-                            target="_blank"
-                            rel="noreferrer"
-                          >
-                            <FontAwesomeIcon icon={faDownload} />
-                            <span>
-                              {record.productLevel} {text}
-                            </span>
-                          </a>
-                        ),
+                        render: (text, record) => {
+                          return (
+                            <a
+                              href={record.linkUpdate}
+                              className="inline-flex items-center space-x-2 text-blue no-underline"
+                              target="_blank"
+                              rel="noreferrer"
+                            >
+                              <FontAwesomeIcon icon={faDownload} />
+                              <span>
+                                {record.productLevel} {text}
+                              </span>
+                            </a>
+                          )
+                        },
                       },
                     ]}
                     rowKey={(record) => record.version}
