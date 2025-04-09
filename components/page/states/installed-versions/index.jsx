@@ -5,16 +5,14 @@ import {
   ArcElement,
   CategoryScale,
   Chart as ChartJS,
-  // Legend,
   LinearScale,
   LineElement,
   PointElement,
-  // Title,
   Tooltip,
 } from 'chart.js'
 import classNames from 'classnames'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
-import { getElementAtEvent, Pie } from 'react-chartjs-2'
+import { Pie } from 'react-chartjs-2'
 
 import ExportButton from '~/components/export-button'
 import Loading from '~/components/loading'
@@ -29,9 +27,7 @@ ChartJS.register(
   LinearScale,
   PointElement,
   LineElement,
-  // Title,
   Tooltip
-  // Legend
 )
 
 export const options = {
@@ -82,26 +78,29 @@ const InstalledVersions = ({ tabName }) => {
   const [versions, setVersions] = useState([])
 
   const groupedVersions = useMemo(() => {
-    if (versions.length === 0) {
-      return versions
-    }
+    if (versions.length === 0) return []
 
     const versionsGroup = []
 
     for (const version of versions) {
       const index = versionsGroup.findIndex(
-        ({ Version }) => Version === version.Version
+        (group) =>
+          group.version === version.version &&
+          group.lastUpdate === version.lastUpdate
       )
 
       if (index !== -1) {
         versionsGroup[index] = {
           ...versionsGroup[index],
           versionNumbers: versionsGroup[index].versionNumbers + 1,
+          servers: [...versionsGroup[index].servers, version],
         }
       } else {
         versionsGroup.push({
-          ...version,
+          version: version.version,
+          lastUpdate: version.lastUpdate,
           versionNumbers: 1,
+          servers: [version],
         })
       }
     }
@@ -148,26 +147,12 @@ const InstalledVersions = ({ tabName }) => {
     }
   }, [groupedVersions])
 
-  const onClick = (event) => {
+  const onClick = () => {
     const { current: chart } = pieReference
 
     if (!chart) {
       return
     }
-
-    printElementAtEvent(getElementAtEvent(chart, event))
-  }
-
-  const printElementAtEvent = (element) => {
-    if (element.length === 0) return
-
-    const { datasetIndex, index } = element[0]
-
-    // eslint-disable-next-line no-console
-    console.log(
-      chartPieData.labels[index],
-      chartPieData.datasets[datasetIndex].data[index]
-    )
   }
 
   const getData = async () => {
