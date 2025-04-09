@@ -111,7 +111,11 @@ const InstalledVersions = ({ tabName }) => {
 
   const chartPieData = useMemo(() => {
     return {
-      labels: [...groupedVersions.map(({ version }) => version)],
+      labels: [
+        ...groupedVersions.map(
+          ({ version, lastUpdate }) => version + ' ' + lastUpdate
+        ),
+      ],
       datasets: [
         {
           label: '',
@@ -223,7 +227,7 @@ const InstalledVersions = ({ tabName }) => {
                                   ],
                               }}
                             />
-                            <strong>{text}</strong>
+                            <strong>{text + ' ' + record.lastUpdate}</strong>
                           </div>
                         ),
                       },
