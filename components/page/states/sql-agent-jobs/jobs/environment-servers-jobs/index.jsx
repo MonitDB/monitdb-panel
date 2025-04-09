@@ -25,6 +25,7 @@ function Servers({ environmentServers, serversJobs, expand }) {
   const [jobsExecutions, setJobsExecutions] = useState()
   const [isLoadingExecutions, setIsLoadingExecutions] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
+  const [currentMainTablePage, setCurrentMainTablePage] = useState(1)
 
   const getData = useCallback(async () => {
     try {
@@ -174,10 +175,17 @@ function Servers({ environmentServers, serversJobs, expand }) {
                     onClick: () => {
                       setJobModal({
                         isOpen: true,
-                        jobData: serverJobs[index],
+                        jobData:
+                          serverJobs[index + 10 * (currentMainTablePage - 1)],
                       })
                     },
                   })}
+                  pagination={{
+                    current: currentMainTablePage,
+                    pageSize: 10,
+                    total: serverJobs.length,
+                    onChange: (page) => setCurrentMainTablePage(page),
+                  }}
                 />
               ),
             }
@@ -193,7 +201,7 @@ function Servers({ environmentServers, serversJobs, expand }) {
         closable={false}
         cancelButtonProps={{ style: { display: 'none' } }}
       >
-        <div style={{ height: '75vh', overflowY: 'auto' }}>
+        <div style={{ height: 'auto', overflowY: 'auto' }}>
           {/* <h2 className="heading-md">Job</h2>
           <br />
           <Table size="small" dataSource={[jobModal.jobData]}>
