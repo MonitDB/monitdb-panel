@@ -1,10 +1,12 @@
 /* eslint-disable unicorn/no-nested-ternary */
 /* eslint-disable no-console */
+'use client'
 import { faBell, faWarning } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Button, Select } from 'antd'
 import classNames from 'classnames'
 import { useRouter } from 'next/router'
+import Script from 'next/script'
 import React, { useCallback, useEffect, useState } from 'react'
 
 import Link from '~/components/link'
@@ -68,6 +70,31 @@ const LatestAlerts = () => {
   ])
 
   useEffect(getAlertsData, [getAlertsData])
+
+  useEffect(() => {
+    if (!window.chatbase || window.chatbase('getState') !== 'initialized') {
+      window.chatbase = (...arguments_) => {
+        if (!window.chatbase.q) {
+          window.chatbase.q = []
+        }
+        window.chatbase.q.push(arguments_)
+      }
+
+      window.chatbase = new Proxy(window.chatbase, {
+        get(target, property) {
+          if (property === 'q') return target.q
+          return (...arguments_) => target(property, ...arguments_)
+        },
+      })
+    }
+
+    const script = document.createElement('script')
+    script.src = 'https://www.chatbase.co/embed.min.js'
+    script.id = '1FX375983LWVDnV2Rux0S'
+    script.dataset.domain = 'www.chatbase.co'
+    document.body.append(script)
+  }, [])
+
   if (hasPermission(user, FeatureFunction.ALERTS_LISTING, TypeGrant.READ))
     return (
       <div>
