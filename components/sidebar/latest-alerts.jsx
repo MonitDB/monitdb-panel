@@ -6,7 +6,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Button, Select } from 'antd'
 import classNames from 'classnames'
 import { useRouter } from 'next/router'
-import Script from 'next/script'
 import React, { useCallback, useEffect, useState } from 'react'
 
 import Link from '~/components/link'

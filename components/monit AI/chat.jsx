@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable unicorn/prevent-abbreviations */
 import { RobotOutlined, SendOutlined, UserOutlined } from '@ant-design/icons'
 import {
   Avatar,
@@ -12,7 +14,6 @@ import {
 import React, { useEffect, useRef, useState } from 'react'
 
 const { Header, Content, Footer } = Layout
-const { TextArea } = Input
 
 const ChatAI = () => {
   const [messages, setMessages] = useState([])
@@ -20,7 +21,7 @@ const ChatAI = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [page, setPage] = useState(1)
   const [hasMore, setHasMore] = useState(true)
-  const [isNew, setIsNew] = useState(true)
+  const [isNew] = useState(true)
   const containerReference = useRef(null)
 
   const suggestions = [

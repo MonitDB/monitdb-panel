@@ -1,16 +1,12 @@
 // Sidebar.js
 import { FileTextOutlined } from '@ant-design/icons'
-import { Avatar, Button, Layout, List, Space, Typography } from 'antd'
+import { Button, Layout } from 'antd'
 import { useRouter } from 'next/router'
 import React from 'react'
 
 const { Sider } = Layout
 
-const SidebarAI = ({
-  conversations,
-  onSelectConversation,
-  onNewConversation,
-}) => {
+const SidebarAI = () => {
   const router = useRouter()
   return (
     <Sider width={300}>
