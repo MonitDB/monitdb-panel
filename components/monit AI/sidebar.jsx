@@ -9,7 +9,7 @@ const { Sider } = Layout
 const SidebarAI = () => {
   const router = useRouter()
   return (
-    <Sider width={300}>
+    <Sider width={300} className="bg-gray-dark">
       <Button
         type="primary"
         style={{
@@ -23,40 +23,6 @@ const SidebarAI = () => {
       >
         New Chat
       </Button>
-
-      {/* <List
-        header={
-          <Typography.Title
-            level={5}
-            style={{ color: '#ecf0f1', marginBottom: 16 }}
-          >
-            Conversas
-          </Typography.Title>
-        }
-        emptyText="Nenhuma conversa criada"
-        bordered
-        dataSource={conversations}
-        renderItem={(conversation, index) => (
-          <List.Item
-            style={{
-              background: '#34495e',
-              cursor: 'pointer',
-              borderRadius: 8,
-              marginBottom: 8,
-            }}
-            onClick={() => onSelectConversation(conversation, index)}
-          >
-            <Space>
-              <Avatar style={{ backgroundColor: '#16a085' }} size="small">
-                {conversation.title.charAt(0)}
-              </Avatar>
-              <Typography.Text style={{ color: '#ecf0f1' }}>
-                {conversation.title}
-              </Typography.Text>
-            </Space>
-          </List.Item>
-        )}
-      /> */}
     </Sider>
   )
 }

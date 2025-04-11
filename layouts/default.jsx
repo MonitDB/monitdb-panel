@@ -7,7 +7,7 @@ const Default = ({ children }) => {
   return (
     <ProtectedPage>
       <Header />
-      <main>{children}</main>
+      <main style={{ height: 'calc(100vh - 64px)' }}>{children}</main>
     </ProtectedPage>
   )
 }

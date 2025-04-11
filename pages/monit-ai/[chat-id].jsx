@@ -1,22 +1,32 @@
-import { Layout } from 'antd'
+import { Layout as AntdLayout } from 'antd'
+import { NextSeo } from 'next-seo'
 import React from 'react'
 
 import ChatAI from '~/components/monit AI/chat'
 import SidebarAI from '~/components/monit AI/sidebar'
+import { PageContent, PageHeader } from '~/components/page'
+import Layout from '~/layouts/default'
 
-const { Content } = Layout
+const { Content } = AntdLayout
 
 const MonitAI = () => {
   return (
-    <Layout style={{ minHeight: '100vh' }}>
-      <SidebarAI />
+    <>
+      <NextSeo title="Integrations - Configurations - MonitDB" />
       <Layout>
-        {/* O ChatAI ocupa o restante do layout */}
-        <Content>
-          <ChatAI />
-        </Content>
+        <AntdLayout style={{ height: '100%' }}>
+          <div className="bg-gray-dark">
+            <SidebarAI />
+          </div>
+
+          <AntdLayout>
+            <Content>
+              <ChatAI />
+            </Content>
+          </AntdLayout>
+        </AntdLayout>
       </Layout>
-    </Layout>
+    </>
   )
 }
 
