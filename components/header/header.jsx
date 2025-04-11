@@ -3,6 +3,7 @@ import {
   faGear,
   faUser,
   faUserPen,
+  faWandMagicSparkles,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Button } from 'antd'
@@ -54,6 +55,15 @@ const Header = () => {
       title: 'Integrations',
       href: '/integrations/',
       requiredPermissions: Feature.INTEGRATION,
+    },
+    {
+      title: (
+        <>
+          <FontAwesomeIcon icon={faWandMagicSparkles} className="mr-1" />
+          Monit AI
+        </>
+      ),
+      href: '/monit-ai/new',
     },
   ]
 

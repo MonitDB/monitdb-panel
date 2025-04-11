@@ -4,7 +4,6 @@ import React from 'react'
 
 import ChatAI from '~/components/monit AI/chat'
 import SidebarAI from '~/components/monit AI/sidebar'
-import { PageContent, PageHeader } from '~/components/page'
 import Layout from '~/layouts/default'
 
 const { Content } = AntdLayout

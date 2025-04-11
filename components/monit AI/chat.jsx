@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/aria-role */
 /* eslint-disable sonarjs/no-empty-collection */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable unicorn/prevent-abbreviations */
@@ -20,7 +21,10 @@ import {
 import { useRouter } from 'next/router'
 import React, { useEffect, useRef, useState } from 'react'
 
+import { useChatStore } from '~/services/state-manager/chat-store'
 import { apiV2 } from '~/utils/client-api'
+
+import { Markdown } from '../md'
 
 const { Content, Footer } = Layout
 
@@ -28,10 +32,7 @@ const ChatAI = () => {
   const [messages, setMessages] = useState([])
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const [page, setPage] = useState(1)
-  const [hasMore, setHasMore] = useState(true)
-  const [loadedMessageIds, setLoadedMessageIds] = useState(new Set())
-
+  const [hasMore] = useState(true)
   const containerReference = useRef(null)
 
   const router = useRouter()
@@ -41,30 +42,33 @@ const ChatAI = () => {
 
   const suggestions = []
 
+  const { renameChat, fetchChats } = useChatStore()
+
   const loadPreviousMessages = async (chatId) => {
-    if (!hasMore || isNew) return
+    if (isNew) return
 
     try {
       const { data = [] } = await apiV2().get(
         `ai/load-previous-messages/${chatId}`,
         {
-          params: { page },
+          // params: { page },
         }
       )
+      setMessages(data)
+      scrollToBottom()
+      // const newMessages = data.filter((msg) => !loadedMessageIds.has(msg.id))
 
-      const newMessages = data.filter((msg) => !loadedMessageIds.has(msg.id))
-
-      if (newMessages.length > 0) {
-        setMessages((previous) => [...newMessages.reverse(), ...previous])
-        setLoadedMessageIds((prev) => {
-          const updated = new Set(prev)
-          for (const msg of newMessages) updated.add(msg.id)
-          return updated
-        })
-        setPage((prev) => prev + 1)
-      } else {
-        setHasMore(false)
-      }
+      // if (newMessages.length > 0) {
+      //   setMessages((previous) => [...newMessages.reverse(), ...previous])
+      //   setLoadedMessageIds((prev) => {
+      //     const updated = new Set(prev)
+      //     for (const msg of newMessages) updated.add(msg.id)
+      //     return updated
+      //   })
+      //   setPage((prev) => prev + 1)
+      // } else {
+      //   setHasMore(false)
+      // }
     } catch {
       return
     }
@@ -97,12 +101,21 @@ const ChatAI = () => {
           pathname: router.pathname,
           query: { 'chat-id': generatedChatId },
         })
+
+        const _ = async () => {
+          await renameChat(generatedChatId, input.trim())
+
+          await fetchChats()
+        }
+        _()
       }
 
-      setMessages((previous) => [
-        ...previous,
-        { id: `loading-${Date.now()}`, role: 'loading', message: '' },
-      ])
+      const loadingMessage = {
+        id: `loading-${Date.now()}`,
+        role: 'loading',
+        message: '',
+      }
+      setMessages((previous) => [...previous, loadingMessage])
 
       const { data } = await apiV2().post('ai/completions', {
         chatId: generatedChatId,
@@ -116,8 +129,14 @@ const ChatAI = () => {
       }
 
       setMessages((previous) => {
-        previous.pop()
-        return [...previous, assistantMessage]
+        const updated = [...previous]
+        const lastMessage = updated[updated.length - 1]
+
+        if (lastMessage?.role === 'loading') {
+          updated.pop()
+        }
+
+        return [...updated, assistantMessage]
       })
     } catch (error) {
       setMessages((previous) => {
@@ -166,11 +185,10 @@ const ChatAI = () => {
   }
 
   useEffect(() => {
-    if (!isNew) {
-      loadPreviousMessages(chatId)
-    }
+    loadPreviousMessages(chatId)
+
     scrollToBottom()
-  }, [chatId])
+  }, [router.query['chat-id']])
 
   return (
     <Layout style={{ minHeight: '100%' }}>
@@ -245,7 +263,12 @@ const ChatAI = () => {
                           color: message.role === 'user' ? '#fff' : '#000',
                         }}
                       >
-                        {message.role !== 'loading' && <p>{message.message}</p>}
+                        {message.role !== 'loading' && (
+                          <Markdown
+                            content={message.message.trim()}
+                            className="prose"
+                          />
+                        )}
 
                         {message.role === 'loading' && (
                           <Skeleton
@@ -271,10 +294,11 @@ const ChatAI = () => {
       <Footer style={{ padding: 12, width: '100%' }}>
         <div style={{ width: '100%', padding: '0 30%' }}>
           <div style={{ display: 'flex', width: '100%' }}>
-            <Input
+            <Input.TextArea
               style={{ flex: 1, marginRight: 8 }}
               placeholder="Write your message..."
               value={input}
+              rows={2}
               disabled={isLoading}
               onChange={(e) => setInput(e.target.value)}
               onPressEnter={(e) => {
