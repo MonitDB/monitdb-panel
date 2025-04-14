@@ -109,13 +109,12 @@ const Header = () => {
                       <Link
                         href={item.href}
                         className={classNames(buttonClasses, {
-                          [buttonClassesActive]: router.pathname.startsWith(
-                            item.href.replace(/\/$/, '')
-                          ),
+                          [buttonClassesActive]:
+                            item.href.split('/')[1] ===
+                            router.pathname.split('/')[1],
                           'border-gray-dark text-opacity-50':
-                            !router.pathname.startsWith(
-                              item.href.replace(/\/$/, '')
-                            ),
+                            item.href.split('/')[1] !==
+                            router.pathname.split('/')[1],
                         })}
                       >
                         {item.title}

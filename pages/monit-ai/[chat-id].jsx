@@ -11,7 +11,7 @@ const { Content } = AntdLayout
 const MonitAI = () => {
   return (
     <>
-      <NextSeo title="Integrations - Configurations - MonitDB" />
+      <NextSeo title="Monit AI - MonitDB" />
       <Layout>
         <AntdLayout style={{ height: '100%' }}>
           <div className="bg-gray-dark">
