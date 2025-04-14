@@ -72,7 +72,7 @@ const ChatAI = () => {
         setMessages([loadingMessage])
         const { data: createdChat } = await apiV2().post('ai/create-chat')
         generatedChatId = createdChat.id
-
+        renameChat(generatedChatId, input.trim())
         router.replace({
           pathname: router.pathname,
           query: { 'chat-id': generatedChatId },
@@ -85,11 +85,7 @@ const ChatAI = () => {
       })
 
       if (isNew) {
-        const _ = async () => {
-          setChats([{ id: generatedChatId, title: input.trim() }, ...chats])
-          await renameChat(generatedChatId, input.trim())
-        }
-        _()
+        setChats([{ id: generatedChatId, title: input.trim() }, ...chats])
       }
 
       const assistantMessage = {
