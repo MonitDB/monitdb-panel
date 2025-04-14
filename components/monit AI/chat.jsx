@@ -67,7 +67,11 @@ const ChatAI = () => {
         role: 'loading',
         message: '',
       }
-      setMessages([...messages, loadingMessage])
+      setMessages([
+        ...messages,
+        { id: Date.now(), role: 'user', message: input },
+        loadingMessage,
+      ])
       if (isNew) {
         setMessages([loadingMessage])
         const { data: createdChat } = await apiV2().post('ai/create-chat')
@@ -136,7 +140,9 @@ const ChatAI = () => {
 
   useEffect(() => {
     ;(async () => {
+      setIsLoading(true)
       await loadPreviousMessages()
+      setIsLoading(false)
       scrollToBottom()
     })()
   }, [currentChatId])
@@ -147,7 +153,6 @@ const ChatAI = () => {
     <Layout style={{ minHeight: '100%', padding: '0 20% 0 20%' }}>
       <Content
         style={{
-          // background: '#f0f2f5',
           overflowY: 'hidden',
           height: '100%',
         }}
@@ -208,7 +213,7 @@ const ChatAI = () => {
               <>
                 <List
                   dataSource={messages}
-                  style={{ height: '100%' }}
+                  style={{ height: '100%', paddingTop: 16, overflow: 'auto' }}
                   renderItem={(message) => (
                     <List.Item
                       key={message.id}
@@ -247,7 +252,6 @@ const ChatAI = () => {
                           {message.role === 'user' && (
                             <p
                               style={{
-                                maxWidth: 400,
                                 color: '#fff',
                               }}
                             >

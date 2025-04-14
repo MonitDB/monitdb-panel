@@ -1,7 +1,11 @@
 /* eslint-disable unicorn/prevent-abbreviations */
 /* eslint-disable react-hooks/exhaustive-deps */
-import { FileTextOutlined, MessageOutlined } from '@ant-design/icons'
-import { Button, Input, Layout, List, Skeleton, Space, Typography } from 'antd'
+import {
+  FileTextOutlined,
+  LoadingOutlined,
+  MessageOutlined,
+} from '@ant-design/icons'
+import { Button, Input, Layout, List, Space, Spin, Typography } from 'antd'
 import { useRouter } from 'next/router'
 import React, { useEffect, useMemo } from 'react'
 
@@ -65,7 +69,15 @@ const SidebarAI = () => {
       </Typography.Title>
 
       {isLoading ? (
-        <Skeleton active paragraph={{ rows: 6 }} title={false} />
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            magin: 'auto',
+          }}
+        >
+          <Spin size="large" indicator={<LoadingOutlined spin />} />
+        </div>
       ) : (
         <List
           size="small"
