@@ -1,3 +1,4 @@
+import { fi } from 'faker/lib/locales'
 import { create } from 'zustand'
 
 import { apiV2 } from '~/utils/client-api'
@@ -7,6 +8,28 @@ export const useChatStore = create((set, get) => ({
   isLoading: false,
   error: undefined,
   searchTerm: '',
+  messages: [],
+  loadingMessages: '',
+  chatId: undefined,
+  setLoadingMessages: (loadingMessages) => set({ loadingMessages }),
+  setChats: (chats) => set({ chats }),
+  setChatId: (chatId) => set({ chatId }),
+  setMessages: (messages) => set({ messages }),
+  loadPreviousMessages: async () => {
+    try {
+      const chatId = get().chatId
+      set({ loadingMessages: chatId, messages: [] })
+      if (!chatId) return
+      const { data = [] } = await apiV2().get(
+        `ai/load-previous-messages/${chatId}`
+      )
+      set({ messages: data })
+    } catch {
+      return
+    } finally {
+      set({ loadingMessages: '' })
+    }
+  },
 
   setSearchTerm: (term) => set({ searchTerm: term }),
 

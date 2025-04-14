@@ -1,13 +1,9 @@
+/* eslint-disable no-extra-semi */
 /* eslint-disable jsx-a11y/aria-role */
 /* eslint-disable sonarjs/no-empty-collection */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable unicorn/prevent-abbreviations */
-import {
-  ApiOutlined,
-  RobotOutlined,
-  SendOutlined,
-  UserOutlined,
-} from '@ant-design/icons'
+import { ApiOutlined, RobotOutlined, UserOutlined } from '@ant-design/icons'
 import {
   Avatar,
   Button,
@@ -29,10 +25,8 @@ import { Markdown } from '../md'
 const { Content, Footer } = Layout
 
 const ChatAI = () => {
-  const [messages, setMessages] = useState([])
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const [hasMore] = useState(true)
   const containerReference = useRef(null)
 
   const router = useRouter()
@@ -42,38 +36,16 @@ const ChatAI = () => {
 
   const suggestions = []
 
-  const { renameChat, fetchChats } = useChatStore()
-
-  const loadPreviousMessages = async (chatId) => {
-    if (isNew) return
-
-    try {
-      const { data = [] } = await apiV2().get(
-        `ai/load-previous-messages/${chatId}`,
-        {
-          // params: { page },
-        }
-      )
-      setMessages(data)
-      scrollToBottom()
-      // const newMessages = data.filter((msg) => !loadedMessageIds.has(msg.id))
-
-      // if (newMessages.length > 0) {
-      //   setMessages((previous) => [...newMessages.reverse(), ...previous])
-      //   setLoadedMessageIds((prev) => {
-      //     const updated = new Set(prev)
-      //     for (const msg of newMessages) updated.add(msg.id)
-      //     return updated
-      //   })
-      //   setPage((prev) => prev + 1)
-      // } else {
-      //   setHasMore(false)
-      // }
-    } catch {
-      return
-    }
-  }
-
+  const {
+    renameChat,
+    setChats,
+    loadPreviousMessages,
+    messages,
+    setMessages,
+    chats,
+    chatId: currentChatId,
+    loadingMessages,
+  } = useChatStore()
   const scrollToBottom = () => {
     setTimeout(() => {
       if (containerReference.current) {
@@ -86,41 +58,39 @@ const ChatAI = () => {
   const handleSend = async () => {
     if (!input.trim()) return
 
-    const userMessage = { id: Date.now(), role: 'user', message: input.trim() }
-    setMessages((previous) => [...previous, userMessage])
-    setInput('')
-    setIsLoading(true)
-
     try {
       let generatedChatId = chatId
-
-      if (isNew) {
-        const { data: createdChat } = await apiV2().post('ai/create-chat')
-        generatedChatId = createdChat.id
-        router.replace({
-          pathname: router.pathname,
-          query: { 'chat-id': generatedChatId },
-        })
-
-        const _ = async () => {
-          await renameChat(generatedChatId, input.trim())
-
-          await fetchChats()
-        }
-        _()
-      }
-
+      setInput('')
+      setIsLoading(true)
       const loadingMessage = {
         id: `loading-${Date.now()}`,
         role: 'loading',
         message: '',
       }
-      setMessages((previous) => [...previous, loadingMessage])
+      setMessages([...messages, loadingMessage])
+      if (isNew) {
+        setMessages([loadingMessage])
+        const { data: createdChat } = await apiV2().post('ai/create-chat')
+        generatedChatId = createdChat.id
+
+        router.replace({
+          pathname: router.pathname,
+          query: { 'chat-id': generatedChatId },
+        })
+      }
 
       const { data } = await apiV2().post('ai/completions', {
         chatId: generatedChatId,
         message: input.trim(),
       })
+
+      if (isNew) {
+        const _ = async () => {
+          setChats([{ id: generatedChatId, title: input.trim() }, ...chats])
+          await renameChat(generatedChatId, input.trim())
+        }
+        _()
+      }
 
       const assistantMessage = {
         id: `assistant-${Date.now()}`,
@@ -128,24 +98,19 @@ const ChatAI = () => {
         message: data,
       }
 
-      setMessages((previous) => {
-        const updated = [...previous]
-        const lastMessage = updated[updated.length - 1]
+      const updated = [...messages]
+      const lastMessage = updated[updated.length - 1]
 
-        if (lastMessage?.role === 'loading') {
-          updated.pop()
-        }
+      if (lastMessage?.role === 'loading') {
+        updated.pop()
+      }
 
-        return [...updated, assistantMessage]
-      })
+      setMessages([...updated, assistantMessage])
     } catch (error) {
-      setMessages((previous) => {
-        previous.pop()
-        return [
-          ...previous,
-          { id: `error-${Date.now()}`, role: 'error', message: error.message },
-        ]
-      })
+      setMessages([
+        ...messages,
+        { id: `error-${Date.now()}`, role: 'error', message: error.message },
+      ])
     } finally {
       setIsLoading(false)
       scrollToBottom()
@@ -158,7 +123,7 @@ const ChatAI = () => {
       role: 'user',
       message: suggestionText,
     }
-    setMessages((previous) => [...previous, userMessage])
+    setMessages([...messages, userMessage])
     setIsLoading(true)
 
     setTimeout(() => {
@@ -167,156 +132,182 @@ const ChatAI = () => {
         role: 'assistant',
         message: `Resposta gerada para: "${suggestionText}"`,
       }
-      setMessages((previous) => [...previous, assistantMessage])
+      setMessages([...messages, assistantMessage])
       setIsLoading(false)
       scrollToBottom()
     }, 1500)
   }
 
-  const handleScroll = async () => {
-    if (containerReference.current.scrollTop === 0 && hasMore) {
-      const previousHeight = containerReference.current.scrollHeight
-      await loadPreviousMessages(chatId)
-      setTimeout(() => {
-        const newHeight = containerReference.current.scrollHeight
-        containerReference.current.scrollTop = newHeight - previousHeight
-      }, 100)
-    }
-  }
-
   useEffect(() => {
-    loadPreviousMessages(chatId)
+    ;(async () => {
+      await loadPreviousMessages()
+      scrollToBottom()
+    })()
+  }, [currentChatId])
 
-    scrollToBottom()
-  }, [router.query['chat-id']])
+  const isLoadingCurrentChatMessages = loadingMessages === chatId
 
   return (
-    <Layout style={{ minHeight: '100%' }}>
+    <Layout style={{ minHeight: '100%', padding: '0 20% 0 20%' }}>
       <Content
         style={{
-          paddingLeft: '24px',
-          background: '#f0f2f5',
+          // background: '#f0f2f5',
           overflowY: 'hidden',
+          height: '100%',
         }}
       >
-        <div
-          ref={containerReference}
-          onScroll={handleScroll}
-          style={{
-            height: 'calc(100vh - 200px)',
-            overflowY: 'auto',
-            padding: '24px',
-            display: 'flex',
-            flexDirection: 'column',
-          }}
-        >
-          {isNew && (
-            <div style={{ margin: 'auto', textAlign: 'center' }}>
-              <Space direction="vertical">
-                <Typography.Title level={3}>
-                  What can I help with?
-                </Typography.Title>
-                <Space wrap style={{ justifyContent: 'center' }}>
-                  {suggestions.map((suggestion, index) => (
-                    <Button
-                      key={index}
-                      onClick={() => handleSuggestionClick(suggestion)}
-                      role="default"
-                      style={{ borderRadius: 20 }}
-                    >
-                      {suggestion}
-                    </Button>
-                  ))}
-                </Space>
-              </Space>
-            </div>
-          )}
-
-          {!isNew && (
-            <>
-              <List
-                dataSource={messages}
-                style={{ height: '100%' }}
-                renderItem={(message) => (
-                  <List.Item
-                    key={message.id}
-                    style={{
-                      justifyContent:
-                        message.role === 'user' ? 'flex-end' : 'flex-start',
-                    }}
-                  >
-                    <Space align="start">
-                      {message.role === 'assistant' ||
-                        (message.role === 'loading' && (
-                          <Avatar icon={<RobotOutlined />} />
-                        ))}
-                      {message.role === 'error' && (
-                        <Avatar icon={<ApiOutlined />} />
-                      )}
-                      <div
-                        style={{
-                          background:
-                            message.role === 'user' ? '#5046e5' : '#fff',
-                          borderRadius: 8,
-                          padding: '8px 12px',
-                          maxWidth: 400,
-                          color: message.role === 'user' ? '#fff' : '#000',
-                        }}
-                      >
-                        {message.role !== 'loading' && (
-                          <Markdown
-                            content={message.message.trim()}
-                            className="prose"
-                          />
-                        )}
-
-                        {message.role === 'loading' && (
-                          <Skeleton
-                            active
-                            paragraph={{ rows: 1 }}
-                            title={false}
-                            style={{ marginLeft: 10, width: 300 }}
-                          />
-                        )}
-                      </div>
-                      {message.role === 'user' && (
-                        <Avatar icon={<UserOutlined />} />
-                      )}
-                    </Space>
-                  </List.Item>
-                )}
-              />
-            </>
-          )}
-        </div>
-      </Content>
-
-      <Footer style={{ padding: 12, width: '100%' }}>
-        <div style={{ width: '100%', padding: '0 30%' }}>
-          <div style={{ display: 'flex', width: '100%' }}>
-            <Input.TextArea
-              style={{ flex: 1, marginRight: 8 }}
-              placeholder="Write your message..."
-              value={input}
-              rows={2}
-              disabled={isLoading}
-              onChange={(e) => setInput(e.target.value)}
-              onPressEnter={(e) => {
-                if (!e.shiftKey) {
-                  e.preventDefault()
-                  handleSend()
-                }
-              }}
-            />
-            <Button
-              role="primary"
-              icon={<SendOutlined />}
-              onClick={handleSend}
-              disabled={isLoading}
-            />
+        {isLoadingCurrentChatMessages && (
+          <div
+            style={{
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '80vh',
+              background: 'rgba(255, 255, 255, 0)',
+            }}
+          >
+            <br />
+            <Skeleton />
+            <br />
+            <Skeleton />
+            <br />
+            <Skeleton />
           </div>
-        </div>
-      </Footer>
+        )}
+        {!isLoadingCurrentChatMessages && (
+          <div
+            ref={containerReference}
+            style={{
+              height: 'calc(100vh - 200px)',
+              overflowY: 'auto',
+              display: 'flex',
+
+              flexDirection: 'column',
+              scrollBehavior: 'smooth',
+            }}
+          >
+            {isNew && (
+              <div style={{ margin: 'auto', textAlign: 'center' }}>
+                <Space direction="vertical">
+                  <Typography.Title level={3}>
+                    What can I help with?
+                  </Typography.Title>
+                  <Space wrap style={{ justifyContent: 'center' }}>
+                    {suggestions.map((suggestion, index) => (
+                      <Button
+                        key={index}
+                        onClick={() => handleSuggestionClick(suggestion)}
+                        role="default"
+                        style={{ borderRadius: 20 }}
+                      >
+                        {suggestion}
+                      </Button>
+                    ))}
+                  </Space>
+                </Space>
+              </div>
+            )}
+
+            {!isNew && (
+              <>
+                <List
+                  dataSource={messages}
+                  style={{ height: '100%' }}
+                  renderItem={(message) => (
+                    <List.Item
+                      key={message.id}
+                      style={{
+                        justifyContent:
+                          message.role === 'user' ? 'flex-end' : 'flex-start',
+                      }}
+                    >
+                      <Space align="start">
+                        {(message.role === 'assistant' ||
+                          message.role === 'loading') && (
+                          <Avatar icon={<RobotOutlined />} />
+                        )}
+
+                        {message.role === 'error' && (
+                          <Avatar icon={<ApiOutlined />} />
+                        )}
+                        <div
+                          style={{
+                            background:
+                              message.role === 'user' ? '#5046e5' : '#fff',
+                            borderRadius: 8,
+                            padding: '8px 12px',
+                            maxWidth: 400,
+                            color: message.role === 'user' ? '#fff' : '#000',
+                          }}
+                        >
+                          {message.role !== 'user' &&
+                            message.role !== 'loading' && (
+                              <Markdown
+                                content={message.message.trim()}
+                                className="prose"
+                              />
+                            )}
+
+                          {message.role === 'user' && (
+                            <p
+                              style={{
+                                maxWidth: 400,
+                                color: '#fff',
+                              }}
+                            >
+                              {message.message.trim()}
+                            </p>
+                          )}
+
+                          {message.role === 'loading' && (
+                            <Skeleton
+                              active
+                              paragraph={{ rows: 1 }}
+                              title={false}
+                              style={{ marginLeft: 10, width: 300 }}
+                            />
+                          )}
+                        </div>
+                        {message.role === 'user' && (
+                          <Avatar icon={<UserOutlined />} />
+                        )}
+                      </Space>
+                    </List.Item>
+                  )}
+                />
+              </>
+            )}
+          </div>
+        )}
+      </Content>
+      {!isLoadingCurrentChatMessages && (
+        <Footer style={{ padding: 12, width: '100%' }}>
+          <div style={{ width: '100%', padding: '0 20%' }}>
+            <div style={{ display: 'flex', width: '100%' }}>
+              <Input.TextArea
+                style={{ flex: 1 }}
+                placeholder="Write your message..."
+                value={input}
+                rows={2}
+                disabled={isLoading}
+                onChange={(e) => setInput(e.target.value)}
+                onPressEnter={(e) => {
+                  if (!e.shiftKey) {
+                    e.preventDefault()
+                    handleSend()
+                  }
+                }}
+              />
+              {/* <Button
+                role="primary"
+                icon={<SendOutlined />}
+                onClick={handleSend}
+                disabled={isLoading}
+              /> */}
+            </div>
+          </div>
+        </Footer>
+      )}
     </Layout>
   )
 }

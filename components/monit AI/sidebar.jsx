@@ -14,8 +14,15 @@ const SidebarAI = () => {
   const router = useRouter()
   const currentChatId = router.query['chat-id']
 
-  const { chats, isLoading, searchTerm, fetchChats, setSearchTerm } =
-    useChatStore()
+  const {
+    chats,
+    isLoading,
+    searchTerm,
+    fetchChats,
+    setSearchTerm,
+    setChatId,
+    loadingMessages,
+  } = useChatStore()
 
   useEffect(() => {
     fetchChats()
@@ -29,7 +36,11 @@ const SidebarAI = () => {
   }, [chats, searchTerm])
 
   return (
-    <Sider width={300} className="bg-gray-dark" style={{ padding: 16 }}>
+    <Sider
+      width={300}
+      className="bg-gray-dark"
+      style={{ padding: 16, height: 'calc(100vh - 64px)', overflow: 'auto' }}
+    >
       <div style={{ marginBottom: 24 }}>
         <Button
           type="primary"
@@ -69,9 +80,14 @@ const SidebarAI = () => {
                   padding: '8px 12px',
                   borderRadius: 6,
                   marginBottom: 4,
+
                   backgroundColor: isSelected ? '#2a2f45' : 'transparent',
                 }}
-                onClick={() => router.push(`/monit-ai/${chat.id}`)}
+                onClick={() => {
+                  if (loadingMessages !== '') return
+                  setChatId(chat.id)
+                  router.push(`/monit-ai/${chat.id}`)
+                }}
               >
                 <Space>
                   <MessageOutlined style={{ color: '#ccc' }} />
