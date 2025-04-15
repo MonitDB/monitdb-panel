@@ -10,6 +10,7 @@ import { useRouter } from 'next/router'
 import React, { useEffect, useMemo } from 'react'
 
 import { useChatStore } from '~/services/state-manager/chat-store'
+import { truncateString } from '~/utils/truncateString'
 
 const { Sider } = Layout
 const { Search } = Input
@@ -108,7 +109,11 @@ const SidebarAI = () => {
                     ellipsis
                     strong={isSelected}
                   >
-                    {chat.title || `Chat ${chat.id.slice(0, 5)}...`}
+                    {truncateString(
+                      chat.title || `Chat ${chat.id.slice(0, 5)}...`,
+                      30
+                    )}
+                    {}
                   </Typography.Text>
                 </Space>
               </List.Item>

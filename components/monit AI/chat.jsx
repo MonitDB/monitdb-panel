@@ -67,13 +67,15 @@ const ChatAI = () => {
         role: 'loading',
         message: '',
       }
-      setMessages([
-        ...messages,
-        { id: Date.now(), role: 'user', message: input },
-        loadingMessage,
-      ])
+
+      const userMessage = {
+        id: Date.now(),
+        role: 'user',
+        message: input,
+      }
+      setMessages([...messages, userMessage, loadingMessage])
       if (isNew) {
-        setMessages([loadingMessage])
+        setMessages([userMessage, loadingMessage])
         const { data: createdChat } = await apiV2().post('ai/create-chat')
         generatedChatId = createdChat.id
         renameChat(generatedChatId, input.trim())
@@ -150,7 +152,7 @@ const ChatAI = () => {
   const isLoadingCurrentChatMessages = loadingMessages === chatId
 
   return (
-    <Layout style={{ minHeight: '100%', padding: '0 20% 0 20%' }}>
+    <Layout style={{ minHeight: '100%' }}>
       <Content
         style={{
           overflowY: 'hidden',
@@ -164,6 +166,7 @@ const ChatAI = () => {
               left: 0,
               width: '100%',
               height: '80vh',
+              padding: '0 15%',
               background: 'rgba(255, 255, 255, 0)',
             }}
           >
@@ -213,7 +216,12 @@ const ChatAI = () => {
               <>
                 <List
                   dataSource={messages}
-                  style={{ height: '100%', paddingTop: 16, overflow: 'auto' }}
+                  style={{
+                    height: '100%',
+                    paddingTop: 16,
+                    overflow: 'auto',
+                    padding: '0 15%',
+                  }}
                   renderItem={(message) => (
                     <List.Item
                       key={message.id}
@@ -288,8 +296,9 @@ const ChatAI = () => {
                 style={{ flex: 1 }}
                 placeholder="Write your message..."
                 value={input}
-                rows={2}
                 disabled={isLoading}
+                size="large"
+                autoSize={{ minRows: 3, maxRows: 5 }}
                 onChange={(e) => setInput(e.target.value)}
                 onPressEnter={(e) => {
                   if (!e.shiftKey) {
