@@ -199,7 +199,7 @@ const ResultReportsPage = () => {
         reportTypes.map(async (reportType) => {
           const { data } = await getReportsByType({
             type: reportType.slug,
-            params: { serverId: router?.query?.server },
+            serverId: router?.query?.server,
           })
           setReports((previousReports) => ({
             ...previousReports,
@@ -209,7 +209,6 @@ const ResultReportsPage = () => {
       )
     } catch (error) {
       console.error(error) // eslint-disable-line no-console
-      // setData({})
     }
 
     setIsLoading(false)
@@ -220,10 +219,11 @@ const ResultReportsPage = () => {
     try {
       setReports({})
       setIsLoading(true)
-      await executeQueryComponent(router.query.server, 'SPLOADCHK')
-      getData()
+      await executeQueryComponent('SPLOADCHK', router.query.server)
     } catch {
       /* empty */
+    } finally {
+      getData()
     }
     setIsLoading(false)
   }
