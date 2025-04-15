@@ -227,7 +227,7 @@ const InstalledVersions = ({ tabName }) => {
                                   ],
                               }}
                             />
-                            <strong>{text + ' ' + record.lastUpdate}</strong>
+                            <strong>{text}</strong>
                           </div>
                         ),
                       },

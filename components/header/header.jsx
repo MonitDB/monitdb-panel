@@ -58,10 +58,10 @@ const Header = () => {
     },
     {
       title: (
-        <>
+        <div style={{ width: '84px' }}>
           <FontAwesomeIcon icon={faWandMagicSparkles} className="mr-1" />
           Monit AI
-        </>
+        </div>
       ),
       href: '/monit-ai/new',
     },
