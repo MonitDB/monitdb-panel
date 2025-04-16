@@ -26,7 +26,7 @@ const Backups = ({ tabName }) => {
   })
 
   const [isLoading, setIsLoading] = useState(true)
-  const [backups, setBackups] = useState([])
+  const [backups, setBackups] = useState({})
   const [expand, setExpand] = useState(false)
 
   const getData = useCallback(async () => {
@@ -34,7 +34,17 @@ const Backups = ({ tabName }) => {
 
     if (!data) return
 
-    setBackups(data)
+    const backupsByServer = data?.reduce((accumulator, backup) => {
+      if (!accumulator[backup.ServerId]) {
+        accumulator[backup.ServerId] = []
+      }
+
+      accumulator[backup.ServerId].push(backup)
+
+      return accumulator
+    }, {})
+
+    setBackups(backupsByServer)
     setIsLoading(false)
   }, [])
 
@@ -113,7 +123,8 @@ const Backups = ({ tabName }) => {
                     servers
                   ).map((server) => formatServer(server, { serverTypes }))
 
-                  if (environmentServers.length === 0) return
+                  if (environmentServers.length === 0) return []
+
                   return {
                     key: environmentIndex,
                     label: typeServerEnvironmentName,

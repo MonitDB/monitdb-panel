@@ -176,91 +176,91 @@ const EnvironmentServersBackups = ({
       <Collapse
         activeKey={serverExpandedIndices}
         onChange={setServerExpandedIndices}
-        items={servers.map(({ id, serverName }, index) => {
-          const serverBackups = backups.filter(
-            (backup) => backup.ServerId === id
-          )
-          if (serverBackups.length === 0) return
+        items={
+          servers?.map(({ id, serverName }, index) => {
+            const serverBackups = backups[id] || []
 
-          const separatedBackups = separeteBackups(serverBackups)
-          const databases = Object.keys(separatedBackups).map(
-            (databaseName) => {
-              const fullBackup = separatedBackups[databaseName].Full?.[0] || {}
-              const diffBackup =
-                separatedBackups[databaseName].Differential?.[0] || {}
-              const logBackup = separatedBackups[databaseName].Log?.[0] || {}
+            const separatedBackups = separeteBackups(serverBackups)
+            const databases = Object?.keys(separatedBackups || {}).map(
+              (databaseName) => {
+                const fullBackup =
+                  separatedBackups[databaseName].Full?.[0] || {}
+                const diffBackup =
+                  separatedBackups[databaseName].Differential?.[0] || {}
+                const logBackup = separatedBackups[databaseName].Log?.[0] || {}
 
-              return {
-                database_name: databaseName,
-                Full: {
-                  lastBackup: {
-                    backup_start_date: fullBackup.backup_start_date,
-                    backup_size: fullBackup.backup_size,
-                    intervalTime:
-                      getIntervalTime(
-                        fullBackup.backup_start_date,
-                        fullBackup.backup_finish_date
-                      ) ?? '0s',
+                return {
+                  database_name: databaseName,
+                  Full: {
+                    lastBackup: {
+                      backup_start_date: fullBackup.backup_start_date,
+                      backup_size: fullBackup.backup_size,
+                      intervalTime:
+                        getIntervalTime(
+                          fullBackup.backup_start_date,
+                          fullBackup.backup_finish_date
+                        ) ?? '0s',
+                    },
                   },
-                },
-                Differential: {
-                  lastBackup: {
-                    backup_start_date: diffBackup.backup_start_date,
-                    backup_size: diffBackup.backup_size,
-                    intervalTime:
-                      getIntervalTime(
-                        diffBackup.backup_start_date,
-                        diffBackup.backup_finish_date
-                      ) ?? '0s',
+                  Differential: {
+                    lastBackup: {
+                      backup_start_date: diffBackup.backup_start_date,
+                      backup_size: diffBackup.backup_size,
+                      intervalTime:
+                        getIntervalTime(
+                          diffBackup.backup_start_date,
+                          diffBackup.backup_finish_date
+                        ) ?? '0s',
+                    },
                   },
-                },
-                Log: {
-                  lastBackup: {
-                    backup_start_date: logBackup.backup_start_date,
-                    backup_size: logBackup.backup_size,
-                    intervalTime:
-                      getIntervalTime(
-                        logBackup.backup_start_date,
-                        logBackup.backup_finish_date
-                      ) ?? '0s',
+                  Log: {
+                    lastBackup: {
+                      backup_start_date: logBackup.backup_start_date,
+                      backup_size: logBackup.backup_size,
+                      intervalTime:
+                        getIntervalTime(
+                          logBackup.backup_start_date,
+                          logBackup.backup_finish_date
+                        ) ?? '0s',
+                    },
                   },
-                },
-              }
-            }
-          )
-
-          return {
-            label: serverName,
-            key: index,
-            children: (
-              <StyledTable
-                dataSource={databases}
-                columns={renderColumns()}
-                pagination={false}
-                bordered
-                onRow={(record) => ({
-                  onClick: () =>
-                    handleRowClick(
-                      id,
-                      serverName,
-                      record.database_name,
-                      record
-                    ),
-                  style: {
-                    cursor: 'pointer',
-                  },
-                })}
-                style={{
-                  '--table-zebra-odd-bg': '#f5f5f5', // Tonalidade mais escura para linhas ímpares
-                  '--table-zebra-even-bg': '#ffffff', // Cor normal para linhas pares
-                }}
-                rowClassName={(record, index) =>
-                  index % 2 === 1 ? 'zebra-odd' : 'zebra-even'
                 }
-              />
-            ),
-          }
-        })}
+              }
+            )
+
+            return {
+              label: serverName,
+              key: index,
+              children: (
+                <StyledTable
+                  dataSource={databases ?? []}
+                  columns={renderColumns()}
+                  pagination={false}
+                  bordered
+                  onRow={(record) => ({
+                    onClick: () =>
+                      handleRowClick(
+                        id,
+                        serverName,
+                        record.database_name,
+                        record
+                      ),
+                    style: {
+                      cursor: 'pointer',
+                    },
+                  })}
+                  style={{
+                    '--table-zebra-odd-bg': '#f5f5f5',
+                    '--table-zebra-even-bg': '#ffffff',
+                  }}
+                  rowClassName={(record, index) =>
+                    index % 2 === 1 ? 'zebra-odd' : 'zebra-even'
+                  }
+                />
+              ),
+            }
+          }) ?? []
+        }
       />
     </div>
   )

@@ -61,7 +61,7 @@ const tabsData = [
   // },
 ]
 
-const EstatePage = () => {
+const StatePage = () => {
   const router = useRouter()
   const [tabActive, setTabActive] = useState()
   const { userState: user } = useUser()
@@ -118,4 +118,4 @@ const EstatePage = () => {
   )
 }
 
-export default EstatePage
+export default StatePage
