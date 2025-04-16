@@ -13,7 +13,6 @@ import { useChatStore } from '~/services/state-manager/chat-store'
 import { truncateString } from '~/utils/truncateString'
 
 const { Sider } = Layout
-const { Search } = Input
 
 const SidebarAI = () => {
   const router = useRouter()
@@ -57,7 +56,7 @@ const SidebarAI = () => {
         </Button>
       </div>
 
-      <Search
+      <Input
         placeholder="Search chats..."
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}

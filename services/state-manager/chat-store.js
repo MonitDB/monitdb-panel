@@ -14,7 +14,12 @@ export const useChatStore = create((set, get) => ({
   setLoadingMessages: (loadingMessages) => set({ loadingMessages }),
   setChats: (chats) => set({ chats }),
   setChatId: (chatId) => set({ chatId }),
-  setMessages: (messages) => set({ messages }),
+  setMessages: (updater) =>
+    set((state) => ({
+      messages:
+        typeof updater === 'function' ? updater(state.messages) : updater,
+    })),
+
   loadPreviousMessages: async () => {
     try {
       const chatId = get().chatId

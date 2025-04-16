@@ -58,31 +58,39 @@ const ChatAI = () => {
   const handleSend = async () => {
     if (!input.trim()) return
 
-    try {
-      let generatedChatId = chatId
-      setInput('')
-      setIsLoading(true)
-      const loadingMessage = {
-        id: `loading-${Date.now()}`,
-        role: 'loading',
-        message: '',
-      }
+    const userMessage = {
+      id: Date.now(),
+      role: 'user',
+      message: input.trim(),
+    }
 
-      const userMessage = {
-        id: Date.now(),
-        role: 'user',
-        message: input,
-      }
-      setMessages([...messages, userMessage, loadingMessage])
+    const loadingMessage = {
+      id: `loading-${Date.now()}`,
+      role: 'loading',
+      message: '',
+    }
+
+    let generatedChatId = chatId
+    const initialMessages = isNew
+      ? [userMessage, loadingMessage]
+      : [...(messages || []), userMessage, loadingMessage]
+
+    setMessages(initialMessages)
+    setInput('')
+    setIsLoading(true)
+
+    try {
       if (isNew) {
-        setMessages([userMessage, loadingMessage])
         const { data: createdChat } = await apiV2().post('ai/create-chat')
         generatedChatId = createdChat.id
+
         renameChat(generatedChatId, input.trim())
         router.replace({
           pathname: router.pathname,
           query: { 'chat-id': generatedChatId },
         })
+
+        setChats([{ id: generatedChatId, title: input.trim() }, ...chats])
       }
 
       const { data } = await apiV2().post('ai/completions', {
@@ -90,27 +98,24 @@ const ChatAI = () => {
         message: input.trim(),
       })
 
-      if (isNew) {
-        setChats([{ id: generatedChatId, title: input.trim() }, ...chats])
-      }
-
       const assistantMessage = {
         id: `assistant-${Date.now()}`,
         role: 'assistant',
         message: data,
       }
 
-      const updated = [...messages]
-      const lastMessage = updated[updated.length - 1]
-
-      if (lastMessage?.role === 'loading') {
-        updated.pop()
-      }
-
-      setMessages([...updated, assistantMessage])
+      // Remove loading e adiciona mensagens novas
+      setMessages((prev) => {
+        return isNew
+          ? [userMessage, assistantMessage]
+          : [
+              ...(prev || []).filter((m) => m.role !== 'loading'),
+              assistantMessage,
+            ]
+      })
     } catch (error) {
-      setMessages([
-        ...messages,
+      setMessages((prev) => [
+        ...(prev || []).filter((m) => m.role !== 'loading'),
         { id: `error-${Date.now()}`, role: 'error', message: error.message },
       ])
     } finally {
