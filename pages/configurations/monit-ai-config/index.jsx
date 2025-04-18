@@ -9,7 +9,7 @@ import { useUser } from '~/hooks/index'
 import Layout from '~/layouts/default'
 import { useAiConfigStore } from '~/services/state-manager/ai-store'
 
-const IntegrationsPage = () => {
+const AiConfigPage = () => {
   const router = useRouter()
   const { query, pathname } = router
   const { userState: user } = useUser()
@@ -130,4 +130,4 @@ const IntegrationsPage = () => {
   )
 }
 
-export default IntegrationsPage
+export default AiConfigPage
