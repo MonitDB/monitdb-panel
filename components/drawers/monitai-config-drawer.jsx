@@ -72,10 +72,12 @@ const AiConfigDrawer = () => {
   }, [isEdit, form, query, open, fetchConfigById])
 
   useEffect(() => {
-    const headers = safeJsonParse(
-      selectedConfig?.headers?.length > 0
-        ? JSON.stringify(selectedConfig?.headers)
-        : '{}'
+    const headers = JSON.stringify(
+      safeJsonParse(
+        selectedConfig?.headers?.length > 0
+          ? JSON.stringify(selectedConfig?.headers)
+          : '{}'
+      )
     )
 
     form.setFieldsValue({
