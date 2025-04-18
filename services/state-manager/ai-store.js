@@ -8,6 +8,8 @@ export const useAiConfigStore = create((set, get) => ({
   selectedConfig: null,
   loading: false,
   error: null,
+  loadingConfig: false,
+  toggleEnableId: null,
 
   fetchConfigs: async () => {
     set({ loading: true, error: null })
@@ -20,48 +22,52 @@ export const useAiConfigStore = create((set, get) => ({
   },
 
   fetchConfigById: async (id) => {
-    set({ loading: true, error: null })
+    set({ loadingConfig: true, error: null })
     try {
       const response = await apiV2().get(`/ai/config/${id}`)
-      set({ selectedConfig: response.data, loading: false })
+      set({ selectedConfig: response.data, loadingConfig: false })
     } catch (error) {
-      set({ error: error, loading: false })
+      set({ error: error, loadingConfig: false })
     }
   },
 
   createConfig: async (data) => {
-    set({ loading: true, error: null })
+    set({ loadingConfig: true, error: null })
     try {
       await apiV2().post('/ai/config', data)
       await get().fetchConfigs()
     } catch (error) {
       set({ error: error })
     } finally {
-      set({ loading: false })
+      set({ loadingConfig: false })
     }
   },
 
   updateConfig: async (id, data) => {
-    set({ loading: true, error: null })
+    set({ loadingConfig: true, error: null })
     try {
       await apiV2().put(`/ai/config/${id}`, data)
       await get().fetchConfigs()
     } catch (error) {
       set({ error: error })
     } finally {
-      set({ loading: false })
+      set({ loadingConfig: false })
     }
   },
 
-  toggleStatus: async (id) => {
-    set({ loading: true, error: null })
+  toggleEnabled: async (id) => {
+    set({ toggleEnableId: id, error: null })
     try {
       await apiV2().patch(`/ai/config/${id}/toggle`)
-      await get().fetchConfigs()
+      set({
+        configs: get().configs.map((c) =>
+          c.id === id ? { ...c, enabled: !c.enabled } : c
+        ),
+      })
     } catch (error) {
       set({ error: error })
     } finally {
-      set({ loading: false })
+      set({ toggleEnableId: null })
     }
   },
 

@@ -1,58 +1,29 @@
 import { Button, Table } from 'antd'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 
-import IntegrationDrawer from '~/components/drawers/integration-drawer'
+import AiConfigDrawer from '~/components/drawers/monitai-config-drawer'
 import { PageContent, PageHeader } from '~/components/page'
 import { useUser } from '~/hooks/index'
 import Layout from '~/layouts/default'
-import { listIntegrations } from '~/services/integration'
-import {
-  FeatureFunction,
-  hasPermission,
-  TypeGrant,
-} from '~/utils/hasPermission'
+import { useAiConfigStore } from '~/services/state-manager/ai-store'
 
 const IntegrationsPage = () => {
   const router = useRouter()
   const { query, pathname } = router
   const { userState: user } = useUser()
 
-  const [integrations, setIntegrations] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [currentPage, setCurrentPage] = useState(1)
-  const [total, setTotal] = useState(0)
+  const { configs, loading, toggleEnableId, fetchConfigs, toggleEnabled } =
+    useAiConfigStore()
+
   const pageSize = 10
 
   useEffect(() => {
-    if (
-      !hasPermission(
-        user,
-        FeatureFunction.MANAGE_INTEGRATIONS,
-        TypeGrant.WRITE
-      ) &&
-      user.grants
-    ) {
-      router.push('/403')
-      return
-    }
-    const fetchIntegrations = async () => {
-      setLoading(true)
-      try {
-        const data = await listIntegrations(currentPage, pageSize)
-        setIntegrations(data.data)
-        setTotal(data.total)
-      } catch {
-        /* empty */
-      } finally {
-        setLoading(false)
-      }
-    }
-    if (Object.keys(query).length === 0) fetchIntegrations()
-  }, [currentPage, query, router, user])
+    fetchConfigs()
+  }, [fetchConfigs, user])
 
-  const addNewIntegration = () => {
+  const addNewConfig = () => {
     router.push(
       {
         pathname: pathname,
@@ -66,22 +37,18 @@ const IntegrationsPage = () => {
     )
   }
 
-  const openIntegration = (id) => {
+  const openConfig = (id) => {
     router.push(
       {
         pathname: pathname,
         query: {
           ...query,
-          'integration-id': id,
+          'aiconfig-id': id,
         },
       },
       undefined,
       { shallow: true }
     )
-  }
-
-  const handleTableChange = (pagination) => {
-    setCurrentPage(pagination.current)
   }
 
   const columns = [
@@ -91,19 +58,9 @@ const IntegrationsPage = () => {
       key: 'name',
     },
     {
-      title: 'Type',
-      dataIndex: 'type',
-      key: 'type',
-    },
-    {
-      title: 'URL',
-      dataIndex: 'url',
-      key: 'url',
-    },
-    {
-      title: 'Method',
-      dataIndex: 'method',
-      key: 'method',
+      title: 'Model',
+      dataIndex: 'model',
+      key: 'model',
     },
     {
       title: 'Created At',
@@ -111,15 +68,31 @@ const IntegrationsPage = () => {
       key: 'created_at',
       render: (text) => new Date(text).toLocaleString(),
     },
+    {
+      title: 'Enabled',
+      dataIndex: 'enabled',
+      key: 'enabled',
+      render: (text, record) => {
+        return (
+          <Button
+            type={text ? 'primary' : 'default'}
+            loading={toggleEnableId === record.id}
+            onClick={() => toggleEnabled(record.id)}
+          >
+            {text ? 'Enabled' : 'Disabled'}
+          </Button>
+        )
+      },
+    },
   ]
 
   return (
     <>
-      <NextSeo title="Integrations - Configurations - MonitDB" />
+      <NextSeo title="AI Configuration - Configurations - MonitDB" />
       <Layout>
         <PageContent removeSidebarMargin={true}>
           <PageHeader
-            title="Integrations"
+            title="AI Configuration"
             breadcrumbs={[
               {
                 title: 'Configurations',
@@ -127,32 +100,30 @@ const IntegrationsPage = () => {
               },
               {
                 title: 'Integrations',
-                href: '/configurations/integrations/',
+                href: '/configurations/ai-config/',
               },
             ]}
             extra={
-              <Button type="primary" onClick={addNewIntegration}>
-                New Integration
+              <Button type="primary" onClick={addNewConfig}>
+                New Ai Config
               </Button>
             }
           />
           <Table
             loading={loading}
-            dataSource={integrations}
+            dataSource={configs}
             columns={columns}
             rowKey="id"
             onRow={(record) => ({
-              onClick: () => openIntegration(record.id),
+              onClick: () => openConfig(record.id),
             })}
             pagination={{
-              current: currentPage,
               pageSize: pageSize,
-              total: total,
+              total: configs?.length,
               showSizeChanger: false,
             }}
-            onChange={handleTableChange}
           />
-          <IntegrationDrawer />
+          <AiConfigDrawer />
         </PageContent>
       </Layout>
     </>
