@@ -16,13 +16,10 @@ import {
 } from 'antd'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 
-import {
-  createAiconfig,
-  getaiconfig,
-  updateAiconfig,
-} from '~/services/aiconfig' // Supondo que você tenha essas funções
+import { useAiConfigStore } from '~/services/state-manager/ai-store'
+import { safeJsonParse } from '~/utils/json'
 
 export const ReactJson = dynamic(
   () => {
@@ -34,6 +31,14 @@ export const ReactJson = dynamic(
 const AiConfigDrawer = () => {
   const router = useRouter()
   const { query, pathname } = router
+
+  const {
+    fetchConfigById,
+    loadingConfig,
+    updateConfig,
+    createConfig,
+    selectedConfig,
+  } = useAiConfigStore()
 
   const open =
     query['aiconfig-new'] === 'true' || query['aiconfig-id'] !== undefined
@@ -57,44 +62,21 @@ const AiConfigDrawer = () => {
   }
 
   const [form] = Form.useForm()
-  const [loading, setLoading] = useState(false)
-
-  const [fetching, setFetching] = useState(false)
 
   useEffect(() => {
     form.resetFields()
 
     if (isEdit) {
-      setFetching(true)
-      const fetchAiconfig = async () => {
-        try {
-          const data = await getaiconfig(query['aiconfig-id'])
-          const headers = JSON.parse(
-            data?.headers.length ? data?.headers : '{}'
-          )
-          form.setFieldsValue({
-            name: data.name,
-            url: data.url,
-            type: data.type,
-            method: data.method,
-            headers: Object.entries(headers).map(([key, value]) => ({
-              key,
-              value,
-            })),
-            body: data.body,
-          })
-        } catch {
-          message.error('Failed to load aiconfig data')
-        }
-        setFetching(false)
-      }
-      fetchAiconfig()
+      fetchConfigById(query['aiconfig-id'])
     }
-  }, [isEdit, form, query, open])
+  }, [isEdit, form, query, open, fetchConfigById])
 
-  // const handleJsonChange = (updatedJson) => {
-  //   setBody(updatedJson.updated_src)
-  // }
+  useEffect(() => {
+    const headers = safeJsonParse(
+      selectedConfig?.headers?.length > 0 ? selectedConfig : '{}'
+    )
+    selectedConfig && form.setFieldsValue({ ...selectedConfig, headers })
+  }, [form, selectedConfig])
 
   const handleSubmit = async () => {
     try {
@@ -111,11 +93,11 @@ const AiConfigDrawer = () => {
       }
 
       if (isEdit) {
-        await updateAiconfig(query['aiconfig-id'], data)
-        message.success('aiconfig updated successfully')
+        await updateConfig(query['aiconfig-id'], data)
+        message.success('Config updated successfully')
       } else {
-        await createAiconfig(data)
-        message.success('aiconfig created successfully')
+        await createConfig(data)
+        message.success('Config created successfully')
       }
       form.resetFields()
 
@@ -136,7 +118,7 @@ const AiConfigDrawer = () => {
       bodyStyle={{ display: 'flex', flexDirection: 'column', height: '100%' }}
       width={600}
     >
-      {fetching && (
+      {loadingConfig && (
         <div
           style={{
             display: 'flex',
@@ -150,7 +132,7 @@ const AiConfigDrawer = () => {
           <Spin />
         </div>
       )}
-      {!fetching && (
+      {!loadingConfig && (
         <>
           <div>
             <Typography.Title level={4}>AI Config</Typography.Title>
