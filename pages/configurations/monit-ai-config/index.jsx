@@ -9,6 +9,15 @@ import { useUser } from '~/hooks/index'
 import Layout from '~/layouts/default'
 import { useAiConfigStore } from '~/services/state-manager/ai-store'
 
+/*************  ✨ Windsurf Command ⭐  *************/
+/**
+ * AiConfigPage component renders a page for managing AI configurations.
+ * It displays a table with existing configurations and provides options to add new configurations or edit existing ones.
+ * The component integrates with the AI configuration store to fetch and manage configuration data.
+ * It also uses React Router for navigation and provides a drawer for configuration details.
+ */
+
+/*******  1a739de9-bd6c-4696-a438-2929650f6344  *******/
 const AiConfigPage = () => {
   const router = useRouter()
   const { query, pathname } = router
@@ -29,7 +38,7 @@ const AiConfigPage = () => {
         pathname: pathname,
         query: {
           ...query,
-          'integration-new': 'true',
+          'aiconfig-new': 'true',
         },
       },
       undefined,
@@ -77,7 +86,10 @@ const AiConfigPage = () => {
           <Button
             type={text ? 'primary' : 'default'}
             loading={toggleEnableId === record.id}
-            onClick={() => toggleEnabled(record.id)}
+            onClick={(event) => {
+              event.stopPropagation()
+              toggleEnabled(record.id)
+            }}
           >
             {text ? 'Enabled' : 'Disabled'}
           </Button>

@@ -116,7 +116,11 @@ const ChatAI = () => {
     } catch (error) {
       setMessages((prev) => [
         ...(prev || []).filter((m) => m.role !== 'loading'),
-        { id: `error-${Date.now()}`, role: 'error', message: error.message },
+        {
+          id: `error-${Date.now()}`,
+          role: 'error',
+          message: error.message + ' ' + (error?.response?.data?.message ?? ''),
+        },
       ])
     } finally {
       setIsLoading(false)
@@ -255,7 +259,8 @@ const ChatAI = () => {
                           }}
                         >
                           {message.role !== 'user' &&
-                            message.role !== 'loading' && (
+                            message.role !== 'loading' &&
+                            message.role !== 'error' && (
                               <Markdown
                                 content={message.message.trim()}
                                 className="prose"
@@ -266,6 +271,16 @@ const ChatAI = () => {
                             <p
                               style={{
                                 color: '#fff',
+                              }}
+                            >
+                              {message.message.trim()}
+                            </p>
+                          )}
+
+                          {message.role === 'error' && (
+                            <p
+                              style={{
+                                color: 'red',
                               }}
                             >
                               {message.message.trim()}

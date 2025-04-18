@@ -73,23 +73,24 @@ const AiConfigDrawer = () => {
 
   useEffect(() => {
     const headers = safeJsonParse(
-      selectedConfig?.headers?.length > 0 ? selectedConfig : '{}'
+      selectedConfig?.headers?.length > 0
+        ? JSON.stringify(selectedConfig?.headers)
+        : '{}'
     )
-    selectedConfig && form.setFieldsValue({ ...selectedConfig, headers })
+
+    form.setFieldsValue({
+      ...selectedConfig,
+      headers,
+    })
   }, [form, selectedConfig])
 
   const handleSubmit = async () => {
     try {
-      setLoading(true)
       const values = await form.validateFields()
 
-      const headers = values.headers?.reduce((accumulator, header) => {
-        accumulator[header.key] = header.value
-        return accumulator
-      }, {})
       const data = {
         ...values,
-        headers: JSON.stringify(headers),
+        headers: JSON.stringify(safeJsonParse(values.headers)),
       }
 
       if (isEdit) {
@@ -105,7 +106,7 @@ const AiConfigDrawer = () => {
     } catch (error) {
       message.error(error, 'Failed to save aiconfig')
     } finally {
-      setLoading(false)
+      /* empty */
     }
   }
 
@@ -157,6 +158,7 @@ const AiConfigDrawer = () => {
               </Form.Item>
               <Form.Item
                 name="prompt"
+                label="Prompt"
                 initialValue={''}
                 rules={[{ required: false }]}
               >
@@ -188,7 +190,11 @@ const AiConfigDrawer = () => {
           >
             <Space>
               <Button onClick={closeDrawer}>Cancel</Button>
-              <Button onClick={handleSubmit} type="primary" loading={loading}>
+              <Button
+                onClick={handleSubmit}
+                type="primary"
+                loading={loadingConfig}
+              >
                 {!isEdit ? 'Create' : 'Save'}
               </Button>
             </Space>
