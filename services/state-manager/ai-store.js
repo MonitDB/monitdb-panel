@@ -60,9 +60,15 @@ export const useAiConfigStore = create((set, get) => ({
     try {
       await apiV2().patch(`/ai/config/${id}/toggle`)
       set({
-        configs: get().configs.map((c) =>
-          c.id === id ? { ...c, enabled: !c.enabled } : c
-        ),
+        configs: get().configs.map((c) => {
+          if (c.id === id) {
+            return { ...c, enabled: !c.enabled }
+          } else if (!get().configs.find((cfg) => cfg.id === id)?.enabled) {
+            return { ...c, enabled: false }
+          } else {
+            return c
+          }
+        }),
       })
     } catch (error) {
       set({ error: error })

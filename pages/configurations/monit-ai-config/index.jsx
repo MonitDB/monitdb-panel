@@ -1,4 +1,4 @@
-import { Button, Table } from 'antd'
+import { Button, Switch, Table } from 'antd'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
 import { useEffect } from 'react'
@@ -83,16 +83,16 @@ const AiConfigPage = () => {
       key: 'enabled',
       render: (text, record) => {
         return (
-          <Button
-            type={text ? 'primary' : 'default'}
+          <Switch
+            checked={!!text}
             loading={toggleEnableId === record.id}
-            onClick={(event) => {
+            onClick={(checked, event) => {
               event.stopPropagation()
               toggleEnabled(record.id)
             }}
-          >
-            {text ? 'Enabled' : 'Disabled'}
-          </Button>
+            checkedChildren="Enabled"
+            unCheckedChildren="Disabled"
+          />
         )
       },
     },
