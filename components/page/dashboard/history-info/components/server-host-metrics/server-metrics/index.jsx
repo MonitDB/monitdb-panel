@@ -58,15 +58,19 @@ const ServerMetrics = ({ key }) => {
 
   return (
     <div className="mt-6" key={key} id="sql-server-metrics">
-      {hasSomePermissions(user, [
-        FeatureFunction.SQL_SERVER_METRICS_BATCH_REQUESTS,
-        FeatureFunction.SQL_SERVER_METRICS_SQLCOMPILATIONS_BATCH_REQUESTS,
-        FeatureFunction.SQL_SERVER_METRICS_PAGE_SPLITS_BATCH_REQUESTS,
-        FeatureFunction.SQL_SERVER_METRICS_SQLCOMPILATIONS_SEC,
-        FeatureFunction.SQL_SERVER_METRICS_PAGE_SPLITS_SEC,
-        FeatureFunction.SQL_SERVER_METRICS_FULL_SCANS_SEC,
-        FeatureFunction.SQL_SERVER_METRICS_USER_CONNECTIONS,
-      ]) && (
+      {hasSomePermissions(
+        user,
+        [
+          FeatureFunction.SQL_SERVER_METRICS_BATCH_REQUESTS,
+          FeatureFunction.SQL_SERVER_METRICS_SQLCOMPILATIONS_BATCH_REQUESTS,
+          FeatureFunction.SQL_SERVER_METRICS_PAGE_SPLITS_BATCH_REQUESTS,
+          FeatureFunction.SQL_SERVER_METRICS_SQLCOMPILATIONS_SEC,
+          FeatureFunction.SQL_SERVER_METRICS_PAGE_SPLITS_SEC,
+          FeatureFunction.SQL_SERVER_METRICS_FULL_SCANS_SEC,
+          FeatureFunction.SQL_SERVER_METRICS_USER_CONNECTIONS,
+        ],
+        TypeGrant.READ
+      ) && (
         <>
           <h3 className="font-bold mb-6">SQL Server metrics</h3>
           <div>
