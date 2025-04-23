@@ -121,7 +121,6 @@ const ChatAI = () => {
         message: data.aiResponse,
       }
 
-      // Remove loading e adiciona mensagens novas
       setMessages((prev) => {
         return isNew
           ? [userMessage, assistantMessage]
@@ -149,7 +148,7 @@ const ChatAI = () => {
   const handleStop = async () => {
     if (controllerReference.current) {
       controllerReference.current.abort()
-      controllerReference.current = null
+      controllerReference.current = undefined
     }
   }
 
