@@ -42,6 +42,8 @@ export const tableDataItems = labels.map(() => ({
   title: `SELECT user_id FROM ${faker.random.word()} WHERE meta_key = '${faker.random.word()}'`,
 }))
 
+console.log('s')
+
 const SingleDashboard = () => {
   const {
     globalState: { servers, serverTypes },
