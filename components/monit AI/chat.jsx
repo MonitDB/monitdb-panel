@@ -3,7 +3,13 @@
 /* eslint-disable sonarjs/no-empty-collection */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable unicorn/prevent-abbreviations */
-import { ApiOutlined, RobotOutlined, UserOutlined, SendOutlined, PauseOutlined } from '@ant-design/icons'
+import {
+  ApiOutlined,
+  PauseOutlined,
+  RobotOutlined,
+  SendOutlined,
+  UserOutlined,
+} from '@ant-design/icons'
 import {
   Avatar,
   Button,
@@ -60,8 +66,8 @@ const ChatAI = () => {
   const handleSend = async () => {
     if (!input.trim()) return
 
-    let controller = new AbortController();
-    controllerReference.current = controller;
+    let controller = new AbortController()
+    controllerReference.current = controller
 
     const userMessage = {
       id: Date.now(),
@@ -81,7 +87,7 @@ const ChatAI = () => {
       : [...(messages || []), userMessage, loadingMessage]
 
     setMessages(initialMessages)
-    setInput('Processando seu prompt...')
+    setInput('')
     setIsLoading(true)
 
     try {
@@ -98,12 +104,16 @@ const ChatAI = () => {
         setChats([{ id: generatedChatId, title: input.trim() }, ...chats])
       }
 
-      const { data } = await apiV2().post('ai/completions', {
-        chatId: generatedChatId,
-        message: input.trim(),
-      }, {
-        signal: controllerReference.current.signal
-      })
+      const { data } = await apiV2().post(
+        'ai/completions',
+        {
+          chatId: generatedChatId,
+          message: input.trim(),
+        },
+        {
+          signal: controllerReference.current.signal,
+        }
+      )
 
       const assistantMessage = {
         id: `assistant-${Date.now()}`,
@@ -183,7 +193,7 @@ const ChatAI = () => {
           display: `${isNew ? 'flex' : 'block'}`,
           flexDirection: 'column',
           justifyContent: 'center',
-          gap: '20px'
+          gap: '20px',
         }}
       >
         {isLoadingCurrentChatMessages && (
@@ -192,7 +202,7 @@ const ChatAI = () => {
               top: 0,
               left: 0,
               width: '100%',
-              height: '80vh',
+              height: '70vh',
               padding: '0 15%',
               background: 'rgba(255, 255, 255, 0)',
             }}
@@ -214,7 +224,7 @@ const ChatAI = () => {
               display: 'flex',
 
               flexDirection: 'column',
-              scrollBehavior: 'smooth'
+              scrollBehavior: 'smooth',
             }}
           >
             {isNew && (
@@ -247,7 +257,7 @@ const ChatAI = () => {
                     height: '100%',
                     paddingTop: 16,
                     overflow: 'auto',
-                    padding: '0 15%'
+                    padding: '0 15%',
                   }}
                   renderItem={(message) => (
                     <List.Item
@@ -326,29 +336,31 @@ const ChatAI = () => {
           </div>
         )}
         <div style={{ width: '100%', padding: '1.2rem 20% 0 20%' }}>
-          <Card hoverable variant='borderless'>
-            <Input.TextArea
-              style={{ flex: 1 }}
-              variant='borderless'
-              placeholder="Write your message..."
-              value={input}
-              disabled={isLoading}
-              size="large"
-              autoSize={{ minRows: 3, maxRows: 5 }}
-              onChange={(e) => setInput(e.target.value)}
-              onPressEnter={(e) => {
-                if (!e.shiftKey) {
-                  e.preventDefault()
-                  handleSend()
-                }
-              }}
-            />
-            <Button
-              role="primary"
-              icon={ isLoading ? <PauseOutlined /> : <SendOutlined /> }
-              onClick={isLoading ? handleStop : handleSend }
-              disabled={!input.trim()}
-            />
+          <Card hoverable variant="borderless">
+            <div style={{ display: 'flex', alignItems: 'flex-end', gap: 8 }}>
+              <Input.TextArea
+                style={{ flex: 1 }}
+                variant="borderless"
+                placeholder="Write your message..."
+                value={input}
+                // disabled={isLoading}
+                size="large"
+                autoSize={{ minRows: 3, maxRows: 5 }}
+                onChange={(e) => setInput(e.target.value)}
+                onPressEnter={(e) => {
+                  if (!e.shiftKey && !isLoading) {
+                    e.preventDefault()
+                    handleSend()
+                  }
+                }}
+              />
+              <Button
+                style={{ marginLeft: 'auto' }}
+                role="primary"
+                icon={isLoading ? <PauseOutlined /> : <SendOutlined />}
+                onClick={isLoading ? handleStop : handleSend}
+              />
+            </div>
           </Card>
         </div>
       </Content>
