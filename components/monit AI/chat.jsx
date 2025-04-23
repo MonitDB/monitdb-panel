@@ -92,7 +92,9 @@ const ChatAI = () => {
 
     try {
       if (isNew) {
-        const { data: createdChat } = await apiV2().post('ai/create-chat')
+        const { data: createdChat } = await apiV2().post('ai/create-chat', {}, {
+          signal: controllerReference.current.signal
+        })
         generatedChatId = createdChat.id
 
         renameChat(generatedChatId, input.trim())
