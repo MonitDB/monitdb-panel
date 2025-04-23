@@ -1,6 +1,5 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-/* eslint-disable no-console */
 
 import { Col, Row, Tabs } from 'antd'
 import faker from 'faker'
@@ -41,8 +40,6 @@ export const labels = Array.from({ length: 60 }, (_, index) => `8:${index}`)
 export const tableDataItems = labels.map(() => ({
   title: `SELECT user_id FROM ${faker.random.word()} WHERE meta_key = '${faker.random.word()}'`,
 }))
-
-console.log('s')
 
 const SingleDashboard = () => {
   const {
