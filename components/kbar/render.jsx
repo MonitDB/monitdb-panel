@@ -1,8 +1,4 @@
-import {
-  // ...
-  KBarResults,
-  useMatches,
-} from 'kbar'
+import { KBarResults, useMatches } from 'kbar'
 
 import ResultItem from './Components/ResultItem'
 
@@ -17,8 +13,7 @@ function RenderResults() {
       onRender={({ item, active }) => {
         return typeof item === 'string' ? (
           <div className="py-3 px-5">
-            {' '}
-            <h2 className="text-center uppercase"> {item} </h2>{' '}
+            <h2 className="text-center uppercase">{item}</h2>
           </div>
         ) : (
           <ResultItem action={item} active={active} />

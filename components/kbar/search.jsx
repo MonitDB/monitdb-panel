@@ -1,10 +1,13 @@
 'use client'
 import { KBarAnimator, KBarPortal, KBarPositioner, KBarSearch } from 'kbar'
+import { useState } from 'react'
 
 import KBarActions from './actions'
 import RenderResults from './render'
 
 export default function KBarSearchComponent() {
+  const [currentQuery, setCurrentQuery] = useState('')
+
   return (
     <KBarPortal>
       <KBarPositioner
@@ -28,8 +31,13 @@ export default function KBarSearchComponent() {
             overflow: 'hidden',
           }}
         >
-          <KBarActions />
+          <KBarActions currentQuery={currentQuery} />
           <KBarSearch
+            onChange={(event) => {
+              if (event.target.value.length > 0) {
+                setCurrentQuery(event.target.value)
+              }
+            }}
             style={{
               width: '100%',
               padding: '0.75rem 1rem',

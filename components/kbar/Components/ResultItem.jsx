@@ -1,4 +1,5 @@
-import * as React from 'react'
+import { RightCircleOutlined } from '@ant-design/icons'
+import React from 'react'
 
 const ResultItem = React.forwardRef(function ResultItem(
   { action, active },
@@ -13,17 +14,21 @@ const ResultItem = React.forwardRef(function ResultItem(
           : `px-3 py-2 leading-none rounded text-violet11 flex items-center justify-between hover:bg-violet4`
       }
     >
-      <header className="flex items-center">
+      <header className="flex items-center gap-3">
         {action.icon}
-        <div className="rounded flex flex-col items-start justify-center relative select-none outline-none hover:bg-violet4">
-          <h1 className="text-lg text-violet11"> {action.name} </h1>
-          <p className="text-md text-violet9 py-1"> {action.subtitle} </p>
+        <div className="flex flex-col items-start">
+          <h1 className="text-lg">{action.name}</h1>
+          {action.subtitle && (
+            <p className="text-sm text-violet9">{action.subtitle}</p>
+          )}
         </div>
       </header>
-      <div className="text-[15px] leading-none text-violet11 rounded flex justify-between items-center relative select-none outline-none hover:bg-violet4">
-        {action.shortcut?.length ? (
+
+      <div className="flex items-center gap-2">
+        {action.shortcut?.length > 0 && (
           <div
             aria-hidden
+            className="hidden md:flex"
             style={{ display: 'grid', gridAutoFlow: 'column', gap: '4px' }}
           >
             {action.shortcut.map((sc) => (
@@ -40,7 +45,11 @@ const ResultItem = React.forwardRef(function ResultItem(
               </kbd>
             ))}
           </div>
-        ) : undefined}
+        )}
+        {/* 👇 Se a ação tiver filhos, indicamos com um chevron */}
+        {action.children?.length > 0 && (
+          <RightCircleOutlined className="w-4 h-4 text-violet9" />
+        )}
       </div>
     </div>
   )

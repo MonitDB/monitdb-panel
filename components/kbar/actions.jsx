@@ -1,62 +1,68 @@
+'use client'
 import { useRegisterActions } from 'kbar'
 import { useRouter } from 'next/router'
 
-export default function KBarActions() {
+export default function KBarActions({ currentQuery }) {
   const router = useRouter()
+
+  const dynamicResults =
+    currentQuery.length > 2
+      ? [
+          {
+            id: 'search-query',
+            name: `Ask to MonitAI "${currentQuery}"`,
+            subtitle: 'Press enter to search',
+            keywords: currentQuery,
+            parent: 'search',
+            shortcut: ['enter'],
+            perform: () => {
+              router.push(`monit-ai/new?query=${currentQuery}`)
+            },
+          },
+        ]
+      : []
 
   useRegisterActions(
     [
       {
+        id: 'search',
+        name: 'Search',
+        keywords: 'pesquisar buscar',
+      },
+      ...dynamicResults,
+      {
         id: 'home',
         name: 'Ir para Home',
         shortcut: ['h'],
-        keywords: 'início',
+        keywords: 'início principal',
         perform: () => router.push('/'),
       },
       {
-        id: 'about',
+        id: 'sobre',
         name: 'Sobre',
-        shortcut: ['a'],
-        keywords: 'sobre nós',
-        perform: () => router.push('/about'),
+        shortcut: ['s'],
+        keywords: 'informações sobre nós',
       },
       {
-        id: 'about2',
-        name: 'Sobre',
-        shortcut: ['a'],
-        keywords: 'sobre nós',
-        perform: () => router.push('/about'),
+        id: 'sobre-equipe',
+        name: 'Equipe',
+        parent: 'sobre',
+        perform: () => router.push('/about/team'),
       },
       {
-        id: 'about3',
-        name: 'Sobre',
-        shortcut: ['a'],
-        keywords: 'sobre nós',
-        perform: () => router.push('/about'),
+        id: 'sobre-missao',
+        name: 'Missão',
+        parent: 'sobre',
+        perform: () => router.push('/about/mission'),
       },
       {
-        id: 'about4',
-        name: 'Sobre',
-        shortcut: ['a'],
-        keywords: 'sobre nós',
-        perform: () => router.push('/about'),
-      },
-      {
-        id: 'about',
-        name: 'Sobre',
-        shortcut: ['a'],
-        keywords: 'sobre nós',
-        perform: () => router.push('/about'),
-      },
-      {
-        id: 'about',
-        name: 'Sobre',
-        shortcut: ['a'],
-        keywords: 'sobre nós',
-        perform: () => router.push('/about'),
+        id: 'sobre-contato',
+        name: 'Contato',
+        parent: 'sobre',
+        perform: () => router.push('/about/contact'),
       },
     ],
-    []
+    [router, dynamicResults]
   )
 
   return <></>
