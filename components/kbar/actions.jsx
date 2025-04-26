@@ -2,8 +2,29 @@
 import { useRegisterActions } from 'kbar'
 import { useRouter } from 'next/router'
 
+import { useGlobal } from '~/hooks/index'
+
 export default function KBarActions({ currentQuery }) {
   const router = useRouter()
+
+  const generateServerAction = (
+    server,
+    section,
+    actionType,
+    subtitle,
+    tab
+  ) => ({
+    id: `${server.id}-${actionType}`,
+    name: `${server.serverName} - ${actionType}`,
+    subtitle,
+    parent: server.id,
+    perform: () => router.push(`/${section}/${server.id}?tab=${tab}`),
+    keywords: server.serverName,
+  })
+
+  const {
+    globalState: { servers },
+  } = useGlobal()
 
   const dynamicResults =
     currentQuery.length > 2
@@ -15,12 +36,68 @@ export default function KBarActions({ currentQuery }) {
             keywords: currentQuery,
             parent: 'search',
             shortcut: ['enter'],
-            perform: () => {
-              router.push(`monit-ai/new?query=${currentQuery}`)
-            },
+            perform: () => router.push(`monit-ai/new?query=${currentQuery}`),
           },
         ]
       : []
+
+  const dashboardActions = [
+    'history',
+    'query',
+    'current-activity',
+    'tuning-advisor',
+  ].flatMap((action) =>
+    servers.map((server) =>
+      generateServerAction(
+        server,
+        'dashboard',
+        action.charAt(0).toUpperCase() + action.slice(1),
+        `View ${action}`,
+        action
+      )
+    )
+  )
+
+  const alertsActions = servers.map((server) => ({
+    id: `${server.id}-alerts`,
+    name: `${server.serverName} - Alerts`,
+    subtitle: 'View alerts',
+    parent: server.id,
+    perform: () => router.push(`/alerts/?server=${server.id}`),
+    keywords: server.serverName,
+  }))
+
+  const reportsActions = servers.map((server) => ({
+    id: `${server.id}-reports`,
+    name: `${server.serverName} - Reports`,
+    subtitle: 'View reports',
+    parent: server.id,
+    perform: () => router.push(`/reports/results/?server=${server.id}`),
+    keywords: server.serverName,
+  }))
+
+  const states = [
+    {
+      id: 'installed-versions',
+      name: 'Installed Versions',
+      subtitle: 'View installed versions',
+    },
+    { id: 'disk-usage', name: 'Disk Usage', subtitle: 'View disk usage' },
+    {
+      id: 'capacity-plan',
+      name: 'Capacity Plan',
+      subtitle: 'View capacity plan',
+    },
+    { id: 'backups', name: 'Backups', subtitle: 'View backups' },
+    { id: 'jobs', name: 'Jobs', subtitle: 'View jobs' },
+  ].map(({ id, name, subtitle }) => ({
+    id: `states-${id}`,
+    name,
+    subtitle,
+    parent: 'states',
+    perform: () => router.push(`/states/?tab=${id}`),
+    keywords: name.toLowerCase(),
+  }))
 
   useRegisterActions(
     [
@@ -29,38 +106,30 @@ export default function KBarActions({ currentQuery }) {
         name: 'Search',
         keywords: 'pesquisar buscar',
       },
-      ...dynamicResults,
       {
-        id: 'home',
-        name: 'Ir para Home',
+        id: 'dashboard',
+        name: 'Go to Dashboard',
         shortcut: ['h'],
-        keywords: 'início principal',
+        keywords: 'dashboard home',
+        group: 'dashboard',
         perform: () => router.push('/'),
       },
       {
-        id: 'sobre',
-        name: 'Sobre',
-        shortcut: ['s'],
-        keywords: 'informações sobre nós',
+        id: 'states',
+        name: 'States',
+        keywords: 'states',
       },
-      {
-        id: 'sobre-equipe',
-        name: 'Equipe',
-        parent: 'sobre',
-        perform: () => router.push('/about/team'),
-      },
-      {
-        id: 'sobre-missao',
-        name: 'Missão',
-        parent: 'sobre',
-        perform: () => router.push('/about/mission'),
-      },
-      {
-        id: 'sobre-contato',
-        name: 'Contato',
-        parent: 'sobre',
-        perform: () => router.push('/about/contact'),
-      },
+      ...servers.map((server) => ({
+        id: server.id,
+        name: `${server.serverName}`,
+        perform: () => router.push(`/dashboard/${server.id}`),
+        keywords: server.serverName,
+      })),
+      ...dashboardActions,
+      ...dynamicResults,
+      ...states,
+      ...alertsActions,
+      ...reportsActions,
     ],
     [router, dynamicResults]
   )

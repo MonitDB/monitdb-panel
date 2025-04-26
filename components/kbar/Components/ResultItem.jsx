@@ -1,18 +1,11 @@
 import { RightCircleOutlined } from '@ant-design/icons'
 import React from 'react'
 
-const ResultItem = React.forwardRef(function ResultItem(
-  { action, active },
-  reference
-) {
+const ResultItem = React.forwardRef(function ResultItem({ action }, reference) {
   return (
     <div
       ref={reference}
-      className={
-        active
-          ? `px-3 py-2 leading-none rounded text-violet11 flex items-center justify-between bg-violet4`
-          : `px-3 py-2 leading-none rounded text-violet11 flex items-center justify-between hover:bg-violet4`
-      }
+      className={`px-3 py-2 leading-none rounded text-violet11 flex items-center justify-between hover:bg-gray hover:cursor-pointer `}
     >
       <header className="flex items-center gap-3">
         {action.icon}

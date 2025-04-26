@@ -5,7 +5,7 @@ import { Col, Row, Tabs } from 'antd'
 import faker from 'faker'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo } from 'react'
 
 import Loading from '~/components/loading'
 import {
@@ -50,7 +50,9 @@ const SingleDashboard = () => {
 
   const { userState: user } = useUser()
 
-  const [activeTabId, setActiveTabId] = useState('0')
+  const route = useRouter()
+  const { query } = route
+  const tab = query.tab
 
   const router = useRouter()
 
@@ -149,13 +151,13 @@ const SingleDashboard = () => {
 
   const items = [
     {
-      key: '0',
+      key: 'history',
       label: 'History',
       children: <HistoryInfo currentServer={currentServer} />,
       render: true,
     },
     {
-      key: '1',
+      key: 'query-window',
       label: 'Query Window',
       children: <QueryWindow currentServer={currentServer} />,
       render: hasPermission(
@@ -165,7 +167,7 @@ const SingleDashboard = () => {
       ),
     },
     {
-      key: '2',
+      key: 'current-activity',
       label: 'Current Activity',
       children: <CurrentActivity currentServer={currentServer} />,
       render: hasPermission(
@@ -175,7 +177,7 @@ const SingleDashboard = () => {
       ),
     },
     {
-      key: '3',
+      key: 'tuning-advisor',
       label: 'Tuning Advisor',
       children: <TuningAdvisor currentServer={currentServer} />,
       render: hasSomePermissions(
@@ -204,7 +206,7 @@ const SingleDashboard = () => {
           <PageWrapper>
             <PageSidebar>
               <LatestAlertsSidebar />
-              {activeTabId === '0' &&
+              {tab === 'history' &&
                 hasPermission(
                   user,
                   FeatureFunction.SCROLL_BAR,
@@ -256,9 +258,19 @@ const SingleDashboard = () => {
                     <div className="flex items-center border-b-gray-light">
                       <Tabs
                         size="large"
-                        defaultActiveKey="0"
+                        defaultActiveKey="history"
+                        activeKey={tab}
                         items={items.filter((item) => item.render)}
-                        onChange={setActiveTabId}
+                        onChange={(key) => {
+                          router.replace(
+                            {
+                              pathname: router.pathname,
+                              query: { ...router.query, tab: key },
+                            },
+                            undefined,
+                            { shallow: true }
+                          )
+                        }}
                         style={{ width: '100%', overflowX: 'hidden' }}
                       />
                     </div>
