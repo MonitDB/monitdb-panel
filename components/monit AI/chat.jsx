@@ -32,13 +32,20 @@ import { Markdown } from '../md'
 const { Content } = Layout
 
 const ChatAI = () => {
-  const [input, setInput] = useState('')
+  const router = useRouter()
+
+  const { query, pathname } = router
+
+  const base64ToString = query?.query
+    ? Buffer.from(query.query, 'base64').toString('utf8')
+    : ''
+
+  const [input, setInput] = useState(base64ToString ?? '')
   const [isLoading, setIsLoading] = useState(false)
   const containerReference = useRef(null)
   const controllerReference = useRef(null)
 
-  const router = useRouter()
-
+  // eslint-disable-next-line unicorn/consistent-destructuring
   const chatId = router.query['chat-id'] || 'new'
   const isNew = chatId === 'new'
 
@@ -62,6 +69,12 @@ const ChatAI = () => {
       }
     }, 100)
   }
+
+  useEffect(() => {
+    if (isNew && query.query) {
+      handleSend()
+    }
+  }, [isNew, query.query])
 
   const handleSend = async () => {
     if (!input.trim()) return
@@ -92,14 +105,18 @@ const ChatAI = () => {
 
     try {
       if (isNew) {
-        const { data: createdChat } = await apiV2().post('ai/create-chat', {}, {
-          signal: controllerReference.current.signal
-        })
+        const { data: createdChat } = await apiV2().post(
+          'ai/create-chat',
+          {},
+          {
+            signal: controllerReference.current.signal,
+          }
+        )
         generatedChatId = createdChat.id
 
         renameChat(generatedChatId, input.trim())
         router.replace({
-          pathname: router.pathname,
+          pathname: pathname,
           query: { 'chat-id': generatedChatId },
         })
 

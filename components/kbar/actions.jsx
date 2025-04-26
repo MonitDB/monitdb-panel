@@ -36,7 +36,10 @@ export default function KBarActions({ currentQuery }) {
             keywords: currentQuery,
             parent: 'search',
             shortcut: ['enter'],
-            perform: () => router.push(`monit-ai/new?query=${currentQuery}`),
+            perform: () => {
+              const query64 = Buffer.from(currentQuery).toString('base64')
+              router.push(`/monit-ai/new?query=${query64}`)
+            },
           },
         ]
       : []
@@ -73,6 +76,15 @@ export default function KBarActions({ currentQuery }) {
     subtitle: 'View reports',
     parent: server.id,
     perform: () => router.push(`/reports/results/?server=${server.id}`),
+    keywords: server.serverName,
+  }))
+
+  const analisysActions = servers.map((server) => ({
+    id: `${server.id}-analysis`,
+    name: `${server.serverName} - Analysis`,
+    subtitle: 'View analysis',
+    parent: server.id,
+    perform: () => router.push(`/analysis/?server=${server.id}`),
     keywords: server.serverName,
   }))
 
@@ -130,6 +142,7 @@ export default function KBarActions({ currentQuery }) {
       ...states,
       ...alertsActions,
       ...reportsActions,
+      ...analisysActions,
     ],
     [router, dynamicResults]
   )

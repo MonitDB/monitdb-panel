@@ -193,6 +193,15 @@ const AnalysisPage = () => {
   const [form] = Form.useForm()
   const router = useRouter()
 
+  const { query } = router
+
+  useEffect(() => {
+    const { server } = query
+    if (server) {
+      form.setFieldsValue({ server: Number(server) })
+    }
+  }, [form, query])
+
   useEffect(() => {
     if (!hasFeature(user, Feature.ANALYSIS) && user.grants) {
       router.push('/403')
@@ -367,7 +376,13 @@ const AnalysisPage = () => {
                     <Select
                       showSearch
                       optionFilterProp="label"
-                      onChange={() => form.submit()}
+                      onChange={(value) => {
+                        router.push(`/analysis?server=${value}`, undefined, {
+                          shallow: true,
+                        })
+
+                        form.submit()
+                      }}
                       options={Object.keys(groupedServers).map((key) => {
                         return {
                           label: key,
