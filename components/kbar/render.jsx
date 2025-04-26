@@ -12,6 +12,8 @@ function RenderResults() {
   return (
     <KBarResults
       items={results}
+      maxHeight={500}
+      className="overflow-y-auto"
       onRender={({ item, active }) => {
         return typeof item === 'string' ? (
           <div className="py-3 px-5">

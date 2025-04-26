@@ -20,6 +20,41 @@ export default function KBarActions() {
         keywords: 'sobre nós',
         perform: () => router.push('/about'),
       },
+      {
+        id: 'about2',
+        name: 'Sobre',
+        shortcut: ['a'],
+        keywords: 'sobre nós',
+        perform: () => router.push('/about'),
+      },
+      {
+        id: 'about3',
+        name: 'Sobre',
+        shortcut: ['a'],
+        keywords: 'sobre nós',
+        perform: () => router.push('/about'),
+      },
+      {
+        id: 'about4',
+        name: 'Sobre',
+        shortcut: ['a'],
+        keywords: 'sobre nós',
+        perform: () => router.push('/about'),
+      },
+      {
+        id: 'about',
+        name: 'Sobre',
+        shortcut: ['a'],
+        keywords: 'sobre nós',
+        perform: () => router.push('/about'),
+      },
+      {
+        id: 'about',
+        name: 'Sobre',
+        shortcut: ['a'],
+        keywords: 'sobre nós',
+        perform: () => router.push('/about'),
+      },
     ],
     []
   )
