@@ -111,6 +111,94 @@ export default function KBarActions({ currentQuery }) {
     keywords: name.toLowerCase(),
   }))
 
+  const configurations = [
+    {
+      id: 'configurations',
+      name: 'Configurations',
+      subtitle: 'View configurations',
+    },
+    {
+      id: 'installation-wizard',
+      name: 'Installation Wizard',
+      subtitle: 'View installation wizard',
+      parent: 'configurations',
+      keywords: 'installation wizard',
+      peform: () => router.push('configurations/installation-wizard'),
+    },
+    {
+      id: 'update-new-version',
+      name: 'Update New Version',
+      subtitle: 'View update new version',
+      parent: 'configurations',
+      keywords: 'update new version',
+      peform: () => router.push('configurations/update-new-version'),
+    },
+    {
+      id: 'servers',
+      name: 'Servers',
+      subtitle: 'View servers',
+      parent: 'configurations',
+      keywords: 'servers',
+      peform: () => router.push('configurations/servers'),
+    },
+    {
+      id: 'profiles',
+      name: 'Profiles',
+      subtitle: 'View profiles',
+      parent: 'configurations',
+      keywords: 'profiles',
+      peform: () => router.push('configurations/profiles'),
+    },
+    {
+      id: 'users',
+      name: 'Users',
+      subtitle: 'View users',
+      parent: 'configurations',
+      keywords: 'users',
+      peform: () => router.push('configurations/users'),
+    },
+    {
+      id: 'alerts',
+      name: 'Alerts',
+      subtitle: 'View alerts',
+      parent: 'configurations',
+      keywords: 'config alerts',
+      peform: () => router.push('configurations/alerts'),
+    },
+    {
+      id: 'components',
+      name: 'Components',
+      subtitle: 'View components',
+      parent: 'configurations',
+      keywords: 'components',
+      peform: () => router.push('configurations/components'),
+    },
+    {
+      id: 'logs',
+      name: 'Logs',
+      subtitle: 'View logs',
+      parent: 'configurations',
+      keywords: 'logs',
+      peform: () => router.push('configurations/logs'),
+    },
+    {
+      id: 'integration',
+      name: 'Integration',
+      subtitle: 'View integrations',
+      parent: 'configurations',
+      keywords: 'integration',
+      peform: () => router.push('configurations/integration'),
+    },
+    {
+      id: 'AI Configurations',
+      name: 'AI Configurations',
+      subtitle: 'View AI configurations',
+      parent: 'configurations',
+      keywords: 'AI configurations',
+      perform: () => router.push('configurations/ai-configurations'),
+    },
+  ]
+
   useRegisterActions(
     [
       {
@@ -143,6 +231,7 @@ export default function KBarActions({ currentQuery }) {
       ...alertsActions,
       ...reportsActions,
       ...analisysActions,
+      ...configurations,
     ],
     [router, dynamicResults]
   )
