@@ -85,10 +85,10 @@ const SetUpNewServerStep = ({
         connectionId
       )
       setInstallResult(data)
-      setInstalling(false)
     } catch {
-      setInstalling(false)
       return
+    } finally {
+      setInstalling(false)      
     }
   }
 

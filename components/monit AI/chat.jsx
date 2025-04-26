@@ -3,10 +3,17 @@
 /* eslint-disable sonarjs/no-empty-collection */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable unicorn/prevent-abbreviations */
-import { ApiOutlined, RobotOutlined, UserOutlined } from '@ant-design/icons'
+import {
+  ApiOutlined,
+  PauseOutlined,
+  RobotOutlined,
+  SendOutlined,
+  UserOutlined,
+} from '@ant-design/icons'
 import {
   Avatar,
   Button,
+  Card,
   Input,
   Layout,
   List,
@@ -22,12 +29,13 @@ import { apiV2 } from '~/utils/client-api'
 
 import { Markdown } from '../md'
 
-const { Content, Footer } = Layout
+const { Content } = Layout
 
 const ChatAI = () => {
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const containerReference = useRef(null)
+  const controllerReference = useRef(null)
 
   const router = useRouter()
 
@@ -58,6 +66,9 @@ const ChatAI = () => {
   const handleSend = async () => {
     if (!input.trim()) return
 
+    let controller = new AbortController()
+    controllerReference.current = controller
+
     const userMessage = {
       id: Date.now(),
       role: 'user',
@@ -81,7 +92,9 @@ const ChatAI = () => {
 
     try {
       if (isNew) {
-        const { data: createdChat } = await apiV2().post('ai/create-chat')
+        const { data: createdChat } = await apiV2().post('ai/create-chat', {}, {
+          signal: controllerReference.current.signal
+        })
         generatedChatId = createdChat.id
 
         renameChat(generatedChatId, input.trim())
@@ -93,18 +106,23 @@ const ChatAI = () => {
         setChats([{ id: generatedChatId, title: input.trim() }, ...chats])
       }
 
-      const { data } = await apiV2().post('ai/completions', {
-        chatId: generatedChatId,
-        message: input.trim(),
-      })
+      const { data } = await apiV2().post(
+        'ai/completions',
+        {
+          chatId: generatedChatId,
+          message: input.trim(),
+        },
+        {
+          signal: controllerReference.current.signal,
+        }
+      )
 
       const assistantMessage = {
         id: `assistant-${Date.now()}`,
         role: 'assistant',
-        message: data,
+        message: data.aiResponse,
       }
 
-      // Remove loading e adiciona mensagens novas
       setMessages((prev) => {
         return isNew
           ? [userMessage, assistantMessage]
@@ -123,8 +141,16 @@ const ChatAI = () => {
         },
       ])
     } finally {
+      setInput('')
       setIsLoading(false)
       scrollToBottom()
+    }
+  }
+
+  const handleStop = async () => {
+    if (controllerReference.current) {
+      controllerReference.current.abort()
+      controllerReference.current = undefined
     }
   }
 
@@ -165,7 +191,10 @@ const ChatAI = () => {
       <Content
         style={{
           overflowY: 'hidden',
-          height: '100%',
+          display: `${isNew ? 'flex' : 'block'}`,
+          flexDirection: 'column',
+          justifyContent: 'center',
+          gap: '20px',
         }}
       >
         {isLoadingCurrentChatMessages && (
@@ -174,7 +203,7 @@ const ChatAI = () => {
               top: 0,
               left: 0,
               width: '100%',
-              height: '80vh',
+              height: '70vh',
               padding: '0 15%',
               background: 'rgba(255, 255, 255, 0)',
             }}
@@ -191,7 +220,7 @@ const ChatAI = () => {
           <div
             ref={containerReference}
             style={{
-              height: 'calc(100vh - 200px)',
+              height: `${isNew ? '' : 'calc(100vh - 270px)'}`,
               overflowY: 'auto',
               display: 'flex',
 
@@ -307,36 +336,35 @@ const ChatAI = () => {
             )}
           </div>
         )}
-      </Content>
-      {!isLoadingCurrentChatMessages && (
-        <Footer style={{ padding: 12, width: '100%' }}>
-          <div style={{ width: '100%', padding: '0 20%' }}>
-            <div style={{ display: 'flex', width: '100%' }}>
+        <div style={{ width: '100%', padding: '1.2rem 20% 0 20%' }}>
+          <Card hoverable variant="borderless">
+            <div style={{ display: 'flex', alignItems: 'flex-end', gap: 8 }}>
               <Input.TextArea
                 style={{ flex: 1 }}
+                variant="borderless"
                 placeholder="Write your message..."
                 value={input}
-                disabled={isLoading}
+                // disabled={isLoading}
                 size="large"
                 autoSize={{ minRows: 3, maxRows: 5 }}
                 onChange={(e) => setInput(e.target.value)}
                 onPressEnter={(e) => {
-                  if (!e.shiftKey) {
+                  if (!e.shiftKey && !isLoading) {
                     e.preventDefault()
                     handleSend()
                   }
                 }}
               />
-              {/* <Button
+              <Button
+                style={{ marginLeft: 'auto' }}
                 role="primary"
-                icon={<SendOutlined />}
-                onClick={handleSend}
-                disabled={isLoading}
-              /> */}
+                icon={isLoading ? <PauseOutlined /> : <SendOutlined />}
+                onClick={isLoading ? handleStop : handleSend}
+              />
             </div>
-          </div>
-        </Footer>
-      )}
+          </Card>
+        </div>
+      </Content>
     </Layout>
   )
 }
