@@ -1,11 +1,13 @@
 import '~/styles/global.css'
 
 import { ConfigProvider } from 'antd'
+import { KBarProvider } from 'kbar'
 import { DefaultSeo } from 'next-seo'
 import { ToastContainer } from 'react-toastify'
 import { setLocale } from 'yup'
 import { pt } from 'yup-locales'
 
+import KBarSearchComponent from '~/components/kbar/search'
 import Main from '~/helpers/main'
 
 setLocale(pt)
@@ -31,7 +33,10 @@ export default function MyApp({ Component, pageProps }) {
           }}
         />
         <Main>
-          <Component {...pageProps} />
+          <KBarProvider>
+            <KBarSearchComponent />
+            <Component {...pageProps} />
+          </KBarProvider>
         </Main>
         <ToastContainer position="top-right" />
       </ConfigProvider>
