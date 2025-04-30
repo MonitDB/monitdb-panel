@@ -38,7 +38,7 @@ export default function KBarActions({ currentQuery }) {
             shortcut: ['enter'],
             perform: () => {
               const query64 = Buffer.from(currentQuery).toString('base64')
-              router.push(`/monit-ai/new?query=${query64}`)
+              window.location.href = `/monit-ai/new?query=${query64}`
             },
           },
         ]
