@@ -136,8 +136,9 @@ const ChatAI = () => {
 
       const assistantMessage = {
         id: `assistant-${Date.now()}`,
-        role: 'assistant',
-        message: data.aiResponse,
+        role: data.role,
+        message: data.message,
+        totalTokens: data?.totalTokens,
       }
 
       setMessages((prev) => {
@@ -294,41 +295,37 @@ const ChatAI = () => {
                         {message.role === 'error' && (
                           <Avatar icon={<ApiOutlined />} />
                         )}
+
                         <div
+                          className="message-bubble"
                           style={{
+                            position: 'relative',
                             background:
                               message.role === 'user' ? '#5046e5' : '#fff',
                             borderRadius: 8,
                             padding: '8px 12px',
-                            maxWidth: 400,
+                            maxWidth: '70%',
+                            minWidth: 50,
+                            margin: '0 0 10px 0',
+                            overflowWrap: 'break-word',
                             color: message.role === 'user' ? '#fff' : '#000',
                           }}
                         >
-                          {message.role !== 'user' &&
-                            message.role !== 'loading' &&
-                            message.role !== 'error' && (
-                              <Markdown
-                                content={message.message.trim()}
-                                className="prose"
-                              />
-                            )}
+                          {message.role === 'assistant' && (
+                            <Markdown
+                              content={message.message.trim()}
+                              className="prose"
+                            />
+                          )}
 
                           {message.role === 'user' && (
-                            <p
-                              style={{
-                                color: '#fff',
-                              }}
-                            >
+                            <p style={{ color: '#fff', margin: 0 }}>
                               {message.message.trim()}
                             </p>
                           )}
 
                           {message.role === 'error' && (
-                            <p
-                              style={{
-                                color: 'red',
-                              }}
-                            >
+                            <p style={{ color: 'red', margin: 0 }}>
                               {message.message.trim()}
                             </p>
                           )}
@@ -341,11 +338,36 @@ const ChatAI = () => {
                               style={{ marginLeft: 10, width: 300 }}
                             />
                           )}
+
+                          <div id="toolbar">
+                            {message.totalTokens && (
+                              <Typography.Text
+                                type="secondary"
+                                style={{
+                                  position: 'absolute',
+                                  bottom: -18,
+                                  right: 0,
+                                  fontSize: 10,
+                                  display: 'none',
+                                }}
+                                className="token-count"
+                              >
+                                {message.totalTokens} tokens
+                              </Typography.Text>
+                            )}
+                          </div>
                         </div>
+
                         {message.role === 'user' && (
                           <Avatar icon={<UserOutlined />} />
                         )}
                       </Space>
+
+                      <style>{`
+                        .message-bubble:hover .token-count {
+                          display: block !important;
+                        }
+                      `}</style>
                     </List.Item>
                   )}
                 />
