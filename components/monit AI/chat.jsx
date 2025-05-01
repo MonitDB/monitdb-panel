@@ -33,15 +33,11 @@ const { Content } = Layout
 
 const ChatAI = () => {
   const router = useRouter()
-
   const { query, pathname } = router
 
-  const base64ToString = query?.query
-    ? Buffer.from(query.query, 'base64').toString('utf8')
-    : ''
-
-  const [input, setInput] = useState(base64ToString ?? '')
+  const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [hasHandledURLQuery, setHasHandledURLQuery] = useState(false)
   const containerReference = useRef(null)
   const controllerReference = useRef(null)
 
@@ -53,14 +49,14 @@ const ChatAI = () => {
 
   const {
     renameChat,
-    setChats,
     loadPreviousMessages,
     messages,
     setMessages,
-    chats,
+    fetchChats,
     chatId: currentChatId,
     loadingMessages,
   } = useChatStore()
+
   const scrollToBottom = () => {
     setTimeout(() => {
       if (containerReference.current) {
@@ -71,13 +67,17 @@ const ChatAI = () => {
   }
 
   useEffect(() => {
-    if (isNew && query.query) {
-      handleSend()
+    if (isNew && query.query && !hasHandledURLQuery) {
+      const base64ToString = Buffer.from(query.query, 'base64').toString('utf8')
+      setInput(base64ToString)
+      setHasHandledURLQuery(true)
+      handleSend(base64ToString)
     }
-  }, [isNew, query.query])
+  }, [isNew, query.query, hasHandledURLQuery])
 
-  const handleSend = async () => {
-    if (!input.trim()) return
+  const handleSend = async (messageToSend) => {
+    const inputMessage = messageToSend ?? input
+    if (!inputMessage.trim()) return
 
     let controller = new AbortController()
     controllerReference.current = controller
@@ -85,7 +85,7 @@ const ChatAI = () => {
     const userMessage = {
       id: Date.now(),
       role: 'user',
-      message: input.trim(),
+      message: inputMessage.trim(),
     }
 
     const loadingMessage = {
@@ -109,28 +109,26 @@ const ChatAI = () => {
           'ai/create-chat',
           {},
           {
-            signal: controllerReference.current.signal,
+            signal: controller.signal,
           }
         )
         generatedChatId = createdChat.id
 
-        renameChat(generatedChatId, input.trim())
+        renameChat(generatedChatId, inputMessage.trim()).then(fetchChats)
         router.replace({
           pathname: pathname,
           query: { 'chat-id': generatedChatId },
         })
-
-        setChats([{ id: generatedChatId, title: input.trim() }, ...chats])
       }
 
       const { data } = await apiV2().post(
         'ai/completions',
         {
           chatId: generatedChatId,
-          message: input.trim(),
+          message: inputMessage.trim(),
         },
         {
-          signal: controllerReference.current.signal,
+          signal: controller.signal,
         }
       )
 
@@ -241,7 +239,6 @@ const ChatAI = () => {
               height: `${isNew ? '' : 'calc(100vh - 270px)'}`,
               overflowY: 'auto',
               display: 'flex',
-
               flexDirection: 'column',
               scrollBehavior: 'smooth',
             }}
@@ -384,7 +381,6 @@ const ChatAI = () => {
                 variant="borderless"
                 placeholder="Write your message..."
                 value={input}
-                // disabled={isLoading}
                 size="large"
                 autoSize={{ minRows: 3, maxRows: 5 }}
                 onChange={(e) => setInput(e.target.value)}
