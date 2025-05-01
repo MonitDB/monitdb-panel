@@ -2,26 +2,17 @@
 import { useRegisterActions } from 'kbar'
 import { useRouter } from 'next/router'
 
-import { useGlobal } from '~/hooks/index'
+import { useGlobal, useUser } from '~/hooks/index'
+import {
+  FeatureFunction,
+  hasPermission,
+  hasSomePermissions,
+  TypeGrant,
+} from '~/utils/hasPermission'
 
 export default function KBarActions({ currentQuery }) {
   const router = useRouter()
-
-  const generateServerAction = (
-    server,
-    section,
-    actionType,
-    subtitle,
-    tab
-  ) => ({
-    id: `${server.id}-${actionType}`,
-    name: `${server.serverName} - ${actionType}`,
-    subtitle,
-    parent: server.id,
-    perform: () => router.push(`/${section}/${server.id}?tab=${tab}`),
-    keywords: server.serverName,
-  })
-
+  const { userState: user } = useUser()
   const {
     globalState: { servers },
   } = useGlobal()
@@ -38,35 +29,79 @@ export default function KBarActions({ currentQuery }) {
             shortcut: ['enter'],
             perform: () => {
               const query64 = Buffer.from(currentQuery).toString('base64')
-              window.location.href = `/monit-ai/new?query=${query64}`
+              router.push(`/monit-ai/new?query=${query64}`)
             },
           },
         ]
       : []
 
-  const dashboardActions = [
-    'history',
-    'query',
-    'current-activity',
-    'tuning-advisor',
-  ].flatMap((action) =>
-    servers.map((server) =>
-      generateServerAction(
-        server,
-        'dashboard',
-        action.charAt(0).toUpperCase() + action.slice(1),
-        `View ${action}`,
-        action
-      )
-    )
-  )
+  const dashboardActions = servers.flatMap((server) => [
+    {
+      id: `${server.id}-History`,
+      name: `${server.serverName} - History`,
+      subtitle: 'View history',
+      parent: server.id,
+      perform: () => router.push(`/dashboard/${server.id}?tab=history`),
+      keywords: server.serverName,
+    },
+    {
+      id: `${server.id}-Query`,
+      name: `${server.serverName} - Query`,
+      subtitle: 'View query',
+      parent: server.id,
+      perform: () => router.push(`/dashboard/${server.id}?tab=query`),
+      keywords: server.serverName,
+      hasPermission: hasPermission(
+        user,
+        FeatureFunction.QUERY_WINDOWS_FOR_QUERY_EXECUTION,
+        TypeGrant.EXECUTE
+      ),
+    },
+    {
+      id: `${server.id}-Current-activity`,
+      name: `${server.serverName} - Current Activity`,
+      subtitle: 'View current activity',
+      parent: server.id,
+      perform: () =>
+        router.push(`/dashboard/${server.id}?tab=current-activity`),
+      keywords: server.serverName,
+      hasPermission: hasPermission(
+        user,
+        FeatureFunction.WHO_IS_ACTIVE,
+        TypeGrant.EXECUTE
+      ),
+    },
+    {
+      id: `${server.id}-Tuning-advisor`,
+      name: `${server.serverName} - Tuning Advisor`,
+      subtitle: 'View tuning advisor',
+      parent: server.id,
+      perform: () => router.push(`/dashboard/${server.id}?tab=tuning-advisor`),
+      keywords: server.serverName,
+      hasPermission: hasSomePermissions(
+        user,
+        [
+          FeatureFunction.SP_BLITZ,
+          FeatureFunction.SP_BLITZ_ANALYSIS,
+          FeatureFunction.SP_BLITZ_BACKUP,
+          FeatureFunction.SP_BLITZ_CACHE,
+          FeatureFunction.SP_BLITZ_FIRST,
+          FeatureFunction.SP_BLITZ_INDEX,
+          FeatureFunction.SP_BLITZ_INDEX,
+          FeatureFunction.SP_BLITZ_QUERY_STORE,
+          FeatureFunction.SP_BLITZ_WHO,
+        ],
+        TypeGrant.EXECUTE
+      ),
+    },
+  ])
 
   const alertsActions = servers.map((server) => ({
     id: `${server.id}-alerts`,
     name: `${server.serverName} - Alerts`,
     subtitle: 'View alerts',
     parent: server.id,
-    perform: () => router.push(`/alerts/?server=${server.id}`),
+    perform: () => router.push(`/alerts/results/?server=${server.id}`),
     keywords: server.serverName,
   }))
 
@@ -121,65 +156,57 @@ export default function KBarActions({ currentQuery }) {
       id: 'installation-wizard',
       name: 'Installation Wizard',
       subtitle: 'View installation wizard',
-      parent: 'configurations',
-      keywords: 'installation wizard',
-      peform: () => router.push('configurations/installation-wizard'),
+      group: 'configurations',
+      perform: () => router.push('/configurations/installation-wizard'),
     },
     {
       id: 'update-new-version',
       name: 'Update New Version',
       subtitle: 'View update new version',
-      parent: 'configurations',
-      keywords: 'update new version',
-      peform: () => router.push('configurations/update-new-version'),
+      group: 'configurations',
+      perform: () => router.push('/configurations/update-new-version'),
     },
     {
       id: 'servers',
       name: 'Servers',
       subtitle: 'View servers',
-      parent: 'configurations',
-      keywords: 'servers',
-      peform: () => router.push('configurations/servers'),
+      group: 'configurations',
+      perform: () => router.push('/configurations/servers'),
     },
     {
       id: 'profiles',
       name: 'Profiles',
       subtitle: 'View profiles',
-      parent: 'configurations',
-      keywords: 'profiles',
-      peform: () => router.push('configurations/profiles'),
+      group: 'configurations',
+      perform: () => router.push('/configurations/profiles'),
     },
     {
       id: 'users',
       name: 'Users',
       subtitle: 'View users',
-      parent: 'configurations',
-      keywords: 'users',
-      peform: () => router.push('configurations/users'),
+      group: 'configurations',
+      perform: () => router.push('/configurations/users'),
     },
     {
       id: 'alerts',
       name: 'Alerts',
       subtitle: 'View alerts',
-      parent: 'configurations',
-      keywords: 'config alerts',
-      peform: () => router.push('configurations/alerts'),
+      group: 'configurations',
+      perform: () => router.push('/configurations/alerts'),
     },
     {
       id: 'components',
       name: 'Components',
       subtitle: 'View components',
-      parent: 'configurations',
-      keywords: 'components',
-      peform: () => router.push('configurations/components'),
+      group: 'configurations',
+      perform: () => router.push('/configurations/components'),
     },
     {
       id: 'logs',
       name: 'Logs',
       subtitle: 'View logs',
       parent: 'configurations',
-      keywords: 'logs',
-      peform: () => router.push('configurations/logs'),
+      perform: () => router.push('/configurations/logs'),
     },
     {
       id: 'integration',
@@ -187,7 +214,7 @@ export default function KBarActions({ currentQuery }) {
       subtitle: 'View integrations',
       parent: 'configurations',
       keywords: 'integration',
-      peform: () => router.push('configurations/integration'),
+      perform: () => router.push('/configurations/integration'),
     },
     {
       id: 'AI Configurations',
@@ -195,7 +222,7 @@ export default function KBarActions({ currentQuery }) {
       subtitle: 'View AI configurations',
       parent: 'configurations',
       keywords: 'AI configurations',
-      perform: () => router.push('configurations/ai-configurations'),
+      perform: () => router.push('/configurations/ai-configurations'),
     },
   ]
 

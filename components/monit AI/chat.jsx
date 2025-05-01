@@ -277,6 +277,7 @@ const ChatAI = () => {
                     paddingTop: 16,
                     overflow: 'auto',
                     padding: '0 15%',
+                    width: '100%',
                   }}
                   renderItem={(message) => (
                     <List.Item
@@ -284,6 +285,8 @@ const ChatAI = () => {
                       style={{
                         justifyContent:
                           message.role === 'user' ? 'flex-end' : 'flex-start',
+                        maxWidth: '1000px',
+                        margin: '0 auto',
                       }}
                     >
                       <Space align="start">
@@ -304,10 +307,8 @@ const ChatAI = () => {
                               message.role === 'user' ? '#5046e5' : '#fff',
                             borderRadius: 8,
                             padding: '8px 12px',
-                            maxWidth: '70%',
-                            minWidth: 50,
+                            maxWidth: '100%',
                             margin: '0 0 10px 0',
-                            overflowWrap: 'break-word',
                             color: message.role === 'user' ? '#fff' : '#000',
                           }}
                         >

@@ -9,6 +9,7 @@ const StyledMarkdown = styled.div`
   color: #333;
   line-height: 1.6;
   margin-bottom: 20px;
+  max-width: 750px;
 
   h1,
   h2,
@@ -34,9 +35,12 @@ const StyledMarkdown = styled.div`
 
   code {
     font-family: 'Courier New', monospace;
+    width: '100%';
     color: #f8f9fa;
     padding: 2px 4px;
     border-radius: 4px;
+    text-shadow: none;
+    font-weight: 500;
   }
 
   pre {
