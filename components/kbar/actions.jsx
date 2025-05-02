@@ -214,7 +214,7 @@ export default function KBarActions({ currentQuery }) {
       subtitle: 'View integrations',
       parent: 'configurations',
       keywords: 'integration',
-      perform: () => router.push('/configurations/integration'),
+      perform: () => router.push('/configurations/integrations'),
     },
     {
       id: 'AI Configurations',
@@ -222,7 +222,7 @@ export default function KBarActions({ currentQuery }) {
       subtitle: 'View AI configurations',
       parent: 'configurations',
       keywords: 'AI configurations',
-      perform: () => router.push('/configurations/ai-configurations'),
+      perform: () => router.push('/configurations/monit-ai-config'),
     },
   ]
 
