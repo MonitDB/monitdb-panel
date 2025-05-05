@@ -79,27 +79,26 @@ const InstalledVersions = ({ tabName }) => {
 
   const groupedVersions = useMemo(() => {
     if (versions.length === 0) return []
-
     const map = new Map()
 
     for (const version of versions) {
-      const key = `${version.version}-${version.lastUpdate}-${version.productVersion}`
-      if (map.has(key)) {
-        const group = map.get(key)
-        group.versionNumbers += 1
-        group.servers.push(version)
-      } else {
+      const key = `${version.version}-${version.productVersion}`
+
+      if (!map.has(key)) {
         map.set(key, {
-          version: version.version,
-          lastUpdate: version.lastUpdate,
-          linkUpdate: version.linkUpdate,
-          productVersion: version.productVersion,
+          version: version?.version,
+          lastUpdate: version?.lastUpdate,
+          linkUpdate: version?.linkUpdate,
+          productVersion: version?.productVersion,
           versionNumbers: 1,
           servers: [version],
         })
+      } else {
+        const group = map.get(key)
+        group.versionNumbers += 1
+        group.servers.push(version)
       }
     }
-
     return [...map.values()]
   }, [versions])
 
@@ -221,11 +220,10 @@ const InstalledVersions = ({ tabName }) => {
                                   ],
                               }}
                             />
-                            <span style="font-weight: bold; color: #2c3e50;">
-                              {text}
-                            </span>
-                            <span style="margin-left: 8px; background-color: #f0f0f0; padding: 2px 6px; border-radius: 4px; color: #555;">
-                              {record.productVersion}
+                            <span className="font-bold">{text}</span>
+                            <span className="text-gray text-xs ">
+                              {' v'}
+                              {record.productVersion}{' '}
                             </span>
                           </div>
                         ),
@@ -251,7 +249,7 @@ const InstalledVersions = ({ tabName }) => {
                         },
                       },
                     ]}
-                    rowKey={(record) => record.version}
+                    //  rowKey={(record) => record}
                   />
                 </div>
               </div>
