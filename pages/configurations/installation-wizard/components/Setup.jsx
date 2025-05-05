@@ -41,6 +41,8 @@ const SetUpNewServerStep = ({
 
   useEffect(() => {
     if (eventSource) {
+      eventSource['_listeners'] = {}
+
       eventSource?.addEventListener('connection', () => {
         handleSocketMessage('Connected')
       })
@@ -61,8 +63,9 @@ const SetUpNewServerStep = ({
     return () => {
       eventSource?.removeEventListener('message')
       eventSource?.removeEventListener('error')
+      eventSource?.removeEventListener('connection')
     }
-  }, [])
+  }, [connectionId])
 
   useEffect(async () => {
     try {
@@ -79,16 +82,16 @@ const SetUpNewServerStep = ({
     setInstalling(true)
     setInstallResult()
     try {
-      const { data } = await installNewServer(
-        form.getFieldsValue(),
+      const { data } = await installNewServer({
+        values: form.getFieldsValue(),
         version,
-        connectionId
-      )
+        connectionId,
+      })
       setInstallResult(data)
     } catch {
       return
     } finally {
-      setInstalling(false)      
+      setInstalling(false)
     }
   }
 

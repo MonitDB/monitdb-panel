@@ -30,6 +30,18 @@ const ServerInformationStep = ({ handleNextStep, form }) => {
     (st) => st.id === serverType
   )?.typeServerName
 
+  const fieldsToValidate = [
+    'serverHost',
+    'serverPort',
+    'serverUser',
+    'serverPassword',
+    'serverIP',
+    'serverEnvironment',
+    'serverType',
+    'serverName',
+    'serverDescription',
+  ]
+
   return (
     <>
       <StepContainer>
@@ -170,7 +182,7 @@ const ServerInformationStep = ({ handleNextStep, form }) => {
             onClick={async () => {
               setLoading(true)
               try {
-                await form.validateFields()
+                await form.validateFields(fieldsToValidate)
               } catch {
                 setLoading(false)
                 return
@@ -198,7 +210,7 @@ const ServerInformationStep = ({ handleNextStep, form }) => {
             onClick={async () => {
               setLoading(true)
               try {
-                await form.validateFields()
+                await form.validateFields(fieldsToValidate)
               } catch {
                 setLoading(false)
                 return

@@ -82,13 +82,14 @@ const InstalledVersions = ({ tabName }) => {
     const map = new Map()
 
     for (const version of versions) {
-      const key = `${version.version}-${version.productVersion}`
+      const key = `${version.version}-${version.productUpdateLevel}`
 
       if (!map.has(key)) {
         map.set(key, {
           version: version?.version,
           lastUpdate: version?.lastUpdate,
           linkUpdate: version?.linkUpdate,
+          productUpdateLevel: version?.productUpdateLevel,
           productVersion: version?.productVersion,
           versionNumbers: 1,
           servers: [version],
@@ -106,7 +107,7 @@ const InstalledVersions = ({ tabName }) => {
     return {
       labels: [
         ...groupedVersions.map(
-          ({ version, productVersion }) => version + ' ' + productVersion
+          ({ version, lastUpdate }) => version + ' ' + lastUpdate
         ),
       ],
       datasets: [
@@ -222,8 +223,7 @@ const InstalledVersions = ({ tabName }) => {
                             />
                             <span className="font-bold">{text}</span>
                             <span className="text-gray text-xs ">
-                              {' v'}
-                              {record.productVersion}{' '}
+                              {record.productUpdateLevel}{' '}
                             </span>
                           </div>
                         ),

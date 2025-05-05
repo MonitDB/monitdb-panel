@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable unicorn/prefer-add-event-listener */
 /* eslint-disable no-console */
 // utils/EventSourceContext.js
@@ -37,17 +38,16 @@ export const EventSourceProvider = ({ children }) => {
 
       es.addEventListener('connection', function (event) {
         const data = JSON.parse(event.data)
-        // message.info('Listening Events')
+        console.log(data)
         setConnectionId(data.id)
       })
 
       es.onerror = (error) => {
-        // message.error('EventSource disconnected, attempting to reconnect...')
         console.error('EventSource failed:', error)
         es.close()
         setTimeout(() => {
           initializeEventSource()
-        }, 5000)
+        }, 3000)
       }
     }
   }
@@ -58,8 +58,7 @@ export const EventSourceProvider = ({ children }) => {
     return () => {
       eventSource?.close()
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token])
+  }, [])
 
   return (
     <EventSourceContext.Provider value={{ eventSource, connectionId }}>

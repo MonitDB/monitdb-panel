@@ -12,6 +12,12 @@ const DetailsStep = ({ handleNextStep, handlePreviusStep }) => {
             <Form.Item
               name={['serverDetail', 'serverDetailName']}
               label="Detail"
+              rules={[
+                {
+                  required: true,
+                  message: 'Please enter the detail name',
+                },
+              ]}
             >
               <Input />
             </Form.Item>
@@ -20,6 +26,12 @@ const DetailsStep = ({ handleNextStep, handlePreviusStep }) => {
             <Form.Item
               name={['serverDetail', 'serverDetailDescription']}
               label="Description"
+              rules={[
+                {
+                  required: true,
+                  message: 'Please enter the detail description',
+                },
+              ]}
             >
               <Input />
             </Form.Item>
@@ -30,6 +42,12 @@ const DetailsStep = ({ handleNextStep, handlePreviusStep }) => {
             <Form.Item
               name={['serverDetail', 'serverDetailAdmin']}
               label="Admin Detail"
+              rules={[
+                {
+                  required: true,
+                  message: 'Please enter the detail admin',
+                },
+              ]}
             >
               <Input />
             </Form.Item>
@@ -38,18 +56,36 @@ const DetailsStep = ({ handleNextStep, handlePreviusStep }) => {
             <Form.Item
               name={['serverDetail', 'serverDetailContacto']}
               label="Contact"
+              rules={[
+                {
+                  required: true,
+                  message: 'Please enter the detail contact',
+                },
+              ]}
             >
               <Input />
             </Form.Item>
           </Col>
           <Col sm={12}>
-            <Form.Item name={['serverDetail', 'serverDetailHost']} label="Host">
+            <Form.Item
+              name={['serverDetail', 'serverDetailHost']}
+              label="Host"
+              rules={[
+                { required: true, message: 'Please enter the detail host' },
+              ]}
+            >
               <Input />
             </Form.Item>
           </Col>
 
           <Col sm={12}>
-            <Form.Item name={['serverDetail', 'serverDetailSo']} label="SO">
+            <Form.Item
+              name={['serverDetail', 'serverDetailSo']}
+              label="SO"
+              rules={[
+                { required: true, message: 'Please enter the detail SO' },
+              ]}
+            >
               <Input.TextArea />
             </Form.Item>
           </Col>
