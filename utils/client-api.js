@@ -37,8 +37,8 @@ instance2.interceptors.request.use((config) => {
   const tokenRequest = getUserToken()
 
   if (tokenRequest && isTokenExpired(tokenRequest)) {
-    remove(tokenRequest)
-    window.location.href = ''
+    remove('user_token')
+    window.location.href = '/'
     return config
   }
   config.headers.Authorization = tokenRequest ? `Bearer ${tokenRequest}` : ''

@@ -1,4 +1,4 @@
-import { getCookie, removeCookies, setCookies } from 'cookies-next'
+import { deleteCookie, getCookie, setCookies } from 'cookies-next'
 
 const cookiesNames = ['user_token']
 
@@ -15,7 +15,7 @@ export function setCookie(name, value) {
 }
 
 export function remove(name) {
-  return removeCookies(name)
+  return deleteCookie(name)
 }
 
 export function get(name) {
@@ -28,6 +28,6 @@ export function update(name, value) {
 
 export function reset() {
   for (const key of cookiesNames) {
-    removeCookies(key)
+    deleteCookie(key)
   }
 }
