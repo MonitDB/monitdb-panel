@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import {
   faArrowRightFromBracket,
   faGear,
@@ -14,6 +15,7 @@ import React from 'react'
 import Image from '~/components/image'
 import Link from '~/components/link'
 import { useUser } from '~/hooks/index'
+import { useConfigStore } from '~/services/state-manager/config-store'
 import { Feature } from '~/utils/hasPermission'
 // import DatabasesSvg from '~/icons/databases.svg'
 
@@ -23,6 +25,8 @@ const buttonClassesActive = 'border-blue text-opacity-100'
 
 const Header = () => {
   const router = useRouter()
+
+  const { config } = useConfigStore()
 
   const { userState } = useUser()
 
@@ -87,7 +91,6 @@ const Header = () => {
               href="/dashboard/"
               className="flex items-center justify-center h-16 px-8 space-x-2 uppercase font-oxygen xl:w-80"
             >
-              {/* <DatabasesSvg className="block w-5 h-5" /> <span>MonitDB</span> */}
               <Image
                 src="/images/logos/monitdb.png"
                 alt="MonitDB"
@@ -168,18 +171,7 @@ const Header = () => {
                     <span>Profile settings</span>
                   </Link>
                 </li>
-                {/* <li>
-                  <Link
-                    href="/my-account/"
-                    className="flex items-center space-x-2 py-1 px-4
-                      lg:hover:text-blue"
-                  >
-                    <i className="block w-5 h-5">
-                      <FontAwesomeIcon icon={faGear} />
-                    </i>
-                    <span>Account Settings</span>
-                  </Link>
-                </li> */}
+
                 <li>
                   <Link
                     href="/logout/"
@@ -197,14 +189,11 @@ const Header = () => {
                 </li>
               </ul>
             </div>
-
-            <div className="px-1 bg-white rounded-lg">
-              <Image
-                src="/images/logos/advance-care.png"
-                width="758"
-                height="259"
-                alt=""
-                className="w-full max-w-[100px] h-auto mx-auto"
+            <div>
+              <img
+                src={config.logo ?? '/images/logos/monitdb.png'}
+                className="h-full max-h-[40px] mr-2 ml-2"
+                alt={config?.customerName ?? 'MonitDB'}
               />
             </div>
           </div>

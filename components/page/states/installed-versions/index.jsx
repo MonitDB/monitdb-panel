@@ -80,40 +80,34 @@ const InstalledVersions = ({ tabName }) => {
   const groupedVersions = useMemo(() => {
     if (versions.length === 0) return []
 
-    const versionsGroup = []
+    const map = new Map()
 
     for (const version of versions) {
-      const index = versionsGroup.findIndex(
-        (group) =>
-          group.version === version.version &&
-          group.lastUpdate === version.lastUpdate
-      )
-
-      if (index !== -1) {
-        versionsGroup[index] = {
-          ...versionsGroup[index],
-          versionNumbers: versionsGroup[index].versionNumbers + 1,
-          servers: [...versionsGroup[index].servers, version],
-        }
+      const key = `${version.version}-${version.lastUpdate}-${version.productVersion}`
+      if (map.has(key)) {
+        const group = map.get(key)
+        group.versionNumbers += 1
+        group.servers.push(version)
       } else {
-        versionsGroup.push({
+        map.set(key, {
           version: version.version,
           lastUpdate: version.lastUpdate,
           linkUpdate: version.linkUpdate,
+          productVersion: version.productVersion,
           versionNumbers: 1,
           servers: [version],
         })
       }
     }
 
-    return versionsGroup
+    return [...map.values()]
   }, [versions])
 
   const chartPieData = useMemo(() => {
     return {
       labels: [
         ...groupedVersions.map(
-          ({ version, lastUpdate }) => version + ' ' + lastUpdate
+          ({ version, productVersion }) => version + ' ' + productVersion
         ),
       ],
       datasets: [
@@ -227,7 +221,12 @@ const InstalledVersions = ({ tabName }) => {
                                   ],
                               }}
                             />
-                            <strong>{text}</strong>
+                            <span style="font-weight: bold; color: #2c3e50;">
+                              {text}
+                            </span>
+                            <span style="margin-left: 8px; background-color: #f0f0f0; padding: 2px 6px; border-radius: 4px; color: #555;">
+                              {record.productVersion}
+                            </span>
                           </div>
                         ),
                       },

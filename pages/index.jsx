@@ -1,15 +1,18 @@
+/* eslint-disable @next/next/no-img-element */
 import { useRouter } from 'next/router'
 import { useEffect, useMemo } from 'react'
 
 import Login from '~/components/forms/login'
-import Image from '~/components/image'
 import Layout from '~/layouts/clean'
+import { useConfigStore } from '~/services/state-manager/config-store'
 import * as Cookies from '~/utils/cookies'
 
 const HomePage = () => {
   const router = useRouter()
 
   const userToken = useMemo(() => Cookies.getUserToken(), [])
+
+  const { config } = useConfigStore()
 
   useEffect(() => {
     if (userToken) {
@@ -31,11 +34,11 @@ const HomePage = () => {
         >
           <div className="w-full">
             <div className="prose mb-10 text-center">
-              <Image
-                src="/images/logos/advance-care.png"
+              <img
+                src={config.logo}
                 width="758"
                 height="259"
-                alt=""
+                alt={config?.customerName ?? 'MonitDB'}
                 className="w-full max-w-[260px] h-auto mx-auto"
               />
               <p>

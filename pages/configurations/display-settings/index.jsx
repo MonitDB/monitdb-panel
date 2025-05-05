@@ -2,18 +2,7 @@
 /* eslint-disable jsx-a11y/img-redundant-alt */
 /* eslint-disable @next/next/no-img-element */
 import { UploadOutlined } from '@ant-design/icons'
-import {
-  Button,
-  Col,
-  // ColorPicker,
-  Form,
-  Input,
-  message,
-  Row,
-  Spin,
-  Upload,
-} from 'antd'
-// import ImgCrop from 'antd-img-crop'
+import { Button, Col, Form, Input, message, Row, Spin, Upload } from 'antd'
 import { NextSeo } from 'next-seo'
 import React, { useEffect, useState } from 'react'
 
@@ -35,7 +24,6 @@ const CustomerPage = () => {
         const response = await apiV2().get('/customer') // ajuste a URL conforme necessário
         const customer = response.data
 
-        // Parse customerConfigurations JSON
         if (customer.customerConfigurations) {
           customer.customerConfigurations = JSON.parse(
             customer.customerConfigurations
@@ -60,7 +48,15 @@ const CustomerPage = () => {
   }, [form])
 
   const handleUpload = ({ file, fileList }) => {
+    const MAX_SIZE_MB = 2
+    const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024
+
     if (file instanceof Blob) {
+      if (file.size > MAX_SIZE_BYTES) {
+        message.error(`File size must not exceed ${MAX_SIZE_MB}MB`)
+        return
+      }
+
       const reader = new FileReader()
       // eslint-disable-next-line unicorn/prevent-abbreviations
       reader.addEventListener('load', (e) => {
@@ -69,6 +65,7 @@ const CustomerPage = () => {
       })
       reader.readAsDataURL(file)
     }
+
     setFileList(fileList)
   }
 
@@ -80,10 +77,9 @@ const CustomerPage = () => {
         )
       }
 
-      // eslint-disable-next-line unicorn/no-null
-      if (!values.customerImageBlob) values.customerImageBlob = null
+      if (!values.customerImageBlob) values.customerImageBlob = undefined
       setSaving(true)
-      await apiV2().put('/customer', values) // ajuste a URL conforme necessário
+      await apiV2().put('/customer', values)
       message.success('Customer updated successfully')
     } catch {
       message.error('Failed to update customer')
@@ -187,58 +183,10 @@ const CustomerPage = () => {
                     </Form.Item>
                   </Col>
                 </Row>
-                {/* <Row gutter={16}>
-                  <Col span={24}>
-                    <Form.Item label="Customer Configurations">
-                      <Row gutter={16}>
-                        <Col span={4}>
-                          <Form.Item
-                            name={['customerConfigurations', 'primaryColor']}
-                            hidden
-                          />
-                          <Form.Item label="Primary Color">
-                            <ColorPicker
-                              defaultValue={form.getFieldValue([
-                                'customerConfigurations',
-                                'primaryColor',
-                              ])}
-                              size="large"
-                              allowClear
-                              onChange={(c) => {
-                                form.setFieldValue(
-                                  ['customerConfigurations', 'primaryColor'],
-                                  c.toHexString()
-                                )
-                              }}
-                            />
-                          </Form.Item>
-                        </Col>
-                        <Col span={4}>
-                          <Form.Item
-                            name={['customerConfigurations', 'fontSize']}
-                            label="Font Size"
-                            initialValue={12}
-                          >
-                            <Input type="number" />
-                          </Form.Item>
-                        </Col>
-                        <Col span={4}>
-                          <Form.Item
-                            name={['customerConfigurations', 'language']}
-                            label="Language"
-                            initialValue={'en'}
-                          >
-                            <Input disabled />
-                          </Form.Item>
-                        </Col>
-                      </Row>
-                    </Form.Item>
-                  </Col>
-                </Row> */}
                 <Row gutter={16}>
                   <Col span={12}>
                     <Form.Item name={'customerImageBlob'} hidden />
-                    <Form.Item label="Customer Image">
+                    <Form.Item label="Customer Image (2MB Max)">
                       {/* <ImgCrop onModalOk={(value) => console.log(value)}> */}
                       <Upload
                         beforeUpload={() => false}
