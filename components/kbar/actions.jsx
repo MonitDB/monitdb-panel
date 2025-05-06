@@ -49,7 +49,7 @@ export default function KBarActions({ currentQuery }) {
       name: `${server.serverName} - Query`,
       subtitle: 'View query',
       parent: server.id,
-      perform: () => router.push(`/dashboard/${server.id}?tab=query`),
+      perform: () => router.push(`/dashboard/${server.id}?tab=query-window`),
       keywords: server.serverName,
       hasPermission: hasPermission(
         user,
@@ -136,7 +136,7 @@ export default function KBarActions({ currentQuery }) {
       subtitle: 'View capacity plan',
     },
     { id: 'backups', name: 'Backups', subtitle: 'View backups' },
-    { id: 'jobs', name: 'Jobs', subtitle: 'View jobs' },
+    { id: 'sql-agent-jobs', name: 'Jobs', subtitle: 'View jobs' },
   ].map(({ id, name, subtitle }) => ({
     id: `states-${id}`,
     name,
@@ -187,13 +187,13 @@ export default function KBarActions({ currentQuery }) {
       group: 'configurations',
       perform: () => router.push('/configurations/users'),
     },
-    {
-      id: 'alerts',
-      name: 'Alerts',
-      subtitle: 'View alerts',
-      group: 'configurations',
-      perform: () => router.push('/configurations/alerts'),
-    },
+    // {
+    //   id: 'alerts',
+    //   name: 'Alerts',
+    //   subtitle: 'View alerts',
+    //   group: 'configurations',
+    //   perform: () => router.push('/alerts'),
+    // },
     {
       id: 'components',
       name: 'Components',
@@ -247,7 +247,7 @@ export default function KBarActions({ currentQuery }) {
         keywords: 'states',
       },
       ...servers.map((server) => ({
-        id: server.id,
+        id: `${server.id}`,
         name: `${server.serverName}`,
         perform: () => router.push(`/dashboard/${server.id}`),
         keywords: server.serverName,

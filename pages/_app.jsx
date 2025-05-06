@@ -18,7 +18,7 @@ setLocale(pt)
 // token: { colorPrimary: '#5046e5' },
 
 export default function MyApp({ Component, pageProps }) {
-  const { loaded, fetchConfig, config } = useConfigStore()
+  const { loaded, fetchConfig } = useConfigStore()
 
   useEffect(() => {
     if (!loaded) {
@@ -39,7 +39,7 @@ export default function MyApp({ Component, pageProps }) {
   return (
     <>
       <Head>
-        <link rel="icon" href={config.logo ?? '/images/logos/monitdb.png'} />
+        <link rel="icon" href={'/ico.png'} />
       </Head>
       <ConfigProvider>
         <DefaultSeo

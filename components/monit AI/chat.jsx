@@ -36,7 +36,6 @@ const ChatAI = () => {
   const { query, pathname } = router
 
   const [input, setInput] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
   const [hasHandledURLQuery, setHasHandledURLQuery] = useState(false)
   const containerReference = useRef(null)
   const controllerReference = useRef(null)
@@ -76,8 +75,9 @@ const ChatAI = () => {
   }, [isNew, query.query, hasHandledURLQuery])
 
   const handleSend = async (messageToSend) => {
-    const inputMessage = messageToSend ?? input
-    if (!inputMessage.trim()) return
+    const inputMessage = String(messageToSend || input || '')
+
+    if (!inputMessage?.trim()) return
 
     let controller = new AbortController()
     controllerReference.current = controller
@@ -101,10 +101,13 @@ const ChatAI = () => {
 
     setMessages(initialMessages)
     setInput('')
-    setIsLoading(true)
 
     try {
       if (isNew) {
+        router.replace({
+          pathname: pathname,
+          query: { 'chat-id': Date.now() },
+        })
         const { data: createdChat } = await apiV2().post(
           'ai/create-chat',
           {},
@@ -158,7 +161,6 @@ const ChatAI = () => {
       ])
     } finally {
       setInput('')
-      setIsLoading(false)
       scrollToBottom()
     }
   }
@@ -177,7 +179,6 @@ const ChatAI = () => {
       message: suggestionText,
     }
     setMessages([...messages, userMessage])
-    setIsLoading(true)
 
     setTimeout(() => {
       const assistantMessage = {
@@ -186,16 +187,13 @@ const ChatAI = () => {
         message: `Resposta gerada para: "${suggestionText}"`,
       }
       setMessages([...messages, assistantMessage])
-      setIsLoading(false)
       scrollToBottom()
     }, 1500)
   }
 
   useEffect(() => {
     ;(async () => {
-      setIsLoading(true)
       await loadPreviousMessages()
-      setIsLoading(false)
       scrollToBottom()
     })()
   }, [currentChatId])
@@ -385,7 +383,7 @@ const ChatAI = () => {
                 autoSize={{ minRows: 3, maxRows: 5 }}
                 onChange={(e) => setInput(e.target.value)}
                 onPressEnter={(e) => {
-                  if (!e.shiftKey && !isLoading) {
+                  if (!e.shiftKey && !isLoadingCurrentChatMessages) {
                     e.preventDefault()
                     handleSend()
                   }
@@ -394,8 +392,14 @@ const ChatAI = () => {
               <Button
                 style={{ marginLeft: 'auto' }}
                 role="primary"
-                icon={isLoading ? <PauseOutlined /> : <SendOutlined />}
-                onClick={isLoading ? handleStop : handleSend}
+                icon={
+                  isLoadingCurrentChatMessages ? (
+                    <PauseOutlined />
+                  ) : (
+                    <SendOutlined />
+                  )
+                }
+                onClick={isLoadingCurrentChatMessages ? handleStop : handleSend}
               />
             </div>
           </Card>
