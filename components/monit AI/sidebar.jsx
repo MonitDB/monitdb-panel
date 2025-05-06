@@ -1,11 +1,21 @@
 /* eslint-disable unicorn/prevent-abbreviations */
 /* eslint-disable react-hooks/exhaustive-deps */
 import {
+  DeleteOutlined,
   FileTextOutlined,
   LoadingOutlined,
   MessageOutlined,
 } from '@ant-design/icons'
-import { Button, Input, Layout, List, Space, Spin, Typography } from 'antd'
+import {
+  Button,
+  Input,
+  Layout,
+  List,
+  Popconfirm,
+  Space,
+  Spin,
+  Typography,
+} from 'antd'
 import { useRouter } from 'next/router'
 import React, { useEffect, useMemo } from 'react'
 
@@ -26,6 +36,7 @@ const SidebarAI = () => {
     setSearchTerm,
     setChatId,
     loadingMessages,
+    deleteChat,
   } = useChatStore()
 
   useEffect(() => {
@@ -110,11 +121,30 @@ const SidebarAI = () => {
                   >
                     {truncateString(
                       chat.title || `Chat ${chat.id.slice(0, 5)}...`,
-                      30
+                      25
                     )}
-                    {}
                   </Typography.Text>
                 </Space>
+                <Popconfirm
+                  onClick={(event) => {
+                    event.stopPropagation()
+                  }}
+                  title="Delete the chat"
+                  description="Are you sure to delete this chat?"
+                  onConfirm={(event) => {
+                    event.stopPropagation()
+                    deleteChat(chat.id)
+                    router.push('/monit-ai/new')
+                  }}
+                  okText="Yes"
+                >
+                  <Button
+                    icon={<DeleteOutlined />}
+                    type="text"
+                    size="small"
+                    danger
+                  />
+                </Popconfirm>
               </List.Item>
             )
           }}

@@ -60,4 +60,13 @@ export const useChatStore = create((set, get) => ({
       set({ error })
     }
   },
+  deleteChat: async (chatId) => {
+    try {
+      const updatedChats = get().chats.filter((chat) => chat.id !== chatId)
+      set({ chats: updatedChats })
+      await apiV2().delete(`ai/delete-chat/${chatId}`)
+    } catch (error) {
+      set({ error })
+    }
+  },
 }))
