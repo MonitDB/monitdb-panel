@@ -107,7 +107,8 @@ const InstalledVersions = ({ tabName }) => {
     return {
       labels: [
         ...groupedVersions.map(
-          ({ version, lastUpdate }) => version + ' ' + lastUpdate
+          ({ version, productUpdateLevel }) =>
+            version + ' ' + productUpdateLevel
         ),
       ],
       datasets: [
@@ -198,6 +199,7 @@ const InstalledVersions = ({ tabName }) => {
                     ref={pieReference}
                     data={chartPieData}
                     onClick={onClick}
+                    style={{ cursor: 'pointer', zIndex: 1 }}
                   />
                 </div>
                 <div className="w-full md:w-10/12 md:pl-10">
