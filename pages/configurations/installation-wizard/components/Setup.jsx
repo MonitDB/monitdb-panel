@@ -27,53 +27,17 @@ const SetUpNewServerStep = ({
   form,
   step,
 }) => {
-  const [terminalOutput, setTerminalOutput] = useState([])
-
   const [availableVersions, setAvailableVersions] = useState([])
   const [version, setVersion] = useState()
   const [installing, setInstalling] = useState(false)
   const [installResult, setInstallResult] = useState()
 
-  const { eventSource, connectionId } = useEventSource()
-
-  const handleSocketMessage = (event) => {
-    setTerminalOutput((previousOutput) => [...previousOutput, event])
-  }
-
-  useEffect(() => {
-    if (eventSource) {
-      console.info('EVENT SOURCE')
-      eventSource?.addEventListener('connection', () => {
-        console.info('EVENT CONNECTION')
-        handleSocketMessage('Connected')
-      })
-      eventSource?.addEventListener('message', (event) => {
-        console.info('EVENT MESSAGE')
-        handleSocketMessage(event.data)
-      })
-
-      eventSource?.addEventListener('error', () => {
-        if (eventSource?.current?.readyState == EventSource.CLOSED) {
-          console.info('EVENT ERROR')
-          setTerminalOutput((previousOutput) => [
-            ...previousOutput,
-            'Disconnected',
-          ])
-          setInstallResult()
-        }
-      })
-    }
-    return () => {
-      console.info('removing listeners')
-      eventSource?.removeEventListener('message')
-      eventSource?.removeEventListener('error')
-      eventSource?.removeEventListener('connection')
-    }
-  }, [connectionId, eventSource])
+  const { terminalOutput, connectionId, setTerminalOutput } = useEventSource()
 
   useEffect(async () => {
     try {
       if (step === 2) {
+        setTerminalOutput([])
         const availableVersionsResult = await getAvailableVersions()
         setAvailableVersions(availableVersionsResult.data)
       }

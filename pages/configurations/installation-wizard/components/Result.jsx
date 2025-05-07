@@ -25,7 +25,7 @@ const ResultMessage = styled.div`
  * @param {Function} props.handlePreviusStep - Função para voltar para o passo anterior.
  */
 const ResultStep = ({ handlePreviusStep }) => {
-  const { eventSource } = useEventSource()
+  const { eventSourceReference } = useEventSource()
   const [result, setResult] = useState({ status: '', message: '' })
 
   const router = useRouter()
@@ -37,13 +37,13 @@ const ResultStep = ({ handlePreviusStep }) => {
     }
   }
   useEffect(() => {
-    if (eventSource) {
+    if (eventSourceReference.current) {
       // eslint-disable-next-line unicorn/prevent-abbreviations
-      eventSource.addEventListener('result', (e) => {
+      eventSourceReference.current.addEventListener('result', (e) => {
         handleResult(JSON.parse(e.data))
       })
     }
-  }, [eventSource])
+  }, [eventSourceReference])
 
   const resultMessage = () => {
     if (result) {
