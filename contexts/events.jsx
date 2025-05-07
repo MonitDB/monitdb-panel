@@ -39,6 +39,10 @@ export const EventSourceProvider = ({ children }) => {
         'x-api-key': process.env.apiKey,
       }
 
+      if (eventSourceReference.current) {
+        eventSourceReference.current.close()
+      }
+
       const es = new EventSourcePolyfill(url, {
         headers,
       })
@@ -52,13 +56,13 @@ export const EventSourceProvider = ({ children }) => {
         handleSocketMessage('Connected')
       })
 
-      es?.addEventListener('message', (event) => {
+      es.addEventListener('message', (event) => {
         console.info('EVENT MESSAGE')
         handleSocketMessage(event.data)
       })
 
-      es?.addEventListener('error', () => {
-        if (es.readyState == EventSource.CLOSED) {
+      es.addEventListener('error', () => {
+        if (es.readyState === EventSource.CLOSED) {
           setTerminalOutput((previousOutput) => [
             ...previousOutput,
             'Disconnected',
@@ -75,8 +79,20 @@ export const EventSourceProvider = ({ children }) => {
   }
 
   useEffect(() => {
-    initializeEventSource()
-  }, [token])
+    if (token) {
+      initializeEventSource()
+    } else {
+      if (eventSourceReference.current) {
+        eventSourceReference.current.close()
+      }
+    }
+
+    return () => {
+      if (eventSourceReference.current) {
+        eventSourceReference.current.close()
+      }
+    }
+  }, [token]) // Dependendo do token, reinitialize
 
   return (
     <EventSourceContext.Provider
