@@ -32,6 +32,10 @@ export const EventSourceProvider = ({ children }) => {
   }
 
   const initializeEventSource = () => {
+    if (eventSourceReference.current) {
+      eventSourceReference.current.close()
+      eventSourceReference.current = null
+    }
     if (token) {
       const url = `${APIV2}/events`
       const headers = {
