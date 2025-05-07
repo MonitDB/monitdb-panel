@@ -21,11 +21,11 @@ const EventSourceContext = createContext({
 })
 
 export const EventSourceProvider = ({ children }) => {
-  const [connectionId, setConnectionId] = useState()
   const [terminalOutput, setTerminalOutput] = useState([])
   const token = getUserToken()
 
   const eventSourceReference = useRef(null)
+  const connectionId = useRef(null)
 
   const handleSocketMessage = (event) => {
     setTerminalOutput((previousOutput) => [...previousOutput, event])
@@ -49,19 +49,21 @@ export const EventSourceProvider = ({ children }) => {
 
       eventSourceReference.current = es
 
-      es.addEventListener('connection', (event) => {
+      eventSourceReference.current.addEventListener('connection', (event) => {
         const data = JSON.parse(event.data)
+        console.log(es)
         console.info('connected', data)
-        setConnectionId(data.id)
+        connectionId.current = data.id
+
         handleSocketMessage('Connected')
       })
 
-      es.addEventListener('message', (event) => {
+      eventSourceReference.current.addEventListener('message', (event) => {
         console.info('EVENT MESSAGE')
         handleSocketMessage(event.data)
       })
 
-      es.addEventListener('error', () => {
+      eventSourceReference.current.addEventListener('error', () => {
         if (es.readyState === EventSource.CLOSED) {
           setTerminalOutput((previousOutput) => [
             ...previousOutput,
@@ -70,7 +72,7 @@ export const EventSourceProvider = ({ children }) => {
         }
       })
 
-      es.onerror = (error) => {
+      eventSourceReference.current.onerror = (error) => {
         console.info('EventSource failed:', error)
         es.close()
         initializeEventSource()
@@ -97,7 +99,7 @@ export const EventSourceProvider = ({ children }) => {
   return (
     <EventSourceContext.Provider
       value={{
-        connectionId,
+        connectionId: connectionId.current,
         terminalOutput,
         setTerminalOutput,
         eventSourceReference,
