@@ -71,7 +71,7 @@ export const EventSourceProvider = ({ children }) => {
       eventSource?.close()
       setEventSource()
     }
-  }, [token]) // React to token change (e.g., user logs in/out)
+  }, [])
 
   return (
     <EventSourceContext.Provider value={{ eventSource, connectionId }}>
