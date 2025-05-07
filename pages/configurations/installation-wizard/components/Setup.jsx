@@ -65,7 +65,7 @@ const SetUpNewServerStep = ({
       eventSource?.removeEventListener('error')
       eventSource?.removeEventListener('connection')
     }
-  }, [connectionId])
+  }, [connectionId, eventSource])
 
   useEffect(async () => {
     try {
