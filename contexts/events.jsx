@@ -85,20 +85,22 @@ export const EventSourceProvider = ({ children }) => {
   }
 
   useEffect(() => {
-    if (token) {
-      initializeEventSource()
-    } else {
-      if (eventSourceReference.current) {
-        eventSourceReference.current.close()
+    do {
+      if (token) {
+        initializeEventSource()
+      } else {
+        if (eventSourceReference.current) {
+          eventSourceReference.current.close()
+        }
       }
-    }
+    } while (!token)
 
     return () => {
       if (eventSourceReference.current) {
         eventSourceReference.current.close()
       }
     }
-  }, [token]) // Dependendo do token, reinitialize
+  }, [])
 
   return (
     <EventSourceContext.Provider
