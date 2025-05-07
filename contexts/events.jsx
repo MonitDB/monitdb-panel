@@ -21,7 +21,6 @@ const EventSourceContext = createContext({
 })
 
 export const EventSourceProvider = ({ children }) => {
-  const [eventSource, setEventSource] = useState(null)
   const [connectionId, setConnectionId] = useState()
   const [terminalOutput, setTerminalOutput] = useState([])
   const token = getUserToken()
@@ -33,7 +32,7 @@ export const EventSourceProvider = ({ children }) => {
   }
 
   const initializeEventSource = () => {
-    if (token && !eventSource) {
+    if (token) {
       const url = `${APIV2}/events`
       const headers = {
         Authorization: `Bearer ${token}`,
@@ -45,10 +44,6 @@ export const EventSourceProvider = ({ children }) => {
       })
 
       eventSourceReference.current = es
-
-      console.log('Event source initialized')
-
-      setEventSource(es)
 
       es.addEventListener('connection', (event) => {
         const data = JSON.parse(event.data)
@@ -63,7 +58,7 @@ export const EventSourceProvider = ({ children }) => {
       })
 
       es?.addEventListener('error', () => {
-        if (eventSource?.current?.readyState == EventSource.CLOSED) {
+        if (es.readyState == EventSource.CLOSED) {
           setTerminalOutput((previousOutput) => [
             ...previousOutput,
             'Disconnected',
@@ -74,30 +69,18 @@ export const EventSourceProvider = ({ children }) => {
       es.onerror = (error) => {
         console.info('EventSource failed:', error)
         es.close()
-        setEventSource(null)
-        setTimeout(() => {
-          initializeEventSource()
-        }, 3000)
+        initializeEventSource()
       }
     }
   }
 
   useEffect(() => {
     initializeEventSource()
-
-    return () => {
-      if (eventSource) {
-        eventSource.close()
-        console.info('EventSource closed')
-        setEventSource(null)
-      }
-    }
-  }, [eventSource])
+  }, [token])
 
   return (
     <EventSourceContext.Provider
       value={{
-        eventSource,
         connectionId,
         terminalOutput,
         setTerminalOutput,
