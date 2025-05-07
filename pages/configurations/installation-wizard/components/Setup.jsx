@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Button, Col, Row, Select, Space } from 'antd'
 import { useEffect, useState } from 'react'
@@ -41,17 +42,19 @@ const SetUpNewServerStep = ({
 
   useEffect(() => {
     if (eventSource) {
-      eventSource['_listeners'] = {}
-
+      console.info('EVENT SOURCE')
       eventSource?.addEventListener('connection', () => {
+        console.info('EVENT CONNECTION')
         handleSocketMessage('Connected')
       })
       eventSource?.addEventListener('message', (event) => {
+        console.info('EVENT MESSAGE')
         handleSocketMessage(event.data)
       })
 
       eventSource?.addEventListener('error', () => {
         if (eventSource?.current?.readyState == EventSource.CLOSED) {
+          console.info('EVENT ERROR')
           setTerminalOutput((previousOutput) => [
             ...previousOutput,
             'Disconnected',
@@ -61,6 +64,7 @@ const SetUpNewServerStep = ({
       })
     }
     return () => {
+      console.info('removing listeners')
       eventSource?.removeEventListener('message')
       eventSource?.removeEventListener('error')
       eventSource?.removeEventListener('connection')

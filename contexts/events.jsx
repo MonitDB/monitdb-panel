@@ -26,6 +26,7 @@ export const EventSourceProvider = ({ children }) => {
   const token = getUserToken()
 
   const initializeEventSource = () => {
+    console.info('Initializing EventSource')
     if (token && !eventSource) {
       const url = `${APIV2}/events`
       const headers = {
@@ -36,17 +37,18 @@ export const EventSourceProvider = ({ children }) => {
       const es = new EventSourcePolyfill(url, {
         headers,
       })
+      console.log('Event source initialized')
 
       setEventSource(es)
 
       es.addEventListener('connection', (event) => {
         const data = JSON.parse(event.data)
-        console.log(data)
+        console.info('connected', data)
         setConnectionId(data.id)
       })
 
       es.onerror = (error) => {
-        console.error('EventSource failed:', error)
+        console.info('EventSource failed:', error)
         es.close()
         setEventSource(null)
         setTimeout(() => {
@@ -62,10 +64,11 @@ export const EventSourceProvider = ({ children }) => {
     return () => {
       if (eventSource) {
         eventSource.close()
+        console.info('EventSource closed')
         setEventSource(null)
       }
     }
-  }, [])
+  }, [eventSource])
 
   return (
     <EventSourceContext.Provider value={{ eventSource, connectionId }}>
