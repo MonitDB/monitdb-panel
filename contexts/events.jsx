@@ -8,13 +8,6 @@ import { createContext, useContext, useEffect, useRef, useState } from 'react'
 import { APIV2 } from '~/utils/client-api'
 import { getUserToken } from '~/utils/cookies'
 
-/**
- * @typedef {Object} EventSourceContextValue
- * @property {EventSource | null} eventSource
- * @property {string | undefined} connectionId
- */
-
-/** @type {React.Context<EventSourceContextValue>} */
 const EventSourceContext = createContext({
   eventSource: null,
   connectionId: undefined,
@@ -26,16 +19,20 @@ export const EventSourceProvider = ({ children }) => {
 
   const eventSourceReference = useRef(null)
   const connectionId = useRef(null)
+  const isInitialized = useRef(false)
 
   const handleSocketMessage = (event) => {
     setTerminalOutput((previousOutput) => [...previousOutput, event])
   }
 
   const initializeEventSource = () => {
+    if (isInitialized.current) return
+
     if (eventSourceReference.current) {
       eventSourceReference.current.close()
       eventSourceReference.current = null
     }
+
     if (token) {
       const url = `${APIV2}/events`
       const headers = {
@@ -43,31 +40,20 @@ export const EventSourceProvider = ({ children }) => {
         'x-api-key': process.env.apiKey,
       }
 
-      if (eventSourceReference.current) {
-        eventSourceReference.current.close()
-      }
-
-      const es = new EventSourcePolyfill(url, {
-        headers,
-      })
-
+      const es = new EventSourcePolyfill(url, { headers })
       eventSourceReference.current = es
 
-      eventSourceReference.current.addEventListener('connection', (event) => {
+      es.addEventListener('connection', (event) => {
         const data = JSON.parse(event.data)
-        console.log(es)
-        console.info('connected', data)
         connectionId.current = data.id
-
         handleSocketMessage('Connected')
       })
 
-      eventSourceReference.current.addEventListener('message', (event) => {
-        console.info('EVENT MESSAGE')
+      es.addEventListener('message', (event) => {
         handleSocketMessage(event.data)
       })
 
-      eventSourceReference.current.addEventListener('error', () => {
+      es.addEventListener('error', () => {
         if (es.readyState === EventSource.CLOSED) {
           setTerminalOutput((previousOutput) => [
             ...previousOutput,
@@ -76,31 +62,37 @@ export const EventSourceProvider = ({ children }) => {
         }
       })
 
-      eventSourceReference.current.onerror = (error) => {
-        console.info('EventSource failed:', error)
+      es.onerror = (error) => {
         es.close()
+        isInitialized.current = false
         initializeEventSource()
       }
+
+      isInitialized.current = true
     }
   }
 
   useEffect(() => {
-    do {
-      if (token) {
-        initializeEventSource()
-      } else {
-        if (eventSourceReference.current) {
-          eventSourceReference.current.close()
-        }
+    if (!token) {
+      if (eventSourceReference.current) {
+        eventSourceReference.current.close()
+        eventSourceReference.current = null
       }
-    } while (!token)
+      return
+    }
+
+    if (!eventSourceReference.current) {
+      initializeEventSource()
+    }
 
     return () => {
       if (eventSourceReference.current) {
         eventSourceReference.current.close()
+        eventSourceReference.current = null
+        isInitialized.current = false
       }
     }
-  }, [])
+  }, [token])
 
   return (
     <EventSourceContext.Provider
