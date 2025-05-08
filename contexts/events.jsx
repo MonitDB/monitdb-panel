@@ -1,3 +1,4 @@
+/* eslint-disable unicorn/prevent-abbreviations */
 /* eslint-disable unicorn/no-null */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable unicorn/prefer-add-event-listener */
@@ -20,9 +21,18 @@ export const EventSourceProvider = ({ children }) => {
   const eventSourceReference = useRef(null)
   const connectionId = useRef(null)
   const isInitialized = useRef(false)
+  const [result, setResult] = useState({ status: '', message: '' })
 
   const handleSocketMessage = (event) => {
     setTerminalOutput((previousOutput) => [...previousOutput, event])
+  }
+
+  const handleResult = (result) => {
+    try {
+      setResult(result)
+    } catch {
+      // console.log(error)
+    }
   }
 
   const initializeEventSource = () => {
@@ -51,6 +61,10 @@ export const EventSourceProvider = ({ children }) => {
 
       es.addEventListener('message', (event) => {
         handleSocketMessage(event.data)
+      })
+
+      es.current.addEventListener('result', (e) => {
+        handleResult(JSON.parse(e.data))
       })
 
       es.addEventListener('error', () => {
@@ -101,6 +115,7 @@ export const EventSourceProvider = ({ children }) => {
         terminalOutput,
         setTerminalOutput,
         eventSourceReference,
+        result,
       }}
     >
       {children}

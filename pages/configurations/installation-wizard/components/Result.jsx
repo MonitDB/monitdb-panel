@@ -1,6 +1,5 @@
 import { Button, Result, Space } from 'antd'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
 import { useEventSource } from '~/contexts/events'
@@ -25,25 +24,9 @@ const ResultMessage = styled.div`
  * @param {Function} props.handlePreviusStep - Função para voltar para o passo anterior.
  */
 const ResultStep = ({ handlePreviusStep }) => {
-  const { eventSourceReference } = useEventSource()
-  const [result, setResult] = useState({ status: '', message: '' })
+  const { result } = useEventSource()
 
   const router = useRouter()
-  const handleResult = (result) => {
-    try {
-      setResult(result)
-    } catch {
-      // console.log(error)
-    }
-  }
-  useEffect(() => {
-    if (eventSourceReference.current) {
-      // eslint-disable-next-line unicorn/prevent-abbreviations
-      eventSourceReference.current.addEventListener('result', (e) => {
-        handleResult(JSON.parse(e.data))
-      })
-    }
-  }, [eventSourceReference])
 
   const resultMessage = () => {
     if (result) {
@@ -84,7 +67,6 @@ const ResultStep = ({ handlePreviusStep }) => {
     <>
       <StepContainer>
         <ResultContainer>
-          {/* <h2>Result Step</h2> */}
           {<ResultMessage>{resultMessage()}</ResultMessage>}
         </ResultContainer>
       </StepContainer>
