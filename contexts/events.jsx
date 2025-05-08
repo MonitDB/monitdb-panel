@@ -1,7 +1,5 @@
-/* eslint-disable unicorn/prevent-abbreviations */
 /* eslint-disable unicorn/no-null */
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable unicorn/prefer-add-event-listener */
 /* eslint-disable no-console */
 import { EventSourcePolyfill } from 'event-source-polyfill'
 import { createContext, useContext, useEffect, useRef, useState } from 'react'
@@ -21,7 +19,10 @@ export const EventSourceProvider = ({ children }) => {
   const eventSourceReference = useRef(null)
   const connectionId = useRef(null)
   const isInitialized = useRef(false)
+  const retryCount = useRef(0)
   const [result, setResult] = useState({ status: '', message: '' })
+
+  const maxRetries = 5
 
   const handleSocketMessage = (event) => {
     setTerminalOutput((previousOutput) => [...previousOutput, event])
@@ -31,12 +32,12 @@ export const EventSourceProvider = ({ children }) => {
     try {
       setResult(result)
     } catch {
-      // console.log(error)
+      // optional: handle parsing errors
     }
   }
 
   const initializeEventSource = () => {
-    if (isInitialized.current) return
+    if (isInitialized.current || retryCount.current >= maxRetries) return
 
     if (eventSourceReference.current) {
       eventSourceReference.current.close()
@@ -57,29 +58,43 @@ export const EventSourceProvider = ({ children }) => {
         const data = JSON.parse(event.data)
         connectionId.current = data.id
         handleSocketMessage('Connected')
+        retryCount.current = 0
       })
 
       es.addEventListener('message', (event) => {
         handleSocketMessage(event.data)
       })
 
-      es.current.addEventListener('result', (e) => {
+      es.addEventListener('result', (e) => {
         handleResult(JSON.parse(e.data))
       })
 
-      es.addEventListener('error', () => {
+      es.onerror = (error) => {
+        console.error('SSE Error:', error)
+
         if (es.readyState === EventSource.CLOSED) {
           setTerminalOutput((previousOutput) => [
             ...previousOutput,
             'Disconnected',
           ])
         }
-      })
 
-      es.onerror = (error) => {
         es.close()
+        eventSourceReference.current = null
         isInitialized.current = false
-        initializeEventSource()
+
+        if (retryCount.current < maxRetries) {
+          retryCount.current++
+          const retryDelay = Math.min(1000 * 2 ** retryCount.current, 10_000)
+          setTimeout(() => {
+            console.log(
+              `Retrying SSE connection... Attempt ${retryCount.current}`
+            )
+            initializeEventSource()
+          }, retryDelay)
+        } else {
+          console.error('Max SSE reconnection attempts reached.')
+        }
       }
 
       isInitialized.current = true
@@ -95,9 +110,7 @@ export const EventSourceProvider = ({ children }) => {
       return
     }
 
-    if (!eventSourceReference.current) {
-      initializeEventSource()
-    }
+    initializeEventSource()
 
     return () => {
       if (eventSourceReference.current) {
