@@ -38,7 +38,7 @@ export default function KBarActions({ currentQuery }) {
   const dashboardActions = servers.flatMap((server) => [
     {
       id: `${server.id}-History`,
-      name: `${server.serverName} - History`,
+      name: `History of ${server.serverName}`,
       subtitle: 'View history',
       parent: server.id,
       perform: () => router.push(`/dashboard/${server.id}?tab=history`),
@@ -46,8 +46,8 @@ export default function KBarActions({ currentQuery }) {
     },
     {
       id: `${server.id}-Query`,
-      name: `${server.serverName} - Query`,
-      subtitle: 'View query',
+      name: ` Run query on ${server.serverName}`,
+      subtitle: 'Run queries',
       parent: server.id,
       perform: () => router.push(`/dashboard/${server.id}?tab=query-window`),
       keywords: server.serverName,
@@ -59,7 +59,7 @@ export default function KBarActions({ currentQuery }) {
     },
     {
       id: `${server.id}-Current-activity`,
-      name: `${server.serverName} - Current Activity`,
+      name: `Current Activity of ${server.serverName} `,
       subtitle: 'View current activity',
       parent: server.id,
       perform: () =>
@@ -73,7 +73,7 @@ export default function KBarActions({ currentQuery }) {
     },
     {
       id: `${server.id}-Tuning-advisor`,
-      name: `${server.serverName} - Tuning Advisor`,
+      name: `Tuning Advisor of ${server.serverName} `,
       subtitle: 'View tuning advisor',
       parent: server.id,
       perform: () => router.push(`/dashboard/${server.id}?tab=tuning-advisor`),
@@ -98,8 +98,8 @@ export default function KBarActions({ currentQuery }) {
 
   const alertsActions = servers.map((server) => ({
     id: `${server.id}-alerts`,
-    name: `${server.serverName} - Alerts`,
-    subtitle: 'View alerts',
+    name: `Alerts of ${server.serverName}`,
+    subtitle: 'View active alerts',
     parent: server.id,
     perform: () => router.push(`/alerts/results/?server=${server.id}`),
     keywords: server.serverName,
@@ -107,7 +107,7 @@ export default function KBarActions({ currentQuery }) {
 
   const reportsActions = servers.map((server) => ({
     id: `${server.id}-reports`,
-    name: `${server.serverName} - Reports`,
+    name: ` Reports of ${server.serverName}`,
     subtitle: 'View reports',
     parent: server.id,
     perform: () => router.push(`/reports/results/?server=${server.id}`),
@@ -116,8 +116,8 @@ export default function KBarActions({ currentQuery }) {
 
   const analisysActions = servers.map((server) => ({
     id: `${server.id}-analysis`,
-    name: `${server.serverName} - Analysis`,
-    subtitle: 'View analysis',
+    name: ` Analysis of ${server.serverName}`,
+    subtitle: 'Make analysis of server',
     parent: server.id,
     perform: () => router.push(`/analysis/?server=${server.id}`),
     keywords: server.serverName,
@@ -156,49 +156,42 @@ export default function KBarActions({ currentQuery }) {
       id: 'installation-wizard',
       name: 'Installation Wizard',
       subtitle: 'View installation wizard',
-      group: 'configurations',
+      parent: 'configurations',
       perform: () => router.push('/configurations/installation-wizard'),
     },
     {
       id: 'update-new-version',
       name: 'Update New Version',
       subtitle: 'View update new version',
-      group: 'configurations',
+      parent: 'configurations',
       perform: () => router.push('/configurations/update-new-version'),
     },
     {
       id: 'servers',
       name: 'Servers',
       subtitle: 'View servers',
-      group: 'configurations',
+      parent: 'configurations',
       perform: () => router.push('/configurations/servers'),
     },
     {
       id: 'profiles',
       name: 'Profiles',
       subtitle: 'View profiles',
-      group: 'configurations',
+      parent: 'configurations',
       perform: () => router.push('/configurations/profiles'),
     },
     {
       id: 'users',
       name: 'Users',
       subtitle: 'View users',
-      group: 'configurations',
+      parent: 'configurations',
       perform: () => router.push('/configurations/users'),
     },
-    // {
-    //   id: 'alerts',
-    //   name: 'Alerts',
-    //   subtitle: 'View alerts',
-    //   group: 'configurations',
-    //   perform: () => router.push('/alerts'),
-    // },
     {
       id: 'components',
       name: 'Components',
       subtitle: 'View components',
-      group: 'configurations',
+      parent: 'configurations',
       perform: () => router.push('/configurations/components'),
     },
     {
@@ -211,7 +204,7 @@ export default function KBarActions({ currentQuery }) {
     {
       id: 'integration',
       name: 'Integration',
-      subtitle: 'View integrations',
+      subtitle: 'View available integrations',
       parent: 'configurations',
       keywords: 'integration',
       perform: () => router.push('/configurations/integrations'),
@@ -238,7 +231,7 @@ export default function KBarActions({ currentQuery }) {
         name: 'Go to Dashboard',
         shortcut: ['h'],
         keywords: 'dashboard home',
-        group: 'dashboard',
+
         perform: () => router.push('/'),
       },
       {
@@ -249,9 +242,16 @@ export default function KBarActions({ currentQuery }) {
       ...servers.map((server) => ({
         id: `${server.id}`,
         name: `${server.serverName}`,
-        perform: () => router.push(`/dashboard/${server.id}`),
+        // perform: () => router.push(`/dashboard/${server.id}`),
         keywords: server.serverName,
       })),
+      {
+        id: 'integrations',
+        name: 'Integrations',
+        subtitle: 'Run integrations',
+        keywords: 'integration',
+        perform: () => router.push('/integrations'),
+      },
       ...dashboardActions,
       ...dynamicResults,
       ...states,
