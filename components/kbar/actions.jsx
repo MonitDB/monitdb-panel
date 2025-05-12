@@ -190,7 +190,7 @@ export default function KBarActions({ currentQuery }) {
     {
       id: 'components',
       name: 'Components',
-      subtitle: 'View components',
+      subtitle: 'View and configure components',
       parent: 'configurations',
       perform: () => router.push('/configurations/components'),
     },
@@ -216,6 +216,20 @@ export default function KBarActions({ currentQuery }) {
       parent: 'configurations',
       keywords: 'AI configurations',
       perform: () => router.push('/configurations/monit-ai-config'),
+    },
+    {
+      id: 'display-settings',
+      name: 'Display Settings',
+      subtitle: 'Setup customer preference and informations',
+      keywords: 'display settings',
+      perform: () => router.push('/configurations/display-settings/'),
+    },
+    {
+      id: 'alert-metric',
+      name: 'Custom metrics',
+      subtitle: 'Setup custom metrics',
+      keywords: 'custom metrics',
+      perform: () => router.push('/alerts/metrics/'),
     },
   ]
 
@@ -252,6 +266,7 @@ export default function KBarActions({ currentQuery }) {
         keywords: 'integration',
         perform: () => router.push('/integrations'),
       },
+
       ...dashboardActions,
       ...dynamicResults,
       ...states,
