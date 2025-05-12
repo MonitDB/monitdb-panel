@@ -92,7 +92,7 @@ const SetUpNewServerStep = ({
             style={{ width: '100%', marginBotton: '10px' }}
           >
             <TerminalWindow
-              height={'400px'}
+              height={'200px'}
               width={'100%'}
               buttons={[
                 {
@@ -110,7 +110,7 @@ const SetUpNewServerStep = ({
           </div>
         </Row>
       </StepContainer>
-      <div className="flex justify-end mt-10">
+      <div className="flex justify-end mt-5">
         <Space>
           <Button type="default" onClick={() => handlePreviusStep()}>
             Previous
