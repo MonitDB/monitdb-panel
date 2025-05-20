@@ -15,6 +15,8 @@ import {
   Typography,
 } from 'antd'
 import dayjs from 'dayjs'
+import localeData from 'dayjs/plugin/localeData'
+import weekday from 'dayjs/plugin/weekday'
 import moment from 'moment'
 import dynamic from 'next/dynamic'
 import { useEffect, useRef } from 'react'
@@ -31,6 +33,9 @@ import {
 } from '~/services/states'
 
 import PageContent from '../../content/content'
+
+dayjs.extend(weekday)
+dayjs.extend(localeData)
 
 export const ApexChart = dynamic(
   () => {
