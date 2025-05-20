@@ -399,7 +399,9 @@ const ChatAI = () => {
                     <SendOutlined />
                   )
                 }
-                onClick={isLoadingCurrentChatMessages ? handleStop : handleSend}
+                onClick={() =>
+                  isLoadingCurrentChatMessages ? handleStop() : handleSend()
+                }
               />
             </div>
           </Card>

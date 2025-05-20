@@ -155,16 +155,11 @@ const AiConfigDrawer = () => {
               <Form.Item
                 name="model"
                 label="model"
-                rules={[{ required: true }]}
+                rules={[{ required: false }]}
               >
                 <Input />
               </Form.Item>
-              <Form.Item name="Type" label="type" rules={[{ required: true }]}>
-                <Select>
-                  <Select.Option value="openai">OpenAI</Select.Option>
-                  <Select.Option value="llmstudio">LLM Studio</Select.Option>
-                </Select>
-              </Form.Item>
+
               <Form.Item name="type" label="Type" rules={[{ required: true }]}>
                 <Select>
                   <Select.Option value="openai">OpenAI</Select.Option>
