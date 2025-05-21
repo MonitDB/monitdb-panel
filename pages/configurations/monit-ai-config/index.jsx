@@ -67,6 +67,11 @@ const AiConfigPage = () => {
       key: 'name',
     },
     {
+      title: 'Type',
+      dataIndex: 'type',
+      key: 'type',
+    },
+    {
       title: 'Model',
       dataIndex: 'model',
       key: 'model',
