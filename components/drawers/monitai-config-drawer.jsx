@@ -20,7 +20,6 @@ import { useRouter } from 'next/router'
 import React, { useEffect } from 'react'
 
 import { useAiConfigStore } from '~/services/state-manager/ai-store'
-import { safeJsonParse } from '~/utils/json'
 
 export const ReactJson = dynamic(
   () => {
@@ -73,17 +72,8 @@ const AiConfigDrawer = () => {
   }, [isEdit, form, query, open, fetchConfigById])
 
   useEffect(() => {
-    const headers = JSON.stringify(
-      safeJsonParse(
-        selectedConfig?.headers?.length > 0
-          ? JSON.stringify(selectedConfig?.headers)
-          : '{}'
-      )
-    )
-
     form.setFieldsValue({
       ...selectedConfig,
-      headers,
     })
   }, [form, selectedConfig])
 
@@ -93,7 +83,7 @@ const AiConfigDrawer = () => {
 
       const data = {
         ...values,
-        headers: JSON.stringify(safeJsonParse(values.headers)),
+        headers: values.headers,
       }
 
       if (isEdit) {
@@ -120,7 +110,7 @@ const AiConfigDrawer = () => {
       destroyOnClose
       closable={false}
       bodyStyle={{ display: 'flex', flexDirection: 'column', height: '100%' }}
-      width={600}
+      width={1000}
     >
       {loadingConfig && (
         <div
@@ -179,7 +169,7 @@ const AiConfigDrawer = () => {
                 initialValue={''}
                 rules={[{ required: false }]}
               >
-                <Input.TextArea rows={3} />
+                <Input.TextArea rows={10} />
               </Form.Item>
 
               <Typography.Title level={5}>Headers</Typography.Title>
