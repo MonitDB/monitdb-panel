@@ -1,11 +1,11 @@
 /* eslint-disable no-undef */
 /* eslint-disable sonarjs/no-duplicate-string */
+import { FullscreenExitOutlined, FullscreenOutlined } from '@ant-design/icons'
 import { json } from '@codemirror/lang-json'
 import { dracula } from '@uiw/codemirror-theme-dracula'
 import CodeMirror from '@uiw/react-codemirror'
 import {
   Button,
-  Divider,
   Drawer,
   Form,
   Input,
@@ -17,7 +17,7 @@ import {
 } from 'antd'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { useAiConfigStore } from '~/services/state-manager/ai-store'
 
@@ -31,6 +31,7 @@ export const ReactJson = dynamic(
 const AiConfigDrawer = () => {
   const router = useRouter()
   const { query, pathname } = router
+  const [isFullscreen, setIsFullscreen] = useState(false)
 
   const {
     fetchConfigById,
@@ -110,7 +111,25 @@ const AiConfigDrawer = () => {
       destroyOnClose
       closable={false}
       bodyStyle={{ display: 'flex', flexDirection: 'column', height: '100%' }}
-      width={1000}
+      width={isFullscreen ? '100%' : '50%'}
+      title={
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
+          <span>AI Config</span>
+          <Button
+            type="text"
+            onClick={() => setIsFullscreen(!isFullscreen)}
+            icon={
+              isFullscreen ? <FullscreenExitOutlined /> : <FullscreenOutlined />
+            }
+          ></Button>
+        </div>
+      }
     >
       {loadingConfig && (
         <div
@@ -128,11 +147,6 @@ const AiConfigDrawer = () => {
       )}
       {!loadingConfig && (
         <>
-          <div>
-            <Typography.Title level={4}>AI Config</Typography.Title>
-            <Divider></Divider>
-          </div>
-
           <div style={{ padding: '16px', flex: 1, overflowY: 'auto' }}>
             <Form layout="vertical" form={form}>
               <Typography.Title level={5}>Informations</Typography.Title>
