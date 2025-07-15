@@ -301,6 +301,20 @@ const ConfigurationsPage = () => {
                         </Link>
                       </li>
 
+                      <li className="opacity-100">
+                        <Link
+                          href="/configurations/monit-ai-training"
+                          className="group block"
+                        >
+                          <strong className="block group-hover:text-blue">
+                            Ai Training material
+                          </strong>
+                          <span className="group-hover:opacity-75">
+                            Add training material for monit ai
+                          </span>
+                        </Link>
+                      </li>
+
                       {hasPermission(
                         user,
                         FeatureFunction.AUTHENTICATION_TOKENS,

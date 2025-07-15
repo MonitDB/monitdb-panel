@@ -218,6 +218,14 @@ export default function KBarActions({ currentQuery }) {
       perform: () => router.push('/configurations/monit-ai-config'),
     },
     {
+      id: 'AI Training material',
+      name: 'AI Training material',
+      subtitle: 'View and add AI training material',
+      parent: 'configurations',
+      keywords: 'AI training material',
+      perform: () => router.push('/configurations/monit-ai-training'),
+    },
+    {
       id: 'display-settings',
       name: 'Display Settings',
       subtitle: 'Setup customer preference and informations',
