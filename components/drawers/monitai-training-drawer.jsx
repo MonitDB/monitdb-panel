@@ -1,6 +1,5 @@
 import { FullscreenExitOutlined, FullscreenOutlined } from '@ant-design/icons';
-import { Button, Drawer, Form, Input, message, Select, Space, Spin, Typography } from 'antd';
-import dynamic from 'next/dynamic';
+import { Button, Divider, Drawer, Form, Input, message, Select, Space, Spin, Typography } from 'antd';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { useAiTrainingStore } from '~/services/state-manager/ai-training-store';
@@ -10,7 +9,9 @@ const { Option } = Select;
 
 const TYPE_OPTIONS = [
   { label: 'TEXT', value: 'TEXT' },
-  { label: 'DOCUMENT', value: 'DOCUMENT' }
+  { label: 'DOCUMENT', value: 'DOCUMENT' },
+  { label: 'WEBSITE', value: 'WEBSITE' },
+  { label: 'VIDEO', value: 'VIDEO' },
 ];
 
 const AiTrainingDrawer = () => {
@@ -36,7 +37,7 @@ const AiTrainingDrawer = () => {
 
   useEffect(() => {
     form.resetFields();
-    setSelectedType(null);
+    setSelectedType(TYPE_OPTIONS[0].value);
     setFile(null);
   }, [form]);
 
@@ -59,6 +60,21 @@ const AiTrainingDrawer = () => {
           return;
         }
         payload.file = file; // Send raw file, createTraining will handle FormData
+      } else if (values.type === 'WEBSITE') {
+        if (!values.content) {
+          message.error('Please input the website URL');
+          return;
+        }
+        payload.content = values.content;
+      } else if (values.type === 'VIDEO') {
+        if (values.content) {
+          payload.content = values.content;
+        } else if (file) {
+          payload.file = file; // Send raw file, createTraining will handle FormData
+        } else {
+          message.error('Please input the video URL or upload a video file.');
+          return;
+        }
       }
 
       await createTraining(payload);
@@ -90,6 +106,36 @@ const AiTrainingDrawer = () => {
           <FileUploader onFileReady={handleFileReady} />
         </Form.Item>
       );
+    } else if (selectedType === 'WEBSITE') {
+      return (
+        <Form.Item
+          name="content"
+          label="URL"
+          rules={[{ required: true, message: 'Please input the website URL' }]}
+        >
+          <Input type='url' />
+        </Form.Item>
+      );      
+    } else if (selectedType === 'VIDEO') {
+      return (
+        <>
+          {/* <Form.Item
+            name="content"
+            label="URL"
+            rules={[{ required: false, message: 'Please input the website URL' }]}
+          >
+            <Input type='url' />
+          </Form.Item>
+          <div style={{ display: 'flex', alignItems: 'center', width: '45%' }}>
+            <Divider sx={{ width: '100%'}} />
+            <span style={{ fontWeight: 'bold' }} >OR</span>
+            <Divider sx={{ width: '100%'}} />
+          </div> */}
+          <Form.Item>
+            <FileUploader onFileReady={handleFileReady} />
+          </Form.Item>          
+        </>
+      );      
     }
 
     return null;
@@ -145,7 +191,7 @@ const AiTrainingDrawer = () => {
                 label="Type"
                 rules={[{ required: true, message: 'Please select the type' }]}
               >
-                <Select placeholder="Select a type">
+                <Select placeholder="Select a type" defaultValue={selectedType}>
                   {TYPE_OPTIONS.map((option) => (
                     <Option key={option.value} value={option.value}>
                       {option.label}
