@@ -1,13 +1,13 @@
-import { Button, Switch, Table } from 'antd'
+import { Button, Table } from 'antd'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
 import { useEffect } from 'react'
 
+import AiTrainingDrawer from '~/components/drawers/monitai-training-drawer'
 import { PageContent, PageHeader } from '~/components/page'
 import { useUser } from '~/hooks/index'
 import Layout from '~/layouts/default'
 import { useAiTrainingStore } from '~/services/state-manager/ai-training-store'
-import AiTrainingDrawer from '~/components/drawers/monitai-training-drawer'
 
 /*************  ✨ Windsurf Command ⭐  *************/
 /**

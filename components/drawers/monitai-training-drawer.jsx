@@ -1,8 +1,10 @@
 import { FullscreenExitOutlined, FullscreenOutlined } from '@ant-design/icons';
-import { Button, Divider, Drawer, Form, Input, message, Select, Space, Spin, Typography } from 'antd';
+import { Button, Drawer, Form, Input, message, Select, Space, Spin, Typography } from 'antd';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
+
 import { useAiTrainingStore } from '~/services/state-manager/ai-training-store';
+
 import FileUploader from '../file-uploader';
 
 const { Option } = Select;
@@ -20,8 +22,8 @@ const AiTrainingDrawer = () => {
 
   const [form] = Form.useForm();
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [selectedType, setSelectedType] = useState(null);
-  const [file, setFile] = useState(null);
+  const [selectedType, setSelectedType] = useState();
+  const [file, setFile] = useState();
 
   const { createTraining, loadingTraining } = useAiTrainingStore();
 
@@ -38,7 +40,7 @@ const AiTrainingDrawer = () => {
   useEffect(() => {
     form.resetFields();
     setSelectedType(TYPE_OPTIONS[0].value);
-    setFile(null);
+    setFile();
   }, [form]);
 
   const handleFileReady = (fileWrapper) => {
@@ -51,22 +53,32 @@ const AiTrainingDrawer = () => {
 
       const payload = { type: values.type };
 
-      if (values.type === 'TEXT') {
+      switch (values.type) {
+      case 'TEXT': {
         payload.content = values.content;
 
-      } else if (values.type === 'DOCUMENT') {
+      
+      break;
+      }
+      case 'DOCUMENT': {
         if (!file) {
           message.error('Please upload a file');
           return;
         }
         payload.file = file; // Send raw file, createTraining will handle FormData
-      } else if (values.type === 'WEBSITE') {
+      
+      break;
+      }
+      case 'WEBSITE': {
         if (!values.content) {
           message.error('Please input the website URL');
           return;
         }
         payload.content = values.content;
-      } else if (values.type === 'VIDEO') {
+      
+      break;
+      }
+      case 'VIDEO': {
         if (values.content) {
           payload.content = values.content;
         } else if (file) {
@@ -75,70 +87,78 @@ const AiTrainingDrawer = () => {
           message.error('Please input the video URL or upload a video file.');
           return;
         }
+      
+      break;
+      }
+      // No default
       }
 
       await createTraining(payload);
       message.success('Training material created successfully');
 
       form.resetFields();
-      setFile(null);
+      setFile();
       closeDrawer();
-    } catch (error) {
+    } catch {
       message.error('Failed to save AI training');
     }
   };
 
   const renderTypeSpecificField = () => {
-    if (selectedType === 'TEXT') {
-      return (
-        <Form.Item
-          name="content"
-          label="Content"
-          rules={[{ required: true, message: 'Please input the text content' }]}
-        >
-          <Input.TextArea rows={6} placeholder="Enter your text content here" />
-        </Form.Item>
-      );
-      
-    } else if (selectedType === 'DOCUMENT') {
-      return (
-        <Form.Item label="File" required>
-          <FileUploader onFileReady={handleFileReady} />
-        </Form.Item>
-      );
-    } else if (selectedType === 'WEBSITE') {
-      return (
-        <Form.Item
-          name="content"
-          label="URL"
-          rules={[{ required: true, message: 'Please input the website URL' }]}
-        >
-          <Input type='url' />
-        </Form.Item>
-      );      
-    } else if (selectedType === 'VIDEO') {
-      return (
-        <>
-          {/* <Form.Item
+    switch (selectedType) {
+      case 'TEXT': {
+        return (
+          <Form.Item
+            name="content"
+            label="Content"
+            rules={[{ required: true, message: 'Please input the text content' }]}
+          >
+            <Input.TextArea rows={6} placeholder="Enter your text content here" />
+          </Form.Item>
+        );
+        
+      }
+      case 'DOCUMENT': {
+        return (
+          <Form.Item label="File" required>
+            <FileUploader onFileReady={handleFileReady} />
+          </Form.Item>
+        );
+      }
+      case 'WEBSITE': {
+        return (
+          <Form.Item
             name="content"
             label="URL"
-            rules={[{ required: false, message: 'Please input the website URL' }]}
+            rules={[{ required: true, message: 'Please input the website URL' }]}
           >
             <Input type='url' />
           </Form.Item>
-          <div style={{ display: 'flex', alignItems: 'center', width: '45%' }}>
-            <Divider sx={{ width: '100%'}} />
-            <span style={{ fontWeight: 'bold' }} >OR</span>
-            <Divider sx={{ width: '100%'}} />
-          </div> */}
-          <Form.Item>
-            <FileUploader onFileReady={handleFileReady} />
-          </Form.Item>          
-        </>
-      );      
+        );      
+      }
+      case 'VIDEO': {
+        return (
+          <>
+            {/* <Form.Item
+              name="content"
+              label="URL"
+              rules={[{ required: false, message: 'Please input the website URL' }]}
+            >
+              <Input type='url' />
+            </Form.Item>
+            <div style={{ display: 'flex', alignItems: 'center', width: '45%' }}>
+              <Divider sx={{ width: '100%'}} />
+              <span style={{ fontWeight: 'bold' }} >OR</span>
+              <Divider sx={{ width: '100%'}} />
+            </div> */}
+            <Form.Item>
+              <FileUploader onFileReady={handleFileReady} />
+            </Form.Item>          
+          </>
+        );      
+      }
+    // No default
     }
-
-    return null;
   };
 
   return (
@@ -180,7 +200,7 @@ const AiTrainingDrawer = () => {
               onValuesChange={(changedValues) => {
                 if (changedValues.type) {
                   setSelectedType(changedValues.type);
-                  setFile(null);
+                  setFile();
                 }
               }}
             >

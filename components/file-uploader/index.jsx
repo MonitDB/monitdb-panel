@@ -1,13 +1,14 @@
 'use client';
 
+import { DeleteOutlined,UploadOutlined } from '@ant-design/icons';
+import { Button, Card, message,Typography, Upload } from 'antd';
+import Image from 'next/image';
 import { useState } from 'react';
-import { Upload, Card, Typography, Button, message } from 'antd';
-import { UploadOutlined, DeleteOutlined } from '@ant-design/icons';
 
 const { Text } = Typography;
 
 export default function FileUploader({ onFileReady }) {
-  const [uploadedFile, setUploadedFile] = useState(null);
+  const [uploadedFile, setUploadedFile] = useState();
 
   const beforeUpload = (file) => {
     const mimeType = file.type;
@@ -34,7 +35,7 @@ export default function FileUploader({ onFileReady }) {
     if (uploadedFile?.previewUrl) {
       URL.revokeObjectURL(uploadedFile.previewUrl);
     }
-    setUploadedFile(null);
+    setUploadedFile();
     message.info('File removed');
   };
 
@@ -66,7 +67,7 @@ export default function FileUploader({ onFileReady }) {
           }
         >
           {uploadedFile.type === 'image' && (
-            <img
+            <Image
               src={uploadedFile.previewUrl}
               alt="preview"
               style={{ width: '100%', maxHeight: 300, objectFit: 'contain' }}
@@ -74,6 +75,7 @@ export default function FileUploader({ onFileReady }) {
           )}
 
           {uploadedFile.type === 'video' && (
+            // eslint-disable-next-line jsx-a11y/media-has-caption
             <video
               src={uploadedFile.previewUrl}
               controls
@@ -82,6 +84,7 @@ export default function FileUploader({ onFileReady }) {
           )}
 
           {uploadedFile.type === 'audio' && (
+            // eslint-disable-next-line jsx-a11y/media-has-caption
             <audio src={uploadedFile.previewUrl} controls style={{ width: '100%' }} />
           )}
 
