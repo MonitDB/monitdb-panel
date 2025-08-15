@@ -1,9 +1,10 @@
 import { FullscreenExitOutlined, FullscreenOutlined } from '@ant-design/icons';
-import { Button, Drawer, Form, Input, message, Select, Space, Spin, Typography } from 'antd';
+import { Button, Divider, Drawer, Form, Input, message, Select, Space, Spin, Typography } from 'antd';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 
 import { useAiTrainingStore } from '~/services/state-manager/ai-training-store';
+import { useAiTrainingStoreLocalLLM } from '~/services/state-manager/ai-training-store-local-llm';
 
 import FileUploader from '../file-uploader';
 
@@ -22,10 +23,14 @@ const AiTrainingDrawer = () => {
 
   const [form] = Form.useForm();
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [selectedType, setSelectedType] = useState();
+  const [selectedType, setSelectedType] = useState(TYPE_OPTIONS[0].value);
   const [file, setFile] = useState();
 
+  const usingRemoteLLMs = JSON.parse(localStorage.getItem('app:usingRemoteLLMs')) ?? false;
+
   const { createTraining, loadingTraining } = useAiTrainingStore();
+  const { createTrainingLocalLLM, loadingTrainingLocalLLM } = 
+    useAiTrainingStoreLocalLLM();
 
   const open = query['aitraining-new'] === 'true' || query['aitraining-id'] !== undefined;
 
@@ -35,6 +40,7 @@ const AiTrainingDrawer = () => {
     delete newQuery['aitraining-id'];
 
     router.replace({ pathname, query: newQuery }, undefined, { shallow: true });
+    setSelectedType(TYPE_OPTIONS[0].value)
   };
 
   useEffect(() => {
@@ -54,46 +60,48 @@ const AiTrainingDrawer = () => {
       const payload = { type: values.type };
 
       switch (values.type) {
-      case 'TEXT': {
-        payload.content = values.content;
-
-      
-      break;
-      }
-      case 'DOCUMENT': {
-        if (!file) {
-          message.error('Please upload a file');
-          return;
-        }
-        payload.file = file; // Send raw file, createTraining will handle FormData
-      
-      break;
-      }
-      case 'WEBSITE': {
-        if (!values.content) {
-          message.error('Please input the website URL');
-          return;
-        }
-        payload.content = values.content;
-      
-      break;
-      }
-      case 'VIDEO': {
-        if (values.content) {
+        case 'TEXT': {
           payload.content = values.content;
-        } else if (file) {
-          payload.file = file; // Send raw file, createTraining will handle FormData
-        } else {
-          message.error('Please input the video URL or upload a video file.');
-          return;
+        
+          break;
         }
-      
-      break;
-      }
-      // No default
+        case 'DOCUMENT': {
+          if (!file) {
+            message.error('Please upload a file');
+            return;
+          }
+          payload.file = file; // Send raw file, createTraining will handle FormData
+        
+          break;
+        }
+        case 'WEBSITE': {
+          if (!values.content) {
+            message.error('Please input the website URL');
+            return;
+          }
+          payload.content = values.content;
+        
+          break;
+        }
+        case 'VIDEO': {
+          if (values.content) {
+            payload.content = values.content;
+          } else if (file) {
+            payload.file = file; // Send raw file, createTraining will handle FormData
+          } else {
+            message.error('Please input the video URL or upload a video file.');
+            return;
+          }
+        
+          break;
+        }
       }
 
-      await createTraining(payload);
+      if (usingRemoteLLMs) {
+        await createTraining(payload);
+      } else {
+        await createTrainingLocalLLM(payload);
+      }
       message.success('Training material created successfully');
 
       form.resetFields();
@@ -121,7 +129,7 @@ const AiTrainingDrawer = () => {
       case 'DOCUMENT': {
         return (
           <Form.Item label="File" required>
-            <FileUploader onFileReady={handleFileReady} />
+            <FileUploader onFileReady={handleFileReady} type='DOCUMENT' />
           </Form.Item>
         );
       }
@@ -139,9 +147,9 @@ const AiTrainingDrawer = () => {
       case 'VIDEO': {
         return (
           <>
-            {/* <Form.Item
+            <Form.Item
               name="content"
-              label="URL"
+              label="YouTube URL"
               rules={[{ required: false, message: 'Please input the website URL' }]}
             >
               <Input type='url' />
@@ -150,9 +158,9 @@ const AiTrainingDrawer = () => {
               <Divider sx={{ width: '100%'}} />
               <span style={{ fontWeight: 'bold' }} >OR</span>
               <Divider sx={{ width: '100%'}} />
-            </div> */}
+            </div>
             <Form.Item>
-              <FileUploader onFileReady={handleFileReady} />
+              <FileUploader onFileReady={handleFileReady} type='VIDEO' />
             </Form.Item>          
           </>
         );      
@@ -180,7 +188,7 @@ const AiTrainingDrawer = () => {
         </div>
       }
     >
-      {loadingTraining ? (
+      {( (usingRemoteLLMs && loadingTraining) || (!usingRemoteLLMs && loadingTrainingLocalLLM) ) ? (
         <div
           style={{
             display: 'flex',
@@ -197,6 +205,7 @@ const AiTrainingDrawer = () => {
             <Form
               layout="vertical"
               form={form}
+              initialValues={{ type: 'TEXT' }}
               onValuesChange={(changedValues) => {
                 if (changedValues.type) {
                   setSelectedType(changedValues.type);
@@ -211,7 +220,7 @@ const AiTrainingDrawer = () => {
                 label="Type"
                 rules={[{ required: true, message: 'Please select the type' }]}
               >
-                <Select placeholder="Select a type" defaultValue={selectedType}>
+                <Select placeholder="Select a type">
                   {TYPE_OPTIONS.map((option) => (
                     <Option key={option.value} value={option.value}>
                       {option.label}
@@ -236,7 +245,7 @@ const AiTrainingDrawer = () => {
               <Button
                 onClick={handleSubmit}
                 type="primary"
-                loading={loadingTraining}
+                loading={(usingRemoteLLMs && loadingTraining) || (!usingRemoteLLMs && loadingTrainingLocalLLM)}
               >
                 Create
               </Button>

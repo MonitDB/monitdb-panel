@@ -1,7 +1,7 @@
 import { Button, Switch, Table } from 'antd'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 import AiConfigDrawer from '~/components/drawers/monitai-config-drawer'
 import { PageContent, PageHeader } from '~/components/page'
@@ -22,6 +22,8 @@ const AiConfigPage = () => {
   const router = useRouter()
   const { query, pathname } = router
   const { userState: user } = useUser()
+
+  const [usingRemoteLLMs, setUsingRemoteLLMs] = useState(JSON.parse(localStorage.getItem('app:usingRemoteLLMs')) ?? false);
 
   const { configs, loading, toggleEnableId, fetchConfigs, toggleEnabled } =
     useAiConfigStore()
@@ -95,7 +97,7 @@ const AiConfigPage = () => {
               event.stopPropagation()
               toggleEnabled(record.id)
             }}
-            checkedChildren="Enabled"
+            checkedChildren={`Enabled`}
             unCheckedChildren="Disabled"
           />
         )
@@ -121,9 +123,25 @@ const AiConfigPage = () => {
               },
             ]}
             extra={
-              <Button type="primary" onClick={addNewConfig}>
-                New Ai Config
-              </Button>
+              <>
+                <Switch
+                  checked={usingRemoteLLMs}
+                  onClick={(checked, event) => {
+                    event.stopPropagation()
+                    const prevState = usingRemoteLLMs;
+                    setUsingRemoteLLMs(prev => !prev);
+                    localStorage.setItem('app:usingRemoteLLMs', JSON.stringify(!prevState));
+                  }}
+                  checkedChildren={<span style={{ color: 'white', padding: 5 }}>Remote LLMs</span>}
+                  unCheckedChildren={<span style={{ color: 'black', padding: 5 }}>Local LLM</span>}
+                  style={{
+                    marginRight: 20,
+                  }}                  
+                />                
+                <Button type="primary" onClick={addNewConfig} disabled={!usingRemoteLLMs}>
+                  New Ai Config
+                </Button>                
+              </>
             }
           />
           <Table
@@ -132,7 +150,11 @@ const AiConfigPage = () => {
             columns={columns}
             rowKey="id"
             onRow={(record) => ({
-              onClick: () => openConfig(record.id),
+              onClick: () => {
+                if (!usingRemoteLLMs) return;
+                openConfig(record.id);
+              },
+              style: !usingRemoteLLMs ? { cursor: "not-allowed", opacity: 0.6 } : {},
             })}
             pagination={{
               pageSize: pageSize,

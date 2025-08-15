@@ -26,6 +26,7 @@ import React, { useEffect, useRef, useState } from 'react'
 
 import { useChatStore } from '~/services/state-manager/chat-store'
 import { apiV2 } from '~/utils/client-api'
+import { apiLocalLLM } from '~/utils/client-api-local-llm'
 
 import { Markdown } from '../md'
 
@@ -34,6 +35,8 @@ const { Content } = Layout
 const ChatAI = () => {
   const router = useRouter()
   const { query, pathname } = router
+
+  const usingRemoteLLMs = JSON.parse(localStorage.getItem('app:usingRemoteLLMs')) ?? false;
 
   const [input, setInput] = useState('')
   const [hasHandledURLQuery, setHasHandledURLQuery] = useState(false)
@@ -115,6 +118,7 @@ const ChatAI = () => {
             signal: controller.signal,
           }
         )
+
         generatedChatId = createdChat.id
 
         renameChat(generatedChatId, inputMessage.trim()).then(fetchChats)
@@ -124,23 +128,31 @@ const ChatAI = () => {
         })
       }
 
-      const { data } = await apiV2().post(
-        'ai/completions',
-        {
-          chatId: generatedChatId,
-          message: inputMessage.trim(),
-        },
-        {
-          signal: controller.signal,
-        }
-      )
+      const { data } = usingRemoteLLMs
+        ? await apiV2().post(
+          'ai/completions',
+          {
+            chatId: generatedChatId,
+            message: inputMessage.trim(),
+          },
+          {
+            signal: controller.signal,
+          }
+        )
+        : await apiLocalLLM.post(
+          `llm/${process.env.localLLMCollectionName}/chat`,
+          {
+            prompt: inputMessage.trim(),
+            model: 'llama3.1:8b'
+          }
+        );
 
       const assistantMessage = {
         id: `assistant-${Date.now()}`,
-        role: data.role,
-        message: data.message,
-        totalTokens: data?.totalTokens,
-      }
+        role: usingRemoteLLMs ? data.role : data.choices[0].message.role,
+        message: usingRemoteLLMs ? data.message : data.choices[0].message.content,
+        totalTokens: usingRemoteLLMs ? data?.totalTokens : data.usage.totalTokens
+      };
 
       setMessages((prev) => {
         return isNew

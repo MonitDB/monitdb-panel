@@ -49,6 +49,7 @@ export const UserContextProvider = ({ children }) => {
   }
 
   const handleChangeUserState = useCallback((newUserState) => {
+   
     if (newUserState?.logged && newUserState?.token) {
       Cookies.setUserToken(newUserState.token)
     }

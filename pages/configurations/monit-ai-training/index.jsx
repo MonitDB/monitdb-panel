@@ -1,13 +1,14 @@
 import { Button, Table } from 'antd'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 import AiTrainingDrawer from '~/components/drawers/monitai-training-drawer'
 import { PageContent, PageHeader } from '~/components/page'
 import { useUser } from '~/hooks/index'
 import Layout from '~/layouts/default'
-import { useAiTrainingStore } from '~/services/state-manager/ai-training-store'
+import { useAiTrainingStore } from '~/services/state-manager/ai-training-store';
+import { useAiTrainingStoreLocalLLM } from '~/services/state-manager/ai-training-store-local-llm'
 
 /*************  ✨ Windsurf Command ⭐  *************/
 /**
@@ -22,14 +23,23 @@ const AiTrainingPage = () => {
   const { query, pathname } = router
   const { userState: user } = useUser()
 
-  const { trainings, loading, fetchTrainings, deleteTraining } =
-    useAiTrainingStore()
+  const usingRemoteLLMs = JSON.parse(localStorage.getItem('app:usingRemoteLLMs')) ?? false;
 
-  const pageSize = 10
+  const { trainings, loading, fetchTrainings, deleteTraining } =
+    useAiTrainingStore();
+    
+  const { trainingsLocalLLM, loadingLocalLLM, fetchTrainingsLocalLLM, deleteTrainingLocalLLM } = 
+    useAiTrainingStoreLocalLLM();
+
+  const pageSize = 10;
 
   useEffect(() => {
-    fetchTrainings()
-  }, [fetchTrainings, user])
+    if (usingRemoteLLMs) {
+      fetchTrainings();
+    } else {
+      fetchTrainingsLocalLLM();
+    }
+  }, [fetchTrainings, fetchTrainingsLocalLLM, user])
 
   const addNewTraining = () => {
     router.push(
@@ -76,7 +86,11 @@ const AiTrainingPage = () => {
       title: '',
       render: (text, record) => {
         return (
-          <Button type="link" onClick={() => deleteTraining(record.idTrainingMaterial)}>
+          <Button type="link" onClick={() => {
+            usingRemoteLLMs
+              ? deleteTraining(record.idTrainingMaterial)
+              : deleteTrainingLocalLLM(record.idTrainingMaterial);
+          }}>
             Remove
           </Button>
         )
@@ -108,16 +122,13 @@ const AiTrainingPage = () => {
             }
           />
           <Table
-            loading={loading}
-            dataSource={trainings}
+            loading={usingRemoteLLMs ? loading : loadingLocalLLM}
+            dataSource={usingRemoteLLMs ? trainings : trainingsLocalLLM}
             columns={columns}
             rowKey="idTrainingMaterial"
-            // onRow={(record) => ({
-            //   onClick: () => openConfig(record.id),
-            // })}
             pagination={{
               pageSize: pageSize,
-              total: trainings?.length,
+              total: usingRemoteLLMs ? trainings?.length : trainingsLocalLLM?.length,
               showSizeChanger: false,
             }}
           />

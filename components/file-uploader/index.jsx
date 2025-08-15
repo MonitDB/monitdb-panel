@@ -7,7 +7,12 @@ import { useState } from 'react';
 
 const { Text } = Typography;
 
-export default function FileUploader({ onFileReady }) {
+const acceptedExtensions = {
+  'DOCUMENT': ".pdf,.doc,.docx,.txt,.odt,.rtf",
+  'VIDEO': ".webm,.mp4"
+}
+
+export default function FileUploader({ onFileReady, type }) {
   const [uploadedFile, setUploadedFile] = useState();
 
   const beforeUpload = (file) => {
@@ -49,7 +54,7 @@ export default function FileUploader({ onFileReady }) {
         <Upload
           beforeUpload={beforeUpload}
           showUploadList={false}
-          accept=".pdf,.doc,.docx,.txt,.odt,.rtf"
+          accept={acceptedExtensions[type]}
         >
           <Button icon={<UploadOutlined />}>Select File</Button>
         </Upload>
