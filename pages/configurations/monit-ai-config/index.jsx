@@ -126,18 +126,16 @@ const AiConfigPage = () => {
               <>
                 <Switch
                   checked={usingRemoteLLMs}
-                  onClick={(checked, event) => {
-                    event.stopPropagation()
-                    const prevState = usingRemoteLLMs;
-                    setUsingRemoteLLMs(prev => !prev);
-                    localStorage.setItem('app:usingRemoteLLMs', JSON.stringify(!prevState));
+                  onChange={(checked) => {
+                    setUsingRemoteLLMs(checked)
+                    localStorage.setItem('app:usingRemoteLLMs', JSON.stringify(checked))
                   }}
                   checkedChildren={<span style={{ color: 'white', padding: 5 }}>Remote LLMs</span>}
                   unCheckedChildren={<span style={{ color: 'black', padding: 5 }}>Local LLM</span>}
                   style={{
                     marginRight: 20,
-                  }}                  
-                />                
+                  }}
+                />             
                 <Button type="primary" onClick={addNewConfig} disabled={!usingRemoteLLMs}>
                   New Ai Config
                 </Button>                

@@ -8,14 +8,39 @@ import { useAiTrainingStoreLocalLLM } from '~/services/state-manager/ai-training
 
 import FileUploader from '../file-uploader';
 
+// ---- Deduped constants (avoid sonarjs/no-duplicate-string) ----
+const TRAINING_TYPE = {
+  TEXT: 'TEXT',
+  DOCUMENT: 'DOCUMENT',
+  WEBSITE: 'WEBSITE',
+  VIDEO: 'VIDEO',
+};
+
+const FIELD = {
+  CONTENT: 'content',
+};
+
+const ERRORS = {
+  UPLOAD_FILE: 'Please upload a file',
+  WEBSITE_REQUIRED: 'Please input the website URL',
+  VIDEO_REQUIRED: 'Please input the video URL or upload a video file.',
+  TEXT_REQUIRED: 'Please input the text content',
+  TYPE_REQUIRED: 'Please select the type',
+};
+
 const { Option } = Select;
 
 const TYPE_OPTIONS = [
-  { label: 'TEXT', value: 'TEXT' },
-  { label: 'DOCUMENT', value: 'DOCUMENT' },
-  { label: 'WEBSITE', value: 'WEBSITE' },
-  { label: 'VIDEO', value: 'VIDEO' },
+  { label: TRAINING_TYPE.TEXT, value: TRAINING_TYPE.TEXT },
+  { label: TRAINING_TYPE.DOCUMENT, value: TRAINING_TYPE.DOCUMENT },
+  { label: TRAINING_TYPE.WEBSITE, value: TRAINING_TYPE.WEBSITE },
+  { label: TRAINING_TYPE.VIDEO, value: TRAINING_TYPE.VIDEO },
 ];
+
+const QUERY_KEYS = {
+  NEW: 'aitraining-new',
+  ID: 'aitraining-id',
+};
 
 const AiTrainingDrawer = () => {
   const router = useRouter();
@@ -32,19 +57,21 @@ const AiTrainingDrawer = () => {
   const { createTrainingLocalLLM, loadingTrainingLocalLLM } = 
     useAiTrainingStoreLocalLLM();
 
-  const open = query['aitraining-new'] === 'true' || query['aitraining-id'] !== undefined;
+  const open = query[QUERY_KEYS.NEW] === 'true' || query[QUERY_KEYS.ID] !== undefined;
 
   const closeDrawer = () => {
     const newQuery = { ...query };
-    delete newQuery['aitraining-new'];
-    delete newQuery['aitraining-id'];
+    delete newQuery[QUERY_KEYS.NEW];
+    delete newQuery[QUERY_KEYS.ID];
 
     router.replace({ pathname, query: newQuery }, undefined, { shallow: true });
-    setSelectedType(TYPE_OPTIONS[0].value)
+    form.setFieldsValue({ type: TYPE_OPTIONS[0].value });
+    setSelectedType(TYPE_OPTIONS[0].value);
   };
 
   useEffect(() => {
     form.resetFields();
+    form.setFieldsValue({ type: TYPE_OPTIONS[0].value });
     setSelectedType(TYPE_OPTIONS[0].value);
     setFile();
   }, [form]);
@@ -60,48 +87,41 @@ const AiTrainingDrawer = () => {
       const payload = { type: values.type };
 
       switch (values.type) {
-        case 'TEXT': {
-          payload.content = values.content;
-        
+        case TRAINING_TYPE.TEXT: {
+          payload[FIELD.CONTENT] = values[FIELD.CONTENT];
           break;
         }
-        case 'DOCUMENT': {
+        case TRAINING_TYPE.DOCUMENT: {
           if (!file) {
-            message.error('Please upload a file');
+            message.error(ERRORS.UPLOAD_FILE);
             return;
           }
           payload.file = file; // Send raw file, createTraining will handle FormData
-        
           break;
         }
-        case 'WEBSITE': {
-          if (!values.content) {
-            message.error('Please input the website URL');
+        case TRAINING_TYPE.WEBSITE: {
+          if (!values[FIELD.CONTENT]) {
+            message.error(ERRORS.WEBSITE_REQUIRED);
             return;
           }
-          payload.content = values.content;
-        
+          payload[FIELD.CONTENT] = values[FIELD.CONTENT];
           break;
         }
-        case 'VIDEO': {
-          if (values.content) {
-            payload.content = values.content;
+        case TRAINING_TYPE.VIDEO: {
+          if (values[FIELD.CONTENT]) {
+            payload[FIELD.CONTENT] = values[FIELD.CONTENT];
           } else if (file) {
             payload.file = file; // Send raw file, createTraining will handle FormData
           } else {
-            message.error('Please input the video URL or upload a video file.');
+            message.error(ERRORS.VIDEO_REQUIRED);
             return;
           }
-        
           break;
         }
+        // no default
       }
 
-      if (usingRemoteLLMs) {
-        await createTraining(payload);
-      } else {
-        await createTrainingLocalLLM(payload);
-      }
+      await (usingRemoteLLMs ? createTraining(payload) : createTrainingLocalLLM(payload));
       message.success('Training material created successfully');
 
       form.resetFields();
@@ -114,58 +134,58 @@ const AiTrainingDrawer = () => {
 
   const renderTypeSpecificField = () => {
     switch (selectedType) {
-      case 'TEXT': {
+      case TRAINING_TYPE.TEXT: {
         return (
           <Form.Item
-            name="content"
+            name={FIELD.CONTENT}
             label="Content"
-            rules={[{ required: true, message: 'Please input the text content' }]}
+            rules={[{ required: true, message: ERRORS.TEXT_REQUIRED }]}
           >
             <Input.TextArea rows={6} placeholder="Enter your text content here" />
           </Form.Item>
         );
-        
       }
-      case 'DOCUMENT': {
+      case TRAINING_TYPE.DOCUMENT: {
         return (
           <Form.Item label="File" required>
-            <FileUploader onFileReady={handleFileReady} type='DOCUMENT' />
+            <FileUploader onFileReady={handleFileReady} type={TRAINING_TYPE.DOCUMENT} />
           </Form.Item>
         );
       }
-      case 'WEBSITE': {
+      case TRAINING_TYPE.WEBSITE: {
         return (
           <Form.Item
-            name="content"
+            name={FIELD.CONTENT}
             label="URL"
-            rules={[{ required: true, message: 'Please input the website URL' }]}
+            rules={[{ required: true, message: ERRORS.WEBSITE_REQUIRED }]}
           >
-            <Input type='url' />
+            <Input type="url" />
           </Form.Item>
-        );      
+        );
       }
-      case 'VIDEO': {
+      case TRAINING_TYPE.VIDEO: {
         return (
           <>
             <Form.Item
-              name="content"
+              name={FIELD.CONTENT}
               label="YouTube URL"
-              rules={[{ required: false, message: 'Please input the website URL' }]}
+              // NOTE: optional; when required becomes true, use ERRORS.VIDEO_REQUIRED
+              rules={[{ required: false, message: ERRORS.WEBSITE_REQUIRED }]}
             >
-              <Input type='url' />
+              <Input type="url" />
             </Form.Item>
             <div style={{ display: 'flex', alignItems: 'center', width: '45%' }}>
-              <Divider sx={{ width: '100%'}} />
-              <span style={{ fontWeight: 'bold' }} >OR</span>
-              <Divider sx={{ width: '100%'}} />
+              <Divider sx={{ width: '100%' }} />
+              <span style={{ fontWeight: 'bold' }}>OR</span>
+              <Divider sx={{ width: '100%' }} />
             </div>
             <Form.Item>
-              <FileUploader onFileReady={handleFileReady} type='VIDEO' />
-            </Form.Item>          
+              <FileUploader onFileReady={handleFileReady} type={TRAINING_TYPE.VIDEO} />
+            </Form.Item>
           </>
-        );      
+        );
       }
-    // No default
+      // No default
     }
   };
 
@@ -205,7 +225,7 @@ const AiTrainingDrawer = () => {
             <Form
               layout="vertical"
               form={form}
-              initialValues={{ type: 'TEXT' }}
+              initialValues={{ type: TRAINING_TYPE.TEXT }}
               onValuesChange={(changedValues) => {
                 if (changedValues.type) {
                   setSelectedType(changedValues.type);

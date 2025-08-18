@@ -1,7 +1,7 @@
 import { Button, Table } from 'antd'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 
 import AiTrainingDrawer from '~/components/drawers/monitai-training-drawer'
 import { PageContent, PageHeader } from '~/components/page'
@@ -39,7 +39,7 @@ const AiTrainingPage = () => {
     } else {
       fetchTrainingsLocalLLM();
     }
-  }, [fetchTrainings, fetchTrainingsLocalLLM, user])
+  }, [fetchTrainings, fetchTrainingsLocalLLM, user, usingRemoteLLMs])
 
   const addNewTraining = () => {
     router.push(
