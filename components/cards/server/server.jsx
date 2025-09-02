@@ -365,8 +365,7 @@ const ServerCard = ({
                     {getDiskTotal({
                       total: disk['Total(MB)'],
                       unitType: 'MB',
-                    })}{' '}
-                    total
+                    })}
                   </p>
                 </div>
               ))}
