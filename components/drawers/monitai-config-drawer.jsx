@@ -168,6 +168,7 @@ const AiConfigDrawer = () => {
                 <Select>
                   <Select.Option value="openai">OpenAI</Select.Option>
                   <Select.Option value="llmstudio">LLM Studio</Select.Option>
+                  <Select.Option value="azure">Azure</Select.Option>
                 </Select>
               </Form.Item>
               <Form.Item

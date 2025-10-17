@@ -36,7 +36,8 @@ const ChatAI = () => {
   const router = useRouter()
   const { query, pathname } = router
 
-  const usingRemoteLLMs = JSON.parse(localStorage.getItem('app:usingRemoteLLMs')) ?? false;
+  // const  = JSON.parse(localStorage.getItem('app:usingRemoteLLMs')) ?? false;
+  const usingRemoteLLMs = true;
 
   const [input, setInput] = useState('')
   const [hasHandledURLQuery, setHasHandledURLQuery] = useState(false)

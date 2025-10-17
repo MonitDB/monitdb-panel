@@ -51,7 +51,8 @@ const AiTrainingDrawer = () => {
   const [selectedType, setSelectedType] = useState(TYPE_OPTIONS[0].value);
   const [file, setFile] = useState();
 
-  const usingRemoteLLMs = JSON.parse(localStorage.getItem('app:usingRemoteLLMs')) ?? false;
+  // const usingRemoteLLMs = JSON.parse(localStorage.getItem('app:usingRemoteLLMs')) ?? false;
+  const usingRemoteLLMs = true;
 
   const { createTraining, loadingTraining } = useAiTrainingStore();
   const { createTrainingLocalLLM, loadingTrainingLocalLLM } = 

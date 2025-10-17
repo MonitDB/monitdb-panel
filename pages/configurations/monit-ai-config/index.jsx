@@ -23,7 +23,8 @@ const AiConfigPage = () => {
   const { query, pathname } = router
   const { userState: user } = useUser()
 
-  const [usingRemoteLLMs, setUsingRemoteLLMs] = useState(JSON.parse(localStorage.getItem('app:usingRemoteLLMs')) ?? false);
+  // const [usingRemoteLLMs, setUsingRemoteLLMs] = useState(JSON.parse(localStorage.getItem('app:usingRemoteLLMs')) ?? false);
+  const usingRemoteLLMs = true;
 
   const { configs, loading, toggleEnableId, fetchConfigs, toggleEnabled } =
     useAiConfigStore()
@@ -124,7 +125,7 @@ const AiConfigPage = () => {
             ]}
             extra={
               <>
-                <Switch
+                {/* <Switch
                   checked={usingRemoteLLMs}
                   onChange={(checked) => {
                     setUsingRemoteLLMs(checked)
@@ -135,7 +136,7 @@ const AiConfigPage = () => {
                   style={{
                     marginRight: 20,
                   }}
-                />             
+                />              */}
                 <Button type="primary" onClick={addNewConfig} disabled={!usingRemoteLLMs}>
                   New Ai Config
                 </Button>                

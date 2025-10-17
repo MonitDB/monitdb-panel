@@ -23,7 +23,8 @@ const AiTrainingPage = () => {
   const { query, pathname } = router
   const { userState: user } = useUser()
 
-  const usingRemoteLLMs = JSON.parse(localStorage.getItem('app:usingRemoteLLMs')) ?? false;
+  // const usingRemoteLLMs = JSON.parse(localStorage.getItem('app:usingRemoteLLMs')) ?? false;
+  const usingRemoteLLMs = true;
 
   const { trainings, loading, fetchTrainings, deleteTraining } =
     useAiTrainingStore();
