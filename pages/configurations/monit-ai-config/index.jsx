@@ -1,7 +1,7 @@
 import { Button, Switch, Table } from 'antd'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 
 import AiConfigDrawer from '~/components/drawers/monitai-config-drawer'
 import { PageContent, PageHeader } from '~/components/page'
