@@ -317,6 +317,20 @@ const ConfigurationsPage = () => {
 
                       <li className="opacity-100">
                         <Link
+                          href="/configurations/monit-ai-secrets"
+                          className="group block"
+                        >
+                          <strong className="block group-hover:text-blue">
+                            AI Secrets
+                          </strong>
+                          <span className="group-hover:opacity-75">
+                            Chaves/credenciais da IA (ex.: embedding)
+                          </span>
+                        </Link>
+                      </li>
+
+                      <li className="opacity-100">
+                        <Link
                           href="/configurations/monit-ai-training"
                           className="group block"
                         >
