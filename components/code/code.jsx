@@ -11,11 +11,9 @@ export default function Code({ code, language }) {
   return (
     <div className="w-full">
       <pre>
-        <code
-          ref={referenceCode}
-          className={`language-${language} !py-2`}
-          dangerouslySetInnerHTML={{ __html: code }}
-        />
+        <code ref={referenceCode} className={`language-${language} !py-2`}>
+          {code}
+        </code>
       </pre>
     </div>
   )

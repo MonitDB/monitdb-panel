@@ -2,7 +2,9 @@ import MarkdownIt from 'markdown-it'
 import React from 'react'
 import styled from 'styled-components'
 
-const md = new MarkdownIt()
+// html:false escapa HTML cru vindo da resposta da IA (defesa contra XSS);
+// o markdown-it também bloqueia links com protocolo javascript:/vbscript:/data:.
+const md = new MarkdownIt({ html: false, linkify: false })
 
 const StyledMarkdown = styled.div`
   font-family: 'Arial', sans-serif;
