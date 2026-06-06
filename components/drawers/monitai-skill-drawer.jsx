@@ -164,6 +164,29 @@ const AiSkillDrawer = () => {
                 />
               </Form.Item>
 
+              <Typography.Title level={5}>
+                Conhecimento profundo (RAG)
+              </Typography.Title>
+              <Form.Item
+                name="useRag"
+                label="Aplicar conhecimento profundo (indexar no RAG)"
+                valuePropName="checked"
+                initialValue={false}
+                extra="Quando ativo, o texto abaixo é indexado no RAG e a IA o consulta quando relevante."
+              >
+                <Switch checkedChildren="Sim" unCheckedChildren="Não" />
+              </Form.Item>
+              <Form.Item
+                name="knowledge"
+                label="Conhecimento (markdown)"
+                rules={[{ required: false }]}
+              >
+                <Input.TextArea
+                  rows={10}
+                  placeholder="Cole aqui o conhecimento de especialista relacionado a esta skill (ex.: como interpretar wait stats, thresholds, boas práticas)..."
+                />
+              </Form.Item>
+
               <Form.Item
                 name="enabled"
                 label="Habilitada"
