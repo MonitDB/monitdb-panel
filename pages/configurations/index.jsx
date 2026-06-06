@@ -303,6 +303,20 @@ const ConfigurationsPage = () => {
 
                       <li className="opacity-100">
                         <Link
+                          href="/configurations/monit-ai-skills"
+                          className="group block"
+                        >
+                          <strong className="block group-hover:text-blue">
+                            AI Skills
+                          </strong>
+                          <span className="group-hover:opacity-75">
+                            Criar e editar skills (tools) da IA
+                          </span>
+                        </Link>
+                      </li>
+
+                      <li className="opacity-100">
+                        <Link
                           href="/configurations/monit-ai-training"
                           className="group block"
                         >
