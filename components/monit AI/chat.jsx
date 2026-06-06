@@ -41,8 +41,20 @@ const ChatAI = () => {
 
   const [input, setInput] = useState('')
   const [hasHandledURLQuery, setHasHandledURLQuery] = useState(false)
+  const [sessionUsage, setSessionUsage] = useState()
   const containerReference = useRef(null)
   const controllerReference = useRef(null)
+
+  // Resumo de uso/custo da sessão (tokens + custo estimado)
+  const loadSessionUsage = async (id) => {
+    if (!id || id === 'new') return
+    try {
+      const { data } = await apiV2().get(`ai/usage/${id}`)
+      setSessionUsage(data)
+    } catch {
+      // silencioso: o resumo é informativo
+    }
+  }
 
   // eslint-disable-next-line unicorn/consistent-destructuring
   const chatId = router.query['chat-id'] || 'new'
@@ -152,7 +164,8 @@ const ChatAI = () => {
         id: `assistant-${Date.now()}`,
         role: usingRemoteLLMs ? data.role : data.choices[0].message.role,
         message: usingRemoteLLMs ? data.message : data.choices[0].message.content,
-        totalTokens: usingRemoteLLMs ? data?.totalTokens : data.usage.totalTokens
+        totalTokens: usingRemoteLLMs ? data?.totalTokens : data.usage.totalTokens,
+        cost: data?.cost,
       };
 
       setMessages((prev) => {
@@ -163,6 +176,9 @@ const ChatAI = () => {
               assistantMessage,
             ]
       })
+
+      // atualiza o resumo de uso/custo da sessão
+      loadSessionUsage(generatedChatId)
     } catch (error) {
       setMessages((prev) => [
         ...(prev || []).filter((m) => m.role !== 'loading'),
@@ -209,6 +225,7 @@ const ChatAI = () => {
       await loadPreviousMessages()
       scrollToBottom()
     })()
+    loadSessionUsage(chatId)
   }, [currentChatId])
 
   const isLoadingCurrentChatMessages = loadingMessages === chatId
@@ -224,6 +241,27 @@ const ChatAI = () => {
           gap: '20px',
         }}
       >
+        {!isNew && sessionUsage && (
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              gap: 16,
+              padding: '6px 0',
+              fontSize: 12,
+              color: '#888',
+              borderBottom: '1px solid #f0f0f0',
+            }}
+            title="Uso desta sessão. Custo histórico é estimado a partir do total de tokens."
+          >
+            <span>💬 {sessionUsage.messageCount} msgs</span>
+            <span>🔢 {Number(sessionUsage.totalTokens || 0).toLocaleString('pt-BR')} tokens</span>
+            <span>
+              💲 ~US$ {Number(sessionUsage.estimatedCost || 0).toFixed(4)}
+            </span>
+            {sessionUsage.model && <span>🤖 {sessionUsage.model}</span>}
+          </div>
+        )}
         {isLoadingCurrentChatMessages && (
           <div
             style={{
