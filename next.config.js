@@ -12,8 +12,7 @@ const nextConfig = removeImports({
     localLLMCollectionName: process.env.LOCAL_LLM_COLLECTION_NAME,
     apiKey: process.env.API_KEY,
     gtmId: process.env.GTM_ID,
-    cipherKey: process.env.CIPHER_KEY,
-    cipherIv: process.env.CIPHER_IV,
+    // SEC-3: cipherKey/cipherIv NÃO são mais expostos ao bundle (cifra de app removida).
     socket: process.env.SOCKET,
   },
   i18n: {
