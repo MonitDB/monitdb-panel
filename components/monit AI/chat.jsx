@@ -25,12 +25,51 @@ import { useRouter } from 'next/router'
 import React, { useEffect, useRef, useState } from 'react'
 
 import { useChatStore } from '~/services/state-manager/chat-store'
-import { apiV2 } from '~/utils/client-api'
+import { APIV2,apiV2 } from '~/utils/client-api'
 import { apiLocalLLM } from '~/utils/client-api-local-llm'
+import { getUserToken } from '~/utils/cookies'
 
 import { Markdown } from '../md'
 
 const { Content } = Layout
+
+// Lê o stream SSE (data: {...}\n\n) e despacha por tipo de evento.
+async function consumeSSEStream(response, { onDelta, onStatus, onDone }) {
+  const reader = response.body.getReader()
+  const decoder = new TextDecoder()
+  let buffer = ''
+  let reading = true
+  while (reading) {
+    const { value, done } = await reader.read()
+    if (done) {
+      reading = false
+      break
+    }
+    buffer += decoder.decode(value, { stream: true })
+    const parts = buffer.split('\n\n')
+    buffer = parts.pop()
+    for (const part of parts) {
+      const line = part.trim()
+      if (!line.startsWith('data:')) continue
+      const ev = JSON.parse(line.slice(5).trim())
+      switch (ev.type) {
+        case 'delta':
+          onDelta(ev.text)
+          break
+        case 'status':
+          onStatus(ev.text)
+          break
+        case 'done':
+          onDone(ev)
+          break
+        case 'error':
+          throw new Error(ev.message)
+        default:
+          break
+      }
+    }
+  }
+}
 
 const ChatAI = () => {
   const router = useRouter()
@@ -90,6 +129,56 @@ const ChatAI = () => {
     }
   }, [isNew, query.query, hasHandledURLQuery])
 
+  // STREAMING: cria a bolha do assistente e a preenche token a token.
+  const streamRemoteCompletion = async (genChatId, text, controller) => {
+    const assistantId = `assistant-${Date.now()}`
+    setMessages((prev) => [
+      ...(prev || []).filter((m) => m.role !== 'loading'),
+      { id: assistantId, role: 'assistant', message: '', streaming: true },
+    ])
+    const updateBubble = (patch) =>
+      setMessages((prev) =>
+        (prev || []).map((m) => (m.id === assistantId ? { ...m, ...patch } : m))
+      )
+
+    const token = getUserToken()
+    const response = await fetch(`${APIV2}/ai/completions/stream`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': process.env.apiKey,
+        Authorization: token ? `Bearer ${token}` : '',
+      },
+      body: JSON.stringify({ chatId: genChatId, message: text }),
+      signal: controller.signal,
+    })
+    if (!response.ok || !response.body) {
+      throw new Error(`HTTP ${response.status}`)
+    }
+
+    let acc = ''
+    let done
+    await consumeSSEStream(response, {
+      onDelta: (t) => {
+        acc += t
+        updateBubble({ message: acc })
+      },
+      onStatus: (t) => updateBubble({ message: acc || `_${t}_` }),
+      onDone: (ev) => {
+        done = ev
+      },
+    })
+
+    updateBubble({
+      message: done?.message ?? acc,
+      role: done?.role || 'assistant',
+      totalTokens: done?.totalTokens,
+      cost: done?.cost,
+      streaming: false,
+    })
+    loadSessionUsage(genChatId)
+  }
+
   const handleSend = async (messageToSend) => {
     const inputMessage = String(messageToSend || input || '')
 
@@ -141,44 +230,28 @@ const ChatAI = () => {
         })
       }
 
-      const { data } = usingRemoteLLMs
-        ? await apiV2().post(
-          'ai/completions',
-          {
-            chatId: generatedChatId,
-            message: inputMessage.trim(),
-          },
-          {
-            signal: controller.signal,
-          }
-        )
-        : await apiLocalLLM.post(
+      if (usingRemoteLLMs) {
+        await streamRemoteCompletion(generatedChatId, inputMessage.trim(), controller)
+      } else {
+        const { data } = await apiLocalLLM.post(
           `llm/${process.env.localLLMCollectionName}/chat`,
           {
             prompt: inputMessage.trim(),
-            model: 'llama3.1:8b'
+            model: 'llama3.1:8b',
           }
-        );
-
-      const assistantMessage = {
-        id: `assistant-${Date.now()}`,
-        role: usingRemoteLLMs ? data.role : data.choices[0].message.role,
-        message: usingRemoteLLMs ? data.message : data.choices[0].message.content,
-        totalTokens: usingRemoteLLMs ? data?.totalTokens : data.usage.totalTokens,
-        cost: data?.cost,
-      };
-
-      setMessages((prev) => {
-        return isNew
-          ? [userMessage, assistantMessage]
-          : [
-              ...(prev || []).filter((m) => m.role !== 'loading'),
-              assistantMessage,
-            ]
-      })
-
-      // atualiza o resumo de uso/custo da sessão
-      loadSessionUsage(generatedChatId)
+        )
+        const assistantMessage = {
+          id: `assistant-${Date.now()}`,
+          role: data.choices[0].message.role,
+          message: data.choices[0].message.content,
+          totalTokens: data.usage.totalTokens,
+        }
+        setMessages((prev) =>
+          isNew
+            ? [userMessage, assistantMessage]
+            : [...(prev || []).filter((m) => m.role !== 'loading'), assistantMessage]
+        )
+      }
     } catch (error) {
       setMessages((prev) => [
         ...(prev || []).filter((m) => m.role !== 'loading'),
