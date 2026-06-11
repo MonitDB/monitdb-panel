@@ -17,6 +17,7 @@ import {
   Input,
   Layout,
   List,
+  message as antdMessage,
   Skeleton,
   Space,
   Typography,
@@ -25,6 +26,7 @@ import { useRouter } from 'next/router'
 import React, { useEffect, useRef, useState } from 'react'
 
 import { useChatStore } from '~/services/state-manager/chat-store'
+import { usePendingQueryStore } from '~/services/state-manager/pending-query-store'
 import { APIV2,apiV2 } from '~/utils/client-api'
 import { apiLocalLLM } from '~/utils/client-api-local-llm'
 import { getUserToken } from '~/utils/cookies'
@@ -110,6 +112,40 @@ const ChatAI = () => {
     chatId: currentChatId,
     loadingMessages,
   } = useChatStore()
+
+  const setPendingQuery = usePendingQueryStore((s) => s.setPendingQuery)
+
+  // Quick win — "Abrir no Query Window": guarda o SQL sugerido e avisa o usuário.
+  // O Query Window pré-preenche a partir do store ao ser aberto (qualquer servidor).
+  const handleOpenQuery = (sql) => {
+    if (!sql) return
+    setPendingQuery(sql)
+    antdMessage.success(
+      'SQL enviado para o Query Window. Abra o Query Window de um servidor para revisar e executar.'
+    )
+  }
+
+  // Quick win — exportar a conversa como Markdown (.md).
+  const handleExportChat = async () => {
+    if (!messages || messages.length === 0) return
+    const md = messages
+      .filter((m) => ['user', 'assistant'].includes(m.role))
+      .map((m) => {
+        const who = m.role === 'user' ? '## 🧑 Usuário' : '## 🤖 MonitAI'
+        return `${who}\n\n${(m.message || '').trim()}\n`
+      })
+      .join('\n---\n\n')
+    const header = `# MonitDB — Conversa de IA\n\n`
+    try {
+      const { saveAs } = await import('file-saver')
+      const blob = new Blob([header + md], {
+        type: 'text/markdown;charset=utf-8',
+      })
+      saveAs(blob, `monitai-chat-${chatId}.md`)
+    } catch {
+      antdMessage.error('Não foi possível exportar a conversa.')
+    }
+  }
 
   const scrollToBottom = () => {
     setTimeout(() => {
@@ -333,6 +369,16 @@ const ChatAI = () => {
               💲 ~US$ {Number(sessionUsage.estimatedCost || 0).toFixed(4)}
             </span>
             {sessionUsage.model && <span>🤖 {sessionUsage.model}</span>}
+            <span
+              role="button"
+              tabIndex={0}
+              onClick={handleExportChat}
+              onKeyDown={(e) => e.key === 'Enter' && handleExportChat()}
+              style={{ cursor: 'pointer', color: '#5046e5' }}
+              title="Exportar a conversa em Markdown"
+            >
+              ⬇️ Exportar
+            </span>
           </div>
         )}
         {isLoadingCurrentChatMessages && (
@@ -435,6 +481,7 @@ const ChatAI = () => {
                             <Markdown
                               content={message.message.trim()}
                               className="prose"
+                              onOpenQuery={handleOpenQuery}
                             />
                           )}
 

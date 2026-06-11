@@ -5,17 +5,18 @@
 import '@uiw/react-textarea-code-editor/dist.css'
 
 import dynamic from 'next/dynamic'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 const AceEditor = dynamic(
   () => import('react-ace').then((module_) => module_.default),
   { ssr: false }
 )
 
-import { Button } from 'antd'
+import { Button, message as antdMessage } from 'antd'
 
 import { GenericTable } from '~/components/table/genericTable'
 import { useExecQueryContext } from '~/services/state-manager/execQuery'
+import { usePendingQueryStore } from '~/services/state-manager/pending-query-store'
 
 function QueryWindow(properties) {
   const { currentServer } = properties
@@ -23,6 +24,17 @@ function QueryWindow(properties) {
   const [sqlCode, setSqlCode] = useState(
     `SELECT * FROM Historic.Historic_Parameter;`
   )
+
+  const consumePendingQuery = usePendingQueryStore((s) => s.consumePendingQuery)
+
+  // Quick win — pré-preenche com o SQL enviado pelo chat de IA ("Abrir no Query Window").
+  useEffect(() => {
+    const pending = consumePendingQuery()
+    if (pending) {
+      setSqlCode(pending)
+      antdMessage.info('SQL carregado do chat de IA. Revise antes de executar.')
+    }
+  }, [consumePendingQuery])
 
   const { execQuery, loadingExecuteQuery, queryResult } = useExecQueryContext()
 
