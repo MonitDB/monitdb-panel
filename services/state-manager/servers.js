@@ -13,6 +13,11 @@ const useServerContext = create(() => ({
       /* empty */
     }
   },
+  // Quick win — botão "Iniciar coleta": dispara o job do agente na instância.
+  startCollector: async (id) => {
+    const { data } = await apiV2().post(`/server/start-collector/${id}`)
+    return data
+  },
   getTypes: async () => {
     return clientApi().get(`/api/typeserver`)
   },

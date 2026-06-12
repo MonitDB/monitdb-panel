@@ -2,7 +2,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { faDatabase } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Badge, Card, Space, Tooltip as AntdTooltip } from 'antd'
+import {
+  Badge,
+  Button,
+  Card,
+  message as antdMessage,
+  Space,
+  Tooltip as AntdTooltip,
+} from 'antd'
 import { ArcElement, Chart as ChartJS, Legend, Tooltip } from 'chart.js'
 import classNames from 'classnames'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
@@ -86,7 +93,27 @@ const ServerCard = ({
   } = useGlobal()
 
   const [lastUpdated, setLastUpdated] = useState(new Date())
+  const [startingCollector, setStartingCollector] = useState(false)
   const server = servers.find((server) => server.id === id)
+
+  // Quick win — "Iniciar coleta": dispara o job do agente na instância.
+  const collectorStopped = metrics.agents?.some(
+    (agent) => agent.status_desc !== 'Running'
+  )
+  const handleStartCollector = async (event) => {
+    event.preventDefault()
+    event.stopPropagation()
+    setStartingCollector(true)
+    try {
+      const result = await useServerContext.getState().startCollector(id)
+      if (result?.ok) antdMessage.success(result.message)
+      else antdMessage.warning(result?.message || 'Não foi possível iniciar a coleta.')
+    } catch {
+      antdMessage.error('Falha ao iniciar a coleta.')
+    } finally {
+      setStartingCollector(false)
+    }
+  }
 
   const { getServerMetrics } = useServerContext()
   if (interval) {
@@ -314,6 +341,17 @@ const ServerCard = ({
               )
             })}
           </Space>
+          {serverEnable && server?.online && collectorStopped && (
+            <Button
+              size="small"
+              danger
+              loading={startingCollector}
+              onClick={handleStartCollector}
+              style={{ marginTop: 8, fontSize: 12 }}
+            >
+              ▶ Iniciar coleta
+            </Button>
+          )}
         </Link>
 
         {metrics.disks?.length > 0 && showDisks ? (
