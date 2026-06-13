@@ -357,6 +357,20 @@ const ConfigurationsPage = () => {
                         </Link>
                       </li>
 
+                      <li className="opacity-100">
+                        <Link
+                          href="/configurations/data-masking"
+                          className="group block"
+                        >
+                          <strong className="block group-hover:text-blue">
+                            Mascaramento de PII (IA)
+                          </strong>
+                          <span className="group-hover:opacity-75">
+                            Redigir dados pessoais na saída das tools por servidor
+                          </span>
+                        </Link>
+                      </li>
+
                       {hasPermission(
                         user,
                         FeatureFunction.AUTHENTICATION_TOKENS,
