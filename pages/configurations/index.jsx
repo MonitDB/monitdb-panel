@@ -343,6 +343,20 @@ const ConfigurationsPage = () => {
                         </Link>
                       </li>
 
+                      <li className="opacity-100">
+                        <Link
+                          href="/configurations/webhooks"
+                          className="group block"
+                        >
+                          <strong className="block group-hover:text-blue">
+                            Webhooks de Alerta
+                          </strong>
+                          <span className="group-hover:opacity-75">
+                            Slack/Teams/genérico — alertas e insights da IA
+                          </span>
+                        </Link>
+                      </li>
+
                       {hasPermission(
                         user,
                         FeatureFunction.AUTHENTICATION_TOKENS,
