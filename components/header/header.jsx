@@ -69,6 +69,10 @@ const Header = () => {
       ),
       href: '/monit-ai/new',
     },
+    {
+      title: 'Insights',
+      href: '/insights/',
+    },
   ]
 
   const navMenuList = navMenuListData.filter((item) => {
