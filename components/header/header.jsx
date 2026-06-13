@@ -77,6 +77,10 @@ const Header = () => {
       title: 'Regressão de Plano',
       href: '/plan-regressions/',
     },
+    {
+      title: 'Anomalias',
+      href: '/anomalies/',
+    },
   ]
 
   const navMenuList = navMenuListData.filter((item) => {
