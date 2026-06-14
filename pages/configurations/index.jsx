@@ -393,6 +393,26 @@ const ConfigurationsPage = () => {
 
                       {hasPermission(
                         user,
+                        FeatureFunction.SSH_TERMINAL,
+                        TypeGrant.DELETE
+                      ) && (
+                        <li className="opacity-100">
+                          <Link
+                            href="/configurations/ssh-audit"
+                            className="group block"
+                          >
+                            <strong className="block group-hover:text-blue">
+                              Auditoria SSH
+                            </strong>
+                            <span className="group-hover:opacity-75">
+                              Sessões e comandos do Terminal SSH (compliance)
+                            </span>
+                          </Link>
+                        </li>
+                      )}
+
+                      {hasPermission(
+                        user,
                         FeatureFunction.AUTHENTICATION_TOKENS,
                         TypeGrant.OWNER
                       ) && (

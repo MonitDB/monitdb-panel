@@ -7,6 +7,20 @@ export const useSshStore = create((set) => ({
   hosts: [],
   loading: false,
   saving: false,
+  audit: [],
+  auditLoading: false,
+
+  fetchAudit: async () => {
+    set({ auditLoading: true })
+    try {
+      const { data } = await apiV2().get('/ssh-hosts/audit')
+      set({ audit: Array.isArray(data) ? data : [] })
+    } catch {
+      set({ audit: [] })
+    } finally {
+      set({ auditLoading: false })
+    }
+  },
 
   fetchHosts: async () => {
     set({ loading: true })
