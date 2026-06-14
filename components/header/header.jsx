@@ -16,7 +16,12 @@ import Image from '~/components/image'
 import Link from '~/components/link'
 import { useUser } from '~/hooks/index'
 import { useConfigStore } from '~/services/state-manager/config-store'
-import { Feature } from '~/utils/hasPermission'
+import {
+  Feature,
+  FeatureFunction,
+  hasPermission,
+  TypeGrant,
+} from '~/utils/hasPermission'
 // import DatabasesSvg from '~/icons/databases.svg'
 
 const buttonClasses =
@@ -81,9 +86,17 @@ const Header = () => {
       title: 'Anomalias',
       href: '/anomalies/',
     },
+    {
+      title: 'Terminal',
+      href: '/terminal/',
+      requiredFeatureFunction: FeatureFunction.SSH_TERMINAL,
+    },
   ]
 
   const navMenuList = navMenuListData.filter((item) => {
+    if (item.requiredFeatureFunction) {
+      return hasPermission(userState, item.requiredFeatureFunction, TypeGrant.OWNER)
+    }
     if (item.requiredPermissions) {
       return userState?.grants?.some((grant) => {
         return (

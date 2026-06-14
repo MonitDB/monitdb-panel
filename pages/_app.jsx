@@ -1,4 +1,5 @@
 import '~/styles/global.css'
+import 'xterm/css/xterm.css'
 
 import { ConfigProvider } from 'antd'
 import { KBarProvider } from 'kbar'

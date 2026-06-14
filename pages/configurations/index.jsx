@@ -373,6 +373,26 @@ const ConfigurationsPage = () => {
 
                       {hasPermission(
                         user,
+                        FeatureFunction.SSH_TERMINAL,
+                        TypeGrant.WRITE
+                      ) && (
+                        <li className="opacity-100">
+                          <Link
+                            href="/configurations/ssh-hosts"
+                            className="group block"
+                          >
+                            <strong className="block group-hover:text-blue">
+                              Hosts SSH
+                            </strong>
+                            <span className="group-hover:opacity-75">
+                              Gerir hosts e credenciais do Terminal SSH (cifradas)
+                            </span>
+                          </Link>
+                        </li>
+                      )}
+
+                      {hasPermission(
+                        user,
                         FeatureFunction.AUTHENTICATION_TOKENS,
                         TypeGrant.OWNER
                       ) && (
