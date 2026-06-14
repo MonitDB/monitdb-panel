@@ -6,7 +6,6 @@ import React, { useEffect, useRef, useState } from 'react'
 import { PageContent, PageHeader } from '~/components/page'
 import Layout from '~/layouts/default'
 import { useRemoteStore } from '~/services/state-manager/remote-store'
-import { SOCKET } from '~/utils/client-api'
 
 const STATE_LABEL = {
   idle: { c: 'default', t: 'Desconectado' },
@@ -73,11 +72,11 @@ const Remote = () => {
       }
 
       const Guacamole = await loadGuacamole()
-      const wsBase = SOCKET.replace(/^http/, 'ws').replace(
-        /:\d+\/?$/,
-        `:${session.wsPort}`
-      )
-      const tunnel = new Guacamole.WebSocketTunnel(`${wsBase}/`)
+      // A ponte WS é anexada ao servidor da API (porta 3002) no path /guac-ws —
+      // assim usa uma porta já exposta (sem abrir a 3004 no firewall).
+      const wsBase = (process.env.apiV2 || '').replace(/^http/, 'ws')
+      const wsPath = session.wsPath || '/guac-ws'
+      const tunnel = new Guacamole.WebSocketTunnel(`${wsBase}${wsPath}`)
       const client = new Guacamole.Client(tunnel)
       clientReference.current = client
 
