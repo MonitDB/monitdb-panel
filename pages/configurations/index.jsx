@@ -413,6 +413,46 @@ const ConfigurationsPage = () => {
 
                       {hasPermission(
                         user,
+                        FeatureFunction.REMOTE_DESKTOP,
+                        TypeGrant.WRITE
+                      ) && (
+                        <li className="opacity-100">
+                          <Link
+                            href="/configurations/remote-hosts"
+                            className="group block"
+                          >
+                            <strong className="block group-hover:text-blue">
+                              Hosts remotos (RDP/VNC)
+                            </strong>
+                            <span className="group-hover:opacity-75">
+                              Gerir hosts e credenciais do Desktop remoto (cifradas)
+                            </span>
+                          </Link>
+                        </li>
+                      )}
+
+                      {hasPermission(
+                        user,
+                        FeatureFunction.REMOTE_DESKTOP,
+                        TypeGrant.DELETE
+                      ) && (
+                        <li className="opacity-100">
+                          <Link
+                            href="/configurations/remote-audit"
+                            className="group block"
+                          >
+                            <strong className="block group-hover:text-blue">
+                              Auditoria remota
+                            </strong>
+                            <span className="group-hover:opacity-75">
+                              Sessões RDP/VNC e gravações (replay) para compliance
+                            </span>
+                          </Link>
+                        </li>
+                      )}
+
+                      {hasPermission(
+                        user,
                         FeatureFunction.AUTHENTICATION_TOKENS,
                         TypeGrant.OWNER
                       ) && (

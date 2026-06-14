@@ -41,6 +41,7 @@
     "faker": "5.5.3",
     "file-saver": "^2.0.5",
     "formik": "^2.4.5",
+    "guacamole-common-js": "^1.5.0",
     "hljs": "^6.2.3",
     "html-query-plan": "^2.6.1",
     "jsoneditor": "^10.1.0",

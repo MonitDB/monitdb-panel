@@ -5076,6 +5076,11 @@ graphemer@^1.4.0:
   resolved "https://registry.yarnpkg.com/graphemer/-/graphemer-1.4.0.tgz#fb2f1d55e0e3a1849aeffc90c4fa0dd53a0e66c6"
   integrity sha512-EtKwoO6kxCL9WO5xipiHTZlSzBm7WLT627TqC/uVRd0HKmq8NXyebnNYxDoBi7wt8eTWrUrKXCOVaFq9x1kgag==
 
+guacamole-common-js@^1.5.0:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/guacamole-common-js/-/guacamole-common-js-1.5.0.tgz#50d814c09628b8a65451973d1acc68bc1612558d"
+  integrity sha512-zxztif3GGhKbg1RgOqwmqot8kXgv2HmHFg1EvWwd4q7UfEKvBcYZ0f+7G8HzvU+FUxF0Psqm9Kl5vCbgfrRgJg==
+
 gunzip-maybe@1.2.1:
   version "1.2.1"
   resolved "https://registry.npmjs.org/gunzip-maybe/-/gunzip-maybe-1.2.1.tgz"

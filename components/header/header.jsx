@@ -96,6 +96,11 @@ const Header = () => {
       href: '/sftp/',
       requiredFeatureFunction: FeatureFunction.SSH_TERMINAL,
     },
+    {
+      title: 'Desktop',
+      href: '/remote/',
+      requiredFeatureFunction: FeatureFunction.REMOTE_DESKTOP,
+    },
   ]
 
   const navMenuList = navMenuListData.filter((item) => {
