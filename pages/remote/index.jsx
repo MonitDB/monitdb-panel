@@ -153,7 +153,12 @@ const Remote = () => {
                     Desconectar
                   </Button>
                 ) : (
-                  <Button type="primary" disabled={!hostId} onClick={connect}>
+                  <Button
+                    type="primary"
+                    disabled={!hostId || status === 'connecting'}
+                    loading={status === 'connecting'}
+                    onClick={connect}
+                  >
                     Conectar
                   </Button>
                 )}
