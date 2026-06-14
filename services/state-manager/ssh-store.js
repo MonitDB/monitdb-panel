@@ -1,4 +1,5 @@
 /* eslint-disable unicorn/no-null */
+import { saveAs } from 'file-saver'
 import { create } from 'zustand'
 
 import { apiV2 } from '~/utils/client-api'
@@ -67,5 +68,34 @@ export const useSshStore = create((set) => ({
         message: error?.response?.data?.message || 'Falha no teste.',
       }
     }
+  },
+
+  // ----- SFTP -----
+  sftpList: async (id, path) => {
+    const { data } = await apiV2().get(`/ssh-hosts/${id}/sftp/list`, {
+      params: { path: path || '.' },
+    })
+    return data // { path, entries }
+  },
+
+  sftpDownload: async (id, path, filename) => {
+    const { data } = await apiV2().get(`/ssh-hosts/${id}/sftp/download`, {
+      params: { path },
+      responseType: 'blob',
+    })
+    saveAs(data, filename)
+  },
+
+  sftpUpload: async (id, path, file) => {
+    const form = new FormData()
+    form.append('path', path)
+    form.append('file', file)
+    await apiV2().post(`/ssh-hosts/${id}/sftp/upload`, form, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+  },
+
+  sftpDelete: async (id, path) => {
+    await apiV2().delete(`/ssh-hosts/${id}/sftp`, { params: { path } })
   },
 }))

@@ -91,6 +91,11 @@ const Header = () => {
       href: '/terminal/',
       requiredFeatureFunction: FeatureFunction.SSH_TERMINAL,
     },
+    {
+      title: 'Arquivos',
+      href: '/sftp/',
+      requiredFeatureFunction: FeatureFunction.SSH_TERMINAL,
+    },
   ]
 
   const navMenuList = navMenuListData.filter((item) => {
