@@ -1,6 +1,7 @@
 /* eslint-disable unicorn/no-null */
 import {
   Button,
+  Checkbox,
   Form,
   Input,
   InputNumber,
@@ -106,6 +107,17 @@ const SshHosts = () => {
           <Tag color="green">definida</Tag>
         ) : (
           <Tag color="orange">faltando</Tag>
+        ),
+    },
+    {
+      title: 'Host key',
+      key: 'hostkey',
+      width: 120,
+      render: (t, h) =>
+        h.hostKeyKnown ? (
+          <Tag color="blue">registrada</Tag>
+        ) : (
+          <Tag>na 1ª conexão</Tag>
         ),
     },
     {
@@ -217,6 +229,15 @@ const SshHosts = () => {
               <Form.Item name="description" label="Descrição (opcional)">
                 <Input.TextArea rows={2} />
               </Form.Item>
+              {editing?.hostKeyKnown && (
+                <Form.Item
+                  name="resetHostKey"
+                  valuePropName="checked"
+                  extra="Marque apenas se o host foi reinstalado/migrado legitimamente — a próxima conexão registra a nova host key (TOFU)."
+                >
+                  <Checkbox>Redefinir host key</Checkbox>
+                </Form.Item>
+              )}
             </Form>
           </Modal>
         </PageContent>

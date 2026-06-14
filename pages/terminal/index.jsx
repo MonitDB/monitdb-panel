@@ -73,6 +73,10 @@ const Terminal = () => {
       term.focus()
       if (p?.host) term.writeln(`[32m● conectado a ${p.host}[0m\r\n`)
     })
+    socket.on('ssh:hostkey', (p) => {
+      if (p?.firstUse)
+        term.writeln(`\r\n🔑 host key registrada nesta primeira conexão (TOFU).`)
+    })
     socket.on('ssh:data', (d) => term.write(d))
     socket.on('ssh:close', () => {
       setStatus('closed')
