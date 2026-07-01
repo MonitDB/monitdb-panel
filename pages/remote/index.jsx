@@ -43,6 +43,7 @@ const Remote = () => {
   const containerReference = useRef(null)
   const clientReference = useRef(null)
   const keyboardReference = useRef(null)
+  const resizeReference = useRef(null)
 
   useEffect(() => {
     fetchHosts()
@@ -51,6 +52,10 @@ const Remote = () => {
   const cleanup = () => {
     try { keyboardReference.current?.reset() } catch { /* noop */ }
     try { clientReference.current?.disconnect() } catch { /* noop */ }
+    if (resizeReference.current) {
+      window.removeEventListener('resize', resizeReference.current)
+      resizeReference.current = null
+    }
     if (containerReference.current) containerReference.current.innerHTML = ''
     clientReference.current = null
     keyboardReference.current = null
@@ -58,6 +63,7 @@ const Remote = () => {
 
   useEffect(() => () => cleanup(), [])
 
+  // eslint-disable-next-line sonarjs/cognitive-complexity
   const connect = async () => {
     if (!hostId) return
     cleanup()
@@ -82,12 +88,29 @@ const Remote = () => {
 
       const display = client.getDisplay()
       const element = display.getElement()
-      containerReference.current.innerHTML = ''
-      containerReference.current.append(element)
+      const box = containerReference.current
+      box.innerHTML = ''
+      box.append(element)
+
+      // O guacd envia a resolução do host (ex.: 1856×805). Sem escala, o canvas
+      // pode ficar cortado/escondido — ajustamos o display ao container e
+      // recalculamos em cada resize (do host e da janela).
+      let scale = 1
+      const fit = () => {
+        const w = display.getWidth()
+        const h = display.getHeight()
+        if (!w || !h || !box) return
+        scale = Math.min(box.clientWidth / w, box.clientHeight / h) || 1
+        display.scale(scale)
+      }
+      display.onresize = () => fit()
+      const onWindowResize = () => fit()
+      window.addEventListener('resize', onWindowResize)
+      resizeReference.current = onWindowResize
 
       client.onstatechange = (state) => {
         // 3 = CONNECTED, 5 = DISCONNECTED
-        if (state === 3) setStatus('connected')
+        if (state === 3) { setStatus('connected'); fit() }
         else if (state === 5) setStatus('closed')
       }
       client.onerror = (error) => {
@@ -100,17 +123,38 @@ const Remote = () => {
         setMessage(error?.message || 'Erro no túnel WebSocket.')
       }
 
-      const box = containerReference.current
       const width = Math.max(box.clientWidth || 1280, 640)
       const height = Math.max(box.clientHeight || 720, 480)
       client.connect(
         `token=${encodeURIComponent(session.token)}&width=${width}&height=${height}&dpi=96`
       )
 
+      // Foco para o teclado (Guacamole.Keyboard escuta o document) e para
+      // destacar o canvas ao clicar.
+      box.tabIndex = 0
+      box.focus()
+
+      // Coordenadas do mouse são no espaço da tela (canvas escalado) → dividir
+      // pela escala para o espaço do host.
       const mouse = new Guacamole.Mouse(element)
-      mouse.onmousedown = (mouseState) => client.sendMouseState(mouseState)
-      mouse.onmouseup = (mouseState) => client.sendMouseState(mouseState)
-      mouse.onmousemove = (mouseState) => client.sendMouseState(mouseState)
+      const sendScaled = (mouseState) => {
+        const scaled = new Guacamole.Mouse.State(
+          mouseState.x / scale,
+          mouseState.y / scale,
+          mouseState.left,
+          mouseState.middle,
+          mouseState.right,
+          mouseState.up,
+          mouseState.down
+        )
+        client.sendMouseState(scaled)
+      }
+      mouse.onmousedown = (mouseState) => {
+        box.focus()
+        sendScaled(mouseState)
+      }
+      mouse.onmouseup = sendScaled
+      mouse.onmousemove = sendScaled
 
       const keyboard = new Guacamole.Keyboard(document)
       keyboard.onkeydown = (keysym) => client.sendKeyEvent(1, keysym)
