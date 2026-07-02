@@ -1,8 +1,10 @@
+/* eslint-disable unicorn/no-null */
 import { Alert, Button, message, Space, Table, Tag, Tooltip } from 'antd'
 import { NextSeo } from 'next-seo'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { PageContent, PageHeader } from '~/components/page'
+import RecordingPlayer from '~/components/remote/recording-player'
 import Layout from '~/layouts/default'
 import { useRemoteStore } from '~/services/state-manager/remote-store'
 
@@ -14,6 +16,7 @@ const EVENT = {
 
 const RemoteAudit = () => {
   const { audit, auditLoading, fetchAudit, downloadRecording } = useRemoteStore()
+  const [player, setPlayer] = useState({ open: false, name: null })
 
   useEffect(() => {
     fetchAudit()
@@ -74,11 +77,20 @@ const RemoteAudit = () => {
       key: 'recording',
       render: (rec) =>
         rec ? (
-          <Tooltip title={rec}>
-            <Button size="small" onClick={() => handleDownload(rec)}>
-              ⬇ Replay (.guac)
+          <Space size="small">
+            <Button
+              size="small"
+              type="primary"
+              onClick={() => setPlayer({ open: true, name: rec })}
+            >
+              ▶ Reproduzir
             </Button>
-          </Tooltip>
+            <Tooltip title={`Baixar ${rec}`}>
+              <Button size="small" onClick={() => handleDownload(rec)}>
+                ⬇
+              </Button>
+            </Tooltip>
+          </Space>
         ) : (
           '—'
         ),
@@ -120,6 +132,12 @@ const RemoteAudit = () => {
             loading={auditLoading}
             size="small"
             pagination={{ pageSize: 20, showSizeChanger: false }}
+          />
+
+          <RecordingPlayer
+            name={player.name}
+            open={player.open}
+            onClose={() => setPlayer({ open: false, name: null })}
           />
         </PageContent>
       </Layout>

@@ -69,4 +69,12 @@ export const useRemoteStore = create((set) => ({
     })
     saveAs(data, name)
   },
+
+  // Baixa a gravação como Blob (sem salvar) — para o player de replay embutido.
+  fetchRecordingBlob: async (name) => {
+    const { data } = await apiV2().get(`/remote-hosts/recordings/${name}`, {
+      responseType: 'blob',
+    })
+    return data
+  },
 }))
