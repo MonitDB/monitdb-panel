@@ -184,6 +184,28 @@ const HealthThresholds = () => {
             destroyOnClose
             title={modalTitle}
           >
+            <Alert
+              type="info"
+              showIcon
+              style={{ marginBottom: 16 }}
+              message="Como estes limiares viram a cor do card no dashboard"
+              description={
+                <div style={{ fontSize: 13, lineHeight: 1.7 }}>
+                  🟢 <b>Saudável</b>: abaixo dos limiares.
+                  <br />
+                  🟡 <b>Atenção</b>: CPU% ou Disco% acima do valor de{' '}
+                  <i>atenção</i>.
+                  <br />
+                  🟠 <b>Crítico</b>: CPU% ou Disco% acima do <i>crítico</i>, ou
+                  memória livre abaixo do mínimo (MB).
+                  <br />
+                  🔵 <b>Info</b>: há alerta ativo. · 🔴 <b>Offline</b>: sem
+                  conexão.
+                  <br />O <i>crítico</i> deve ser ≥ <i>atenção</i>. Um override
+                  por servidor tem prioridade sobre o default global.
+                </div>
+              }
+            />
             <Form form={form} layout="vertical">
               {modal.editing ? (
                 <Form.Item name="serverId" hidden>
