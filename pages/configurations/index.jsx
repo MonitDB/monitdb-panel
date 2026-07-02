@@ -86,6 +86,26 @@ const ConfigurationsPage = () => {
                         </Link>
                       </li>
                     )}
+                    {hasPermission(
+                      user,
+                      FeatureFunction.MONITORED_SERVERS,
+                      TypeGrant.OWNER
+                    ) && (
+                      <li>
+                        <Link
+                          href="/configurations/health-thresholds/"
+                          className="group block"
+                        >
+                          <strong className="block group-hover:text-blue">
+                            Limiares de saúde
+                          </strong>
+                          <span className="group-hover:opacity-75">
+                            Configurar limiares de CPU/disco/memória (default
+                            global + override por servidor).
+                          </span>
+                        </Link>
+                      </li>
+                    )}
                     <li>
                       <Link
                         href="/configurations/profiles"
