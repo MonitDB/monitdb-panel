@@ -345,6 +345,20 @@ const ConfigurationsPage = () => {
 
                       <li className="opacity-100">
                         <Link
+                          href="/configurations/monit-ai-audit"
+                          className="group block"
+                        >
+                          <strong className="block group-hover:text-blue">
+                            Auditoria da IA
+                          </strong>
+                          <span className="group-hover:opacity-75">
+                            Queries executadas pela IA (compliance)
+                          </span>
+                        </Link>
+                      </li>
+
+                      <li className="opacity-100">
+                        <Link
                           href="/configurations/webhooks"
                           className="group block"
                         >
