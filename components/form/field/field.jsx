@@ -15,10 +15,9 @@ const Field = ({
       {text && <Label htmlFor={htmlFor}>{text}</Label>}
       {children}
       {hasError && error ? (
-        <p
-          className="absolute -bottom-4 right-0 text-xs lowercase text-danger"
-          dangerouslySetInnerHTML={{ __html: error }}
-        />
+        <p className="absolute -bottom-4 right-0 text-xs lowercase text-danger">
+          {error}
+        </p>
       ) : (
         ''
       )}

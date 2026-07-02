@@ -36,4 +36,4 @@ yarn-error.log*
 .vercel
 
 # overlay de deploy (referencia tags locais; não versionar)
-Dockerfile.overlay-canvas
+Dockerfile.overlay-*

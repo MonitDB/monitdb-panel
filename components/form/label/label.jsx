@@ -7,12 +7,7 @@ const Label = ({ text = '', className = '', children, ...properties }) => {
       className={classNames('relative block font-bold', className)}
       {...properties}
     >
-      {text && (
-        <span
-          className="block mb-1"
-          dangerouslySetInnerHTML={{ __html: text }}
-        />
-      )}
+      {text && <span className="block mb-1">{text}</span>}
       {children}
     </label>
   )
