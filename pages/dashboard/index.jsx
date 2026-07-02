@@ -27,7 +27,8 @@ import { filterServersByEnvironmentId, formatServer } from '~/utils/server'
 
 const DashboardPage = () => {
   const {
-    globalState: { servers, serverTypes, serverEnvironments },
+    globalState: { servers, serverTypes, serverEnvironments, serversStatus },
+    refreshData,
   } = useGlobal()
 
   const { userState: user } = useUser()
@@ -204,16 +205,25 @@ const DashboardPage = () => {
     [formattedEnvironments, refreshInterval, user]
   )
 
-  const totalServers = useMemo(() => {
-    const total = formattedEnvironments.reduce(
-      (accumulator, formattedEnvironment) =>
-        accumulator +
-        formattedEnvironment.servers.filter((server) => server.isActive).length,
-      0
-    )
-    setActiveKey(collapseItems.map((item) => item.key))
-    return total
-  }, [formattedEnvironments, collapseItems])
+  const totalServers = useMemo(
+    () =>
+      formattedEnvironments.reduce(
+        (accumulator, formattedEnvironment) =>
+          accumulator +
+          formattedEnvironment.servers.filter((server) => server.isActive)
+            .length,
+        0
+      ),
+    [formattedEnvironments]
+  )
+
+  // Expande os grupos quando o CONJUNTO de grupos muda (antes era um setState
+  // dentro do useMemo: side effect em render que resetava o colapso do usuário
+  // a cada tecla no filtro).
+  const collapseKeysSignature = collapseItems.map((item) => item.key).join('|')
+  useEffect(() => {
+    setActiveKey(collapseKeysSignature ? collapseKeysSignature.split('|') : [])
+  }, [collapseKeysSignature])
 
   return (
     <>
@@ -340,7 +350,20 @@ const DashboardPage = () => {
             </>
           ) : (
             <PageContent className="w-full min-h-screen flex items-center justify-center">
-              <Loading />
+              {serversStatus === 'error' && (
+                <div className="flex flex-col items-center gap-4">
+                  <span>Não foi possível carregar os servidores.</span>
+                  <Button type="primary" onClick={refreshData}>
+                    Tentar novamente
+                  </Button>
+                </div>
+              )}
+              {serversStatus === 'loaded' && (
+                <span>Nenhum servidor cadastrado.</span>
+              )}
+              {serversStatus !== 'error' && serversStatus !== 'loaded' && (
+                <Loading />
+              )}
             </PageContent>
           )}
         </PageWrapper>

@@ -116,21 +116,6 @@ const ServerCard = ({
   }
 
   const { getServerMetrics } = useServerContext()
-  if (interval) {
-    useEffect(() => {
-      const intervalId = setInterval(() => {
-        try {
-          getMetrics()
-        } catch (error) {
-          console.error(error) // eslint-disable-line no-console
-        }
-      }, interval)
-
-      return () => {
-        clearInterval(intervalId)
-      }
-    }, [getMetrics, interval])
-  }
 
   const getMetrics = useCallback(async () => {
     if (serverEnable)
@@ -148,12 +133,15 @@ const ServerCard = ({
           const { cpu, memory, disks, serverStatus, agents } = response.data
           setMetrics({
             cpu,
-            memory: {
-              ...memory,
-              inUsePercent:
-                ((memory.total - memory.available) / memory.total) * 100,
-            },
-            disks,
+            // Servidor offline (status 5) vem sem métricas — não derrubar o card.
+            memory: memory
+              ? {
+                  ...memory,
+                  inUsePercent:
+                    ((memory.total - memory.available) / memory.total) * 100,
+                }
+              : undefined,
+            disks: disks || [],
             serverStatus,
             agents,
           })
@@ -181,6 +169,25 @@ const ServerCard = ({
   useEffect(() => {
     getMetrics()
   }, [])
+
+  // Hook incondicional (Rules of Hooks): a condição vive DENTRO do effect —
+  // antes era `if (interval) { useEffect(...) }`, que derrubaria a página se
+  // `interval` fosse falsy; declarado após getMetrics (evita ref antes da init).
+  useEffect(() => {
+    if (!interval) return
+
+    const intervalId = setInterval(() => {
+      try {
+        getMetrics()
+      } catch (error) {
+        console.error(error) // eslint-disable-line no-console
+      }
+    }, interval)
+
+    return () => {
+      clearInterval(intervalId)
+    }
+  }, [getMetrics, interval])
 
   const cpu = 100 - metrics.cpu?.SystemIdle
 

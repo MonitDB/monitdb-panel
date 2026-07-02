@@ -8,6 +8,9 @@ const initialGlobalState = {
   servers: [],
   serverTypes: [],
   serverEnvironments: [],
+  // 'loading' | 'loaded' | 'error' — permite à UI distinguir carregando,
+  // vazio de verdade e falha (antes: spinner infinito em qualquer falha).
+  serversStatus: 'loading',
 }
 
 const GlobalContext = createContext(initialGlobalState)
@@ -20,6 +23,10 @@ export const GlobalContextProvider = ({ children }) => {
   const [globalState, setGlobalState] = useState(initialGlobalState)
 
   const getData = useCallback(async () => {
+    setGlobalState((oldGlobalState) => ({
+      ...oldGlobalState,
+      serversStatus: 'loading',
+    }))
     try {
       const promises = [getServers(), getTypes(), getEnvironments()]
 
@@ -31,9 +38,14 @@ export const GlobalContextProvider = ({ children }) => {
         servers: serversData?.data || [],
         serverTypes: responseTypes?.data || [],
         serverEnvironments: responseEnvironments?.data || [],
+        serversStatus: 'loaded',
       }))
     } catch (error) {
       console.error(error) // eslint-disable-line no-console
+      setGlobalState((oldGlobalState) => ({
+        ...oldGlobalState,
+        serversStatus: 'error',
+      }))
     }
   }, [])
 
