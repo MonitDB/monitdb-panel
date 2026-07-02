@@ -6,11 +6,19 @@ import { getUserToken, remove } from '~/utils/cookies'
 const instance = axios.create({ baseURL: process.env.apiBaseUrl })
 
 function isTokenExpired(token) {
-  const decodedToken = JSON.parse(atob(token.split('.')[1]))
+  try {
+    const payload = token
+      .split('.')[1]
+      .replace(/-/g, '+')
+      .replace(/_/g, '/')
+    const decodedToken = JSON.parse(atob(payload))
 
-  const expirationDate = new Date(decodedToken.exp * 1000)
+    const expirationDate = new Date(decodedToken.exp * 1000)
 
-  return expirationDate < new Date()
+    return expirationDate < new Date()
+  } catch {
+    return true
+  }
 }
 
 const clientApi = (token) => {

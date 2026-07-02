@@ -24,6 +24,11 @@ const Terminal = () => {
   }, [fetchHosts])
 
   const cleanup = () => {
+    if (terminalReference.current?._monitOnResize)
+      window.removeEventListener(
+        'resize',
+        terminalReference.current._monitOnResize
+      )
     try { socketReference.current?.disconnect() } catch { /* noop */ }
     try { terminalReference.current?.dispose() } catch { /* noop */ }
     socketReference.current = null

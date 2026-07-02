@@ -2,7 +2,6 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 
 import { Col, Row, Tabs } from 'antd'
-import faker from 'faker'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
 import React, { useEffect, useMemo } from 'react'
@@ -34,12 +33,6 @@ import {
   TypeGrant,
 } from '~/utils/hasPermission'
 import { formatServer } from '~/utils/server'
-
-export const labels = Array.from({ length: 60 }, (_, index) => `8:${index}`)
-
-export const tableDataItems = labels.map(() => ({
-  title: `SELECT user_id FROM ${faker.random.word()} WHERE meta_key = '${faker.random.word()}'`,
-}))
 
 const SingleDashboard = () => {
   const {

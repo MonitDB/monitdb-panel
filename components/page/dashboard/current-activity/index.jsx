@@ -70,13 +70,12 @@ function CurrentActivity(properties) {
         return
       }
 
-      data[componentCode] = result
-      if (data[componentCode]) setData(data)
+      setData((previous) => ({ ...previous, [componentCode]: result }))
       setLoading(false)
     } catch {
       setLoading(false)
     }
-  }, [componentCode, currentServer?.id, data, executeQueryComponent])
+  }, [componentCode, currentServer?.id, executeQueryComponent])
 
   const headerSection = (
     <>

@@ -1,18 +1,28 @@
 import Router from 'next/router'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import Contexts from '~/contexts/index'
 
 const Main = ({ children }) => {
   const [isLoadingPage, setIsLoadingPage] = useState(false)
 
-  Router.events.on('routeChangeStart', () => {
-    setIsLoadingPage(true)
-  })
+  useEffect(() => {
+    const onStart = () => {
+      setIsLoadingPage(true)
+    }
 
-  Router.events.on('routeChangeComplete', () => {
-    setIsLoadingPage(false)
-  })
+    const onDone = () => {
+      setIsLoadingPage(false)
+    }
+
+    Router.events.on('routeChangeStart', onStart)
+    Router.events.on('routeChangeComplete', onDone)
+
+    return () => {
+      Router.events.off('routeChangeStart', onStart)
+      Router.events.off('routeChangeComplete', onDone)
+    }
+  }, [])
 
   return (
     <Contexts>

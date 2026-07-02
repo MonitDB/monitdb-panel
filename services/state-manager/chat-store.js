@@ -1,4 +1,3 @@
-import { fi } from 'faker/lib/locales'
 import { create } from 'zustand'
 
 import { apiV2 } from '~/utils/client-api'

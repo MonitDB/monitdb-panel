@@ -303,7 +303,7 @@ const DashboardPage = () => {
                           { value: 5 * SECOND, label: 'Every 5 seconds' },
                           { value: 15 * SECOND, label: 'Every 15 seconds' },
                           { value: 30 * SECOND, label: 'Every 30 seconds' },
-                          { value: 15 * SECOND, label: 'Every 45 seconds' },
+                          { value: 45 * SECOND, label: 'Every 45 seconds' },
                           { value: MINUTE, label: 'Every 1 minute' },
                         ]}
                         value={refreshInterval}

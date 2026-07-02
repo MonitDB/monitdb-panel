@@ -147,7 +147,7 @@ const AnalysisPage = () => {
   const [options, setOptions] = useState([{ label: 'Count', value: 'count' }])
 
   const [highlightedDate, setHighlightedDate] = useState()
-  const [highlightedWhoIs] = useState([])
+  const [highlightedWhoIs, setHighlightedWhoIs] = useState([])
 
   const [modalWhoData, setModalWhoData] = useState()
   const [modalQueryProfileData, setModalQueryProfileData] = useState()
@@ -565,8 +565,8 @@ const AnalysisPage = () => {
 
                               const [date] =
                                 series[seriesIndex].data[dataPointIndex]
-                              highlightedWhoIs([])
-                              highlightedDate(date)
+                              setHighlightedWhoIs([])
+                              setHighlightedDate(date)
                             }
                           },
                           mouseLeave: function () {

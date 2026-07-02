@@ -119,8 +119,10 @@ const StyledMarkdown = styled.div`
 /**
  * Renderiza markdown da IA. Se `onOpenQuery` for fornecido, os blocos ```sql```
  * ganham os botões "Copiar" / "Abrir no Query Window".
+ * React.memo evita re-renderizar (e re-rodar md.render) as mensagens antigas
+ * a cada delta do streaming SSE.
  */
-export const Markdown = ({ content, onOpenQuery }) => {
+export const Markdown = React.memo(({ content, onOpenQuery }) => {
   const reference = useRef()
 
   useEffect(() => {
@@ -155,4 +157,6 @@ export const Markdown = ({ content, onOpenQuery }) => {
       }}
     />
   )
-}
+})
+
+Markdown.displayName = 'Markdown'

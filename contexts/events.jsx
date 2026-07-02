@@ -20,12 +20,15 @@ export const EventSourceProvider = ({ children }) => {
   const connectionId = useRef(null)
   const isInitialized = useRef(false)
   const retryCount = useRef(0)
+  const retryTimeout = useRef(null)
   const [result, setResult] = useState({ status: '', message: '' })
 
   const maxRetries = 5
 
   const handleSocketMessage = (event) => {
-    setTerminalOutput((previousOutput) => [...previousOutput, event])
+    setTerminalOutput((previousOutput) =>
+      [...previousOutput, event].slice(-500)
+    )
   }
 
   const handleResult = (result) => {
@@ -73,10 +76,9 @@ export const EventSourceProvider = ({ children }) => {
         console.error('SSE Error:', error)
 
         if (es.readyState === EventSource.CLOSED) {
-          setTerminalOutput((previousOutput) => [
-            ...previousOutput,
-            'Disconnected',
-          ])
+          setTerminalOutput((previousOutput) =>
+            [...previousOutput, 'Disconnected'].slice(-500)
+          )
         }
 
         es.close()
@@ -86,7 +88,7 @@ export const EventSourceProvider = ({ children }) => {
         if (retryCount.current < maxRetries) {
           retryCount.current++
           const retryDelay = Math.min(1000 * 2 ** retryCount.current, 10_000)
-          setTimeout(() => {
+          retryTimeout.current = setTimeout(() => {
             console.log(
               `Retrying SSE connection... Attempt ${retryCount.current}`
             )
@@ -113,6 +115,10 @@ export const EventSourceProvider = ({ children }) => {
     initializeEventSource()
 
     return () => {
+      if (retryTimeout.current) {
+        clearTimeout(retryTimeout.current)
+        retryTimeout.current = null
+      }
       if (eventSourceReference.current) {
         eventSourceReference.current.close()
         eventSourceReference.current = null

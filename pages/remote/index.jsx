@@ -50,7 +50,13 @@ const Remote = () => {
   }, [fetchHosts])
 
   const cleanup = () => {
+    // Guacamole.Keyboard registra listeners no document que não são removíveis:
+    // a instância é reusada entre conexões — só resetamos e soltamos os handlers.
     try { keyboardReference.current?.reset() } catch { /* noop */ }
+    if (keyboardReference.current) {
+      keyboardReference.current.onkeydown = null
+      keyboardReference.current.onkeyup = null
+    }
     try { clientReference.current?.disconnect() } catch { /* noop */ }
     if (resizeReference.current) {
       window.removeEventListener('resize', resizeReference.current)
@@ -58,7 +64,6 @@ const Remote = () => {
     }
     if (containerReference.current) containerReference.current.innerHTML = ''
     clientReference.current = null
-    keyboardReference.current = null
   }
 
   useEffect(() => () => cleanup(), [])
@@ -156,10 +161,11 @@ const Remote = () => {
       mouse.onmouseup = sendScaled
       mouse.onmousemove = sendScaled
 
-      const keyboard = new Guacamole.Keyboard(document)
+      if (!keyboardReference.current)
+        keyboardReference.current = new Guacamole.Keyboard(document)
+      const keyboard = keyboardReference.current
       keyboard.onkeydown = (keysym) => client.sendKeyEvent(1, keysym)
       keyboard.onkeyup = (keysym) => client.sendKeyEvent(0, keysym)
-      keyboardReference.current = keyboard
     } catch (error) {
       setStatus('error')
       setMessage(error?.response?.data?.message || error?.message || 'Falha.')
