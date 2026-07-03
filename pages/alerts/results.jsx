@@ -133,8 +133,9 @@ const AlertsDetailsPage = () => {
       if (parameters.length === 0) await getAlertsParameter()
       if (parameters.length > 0)
         await getAlertsResult({ ...requestQuery, serverId })
-      // console.log({ tableReference })
-      tableReference.current.refresh()
+      // A Table do AntD não expõe .refresh() — os dados atualizam via estado.
+      // A chamada antiga (tableReference.current.refresh()) lançava TypeError
+      // engolido pelo catch e poluía o console em todo load da página.
     } catch (error) {
       console.error(error) // eslint-disable-line no-console
     } finally {
