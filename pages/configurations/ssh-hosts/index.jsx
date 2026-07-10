@@ -17,12 +17,16 @@ import { NextSeo } from 'next-seo'
 import React, { useEffect, useState } from 'react'
 
 import { PageContent, PageHeader } from '~/components/page'
+import { useGlobal } from '~/hooks/index'
 import Layout from '~/layouts/default'
 import { useSshStore } from '~/services/state-manager/ssh-store'
 
 const SshHosts = () => {
   const { hosts, loading, saving, fetchHosts, saveHost, deleteHost, testHost } =
     useSshStore()
+  const {
+    globalState: { serverEnvironments },
+  } = useGlobal()
   const [open, setOpen] = useState(false)
   const [editing, setEditing] = useState(null)
   const [authType, setAuthType] = useState('password')
@@ -49,6 +53,8 @@ const SshHosts = () => {
       port: h.port,
       username: h.username,
       authType: h.authType || 'password',
+      idTypeServerEnvironment:
+        h.idTypeServerEnvironment ?? h.typeServerEnvironment?.id ?? null,
       description: h.description,
       password: '',
       privateKey: '',
@@ -59,6 +65,8 @@ const SshHosts = () => {
 
   const submit = async () => {
     const v = await form.validateFields()
+    // allowClear manda undefined — normaliza p/ null para o PUT limpar de fato.
+    v.idTypeServerEnvironment = v.idTypeServerEnvironment ?? null
     const ok = await saveHost(v, editing?.id)
     if (ok) {
       message.success(editing ? 'Host atualizado.' : 'Host criado.')
@@ -86,6 +94,25 @@ const SshHosts = () => {
 
   const columns = [
     { title: 'Nome', dataIndex: 'name', key: 'name' },
+    {
+      title: 'Ambiente',
+      key: 'env',
+      width: 150,
+      filters: serverEnvironments.map((environment) => ({
+        text: environment.typeServerEnvironmentName,
+        value: environment.id,
+      })),
+      onFilter: (value, h) =>
+        (h.idTypeServerEnvironment ?? h.typeServerEnvironment?.id) === value,
+      render: (t, h) =>
+        h.typeServerEnvironment?.typeServerEnvironmentName ? (
+          <Tag color="geekblue">
+            {h.typeServerEnvironment.typeServerEnvironmentName}
+          </Tag>
+        ) : (
+          <Tag>Sem ambiente</Tag>
+        ),
+    },
     {
       title: 'Destino',
       key: 'dest',
@@ -196,6 +223,21 @@ const SshHosts = () => {
               </Space>
               <Form.Item name="username" label="Usuário" rules={[{ required: true }]}>
                 <Input placeholder="ex.: ubuntu" />
+              </Form.Item>
+              <Form.Item name="idTypeServerEnvironment" label="Ambiente">
+                <Select
+                  allowClear
+                  placeholder="Sem ambiente"
+                  options={serverEnvironments
+                    .filter(
+                      (environment) =>
+                        environment.typeServerEnvironmentEnable !== false
+                    )
+                    .map((environment) => ({
+                      value: environment.id,
+                      label: environment.typeServerEnvironmentName,
+                    }))}
+                />
               </Form.Item>
               <Form.Item name="authType" label="Autenticação">
                 <Select

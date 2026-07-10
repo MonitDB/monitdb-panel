@@ -15,6 +15,8 @@ import { NextSeo } from 'next-seo'
 import React, { useEffect, useState } from 'react'
 
 import { PageContent, PageHeader } from '~/components/page'
+import { groupHostsByEnvironment } from '~/components/terminal/host-tree'
+import { useGlobal } from '~/hooks/index'
 import Layout from '~/layouts/default'
 import { useSshStore } from '~/services/state-manager/ssh-store'
 
@@ -40,6 +42,9 @@ const parentPath = (p) => {
 const Sftp = () => {
   const { hosts, fetchHosts, sftpList, sftpDownload, sftpUpload, sftpDelete } =
     useSshStore()
+  const {
+    globalState: { serverEnvironments },
+  } = useGlobal()
   const [hostId, setHostId] = useState(null)
   const [path, setPath] = useState('.')
   const [entries, setEntries] = useState([])
@@ -171,9 +176,15 @@ const Sftp = () => {
                   placeholder="Selecione um host"
                   value={hostId}
                   onChange={setHostId}
-                  options={hosts.map((h) => ({
-                    value: h.id,
-                    label: `${h.name} — ${h.username}@${h.host}:${h.port}`,
+                  options={groupHostsByEnvironment(
+                    hosts,
+                    serverEnvironments
+                  ).map(([environment, list]) => ({
+                    label: environment,
+                    options: list.map((h) => ({
+                      value: h.id,
+                      label: `${h.name} — ${h.username}@${h.host}:${h.port}`,
+                    })),
                   }))}
                 />
                 <Button type="primary" disabled={!hostId} onClick={open}>
