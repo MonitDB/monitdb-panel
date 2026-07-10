@@ -33,11 +33,21 @@ export const groupHostsByEnvironment = (hosts, environments = []) => {
 }
 
 /**
- * Sidebar do terminal: busca + árvore de hosts agrupados por ambiente.
- * Duplo clique na folha (ou botão "Abrir") abre uma nova aba de sessão —
- * o mesmo host pode ter várias sessões simultâneas.
+ * Sidebar de acesso remoto: busca + árvore de hosts agrupados por ambiente.
+ * Duplo clique na folha (ou o botão de ação) chama onOpen(host). Usada pelo
+ * Terminal SSH (abas) e pelo Desktop remoto (sessão única); `subtitle` e
+ * `openText` customizam a linha secundária e o rótulo do botão.
  */
-const HostTree = ({ hosts, environments, onOpen }) => {
+const defaultSubtitle = (host) =>
+  `${host.username}@${host.host}:${host.port}`
+
+const HostTree = ({
+  hosts,
+  environments,
+  onOpen,
+  subtitle = defaultSubtitle,
+  openText = 'Abrir',
+}) => {
   const [search, setSearch] = useState('')
   const [expandedByUser, setExpandedByUser] = useState(null)
 
@@ -82,7 +92,7 @@ const HostTree = ({ hosts, environments, onOpen }) => {
               style={{ fontSize: 11 }}
               ellipsis
             >
-              {host.username}@{host.host}:{host.port}
+              {subtitle(host)}
             </Typography.Text>
           </div>
           <Button
@@ -93,7 +103,7 @@ const HostTree = ({ hosts, environments, onOpen }) => {
               onOpen(host)
             }}
           >
-            Abrir
+            {openText}
           </Button>
         </div>
       ),

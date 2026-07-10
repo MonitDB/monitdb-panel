@@ -17,12 +17,16 @@ import { NextSeo } from 'next-seo'
 import React, { useEffect, useState } from 'react'
 
 import { PageContent, PageHeader } from '~/components/page'
+import { useGlobal } from '~/hooks/index'
 import Layout from '~/layouts/default'
 import { useRemoteStore } from '~/services/state-manager/remote-store'
 
 const RemoteHosts = () => {
   const { hosts, loading, saving, fetchHosts, saveHost, deleteHost } =
     useRemoteStore()
+  const {
+    globalState: { serverEnvironments },
+  } = useGlobal()
   const [open, setOpen] = useState(false)
   const [editing, setEditing] = useState(null)
   const [protocol, setProtocol] = useState('rdp')
@@ -48,7 +52,12 @@ const RemoteHosts = () => {
   const openEdit = (h) => {
     setEditing(h)
     setProtocol(h.protocol)
-    form.setFieldsValue({ ...h, password: '' })
+    form.setFieldsValue({
+      ...h,
+      password: '',
+      idTypeServerEnvironment:
+        h.idTypeServerEnvironment ?? h.typeServerEnvironment?.id ?? null,
+    })
     setOpen(true)
   }
 
@@ -59,6 +68,8 @@ const RemoteHosts = () => {
 
   const submit = async () => {
     const values = await form.validateFields()
+    // allowClear manda undefined — normaliza p/ null para o PUT limpar de fato.
+    values.idTypeServerEnvironment = values.idTypeServerEnvironment ?? null
     const ok = await saveHost(values, editing?.id)
     if (ok) {
       message.success(editing ? 'Host atualizado.' : 'Host criado.')
@@ -77,6 +88,25 @@ const RemoteHosts = () => {
 
   const columns = [
     { title: 'Nome', dataIndex: 'name', key: 'name' },
+    {
+      title: 'Ambiente',
+      key: 'env',
+      width: 150,
+      filters: serverEnvironments.map((environment) => ({
+        text: environment.typeServerEnvironmentName,
+        value: environment.id,
+      })),
+      onFilter: (value, h) =>
+        (h.idTypeServerEnvironment ?? h.typeServerEnvironment?.id) === value,
+      render: (t, h) =>
+        h.typeServerEnvironment?.typeServerEnvironmentName ? (
+          <Tag color="geekblue">
+            {h.typeServerEnvironment.typeServerEnvironmentName}
+          </Tag>
+        ) : (
+          <Tag>Sem ambiente</Tag>
+        ),
+    },
     {
       title: 'Protocolo',
       dataIndex: 'protocol',
@@ -180,6 +210,21 @@ const RemoteHosts = () => {
                   <InputNumber min={1} max={65_535} />
                 </Form.Item>
               </Space>
+              <Form.Item name="idTypeServerEnvironment" label="Ambiente">
+                <Select
+                  allowClear
+                  placeholder="Sem ambiente"
+                  options={serverEnvironments
+                    .filter(
+                      (environment) =>
+                        environment.typeServerEnvironmentEnable !== false
+                    )
+                    .map((environment) => ({
+                      value: environment.id,
+                      label: environment.typeServerEnvironmentName,
+                    }))}
+                />
+              </Form.Item>
               {protocol === 'rdp' && (
                 <Form.Item name="username" label="Usuário">
                   <Input placeholder="ex.: Administrator" />

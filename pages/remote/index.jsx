@@ -1,9 +1,11 @@
 /* eslint-disable unicorn/no-null, unicorn/prefer-add-event-listener */
-import { Alert, Button, Select, Space, Tag } from 'antd'
+import { Alert, Button, Space, Tag } from 'antd'
 import { NextSeo } from 'next-seo'
 import React, { useEffect, useRef, useState } from 'react'
 
 import { PageContent, PageHeader } from '~/components/page'
+import HostTree from '~/components/terminal/host-tree'
+import { useGlobal } from '~/hooks/index'
 import Layout from '~/layouts/default'
 import { useRemoteStore } from '~/services/state-manager/remote-store'
 
@@ -37,7 +39,11 @@ const loadGuacamole = () =>
 
 const Remote = () => {
   const { hosts, fetchHosts, openSession } = useRemoteStore()
-  const [hostId, setHostId] = useState(null)
+  const {
+    globalState: { serverEnvironments },
+  } = useGlobal()
+  // Host da sessão corrente (a sessão Guacamole é única: teclado/canvas globais).
+  const [current, setCurrent] = useState(null) // { id, name }
   const [status, setStatus] = useState('idle')
   const [message, setMessage] = useState('')
   const containerReference = useRef(null)
@@ -69,13 +75,14 @@ const Remote = () => {
   useEffect(() => () => cleanup(), [])
 
   // eslint-disable-next-line sonarjs/cognitive-complexity
-  const connect = async () => {
-    if (!hostId) return
+  const connect = async (host) => {
+    if (!host?.id) return
     cleanup()
+    setCurrent({ id: host.id, name: host.name })
     setStatus('connecting')
     setMessage('')
     try {
-      const session = await openSession(hostId)
+      const session = await openSession(host.id)
       if (!session?.ok) {
         setStatus('error')
         setMessage(session?.message || 'Falha ao abrir a sessão.')
@@ -187,29 +194,12 @@ const Remote = () => {
             breadcrumbs={[{ title: 'Desktop remoto', href: '/remote/' }]}
             extra={
               <Space>
-                <Select
-                  style={{ width: 300 }}
-                  placeholder="Selecione um host"
-                  value={hostId}
-                  onChange={setHostId}
-                  disabled={status === 'connecting' || status === 'connected'}
-                  options={hosts.map((h) => ({
-                    value: h.id,
-                    label: `${h.name} — ${h.protocol.toUpperCase()} ${h.host}:${h.port}`,
-                  }))}
-                />
-                {status === 'connected' ? (
+                {current && (
+                  <Tag color="blue">{current.name}</Tag>
+                )}
+                {(status === 'connected' || status === 'connecting') && (
                   <Button danger onClick={disconnect}>
                     Desconectar
-                  </Button>
-                ) : (
-                  <Button
-                    type="primary"
-                    disabled={!hostId || status === 'connecting'}
-                    loading={status === 'connecting'}
-                    onClick={connect}
-                  >
-                    Conectar
                   </Button>
                 )}
                 <Tag color={STATE_LABEL[status].c}>{STATE_LABEL[status].t}</Tag>
@@ -228,16 +218,33 @@ const Remote = () => {
             <Alert type="error" showIcon style={{ marginBottom: 12 }} message={message} />
           )}
 
-          <div
-            ref={containerReference}
-            style={{
-              height: '72vh',
-              background: '#000',
-              borderRadius: 6,
-              overflow: 'hidden',
-              outline: 'none',
-            }}
-          />
+          <div className="flex gap-4" style={{ height: '70vh' }}>
+            <aside
+              className="shrink-0 overflow-hidden rounded-md border border-gray-200 p-2 dark:border-gray-700"
+              style={{ width: 280 }}
+            >
+              <HostTree
+                hosts={hosts}
+                environments={serverEnvironments}
+                onOpen={connect}
+                openText="Conectar"
+                subtitle={(h) =>
+                  `${h.protocol.toUpperCase()} ${h.host}:${h.port}`
+                }
+              />
+            </aside>
+
+            <div
+              ref={containerReference}
+              className="min-w-0 flex-1"
+              style={{
+                background: '#000',
+                borderRadius: 6,
+                overflow: 'hidden',
+                outline: 'none',
+              }}
+            />
+          </div>
         </PageContent>
       </Layout>
     </>
