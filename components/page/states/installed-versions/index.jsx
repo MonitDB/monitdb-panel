@@ -1,3 +1,4 @@
+/* eslint-disable unicorn/no-null */
 import { faDownload } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Collapse, Table, Tag } from 'antd'
@@ -19,7 +20,7 @@ import Loading from '~/components/loading'
 import { PageContent } from '~/components/page'
 import useGlobal from '~/hooks/use-global'
 import { getVersions } from '~/services/states'
-import { filterServersByEnvironmentId, formatServer } from '~/utils/server'
+import { formatServer } from '~/utils/server'
 
 ChartJS.register(
   ArcElement,
@@ -30,43 +31,24 @@ ChartJS.register(
   Tooltip
 )
 
-export const options = {
-  responsive: true,
-  scales: {
-    y: {
-      ticks: {
-        stepSize: 1,
-        beginAtZero: true,
-      },
-    },
-    x: {
-      grid: {
-        display: false,
-      },
-    },
-  },
-}
-
-const labels = ['06:00', '08:00', '10:00', '12:00', '14:00', '16:00', '18:00']
-
-export const chartData = {
-  labels,
-  datasets: [
-    {
-      // data: labels.map(() => faker.datatype.number({ min: 1, max: 3 })),
-      data: [1, 2, 3, 2, 1, 2, 3],
-      borderColor: 'rgb(53, 162, 235)',
-      backgroundColor: 'rgba(53, 162, 235, 0.5)',
-    },
-    // {
-    //   label: 'Dataset 2',
-    //   data: labels.map(() => faker.datatype.number({ min: 10, max: 20 })),
-
-    // borderColor: 'rgb(255, 99, 132)',
-    // backgroundColor: 'rgba(255, 99, 132, 0.5)',
-    // },
-  ],
-}
+// Left-join dos servidores de um ambiente com as versões coletadas: toda
+// instância aparece; a que não retornou versão (indisponível/sem coleta) vira
+// uma linha marcada (_available:false), em vez de sumir silenciosamente.
+// id === null é o grupo "Sem ambiente" (idTypeServerEnvironment NULL).
+const buildEnvironmentVersions = ({ envId, servers, serverTypes, versions }) =>
+  servers
+    .filter((server) => (server.idTypeServerEnvironment ?? null) === envId)
+    .map((server) => formatServer(server, { serverTypes }))
+    .map((server) => {
+      const version = versions.find((v) => v.ServerId === server.id)
+      return version
+        ? { ...version, ['Server Name']: server.serverName, _available: true }
+        : {
+            ServerId: server.id,
+            ['Server Name']: server.serverName,
+            _available: false,
+          }
+    })
 
 const InstalledVersions = ({ tabName }) => {
   const [isLoading, setIsLoading] = useState(false)
@@ -269,54 +251,60 @@ const InstalledVersions = ({ tabName }) => {
                 <div className="-mx-4 py-4 px-8 bg-white md:-mx-6">
                   {
                     <Collapse
-                      defaultActiveKey={serverEnvironments.map(
-                        ({ id }) => `${id}`
-                      )}
-                      items={serverEnvironments
-                        .map(
-                          (
-                            { id, typeServerEnvironmentName },
-                            environmentIndex
-                          ) => {
-                            const filteredServers =
-                              filterServersByEnvironmentId(id, servers).map(
-                                (server) =>
-                                  formatServer(server, { serverTypes })
-                              )
-
-                            const filteredVersions = []
-
-                            for (let version of versions) {
-                              const server = filteredServers.find(
-                                (server) => server.id === version.ServerId
-                              )
-
-                              if (!server) continue
-
-                              filteredVersions.push({
-                                ...version,
-                                Server: server.serverName,
-                              })
-                            }
+                      defaultActiveKey={[
+                        ...serverEnvironments.map(({ id }) => `${id}`),
+                        'no-env',
+                      ]}
+                      items={[
+                        ...serverEnvironments.map(
+                          ({ id, typeServerEnvironmentName }) => ({
+                            id,
+                            key: `${id}`,
+                            label: typeServerEnvironmentName,
+                          })
+                        ),
+                        // Grupo para instâncias sem ambiente atribuído — antes sumiam
+                        // da tabela detalhada (o filtro por ambiente nunca casava NULL).
+                        { id: null, key: 'no-env', label: 'Sem ambiente' },
+                      ]
+                        .map(({ id, key, label }, environmentIndex) => {
+                            const filteredVersions = buildEnvironmentVersions({
+                              envId: id,
+                              servers,
+                              serverTypes,
+                              versions,
+                            })
 
                             if (filteredVersions.length === 0) return
 
                             return {
-                              key: `${id}`,
-                              label: `${typeServerEnvironmentName}`,
+                              key,
+                              label: `${label} (${filteredVersions.length})`,
 
                               className: 'mb-4',
                               children: (
                                 <Table
                                   size="small"
                                   pagination={filteredVersions.length > 10}
-                                  key={`server-${id}-${environmentIndex}`}
+                                  key={`server-${key}-${environmentIndex}`}
+                                  rowKey={(record) => record.ServerId}
                                   dataSource={filteredVersions}
                                   columns={[
                                     {
                                       dataIndex: 'Server Name',
                                       title: 'Name',
                                       width: 150,
+                                    },
+                                    {
+                                      key: 'state',
+                                      title: 'Estado',
+                                      width: 130,
+                                      render: (_, record) =>
+                                        record._available ? (
+                                          <Tag color="green">Coletado</Tag>
+                                        ) : (
+                                          <Tag color="orange">Indisponível</Tag>
+                                        ),
                                     },
                                     {
                                       dataIndex: 'version',
