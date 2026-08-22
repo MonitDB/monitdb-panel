@@ -79,11 +79,7 @@ const Header = () => {
       href: '/insights/',
     },
     {
-      title: 'Regressão de Plano',
-      href: '/plan-regressions/',
-    },
-    {
-      title: 'Anomalias',
+      title: 'Anomalies',
       href: '/anomalies/',
     },
     {
@@ -92,7 +88,7 @@ const Header = () => {
       requiredFeatureFunction: FeatureFunction.SSH_TERMINAL,
     },
     {
-      title: 'Arquivos',
+      title: 'Files',
       href: '/sftp/',
       requiredFeatureFunction: FeatureFunction.SSH_TERMINAL,
     },

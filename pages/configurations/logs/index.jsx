@@ -29,7 +29,7 @@ const LogsPage = () => {
                 },
                 {
                   title: 'Logs',
-                  href: '/alerts/logs/',
+                  href: '/configurations/logs/',
                 },
               ]}
             />

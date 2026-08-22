@@ -2,8 +2,8 @@
 
 Frontend do **MonitDB** — plataforma de observabilidade para SQL Server com assistente de IA.
 É o painel web do DBA: dashboards em tempo real, análise histórica (19+ métricas), states,
-alertas, relatórios, integrações, o chat **Monit AI**, a vigilância proativa (insights, regressão
-de plano, anomalias) e as ferramentas de operação da 2.2 — **Terminal SSH**, **Arquivos (SFTP)** e
+alertas, relatórios, integrações, o chat **Monit AI**, a vigilância proativa (insights,
+anomalias) e as ferramentas de operação da 2.2 — **Terminal SSH**, **Arquivos (SFTP)** e
 **Desktop remoto (RDP/VNC)** — além de toda a área de **Configurações**.
 
 Faz parte do repositório umbrella `monitdbqua` (é um submódulo git). Toda a leitura de dados e ações
@@ -83,7 +83,6 @@ duplicar aqui.
 | `/monit-ai/[chat-id]` | Chat Monit AI (streaming, citações, tokens/custo) |
 | `/insights` | Insights proativos diários por servidor |
 | `/anomalies` | Anomalias por baseline |
-| `/plan-regressions` | Regressão de plano de execução |
 | `/terminal` | **Terminal SSH** (xterm.js) |
 | `/sftp` | **Arquivos** (SFTP: navegar/baixar/enviar/remover) |
 | `/remote` | **Desktop remoto** RDP/VNC (canvas Guacamole) |

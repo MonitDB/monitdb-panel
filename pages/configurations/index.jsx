@@ -16,7 +16,243 @@ import {
   TypeGrant,
 } from '~/utils/hasPermission'
 
-// eslint-disable-next-line sonarjs/cognitive-complexity
+// Reorganized in 2.2.7: sections grouped by domain, English labels, every card
+// points to a real page (no placeholders). Each card's `visible` gate mirrors the
+// permission the target page itself enforces, so nobody loses a working link.
+const grant = (featureFunction, typeGrant) => (user) =>
+  hasPermission(user, featureFunction, typeGrant)
+const anyGrant = (featureFunctions) => (user) =>
+  existsSomePermissions(user, featureFunctions)
+
+const LEFT_SECTIONS = [
+  {
+    title: 'Servers & collection',
+    items: [
+      {
+        title: 'Monitored servers',
+        description:
+          'Add servers to monitor; edit connection credentials; remove or suspend monitored servers.',
+        href: '/configurations/servers/',
+        visible: grant(FeatureFunction.MONITORED_SERVERS, TypeGrant.OWNER),
+      },
+      {
+        title: 'Install the agent (new server)',
+        description:
+          'Installation wizard: creates the MonitorizacaoAtiva database, procedures and collection jobs on a new server, with live progress.',
+        href: '/configurations/installation-wizard',
+      },
+      {
+        title: 'Update the agent on servers',
+        description:
+          'Upload the SQL script with the latest agent updates and run it on the selected servers.',
+        href: '/configurations/update-new-version',
+      },
+      {
+        title: 'Health thresholds (dashboard status)',
+        description:
+          'CPU, disk and memory thresholds that color the server cards — global default plus per-server override.',
+        href: '/configurations/health-thresholds/',
+        visible: grant(FeatureFunction.MONITORED_SERVERS, TypeGrant.OWNER),
+      },
+    ],
+  },
+  {
+    title: 'Alerts & notifications',
+    items: [
+      {
+        title: 'Alerts',
+        description:
+          'Open the Alerts page: alerts by server, details, clearing and AI suggestions.',
+        href: '/alerts/',
+        visible: grant(FeatureFunction.ALERT_SETTINGS, TypeGrant.DELETE),
+      },
+      {
+        title: 'Alert parameters per server',
+        description:
+          'Thresholds and settings of the agent alerts, server by server.',
+        href: '/alerts/metrics/',
+        visible: grant(FeatureFunction.ALERTS_CUSTOMIZATION, TypeGrant.READ),
+      },
+      {
+        title: 'Alert webhooks (Slack / Teams)',
+        description:
+          'Destinations for alerts and AI insights by minimum severity — Slack, Teams or generic webhook.',
+        href: '/configurations/webhooks',
+        visible: anyGrant([FeatureFunction.MANAGE_INTEGRATIONS]),
+      },
+    ],
+  },
+  {
+    title: 'Monit AI',
+    items: [
+      {
+        title: 'AI provider',
+        description:
+          'Provider, model, keys and prompt used by Monit AI (OpenAI, Azure, Copilot or LM Studio).',
+        href: '/configurations/monit-ai-config',
+        visible: grant(FeatureFunction.CONFIGURATION, TypeGrant.READ),
+      },
+      {
+        title: 'AI skills',
+        description:
+          'Create and edit the SQL skills (tools) the AI can run on the monitored servers.',
+        href: '/configurations/monit-ai-skills',
+        visible: grant(FeatureFunction.CONFIGURATION, TypeGrant.READ),
+      },
+      {
+        title: 'AI secrets',
+        description: 'Keys and credentials used by the AI (e.g. embeddings).',
+        href: '/configurations/monit-ai-secrets',
+        visible: grant(FeatureFunction.CONFIGURATION, TypeGrant.READ),
+      },
+      {
+        title: 'Training material (RAG)',
+        description:
+          'Documents, websites, audio and video indexed as knowledge for Monit AI.',
+        href: '/configurations/monit-ai-training',
+        visible: grant(FeatureFunction.CONFIGURATION, TypeGrant.READ),
+      },
+      {
+        title: 'PII masking',
+        description:
+          'Redact personal data in tool output before it reaches the AI provider, per server.',
+        href: '/configurations/data-masking',
+        visible: grant(FeatureFunction.CONFIGURATION, TypeGrant.READ),
+      },
+      {
+        title: 'AI audit',
+        description: 'Queries executed by the AI (compliance trail).',
+        href: '/configurations/monit-ai-audit',
+        visible: grant(FeatureFunction.CONFIGURATION, TypeGrant.READ),
+      },
+    ],
+  },
+]
+
+const RIGHT_SECTIONS = [
+  {
+    title: 'Remote access',
+    items: [
+      {
+        title: 'SSH hosts',
+        description:
+          'Hosts and credentials (encrypted) for the SSH terminal and SFTP file browser.',
+        href: '/configurations/ssh-hosts',
+        visible: grant(FeatureFunction.SSH_TERMINAL, TypeGrant.WRITE),
+      },
+      {
+        title: 'SSH audit',
+        description: 'Sessions and commands of the SSH terminal (compliance).',
+        href: '/configurations/ssh-audit',
+        visible: grant(FeatureFunction.SSH_TERMINAL, TypeGrant.DELETE),
+      },
+      {
+        title: 'Remote desktop hosts (RDP / VNC)',
+        description:
+          'Hosts and credentials (encrypted) for the remote desktop sessions.',
+        href: '/configurations/remote-hosts',
+        visible: grant(FeatureFunction.REMOTE_DESKTOP, TypeGrant.WRITE),
+      },
+      {
+        title: 'Remote desktop audit',
+        description:
+          'RDP/VNC sessions and recordings (replay) for compliance.',
+        href: '/configurations/remote-audit',
+        visible: grant(FeatureFunction.REMOTE_DESKTOP, TypeGrant.DELETE),
+      },
+    ],
+  },
+  {
+    title: 'Integrations',
+    items: [
+      {
+        title: 'Integrations (Zabbix / Rundeck)',
+        description:
+          'Register and edit external integrations; run them from the Integrations menu.',
+        href: '/configurations/integrations',
+        visible: grant(FeatureFunction.MANAGE_INTEGRATIONS, TypeGrant.WRITE),
+      },
+    ],
+  },
+  {
+    title: 'Users & permissions',
+    items: [
+      {
+        title: 'Users',
+        description: 'Create, edit and deactivate users; assign their profile.',
+        href: '/configurations/users',
+        visible: grant(FeatureFunction.USER_MANAGEMENT, TypeGrant.OWNER),
+      },
+      {
+        title: 'Profiles & permissions',
+        description:
+          'Profiles (roles) and the permission level of each feature per profile.',
+        href: '/configurations/profiles',
+      },
+      {
+        title: 'My account',
+        description:
+          'Your user details and display preferences (theme, font).',
+        href: '/my-account/',
+      },
+    ],
+  },
+  {
+    title: 'Organization & system',
+    items: [
+      {
+        title: 'Organization details',
+        description:
+          'Company name, contact, address and logo shown in the panel.',
+        href: '/configurations/display-settings',
+        visible: grant(FeatureFunction.DISPLAY_SETTINGS, TypeGrant.EXECUTE),
+      },
+      {
+        title: 'Screen components (advanced)',
+        description:
+          'Queries and URLs that feed the panel screens. Editing them changes what the screens show.',
+        href: '/configurations/components/',
+        visible: anyGrant([FeatureFunction.CUSTOM_METRICS]),
+      },
+      {
+        title: 'Logs & diagnostics',
+        description:
+          'Component logs, API request log and agent installation history.',
+        href: '/configurations/logs/',
+        visible: anyGrant([FeatureFunction.CUSTOM_METRICS]),
+      },
+    ],
+  },
+]
+
+const visibleSections = (sections, user) =>
+  sections
+    .map((section) => ({
+      ...section,
+      items: section.items.filter((item) =>
+        item.visible ? item.visible(user) : true
+      ),
+    }))
+    .filter((section) => section.items.length > 0)
+
+const ConfigurationSection = ({ section }) => (
+  <div className="w-full">
+    <h3 className="mb-5 heading-md">{section.title}</h3>
+    <ul className="space-y-4 text-sm">
+      {section.items.map((item) => (
+        <li key={item.href + item.title}>
+          <Link href={item.href} className="group block">
+            <strong className="block group-hover:text-blue">
+              {item.title}
+            </strong>
+            <span className="group-hover:opacity-75">{item.description}</span>
+          </Link>
+        </li>
+      ))}
+    </ul>
+  </div>
+)
+
 const ConfigurationsPage = () => {
   const router = useRouter()
   const { userState: user } = useUser()
@@ -36,694 +272,14 @@ const ConfigurationsPage = () => {
 
             <Grid>
               <div className="col-span-2 space-y-10 md:col-span-6">
-                <div className="w-full">
-                  <h3 className="mb-5 heading-md">Application options</h3>
-                  <ul className="space-y-4 text-sm">
-                    <li>
-                      <Link
-                        href="/configurations/installation-wizard"
-                        className="group block"
-                      >
-                        <strong className="block group-hover:text-blue">
-                          Installation Wizard
-                        </strong>
-                        <span className="group-hover:opacity-75">
-                          Setup and install new severs.
-                        </span>
-                      </Link>
-                    </li>
-                    <li className="">
-                      <Link
-                        href="/configurations/update-new-version"
-                        className="group block"
-                      >
-                        <strong className="block group-hover:text-blue">
-                          Update new versions
-                        </strong>
-                        <span className="group-hover:opacity-75">
-                          Upload SQL file with the lastests updates.
-                        </span>
-                      </Link>
-                    </li>
-
-                    {hasPermission(
-                      user,
-                      FeatureFunction.MONITORED_SERVERS,
-                      TypeGrant.OWNER
-                    ) && (
-                      <li>
-                        <Link
-                          href="/configurations/servers/"
-                          className="group block"
-                        >
-                          <strong className="block group-hover:text-blue">
-                            Monitored servers
-                          </strong>
-                          <span className="group-hover:opacity-75">
-                            Add servers to monitor; edit connection credentials;
-                            remove or suspend monitored servers.
-                          </span>
-                        </Link>
-                      </li>
-                    )}
-                    {hasPermission(
-                      user,
-                      FeatureFunction.MONITORED_SERVERS,
-                      TypeGrant.OWNER
-                    ) && (
-                      <li>
-                        <Link
-                          href="/configurations/health-thresholds/"
-                          className="group block"
-                        >
-                          <strong className="block group-hover:text-blue">
-                            Limiares de saúde
-                          </strong>
-                          <span className="group-hover:opacity-75">
-                            Configurar limiares de CPU/disco/memória (default
-                            global + override por servidor).
-                          </span>
-                        </Link>
-                      </li>
-                    )}
-                    <li>
-                      <Link
-                        href="/configurations/profiles"
-                        className="group block"
-                      >
-                        <strong className="block group-hover:text-blue">
-                          Manage profiles
-                        </strong>
-                        <span className="group-hover:opacity-75">
-                          Configure the permissions of each profile
-                        </span>
-                      </Link>
-                    </li>
-                    {hasPermission(
-                      user,
-                      FeatureFunction.USER_MANAGEMENT,
-                      TypeGrant.DELETE
-                    ) && (
-                      <li>
-                        <Link
-                          href="/configurations/users"
-                          className="group block"
-                        >
-                          <strong className="block group-hover:text-blue">
-                            Manage users
-                          </strong>
-                          <span className="group-hover:opacity-75">
-                            Manage users, roles and permissions.
-                          </span>
-                        </Link>
-                      </li>
-                    )}
-
-                    {hasPermission(
-                      user,
-                      FeatureFunction.AUTHENTICATION_SETTINGS,
-                      TypeGrant.OWNER
-                    ) && (
-                      <li className="opacity-25">
-                        <Link href="/configurations/" className="group block">
-                          <strong className="block group-hover:text-blue">
-                            Authentication settings
-                          </strong>
-                          <span className="group-hover:opacity-75">
-                            Set authentication preferences for MonitDB.
-                          </span>
-                        </Link>
-                      </li>
-                    )}
-
-                    {hasPermission(
-                      user,
-                      FeatureFunction.DISPLAY_SETTINGS,
-                      TypeGrant.EXECUTE
-                    ) && (
-                      <li className="">
-                        <Link
-                          href="/configurations/display-settings"
-                          className="group block"
-                        >
-                          <strong className="block group-hover:text-blue">
-                            Display settings
-                          </strong>
-                          <span className="group-hover:opacity-75">
-                            Set user display preferences for MonitDB.
-                          </span>
-                        </Link>
-                      </li>
-                    )}
-                    {hasPermission(
-                      user,
-                      FeatureFunction.BASIC_MONITOR_CONNECTIONS
-                    ) && (
-                      <li className="opacity-25">
-                        <Link href="/configurations/" className="group block">
-                          <strong className="block group-hover:text-blue">
-                            Base monitor connections
-                          </strong>
-                          <span className="group-hover:opacity-75">
-                            View details of your base monitor connections;
-                            connect to different base monitors.
-                          </span>
-                        </Link>
-                      </li>
-                    )}
-                  </ul>
-                </div>
-
-                {existsSomePermissions(user, [
-                  FeatureFunction.ALERT_SETTINGS,
-                  FeatureFunction.NOTIFICATION_SETTINGS,
-                  FeatureFunction.CUSTOM_METRICS,
-                  FeatureFunction.ALERT_SUPPRESSION,
-                ]) && (
-                  <div className="w-full">
-                    <h3 className="mb-5 heading-md">Alerts and metrics</h3>
-
-                    <ul className="space-y-4 text-sm">
-                      {hasPermission(
-                        user,
-                        FeatureFunction.ALERT_SETTINGS,
-                        TypeGrant.DELETE
-                      ) && (
-                        <li>
-                          <Link href="/alerts/" className="group block">
-                            <strong className="block group-hover:text-blue">
-                              Alert settings
-                            </strong>
-                            <span className="group-hover:opacity-75">
-                              Enable and disable alert types; change alert
-                              thresholds and levels.
-                            </span>
-                          </Link>
-                        </li>
-                      )}
-                      {hasPermission(
-                        user,
-                        FeatureFunction.CUSTOM_METRICS,
-                        TypeGrant.DELETE
-                      ) && (
-                        <li>
-                          <Link href="/alerts/metrics/" className="group block">
-                            <strong className="block group-hover:text-blue">
-                              Custom metrics
-                            </strong>
-                            <span className="group-hover:opacity-75">
-                              Create and manage custom metrics and custom
-                              alerts.
-                            </span>
-                          </Link>
-                        </li>
-                      )}
-                      {hasPermission(
-                        user,
-                        FeatureFunction.NOTIFICATION_SETTINGS,
-                        TypeGrant.EXECUTE
-                      ) && (
-                        <li className="opacity-25">
-                          <Link href="/configurations/" className="group block">
-                            <strong className="block group-hover:text-blue">
-                              Notification settings
-                            </strong>
-                            <span className="group-hover:opacity-75">
-                              Set up and manage notifications for alerts
-                              (Email/Slack/SNMP/Webhook/EventLog).
-                            </span>
-                          </Link>
-                        </li>
-                      )}
-
-                      {hasPermission(
-                        user,
-                        FeatureFunction.ALERT_SUPPRESSION,
-                        TypeGrant.DELETE
-                      ) && (
-                        <li className="opacity-25">
-                          <Link href="/configurations/" className="group block">
-                            <strong className="block group-hover:text-blue">
-                              Alert suppression
-                            </strong>
-                            <span className="group-hover:opacity-75">
-                              Create scheduled or one-off alert suppression
-                              windows (formerly maintenance windows).
-                            </span>
-                          </Link>
-                        </li>
-                      )}
-                    </ul>
-                  </div>
-                )}
-
-                {existsSomePermissions(user, [
-                  FeatureFunction.AUTHENTICATION_TOKENS,
-                  FeatureFunction.DOWNLOAD_POWERSHELL_MODULE,
-                  FeatureFunction.SEE_POWERSHELL_SCRIPT_EXAMPLES,
-                  FeatureFunction.MANAGE_INTEGRATIONS,
-                ]) && (
-                  <div className="w-full">
-                    <h3 className="mb-5 heading-md">API</h3>
-
-                    <ul className="space-y-4 text-sm">
-                      {hasPermission(
-                        user,
-                        FeatureFunction.MANAGE_INTEGRATIONS,
-                        TypeGrant.WRITE
-                      ) && (
-                        <li className="opacity-100">
-                          <Link
-                            href="/configurations/integrations"
-                            className="group block"
-                          >
-                            <strong className="block group-hover:text-blue">
-                              Integrations
-                            </strong>
-                            <span className="group-hover:opacity-75">
-                              Add or edit integrations
-                            </span>
-                          </Link>
-                        </li>
-                      )}
-
-                      <li className="opacity-100">
-                        <Link
-                          href="/configurations/monit-ai-config"
-                          className="group block"
-                        >
-                          <strong className="block group-hover:text-blue">
-                            Ai Configuration
-                          </strong>
-                          <span className="group-hover:opacity-75">
-                            Add or edit monit ai configuration
-                          </span>
-                        </Link>
-                      </li>
-
-                      <li className="opacity-100">
-                        <Link
-                          href="/configurations/monit-ai-skills"
-                          className="group block"
-                        >
-                          <strong className="block group-hover:text-blue">
-                            AI Skills
-                          </strong>
-                          <span className="group-hover:opacity-75">
-                            Criar e editar skills (tools) da IA
-                          </span>
-                        </Link>
-                      </li>
-
-                      <li className="opacity-100">
-                        <Link
-                          href="/configurations/monit-ai-secrets"
-                          className="group block"
-                        >
-                          <strong className="block group-hover:text-blue">
-                            AI Secrets
-                          </strong>
-                          <span className="group-hover:opacity-75">
-                            Chaves/credenciais da IA (ex.: embedding)
-                          </span>
-                        </Link>
-                      </li>
-
-                      <li className="opacity-100">
-                        <Link
-                          href="/configurations/monit-ai-training"
-                          className="group block"
-                        >
-                          <strong className="block group-hover:text-blue">
-                            Ai Training material
-                          </strong>
-                          <span className="group-hover:opacity-75">
-                            Add training material for monit ai
-                          </span>
-                        </Link>
-                      </li>
-
-                      <li className="opacity-100">
-                        <Link
-                          href="/configurations/monit-ai-audit"
-                          className="group block"
-                        >
-                          <strong className="block group-hover:text-blue">
-                            Auditoria da IA
-                          </strong>
-                          <span className="group-hover:opacity-75">
-                            Queries executadas pela IA (compliance)
-                          </span>
-                        </Link>
-                      </li>
-
-                      <li className="opacity-100">
-                        <Link
-                          href="/configurations/webhooks"
-                          className="group block"
-                        >
-                          <strong className="block group-hover:text-blue">
-                            Webhooks de Alerta
-                          </strong>
-                          <span className="group-hover:opacity-75">
-                            Slack/Teams/genérico — alertas e insights da IA
-                          </span>
-                        </Link>
-                      </li>
-
-                      <li className="opacity-100">
-                        <Link
-                          href="/configurations/data-masking"
-                          className="group block"
-                        >
-                          <strong className="block group-hover:text-blue">
-                            Mascaramento de PII (IA)
-                          </strong>
-                          <span className="group-hover:opacity-75">
-                            Redigir dados pessoais na saída das tools por servidor
-                          </span>
-                        </Link>
-                      </li>
-
-                      {hasPermission(
-                        user,
-                        FeatureFunction.SSH_TERMINAL,
-                        TypeGrant.WRITE
-                      ) && (
-                        <li className="opacity-100">
-                          <Link
-                            href="/configurations/ssh-hosts"
-                            className="group block"
-                          >
-                            <strong className="block group-hover:text-blue">
-                              Hosts SSH
-                            </strong>
-                            <span className="group-hover:opacity-75">
-                              Gerir hosts e credenciais do Terminal SSH (cifradas)
-                            </span>
-                          </Link>
-                        </li>
-                      )}
-
-                      {hasPermission(
-                        user,
-                        FeatureFunction.SSH_TERMINAL,
-                        TypeGrant.DELETE
-                      ) && (
-                        <li className="opacity-100">
-                          <Link
-                            href="/configurations/ssh-audit"
-                            className="group block"
-                          >
-                            <strong className="block group-hover:text-blue">
-                              Auditoria SSH
-                            </strong>
-                            <span className="group-hover:opacity-75">
-                              Sessões e comandos do Terminal SSH (compliance)
-                            </span>
-                          </Link>
-                        </li>
-                      )}
-
-                      {hasPermission(
-                        user,
-                        FeatureFunction.REMOTE_DESKTOP,
-                        TypeGrant.WRITE
-                      ) && (
-                        <li className="opacity-100">
-                          <Link
-                            href="/configurations/remote-hosts"
-                            className="group block"
-                          >
-                            <strong className="block group-hover:text-blue">
-                              Hosts remotos (RDP/VNC)
-                            </strong>
-                            <span className="group-hover:opacity-75">
-                              Gerir hosts e credenciais do Desktop remoto (cifradas)
-                            </span>
-                          </Link>
-                        </li>
-                      )}
-
-                      {hasPermission(
-                        user,
-                        FeatureFunction.REMOTE_DESKTOP,
-                        TypeGrant.DELETE
-                      ) && (
-                        <li className="opacity-100">
-                          <Link
-                            href="/configurations/remote-audit"
-                            className="group block"
-                          >
-                            <strong className="block group-hover:text-blue">
-                              Auditoria remota
-                            </strong>
-                            <span className="group-hover:opacity-75">
-                              Sessões RDP/VNC e gravações (replay) para compliance
-                            </span>
-                          </Link>
-                        </li>
-                      )}
-
-                      {hasPermission(
-                        user,
-                        FeatureFunction.AUTHENTICATION_TOKENS,
-                        TypeGrant.OWNER
-                      ) && (
-                        <li className="opacity-25">
-                          <Link href="/configurations/" className="group block">
-                            <strong className="block group-hover:text-blue">
-                              Authentication tokens
-                            </strong>
-                            <span className="group-hover:opacity-75">
-                              Manage authentication tokens for MonitDB.
-                            </span>
-                          </Link>
-                        </li>
-                      )}
-                      {hasPermission(
-                        user,
-                        FeatureFunction.DOWNLOAD_POWERSHELL_MODULE,
-                        TypeGrant.EXECUTE
-                      ) && (
-                        <li className="opacity-25">
-                          <Link href="/configurations/" className="group block">
-                            <strong className="block group-hover:text-blue">
-                              Download PowerShell Module
-                            </strong>
-                            <span className="group-hover:opacity-75">
-                              Configure MonitDB via PowerShell.
-                            </span>
-                          </Link>
-                        </li>
-                      )}
-                      {hasPermission(
-                        user,
-                        FeatureFunction.SEE_POWERSHELL_SCRIPT_EXAMPLES,
-                        TypeGrant.READ
-                      ) && (
-                        <li className="opacity-25">
-                          <Link href="/configurations/" className="group block">
-                            <strong className="block group-hover:text-blue">
-                              View example PowerShell scripts
-                            </strong>
-                            <span className="group-hover:opacity-75">
-                              Download example PowerShell scripts for the API.
-                            </span>
-                          </Link>
-                        </li>
-                      )}
-                    </ul>
-                  </div>
-                )}
+                {visibleSections(LEFT_SECTIONS, user).map((section) => (
+                  <ConfigurationSection key={section.title} section={section} />
+                ))}
               </div>
               <div className="col-span-2 space-y-10 md:col-span-6">
-                {existsSomePermissions(user, [
-                  FeatureFunction.CUSTOM_METRICS,
-                ]) && (
-                  <div className="w-full">
-                    <h3 className="mb-5 heading-md">Components</h3>
-                    <ul className="space-y-4 text-sm">
-                      {hasPermission(
-                        user,
-                        FeatureFunction.CUSTOM_METRICS,
-                        TypeGrant.WRITE
-                      )}
-                      <li>
-                        <Link
-                          href="/configurations/components/"
-                          className="group block"
-                        >
-                          <strong className="block group-hover:text-blue">
-                            Component settings
-                          </strong>
-                          <span className="group-hover:opacity-75">
-                            Set up and manage component settings
-                          </span>
-                        </Link>
-                      </li>
-
-                      <li>
-                        <Link
-                          href="/configurations/logs/"
-                          className="group block"
-                        >
-                          <strong className="block group-hover:text-blue">
-                            Logs
-                          </strong>
-                          <span className="group-hover:opacity-75">
-                            View logs for MonitDB components.
-                          </span>
-                        </Link>
-                      </li>
-                    </ul>
-                  </div>
-                )}
-
-                <div className="w-full">
-                  <h3 className="mb-5 heading-md">Monitoring</h3>
-                  <ul className="space-y-4 text-sm">
-                    {hasPermission(
-                      user,
-                      FeatureFunction.INSTANCE_DISCOVERY,
-                      TypeGrant.EXECUTE
-                    ) && (
-                      <li className="opacity-25">
-                        <Link href="/configurations/" className="group block">
-                          <strong className="block group-hover:text-blue">
-                            Instance discovery
-                          </strong>
-                          <span className="group-hover:opacity-75">
-                            Discover new instances across your estate.
-                          </span>
-                        </Link>
-                      </li>
-                    )}
-
-                    {hasPermission(
-                      user,
-                      FeatureFunction.HOSTS_AND_VMWARE,
-                      TypeGrant.DELETE
-                    ) && (
-                      <li className="opacity-25">
-                        <Link href="/configurations/" className="group block">
-                          <strong className="block group-hover:text-blue">
-                            VMware hosts
-                          </strong>
-                          <span className="group-hover:opacity-75">
-                            Configure VMware hosts for monitoring.
-                          </span>
-                        </Link>
-                      </li>
-                    )}
-
-                    <li className="opacity-25">
-                      <Link href="/configurations/" className="group block">
-                        <strong className="block group-hover:text-blue">
-                          Trace
-                        </strong>
-                        <span className="group-hover:opacity-75">
-                          Enable or disable Profiler trace on selected servers.
-                        </span>
-                      </Link>
-                    </li>
-
-                    {hasPermission(
-                      user,
-                      FeatureFunction.EXTENDED_EVENTS,
-                      TypeGrant.WRITE
-                    ) && (
-                      <li className="opacity-25">
-                        <Link href="/configurations/" className="group block">
-                          <strong className="block group-hover:text-blue">
-                            Extended Events
-                          </strong>
-                          <span className="group-hover:opacity-75">
-                            Enable or disable extended events for advanced
-                            alerting.
-                          </span>
-                        </Link>
-                      </li>
-                    )}
-
-                    {hasPermission(
-                      user,
-                      FeatureFunction.GROUPS,
-                      TypeGrant.DELETE
-                    ) && (
-                      <li className="opacity-25">
-                        <Link href="/configurations/" className="group block">
-                          <strong className="block group-hover:text-blue">
-                            Groups
-                          </strong>
-                          <span className="group-hover:opacity-75">
-                            Organize your monitored servers into groups.
-                          </span>
-                        </Link>
-                      </li>
-                    )}
-                  </ul>
-                </div>
-
-                <div className="w-full">
-                  <h3 className="mb-5 heading-md">Data Management</h3>
-                  <ul className="space-y-4 text-sm">
-                    <li className="opacity-25">
-                      <Link href="/configurations/" className="group block">
-                        <strong className="block group-hover:text-blue">
-                          <i className="rounded py-px px-1 text-xs bg-blue text-white not-italic">
-                            improved
-                          </i>{' '}
-                          Data settings
-                        </strong>
-                        <span className="group-hover:opacity-75">
-                          Specify how long MonitDB keeps historic data in its
-                          Data Repository.
-                        </span>
-                      </Link>
-                    </li>
-                  </ul>
-                </div>
-
-                <div className="w-full">
-                  <h3 className="mb-5 heading-md">Licensing</h3>
-                  <ul className="space-y-4 text-sm">
-                    <li className="opacity-25">
-                      <Link href="/configurations/" className="group block">
-                        <strong className="block group-hover:text-blue">
-                          Licensing
-                        </strong>
-                        <span className="group-hover:opacity-75">
-                          Allocate licenses to your servers.
-                        </span>
-                      </Link>
-                    </li>
-                  </ul>
-                </div>
-
-                {existsSomePermissions(user, [TypeGrant.ABOUT]) && (
-                  <div className="w-full">
-                    <h3 className="mb-5 heading-md">About</h3>
-                    <ul className="space-y-4 text-sm">
-                      {hasPermission(
-                        user,
-                        FeatureFunction.ABOUT,
-                        TypeGrant.READ
-                      ) && (
-                        <li className="opacity-25">
-                          <Link href="/configurations/" className="group block">
-                            <strong className="block group-hover:text-blue">
-                              About
-                            </strong>
-                            <span className="group-hover:opacity-75">
-                              View information about MonitDB components.
-                            </span>
-                          </Link>
-                        </li>
-                      )}
-                    </ul>
-                  </div>
-                )}
+                {visibleSections(RIGHT_SECTIONS, user).map((section) => (
+                  <ConfigurationSection key={section.title} section={section} />
+                ))}
               </div>
             </Grid>
           </PageContent>
