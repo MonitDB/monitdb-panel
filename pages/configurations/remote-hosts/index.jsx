@@ -17,6 +17,9 @@ import { NextSeo } from 'next-seo'
 import React, { useEffect, useState } from 'react'
 
 import { PageContent, PageHeader } from '~/components/page'
+import HostTechnologies, {
+  parseTechnologies,
+} from '~/components/terminal/host-technologies'
 import { useGlobal } from '~/hooks/index'
 import Layout from '~/layouts/default'
 import { useRemoteStore } from '~/services/state-manager/remote-store'
@@ -25,7 +28,7 @@ const RemoteHosts = () => {
   const { hosts, loading, saving, fetchHosts, saveHost, deleteHost } =
     useRemoteStore()
   const {
-    globalState: { serverEnvironments },
+    globalState: { serverEnvironments, serverTypes },
   } = useGlobal()
   const [open, setOpen] = useState(false)
   const [editing, setEditing] = useState(null)
@@ -57,6 +60,8 @@ const RemoteHosts = () => {
       password: '',
       idTypeServerEnvironment:
         h.idTypeServerEnvironment ?? h.typeServerEnvironment?.id ?? null,
+      // A API grava CSV; o Select multiplo trabalha com array de ids.
+      technologies: parseTechnologies(h.technologies),
     })
     setOpen(true)
   }
@@ -70,6 +75,8 @@ const RemoteHosts = () => {
     const values = await form.validateFields()
     // allowClear manda undefined — normaliza p/ null para o PUT limpar de fato.
     values.idTypeServerEnvironment = values.idTypeServerEnvironment ?? null
+    // Sem seleção o antd manda undefined; [] limpa a coluna no PUT.
+    values.technologies = values.technologies ?? []
     const ok = await saveHost(values, editing?.id)
     if (ok) {
       message.success(editing ? 'Host atualizado.' : 'Host criado.')
@@ -106,6 +113,19 @@ const RemoteHosts = () => {
         ) : (
           <Tag>Sem ambiente</Tag>
         ),
+    },
+    {
+      title: 'Tecnologias',
+      key: 'tech',
+      width: 130,
+      render: (t, h) => (
+        <HostTechnologies
+          value={h.technologies}
+          serverTypes={serverTypes}
+          size={20}
+          max={5}
+        />
+      ),
     },
     {
       title: 'Protocolo',
@@ -222,6 +242,24 @@ const RemoteHosts = () => {
                     .map((environment) => ({
                       value: environment.id,
                       label: environment.typeServerEnvironmentName,
+                    }))}
+                />
+              </Form.Item>
+              <Form.Item
+                name="technologies"
+                label="Tecnologias"
+                extra="O que corre nesta máquina. Aparece como logótipo na árvore de acesso."
+              >
+                <Select
+                  mode="multiple"
+                  allowClear
+                  placeholder="Nenhuma"
+                  optionFilterProp="label"
+                  options={serverTypes
+                    .filter((type) => type.typeServerEnable !== false)
+                    .map((type) => ({
+                      value: type.id,
+                      label: type.typeServerName,
                     }))}
                 />
               </Form.Item>

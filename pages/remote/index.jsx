@@ -19,7 +19,7 @@ const MAX_SESSIONS = 4
 const Remote = () => {
   const { hosts, fetchHosts } = useRemoteStore()
   const {
-    globalState: { serverEnvironments },
+    globalState: { serverEnvironments, serverTypes },
   } = useGlobal()
   // Sessões abertas (abas). O client/canvas Guacamole de cada uma vive dentro
   // do RemoteSession — aqui só metadados serializáveis.
@@ -104,6 +104,7 @@ const Remote = () => {
                 openText="Connect"
                 openIcon={<DesktopOutlined />}
                 storageKey="remote"
+                serverTypes={serverTypes}
                 subtitle={(h) =>
                   `${h.protocol.toUpperCase()} ${h.host}:${h.port}`
                 }

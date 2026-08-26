@@ -10,6 +10,7 @@ import {
 import { Button, Empty, Input, Tooltip, Tree, Typography } from 'antd'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
+import HostTechnologies from './host-technologies'
 
 const NO_ENVIRONMENT = 'No environment'
 const FAVORITES_KEY = 'section-favorites'
@@ -82,6 +83,8 @@ const HostTree = ({
   // Ícone da ação de abrir: cada tela passa o seu (terminal, ecrã remoto…).
   openIcon = <LoginOutlined />,
   storageKey = 'ssh',
+  // Catálogo SOLUTION.TYPESERVER: traduz os ids gravados no host em logótipos.
+  serverTypes = [],
 }) => {
   const [search, setSearch] = useState('')
   const [expandedByUser, setExpandedByUser] = useState(null)
@@ -147,7 +150,15 @@ const HostTree = ({
   const renderLeaf = (host) => (
     <div className="group flex items-center justify-between gap-1 pr-1">
       <div className="min-w-0 leading-tight">
-        <div className="truncate">{host.name}</div>
+        <div className="flex items-center gap-1">
+          <span className="truncate">{host.name}</span>
+          <HostTechnologies
+            value={host.technologies}
+            serverTypes={serverTypes}
+            size={14}
+            max={3}
+          />
+        </div>
         <Typography.Text
           type="secondary"
           style={{ fontSize: 11 }}

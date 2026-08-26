@@ -17,6 +17,9 @@ import { NextSeo } from 'next-seo'
 import React, { useEffect, useState } from 'react'
 
 import { PageContent, PageHeader } from '~/components/page'
+import HostTechnologies, {
+  parseTechnologies,
+} from '~/components/terminal/host-technologies'
 import { useGlobal } from '~/hooks/index'
 import Layout from '~/layouts/default'
 import { useSshStore } from '~/services/state-manager/ssh-store'
@@ -25,7 +28,7 @@ const SshHosts = () => {
   const { hosts, loading, saving, fetchHosts, saveHost, deleteHost, testHost } =
     useSshStore()
   const {
-    globalState: { serverEnvironments },
+    globalState: { serverEnvironments, serverTypes },
   } = useGlobal()
   const [open, setOpen] = useState(false)
   const [editing, setEditing] = useState(null)
@@ -56,6 +59,8 @@ const SshHosts = () => {
       idTypeServerEnvironment:
         h.idTypeServerEnvironment ?? h.typeServerEnvironment?.id ?? null,
       description: h.description,
+      // A API grava CSV; o Select multiplo trabalha com array de ids.
+      technologies: parseTechnologies(h.technologies),
       password: '',
       privateKey: '',
       passphrase: '',
@@ -67,6 +72,8 @@ const SshHosts = () => {
     const v = await form.validateFields()
     // allowClear manda undefined — normaliza p/ null para o PUT limpar de fato.
     v.idTypeServerEnvironment = v.idTypeServerEnvironment ?? null
+    // Sem seleção o antd manda undefined; [] limpa a coluna no PUT.
+    v.technologies = v.technologies ?? []
     const ok = await saveHost(v, editing?.id)
     if (ok) {
       message.success(editing ? 'Host atualizado.' : 'Host criado.')
@@ -112,6 +119,19 @@ const SshHosts = () => {
         ) : (
           <Tag>Sem ambiente</Tag>
         ),
+    },
+    {
+      title: 'Tecnologias',
+      key: 'tech',
+      width: 130,
+      render: (t, h) => (
+        <HostTechnologies
+          value={h.technologies}
+          serverTypes={serverTypes}
+          size={20}
+          max={5}
+        />
+      ),
     },
     {
       title: 'Destino',
@@ -236,6 +256,24 @@ const SshHosts = () => {
                     .map((environment) => ({
                       value: environment.id,
                       label: environment.typeServerEnvironmentName,
+                    }))}
+                />
+              </Form.Item>
+              <Form.Item
+                name="technologies"
+                label="Tecnologias"
+                extra="O que corre nesta máquina. Aparece como logótipo na árvore de acesso."
+              >
+                <Select
+                  mode="multiple"
+                  allowClear
+                  placeholder="Nenhuma"
+                  optionFilterProp="label"
+                  options={serverTypes
+                    .filter((type) => type.typeServerEnable !== false)
+                    .map((type) => ({
+                      value: type.id,
+                      label: type.typeServerName,
                     }))}
                 />
               </Form.Item>

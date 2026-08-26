@@ -18,7 +18,7 @@ const MAX_SESSIONS = 8
 const Terminal = () => {
   const { hosts, fetchHosts } = useSshStore()
   const {
-    globalState: { serverEnvironments },
+    globalState: { serverEnvironments, serverTypes },
   } = useGlobal()
   // Sessões abertas (abas). O xterm/socket de cada uma vive dentro do
   // TerminalSession — aqui só metadados serializáveis.
@@ -100,6 +100,7 @@ const Terminal = () => {
                 onOpen={openSession}
                 openIcon={<CodeOutlined />}
                 storageKey="ssh"
+                serverTypes={serverTypes}
               />
             }
           >
