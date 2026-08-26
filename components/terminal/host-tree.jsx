@@ -1,13 +1,26 @@
 /* eslint-disable unicorn/no-array-reduce */
 /* eslint-disable unicorn/no-null */
-import { Button, Empty, Input, Tree, Typography } from 'antd'
-import React, { useMemo, useState } from 'react'
+import {
+  LoginOutlined,
+  MinusSquareOutlined,
+  PlusSquareOutlined,
+  StarFilled,
+  StarOutlined,
+} from '@ant-design/icons'
+import { Button, Empty, Input, Tooltip, Tree, Typography } from 'antd'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
-const NO_ENVIRONMENT = 'Sem ambiente'
+
+const NO_ENVIRONMENT = 'No environment'
+const FAVORITES_KEY = 'section-favorites'
+const RECENT_KEY = 'section-recent'
+// Acima disto a árvore abre fechada: com 30 hosts por lado, tudo expandido vira parede.
+const COLLAPSE_THRESHOLD = 15
+const MAX_RECENT = 5
 
 /**
  * Agrupa hosts SSH pelo nome do ambiente (catálogo TYPESERVERENVIRONMENT).
- * Retorna [[ambiente, hosts]] na ordem do catálogo; "Sem ambiente" por último.
+ * Retorna [[ambiente, hosts]] na ordem do catálogo; "No environment" por último.
  * Reutilizado pelo Select agrupado do /sftp.
  */
 export const groupHostsByEnvironment = (hosts, environments = []) => {
@@ -32,24 +45,89 @@ export const groupHostsByEnvironment = (hosts, environments = []) => {
   })
 }
 
+/** Preferências locais (favoritos, recentes, grupos abertos) — por navegador. */
+const readList = (key) => {
+  try {
+    const raw = window.localStorage.getItem(key)
+    const parsed = raw ? JSON.parse(raw) : []
+    return Array.isArray(parsed) ? parsed : []
+  } catch {
+    return []
+  }
+}
+
+const writeList = (key, value) => {
+  try {
+    window.localStorage.setItem(key, JSON.stringify(value))
+  } catch {
+    // Preferência é conveniência: sem storage, a lista só perde a memória.
+  }
+}
+
 /**
- * Sidebar de acesso remoto: busca + árvore de hosts agrupados por ambiente.
- * Duplo clique na folha (ou o botão de ação) chama onOpen(host). Usada pelo
- * Terminal SSH (abas) e pelo Desktop remoto (sessão única); `subtitle` e
- * `openText` customizam a linha secundária e o rótulo do botão.
+ * Sidebar de acesso remoto: busca + árvore de hosts agrupados por ambiente,
+ * com favoritos fixados e os últimos acessados no topo. Duplo clique na folha
+ * (ou o botão de ação) chama onOpen(host). Usada pelo Terminal SSH (abas) e
+ * pelo Desktop remoto; `subtitle` e `openText` customizam a linha secundária
+ * e o rótulo do botão. `storageKey` separa as preferências das duas telas.
  */
-const defaultSubtitle = (host) =>
-  `${host.username}@${host.host}:${host.port}`
+const defaultSubtitle = (host) => `${host.username}@${host.host}:${host.port}`
 
 const HostTree = ({
   hosts,
   environments,
   onOpen,
   subtitle = defaultSubtitle,
-  openText = 'Abrir',
+  openText = 'Open',
+  // Ícone da ação de abrir: cada tela passa o seu (terminal, ecrã remoto…).
+  openIcon = <LoginOutlined />,
+  storageKey = 'ssh',
 }) => {
   const [search, setSearch] = useState('')
   const [expandedByUser, setExpandedByUser] = useState(null)
+  const [favorites, setFavorites] = useState([])
+  const [recent, setRecent] = useState([])
+
+  const favoritesStorage = `monitdb.hostTree.${storageKey}.favorites`
+  const recentStorage = `monitdb.hostTree.${storageKey}.recent`
+  const expandedStorage = `monitdb.hostTree.${storageKey}.expanded`
+
+  // localStorage só existe no cliente — o Next renderiza esta página no servidor.
+  useEffect(() => {
+    setFavorites(readList(favoritesStorage))
+    setRecent(readList(recentStorage))
+    const stored = readList(expandedStorage)
+    if (stored.length > 0) setExpandedByUser(stored)
+  }, [favoritesStorage, recentStorage, expandedStorage])
+
+  const toggleFavorite = useCallback(
+    (hostId) => {
+      setFavorites((current) => {
+        const next = current.includes(hostId)
+          ? current.filter((id) => id !== hostId)
+          : [...current, hostId]
+        writeList(favoritesStorage, next)
+        return next
+      })
+    },
+    [favoritesStorage]
+  )
+
+  // Abrir também alimenta os recentes — na prática usa-se sempre os mesmos poucos.
+  const handleOpen = useCallback(
+    (host) => {
+      setRecent((current) => {
+        const next = [host.id, ...current.filter((id) => id !== host.id)].slice(
+          0,
+          MAX_RECENT
+        )
+        writeList(recentStorage, next)
+        return next
+      })
+      onOpen(host)
+    },
+    [onOpen, recentStorage]
+  )
 
   const filtered = useMemo(() => {
     const query = search.trim().toLowerCase()
@@ -66,78 +144,170 @@ const HostTree = ({
     [filtered, environments]
   )
 
-  const groupKeys = groups.map(([name]) => `env-${name}`)
-  // Busca ativa expande tudo; sem busca, respeita o usuário (default: tudo aberto).
-  const expandedKeys = search ? groupKeys : expandedByUser ?? groupKeys
-
-  const treeData = groups.map(([name, list]) => ({
-    key: `env-${name}`,
-    selectable: false,
-    title: (
-      <Typography.Text strong>
-        {name}{' '}
-        <Typography.Text type="secondary">({list.length})</Typography.Text>
-      </Typography.Text>
-    ),
-    children: list.map((host) => ({
-      key: `h-${host.id}`,
-      isLeaf: true,
-      host,
-      title: (
-        <div className="flex items-center justify-between gap-1 pr-1">
-          <div className="min-w-0">
-            <div className="truncate">{host.name}</div>
-            <Typography.Text
-              type="secondary"
-              style={{ fontSize: 11 }}
-              ellipsis
-            >
-              {subtitle(host)}
-            </Typography.Text>
-          </div>
+  const renderLeaf = (host) => (
+    <div className="group flex items-center justify-between gap-1 pr-1">
+      <div className="min-w-0 leading-tight">
+        <div className="truncate">{host.name}</div>
+        <Typography.Text
+          type="secondary"
+          style={{ fontSize: 11 }}
+          className="block truncate"
+          title={subtitle(host)}
+        >
+          {subtitle(host)}
+        </Typography.Text>
+      </div>
+      {/* Ações só aparecem na linha sob o cursor (ou com foco): o botão escrito
+          comia largura útil em todas as linhas. */}
+      <div className="flex shrink-0 items-center opacity-0 transition-opacity focus-within:opacity-100 group-hover:opacity-100">
+        <Tooltip
+          title={
+            favorites.includes(host.id) ? 'Remove favorite' : 'Add to favorites'
+          }
+        >
           <Button
             size="small"
-            type="link"
+            type="text"
+            aria-label="Toggle favorite"
+            icon={
+              favorites.includes(host.id) ? (
+                <StarFilled style={{ color: '#faad14' }} />
+              ) : (
+                <StarOutlined />
+              )
+            }
             onClick={(event) => {
               event.stopPropagation()
-              onOpen(host)
+              toggleFavorite(host.id)
             }}
-          >
-            {openText}
-          </Button>
-        </div>
-      ),
+          />
+        </Tooltip>
+        <Tooltip title={openText}>
+          <Button
+            size="small"
+            type="text"
+            aria-label={openText}
+            icon={openIcon}
+            onClick={(event) => {
+              event.stopPropagation()
+              handleOpen(host)
+            }}
+          />
+        </Tooltip>
+      </div>
+    </div>
+  )
+
+  const sectionTitle = (label, count) => (
+    <Typography.Text strong>
+      {label} <Typography.Text type="secondary">({count})</Typography.Text>
+    </Typography.Text>
+  )
+
+  const leafNode = (host, prefix) => ({
+    key: `${prefix}-h-${host.id}`,
+    isLeaf: true,
+    host,
+    title: renderLeaf(host),
+  })
+
+  const byId = useMemo(() => {
+    const map = new Map()
+    for (const host of filtered) map.set(host.id, host)
+    return map
+  }, [filtered])
+
+  const favoriteHosts = favorites
+    .map((id) => byId.get(id))
+    .filter(Boolean)
+  const recentHosts = recent.map((id) => byId.get(id)).filter(Boolean)
+
+  const treeData = [
+    ...(favoriteHosts.length > 0
+      ? [
+          {
+            key: FAVORITES_KEY,
+            selectable: false,
+            title: sectionTitle('Favorites', favoriteHosts.length),
+            children: favoriteHosts.map((host) => leafNode(host, 'fav')),
+          },
+        ]
+      : []),
+    ...(recentHosts.length > 0
+      ? [
+          {
+            key: RECENT_KEY,
+            selectable: false,
+            title: sectionTitle('Recent', recentHosts.length),
+            children: recentHosts.map((host) => leafNode(host, 'rec')),
+          },
+        ]
+      : []),
+    ...groups.map(([name, list]) => ({
+      key: `env-${name}`,
+      selectable: false,
+      title: sectionTitle(name, list.length),
+      children: list.map((host) => leafNode(host, `env-${name}`)),
     })),
-  }))
+  ]
+
+  const allKeys = treeData.map((node) => node.key)
+  // Poucos hosts: tudo aberto. Muitos: só favoritos e recentes, para não virar parede.
+  const defaultExpanded =
+    hosts.length > COLLAPSE_THRESHOLD
+      ? allKeys.filter((key) => key === FAVORITES_KEY || key === RECENT_KEY)
+      : allKeys
+  // Busca ativa expande tudo; sem busca, respeita o que o utilizador deixou aberto.
+  const expandedKeys = search ? allKeys : expandedByUser ?? defaultExpanded
+  const allExpanded = allKeys.every((key) => expandedKeys.includes(key))
+
+  const setExpanded = (keys) => {
+    setExpandedByUser(keys)
+    writeList(expandedStorage, keys)
+  }
 
   return (
     <div className="flex h-full flex-col gap-2">
-      <Input.Search
-        placeholder="Buscar host…"
-        allowClear
-        value={search}
-        onChange={(event) => setSearch(event.target.value)}
-      />
-      {groups.length === 0 ? (
+      <div className="flex items-center gap-1">
+        <Input.Search
+          placeholder="Search host…"
+          allowClear
+          value={search}
+          onChange={(event) => setSearch(event.target.value)}
+        />
+        <Tooltip title={allExpanded ? 'Collapse all' : 'Expand all'}>
+          <Button
+            size="small"
+            type="text"
+            aria-label={allExpanded ? 'Collapse all' : 'Expand all'}
+            disabled={!!search}
+            icon={
+              allExpanded ? <MinusSquareOutlined /> : <PlusSquareOutlined />
+            }
+            onClick={() => setExpanded(allExpanded ? [] : allKeys)}
+          />
+        </Tooltip>
+      </div>
+      {treeData.length === 0 ? (
         <Empty
           image={Empty.PRESENTED_IMAGE_SIMPLE}
           description={
-            hosts.length === 0
-              ? 'Nenhum host cadastrado'
-              : 'Nenhum host encontrado'
+            hosts.length === 0 ? 'No hosts registered' : 'No hosts found'
           }
         />
       ) : (
-        <div className="min-h-0 flex-1 overflow-auto">
+        // Só rolagem vertical: a árvore do antd recua por nível e, com nomes
+        // longos, o overflow-auto fazia nascer uma barra horizontal.
+        <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden">
           <Tree
             blockNode
             treeData={treeData}
             expandedKeys={expandedKeys}
             onExpand={(keys) => {
-              if (!search) setExpandedByUser(keys)
+              if (!search) setExpanded(keys)
             }}
             onDoubleClick={(event, node) => {
-              if (node?.host) onOpen(node.host)
+              if (node?.host) handleOpen(node.host)
             }}
           />
         </div>

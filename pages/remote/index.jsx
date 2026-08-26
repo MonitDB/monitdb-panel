@@ -1,4 +1,5 @@
 /* eslint-disable unicorn/no-null */
+import { DesktopOutlined } from '@ant-design/icons'
 import { Alert, Empty, message } from 'antd'
 import { NextSeo } from 'next-seo'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
@@ -6,6 +7,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { PageContent, PageHeader } from '~/components/page'
 import RemoteSession from '~/components/remote/remote-session'
 import HostTree from '~/components/terminal/host-tree'
+import HostWorkspace from '~/components/terminal/host-workspace'
 import SessionTabs from '~/components/terminal/session-tabs'
 import { useGlobal } from '~/hooks/index'
 import Layout from '~/layouts/default'
@@ -13,6 +15,8 @@ import { useRemoteStore } from '~/services/state-manager/remote-store'
 
 // RDP/VNC pesa mais que SSH (canvas + gravação por sessão) — cap menor.
 const MAX_SESSIONS = 4
+// O aviso é fechável; sem isto voltava a cada carregamento da página.
+const NOTICE_KEY = 'monitdb.remote.noticeDismissed'
 
 const Remote = () => {
   const { hosts, fetchHosts } = useRemoteStore()
@@ -23,15 +27,34 @@ const Remote = () => {
   // do RemoteSession — aqui só metadados serializáveis.
   const [sessions, setSessions] = useState([])
   const [activeKey, setActiveKey] = useState(null)
+  const [noticeVisible, setNoticeVisible] = useState(true)
   const sequenceReference = useRef(0)
 
   useEffect(() => {
     fetchHosts()
   }, [fetchHosts])
 
+  // localStorage só existe no cliente — o Next renderiza esta página no servidor.
+  useEffect(() => {
+    try {
+      if (window.localStorage.getItem(NOTICE_KEY) === '1') setNoticeVisible(false)
+    } catch {
+      // Sem storage o aviso apenas continua a aparecer.
+    }
+  }, [])
+
+  const dismissNotice = () => {
+    setNoticeVisible(false)
+    try {
+      window.localStorage.setItem(NOTICE_KEY, '1')
+    } catch {
+      // idem
+    }
+  }
+
   const openHostSession = (host) => {
     if (sessions.length >= MAX_SESSIONS) {
-      message.warning(`Limite de ${MAX_SESSIONS} sessões simultâneas.`)
+      message.warning(`Limit of ${MAX_SESSIONS} simultaneous sessions.`)
       return
     }
     const key = `r${++sequenceReference.current}`
@@ -72,82 +95,83 @@ const Remote = () => {
 
   return (
     <>
-      <NextSeo title="Desktop remoto - MonitDB" />
+      <NextSeo title="Remote Desktop - MonitDB" />
       <Layout>
         <PageContent removeSidebarMargin={true}>
           <PageHeader
-            title="Desktop remoto (RDP/VNC)"
-            breadcrumbs={[{ title: 'Desktop remoto', href: '/remote/' }]}
+            title="Remote Desktop (RDP/VNC)"
+            breadcrumbs={[{ title: 'Remote Desktop', href: '/remote/' }]}
           />
 
-          <Alert
-            type="warning"
-            showIcon
-            closable
-            style={{ marginBottom: 12 }}
-            message="Acesso remoto privilegiado e gravado"
-            description="Cada aba abre uma sessão gráfica (RDP/VNC) no host via Guacamole. Requer OWNER de Desktop remoto; a abertura é auditada e cada sessão é gravada (replay) para compliance. O teclado vai para a aba ativa. Hosts e credenciais em Configurações → Hosts remotos."
-          />
+          {noticeVisible && (
+            <Alert
+              type="warning"
+              showIcon
+              closable
+              onClose={dismissNotice}
+              style={{ marginBottom: 12 }}
+              message="Privileged and recorded remote access"
+              description="Each tab opens a graphical session (RDP/VNC) on the host through Guacamole. Requires the OWNER permission for Remote Desktop; opening is audited and every session is recorded (replay) for compliance. The keyboard goes to the active tab. Hosts and credentials are managed in Configurations → Remote hosts."
+            />
+          )}
 
-          <div className="flex gap-4" style={{ height: '70vh' }}>
-            <aside
-              className="shrink-0 overflow-hidden rounded-md border border-gray-200 p-2 dark:border-gray-700"
-              style={{ width: 280 }}
-            >
+          <HostWorkspace
+            recalcKey={noticeVisible ? 'notice' : 'no-notice'}
+            sidebar={
               <HostTree
                 hosts={hosts}
                 environments={serverEnvironments}
                 onOpen={openHostSession}
-                openText="Conectar"
+                openText="Connect"
+                openIcon={<DesktopOutlined />}
+                storageKey="remote"
                 subtitle={(h) =>
                   `${h.protocol.toUpperCase()} ${h.host}:${h.port}`
                 }
               />
-            </aside>
-
-            <main className="flex min-w-0 flex-1 flex-col">
-              {sessions.length === 0 ? (
-                <div className="flex flex-1 items-center justify-center rounded-md border border-dashed border-gray-300 dark:border-gray-700">
-                  <Empty description="Dê um duplo clique em um host (ou use o botão Conectar) para abrir uma sessão" />
-                </div>
-              ) : (
-                <>
-                  <SessionTabs
-                    sessions={sessions}
-                    activeKey={activeKey}
-                    onChange={setActiveKey}
-                    onClose={closeSession}
-                  />
-                  {activeSession?.status === 'error' &&
-                    activeSession?.message && (
-                      <Alert
-                        type="error"
-                        showIcon
-                        style={{ marginBottom: 8 }}
-                        message={activeSession.message}
+            }
+          >
+            {sessions.length === 0 ? (
+              <div className="flex flex-1 items-center justify-center rounded-md border border-dashed border-gray-300 dark:border-gray-700">
+                <Empty description="Double-click a host (or use the Connect button) to open a session" />
+              </div>
+            ) : (
+              <>
+                <SessionTabs
+                  sessions={sessions}
+                  activeKey={activeKey}
+                  onChange={setActiveKey}
+                  onClose={closeSession}
+                />
+                {activeSession?.status === 'error' &&
+                  activeSession?.message && (
+                    <Alert
+                      type="error"
+                      showIcon
+                      style={{ marginBottom: 8 }}
+                      message={activeSession.message}
+                    />
+                  )}
+                <div className="min-h-0 flex-1">
+                  {sessions.map((session) => (
+                    <div
+                      key={session.key}
+                      style={{
+                        height: '100%',
+                        display: session.key === activeKey ? 'block' : 'none',
+                      }}
+                    >
+                      <RemoteSession
+                        session={session}
+                        active={session.key === activeKey}
+                        onStatusChange={onStatusChange}
                       />
-                    )}
-                  <div className="min-h-0 flex-1">
-                    {sessions.map((session) => (
-                      <div
-                        key={session.key}
-                        style={{
-                          height: '100%',
-                          display: session.key === activeKey ? 'block' : 'none',
-                        }}
-                      >
-                        <RemoteSession
-                          session={session}
-                          active={session.key === activeKey}
-                          onStatusChange={onStatusChange}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                </>
-              )}
-            </main>
-          </div>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+          </HostWorkspace>
         </PageContent>
       </Layout>
     </>
