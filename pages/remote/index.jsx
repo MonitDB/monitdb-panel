@@ -1,6 +1,6 @@
 /* eslint-disable unicorn/no-null */
-import { DesktopOutlined } from '@ant-design/icons'
-import { Alert, Empty, message } from 'antd'
+import { DesktopOutlined, SafetyCertificateOutlined } from '@ant-design/icons'
+import { Alert, Empty, message, Tag, Tooltip } from 'antd'
 import { NextSeo } from 'next-seo'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 
@@ -15,8 +15,6 @@ import { useRemoteStore } from '~/services/state-manager/remote-store'
 
 // RDP/VNC pesa mais que SSH (canvas + gravação por sessão) — cap menor.
 const MAX_SESSIONS = 4
-// O aviso é fechável; sem isto voltava a cada carregamento da página.
-const NOTICE_KEY = 'monitdb.remote.noticeDismissed'
 
 const Remote = () => {
   const { hosts, fetchHosts } = useRemoteStore()
@@ -27,30 +25,11 @@ const Remote = () => {
   // do RemoteSession — aqui só metadados serializáveis.
   const [sessions, setSessions] = useState([])
   const [activeKey, setActiveKey] = useState(null)
-  const [noticeVisible, setNoticeVisible] = useState(true)
   const sequenceReference = useRef(0)
 
   useEffect(() => {
     fetchHosts()
   }, [fetchHosts])
-
-  // localStorage só existe no cliente — o Next renderiza esta página no servidor.
-  useEffect(() => {
-    try {
-      if (window.localStorage.getItem(NOTICE_KEY) === '1') setNoticeVisible(false)
-    } catch {
-      // Sem storage o aviso apenas continua a aparecer.
-    }
-  }, [])
-
-  const dismissNotice = () => {
-    setNoticeVisible(false)
-    try {
-      window.localStorage.setItem(NOTICE_KEY, '1')
-    } catch {
-      // idem
-    }
-  }
 
   const openHostSession = (host) => {
     if (sessions.length >= MAX_SESSIONS) {
@@ -99,24 +78,24 @@ const Remote = () => {
       <Layout>
         <PageContent removeSidebarMargin={true}>
           <PageHeader
-            title="Remote Desktop (RDP/VNC)"
+            title={
+              <span className="flex items-center gap-2">
+                Remote Desktop (RDP/VNC)
+                <Tooltip title="Each tab opens a graphical session (RDP/VNC) on the host through Guacamole. Requires the OWNER permission for Remote Desktop; opening is audited and every session is recorded (replay) for compliance. The keyboard goes to the active tab. Hosts and credentials are managed in Configurations → Remote hosts.">
+                  <Tag
+                    color="warning"
+                    icon={<SafetyCertificateOutlined />}
+                    style={{ fontSize: 12, fontWeight: 400, marginInlineEnd: 0 }}
+                  >
+                    Privileged &amp; recorded
+                  </Tag>
+                </Tooltip>
+              </span>
+            }
             breadcrumbs={[{ title: 'Remote Desktop', href: '/remote/' }]}
           />
 
-          {noticeVisible && (
-            <Alert
-              type="warning"
-              showIcon
-              closable
-              onClose={dismissNotice}
-              style={{ marginBottom: 12 }}
-              message="Privileged and recorded remote access"
-              description="Each tab opens a graphical session (RDP/VNC) on the host through Guacamole. Requires the OWNER permission for Remote Desktop; opening is audited and every session is recorded (replay) for compliance. The keyboard goes to the active tab. Hosts and credentials are managed in Configurations → Remote hosts."
-            />
-          )}
-
           <HostWorkspace
-            recalcKey={noticeVisible ? 'notice' : 'no-notice'}
             sidebar={
               <HostTree
                 hosts={hosts}

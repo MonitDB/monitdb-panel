@@ -1,6 +1,6 @@
 /* eslint-disable unicorn/no-null */
-import { CodeOutlined } from '@ant-design/icons'
-import { Alert, Empty, message } from 'antd'
+import { CodeOutlined, SafetyCertificateOutlined } from '@ant-design/icons'
+import { Alert, Empty, message, Tag, Tooltip } from 'antd'
 import { NextSeo } from 'next-seo'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 
@@ -14,8 +14,6 @@ import Layout from '~/layouts/default'
 import { useSshStore } from '~/services/state-manager/ssh-store'
 
 const MAX_SESSIONS = 8
-// O aviso é fechável; sem isto voltava a cada carregamento da página.
-const NOTICE_KEY = 'monitdb.terminal.noticeDismissed'
 
 const Terminal = () => {
   const { hosts, fetchHosts } = useSshStore()
@@ -26,30 +24,11 @@ const Terminal = () => {
   // TerminalSession — aqui só metadados serializáveis.
   const [sessions, setSessions] = useState([])
   const [activeKey, setActiveKey] = useState(null)
-  const [noticeVisible, setNoticeVisible] = useState(true)
   const sequenceReference = useRef(0)
 
   useEffect(() => {
     fetchHosts()
   }, [fetchHosts])
-
-  // localStorage só existe no cliente — o Next renderiza esta página no servidor.
-  useEffect(() => {
-    try {
-      if (window.localStorage.getItem(NOTICE_KEY) === '1') setNoticeVisible(false)
-    } catch {
-      // Sem storage o aviso apenas continua a aparecer.
-    }
-  }, [])
-
-  const dismissNotice = () => {
-    setNoticeVisible(false)
-    try {
-      window.localStorage.setItem(NOTICE_KEY, '1')
-    } catch {
-      // idem
-    }
-  }
 
   const openSession = (host) => {
     if (sessions.length >= MAX_SESSIONS) {
@@ -96,24 +75,24 @@ const Terminal = () => {
       <Layout>
         <PageContent removeSidebarMargin={true}>
           <PageHeader
-            title="Terminal SSH"
+            title={
+              <span className="flex items-center gap-2">
+                Terminal SSH
+                <Tooltip title="Each tab opens a real shell session on the selected host. Requires the OWNER permission for SSH Terminal; the whole session (open, close and typed commands) is written to the audit trail. Hosts and credentials are managed in Configurations → SSH hosts.">
+                  <Tag
+                    color="warning"
+                    icon={<SafetyCertificateOutlined />}
+                    style={{ fontSize: 12, fontWeight: 400, marginInlineEnd: 0 }}
+                  >
+                    Privileged &amp; audited
+                  </Tag>
+                </Tooltip>
+              </span>
+            }
             breadcrumbs={[{ title: 'Terminal', href: '/terminal/' }]}
           />
 
-          {noticeVisible && (
-            <Alert
-              type="warning"
-              showIcon
-              closable
-              onClose={dismissNotice}
-              style={{ marginBottom: 12 }}
-              message="Privileged and audited access"
-              description="Each tab opens a real shell session on the selected host. Requires the OWNER permission for SSH Terminal; the whole session (open, close and typed commands) is written to the audit trail. Hosts and credentials are managed in Configurations → SSH hosts."
-            />
-          )}
-
           <HostWorkspace
-            recalcKey={noticeVisible ? 'notice' : 'no-notice'}
             sidebar={
               <HostTree
                 hosts={hosts}

@@ -13,8 +13,10 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
  *  - largura: a lateral é arrastável, com mínimo/máximo, e a preferência fica
  *    guardada por navegador.
  *
- * `recalcKey` força a remedição quando algo acima muda de altura (o aviso do
- * topo é fechável) — mais simples e previsível que observar o DOM.
+ * `recalcKey` força a remedição quando algo acima muda de altura — mais simples
+ * e previsível que observar o DOM. Hoje nenhuma das telas precisa dele (o aviso
+ * do topo passou a etiqueta fixa ao lado do título), mas fica para quem venha a
+ * pôr algo de altura variável acima da lista.
  */
 
 const WIDTH_KEY = 'monitdb.hostWorkspace.width'
