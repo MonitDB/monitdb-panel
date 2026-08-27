@@ -74,13 +74,14 @@ const SshHosts = () => {
     v.idTypeServerEnvironment = v.idTypeServerEnvironment ?? null
     // Sem seleção o antd manda undefined; [] limpa a coluna no PUT.
     v.technologies = v.technologies ?? []
-    const ok = await saveHost(v, editing?.id)
-    if (ok) {
+    const result = await saveHost(v, editing?.id)
+    if (result.ok) {
       message.success(editing ? 'Host updated.' : 'Host created.')
       setOpen(false)
       await fetchHosts()
     } else {
-      message.error('Could not save the host.')
+      // BUG-18: mostra o motivo que a API deu, nao um generico.
+      message.error(result.message)
     }
   }
 

@@ -41,9 +41,15 @@ export const useSshStore = create((set) => ({
       await (id
         ? apiV2().put(`/ssh-hosts/${id}`, payload)
         : apiV2().post('/ssh-hosts', payload))
-      return true
-    } catch {
-      return false
+      return { ok: true }
+    } catch (error) {
+      // BUG-18: a API diz o que esta errado (ex.: "Host must not contain
+      // spaces."). Engolir a mensagem era metade do problema — o utilizador
+      // corrigia as cegas.
+      return {
+        ok: false,
+        message: error?.response?.data?.message || 'Could not save the host.',
+      }
     } finally {
       set({ saving: false })
     }

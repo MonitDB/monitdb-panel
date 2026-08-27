@@ -77,12 +77,15 @@ const RemoteHosts = () => {
     values.idTypeServerEnvironment = values.idTypeServerEnvironment ?? null
     // Sem seleção o antd manda undefined; [] limpa a coluna no PUT.
     values.technologies = values.technologies ?? []
-    const ok = await saveHost(values, editing?.id)
-    if (ok) {
+    const result = await saveHost(values, editing?.id)
+    if (result.ok) {
       message.success(editing ? 'Host updated.' : 'Host created.')
       setOpen(false)
       await fetchHosts()
-    } else message.error('Could not save the host.')
+    } else {
+      // BUG-18: mostra o motivo que a API deu, nao um generico.
+      message.error(result.message)
+    }
   }
 
   const handleDelete = async (h) => {
