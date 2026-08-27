@@ -25,7 +25,14 @@ export const handleException = (error, errorMessage) => {
       return 'Unauthorized'
     }
 
-    return serverResponse?.message || HandleExceptionMessages.GENERAL
+    // BUG-22: a mensagem da API vive em response.DATA.message. Ler
+    // response.message devolvia sempre undefined, e todo o painel caia no
+    // generico -- o utilizador via "tente mais tarde" quando a API tinha
+    // dito exatamente o que estava errado (ex.: quem bloqueia um delete).
+    // NestJS manda string ou array (erros de validacao).
+    const apiMessage = serverResponse?.data?.message
+    if (Array.isArray(apiMessage)) return apiMessage.join(' ')
+    return apiMessage || HandleExceptionMessages.GENERAL
   }
 
   return error?.message || HandleExceptionMessages.GENERAL
