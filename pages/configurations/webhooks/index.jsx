@@ -63,7 +63,7 @@ const WebhooksPage = () => {
       message.success('Webhook salvo')
       setOpen(false)
     } catch {
-      message.error('Falha ao salvar o webhook')
+      message.error('Could not save the webhook.')
     }
   }
 
@@ -73,11 +73,11 @@ const WebhooksPage = () => {
     try {
       const r = await testWebhook(id)
       message.destroy('wh-test')
-      if (r?.ok) message.success('Teste enviado com sucesso.')
-      else message.warning(r?.message || 'Falha no envio.')
+      if (r?.ok) message.success('Test sent.')
+      else message.warning(r?.message || 'Delivery failed.')
     } catch {
       message.destroy('wh-test')
-      message.error('Falha ao testar o webhook.')
+      message.error('Could not test the webhook.')
     }
   }
 
@@ -130,7 +130,7 @@ const WebhooksPage = () => {
             Testar
           </Button>
           <Popconfirm
-            title="Excluir este webhook?"
+            title="Delete this webhook?"
             okText="Delete"
             cancelText="Cancel"
             onConfirm={() => deleteWebhook(record.id)}

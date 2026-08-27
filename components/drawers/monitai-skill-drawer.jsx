@@ -73,7 +73,7 @@ const AiSkillDrawer = () => {
       form.resetFields()
       closeDrawer()
     } catch {
-      message.error('Falha ao salvar a skill')
+      message.error('Could not save the skill.')
     }
   }
 
@@ -93,7 +93,7 @@ const AiSkillDrawer = () => {
             alignItems: 'center',
           }}
         >
-          <span>{isEdit ? 'Editar Skill' : 'Nova Skill'}</span>
+          <span>{isEdit ? 'Edit skill' : 'New skill'}</span>
           <Button
             type="text"
             onClick={() => setIsFullscreen(!isFullscreen)}
@@ -123,7 +123,7 @@ const AiSkillDrawer = () => {
             <Form layout="vertical" form={form}>
               <Form.Item
                 name="name"
-                label="Nome da skill (tool)"
+                label="Skill name (tool)"
                 extra="snake_case, ex.: get_top_slow_queries"
                 rules={[{ required: true }]}
               >
@@ -206,7 +206,7 @@ const AiSkillDrawer = () => {
             }}
           >
             <Space>
-              <Button onClick={closeDrawer}>Cancelar</Button>
+              <Button onClick={closeDrawer}>Cancel</Button>
               <Button onClick={handleSubmit} type="primary" loading={loadingSkill}>
                 {isEdit ? 'Save' : 'Create'}
               </Button>

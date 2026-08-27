@@ -121,7 +121,7 @@ const ChatAI = () => {
     if (!sql) return
     setPendingQuery(sql)
     antdMessage.success(
-      'SQL enviado para o Query Window. Abra o Query Window de um servidor para revisar e executar.'
+      'SQL sent to the Query Window. Open a server\u2019s Query Window to review it and run it.'
     )
   }
 

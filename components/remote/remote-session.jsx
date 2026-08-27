@@ -150,7 +150,7 @@ const startSession = async ({ session, openSession, isDisposed, references, emit
     if (!isDisposed())
       emitStatus(
         'error',
-        error?.response?.data?.message || error?.message || 'Falha.'
+        error?.response?.data?.message || error?.message || 'Failed.'
       )
   }
 }

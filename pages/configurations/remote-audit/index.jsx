@@ -9,9 +9,9 @@ import Layout from '~/layouts/default'
 import { useRemoteStore } from '~/services/state-manager/remote-store'
 
 const EVENT = {
-  open: { color: 'blue', label: 'Abertura' },
-  close: { color: 'default', label: 'Fecho' },
-  error: { color: 'red', label: 'Erro' },
+  open: { color: 'blue', label: 'Open' },
+  close: { color: 'default', label: 'Close' },
+  error: { color: 'red', label: 'Error' },
 }
 
 const RemoteAudit = () => {

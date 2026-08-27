@@ -80,7 +80,7 @@ const Sftp = () => {
     try {
       await sftpDownload(hostId, `${path.replace(/\/+$/, '')}/${name}`, name)
     } catch {
-      message.error('Falha no download.')
+      message.error('Download failed.')
     } finally {
       setBusy(false)
     }
@@ -92,7 +92,7 @@ const Sftp = () => {
       message.success('Removido.')
       await load(hostId, path)
     } catch {
-      message.error('Falha ao remover.')
+      message.error('Could not remove the file.')
     }
   }
 
@@ -103,7 +103,7 @@ const Sftp = () => {
       message.success(`Enviado: ${file.name}`)
       await load(hostId, path)
     } catch (error) {
-      message.error(error?.response?.data?.message || 'Falha no envio.')
+      message.error(error?.response?.data?.message || 'Upload failed.')
     } finally {
       setBusy(false)
     }
@@ -173,7 +173,7 @@ const Sftp = () => {
               <Space>
                 <Select
                   style={{ width: 280 }}
-                  placeholder="Selecione um host"
+                  placeholder="Pick a host"
                   value={hostId}
                   onChange={setHostId}
                   options={groupHostsByEnvironment(
@@ -236,8 +236,8 @@ const Sftp = () => {
               pagination={{ pageSize: 25, showSizeChanger: false }}
               locale={{
                 emptyText: hostId
-                  ? 'Selecione um host e clique em Abrir.'
-                  : 'Selecione um host.',
+                  ? 'Pick a host and choose Open.'
+                  : 'Pick a host.',
               }}
             />
           )}

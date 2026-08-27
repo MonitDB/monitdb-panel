@@ -4,12 +4,12 @@
 export const loadGuacamole = () =>
   new Promise((resolve, reject) => {
     if (typeof window === 'undefined') {
-      reject(new Error('Guacamole só carrega no browser.'))
+      reject(new Error('Guacamole only loads in the browser.'))
       return
     }
     if (window.Guacamole) return resolve(window.Guacamole)
     const onError = () =>
-      reject(new Error('Falha ao carregar o cliente Guacamole.'))
+      reject(new Error('Could not load the Guacamole client.'))
     const existing = document.querySelector('script[data-guac]')
     if (existing) {
       existing.addEventListener('load', () => resolve(window.Guacamole))

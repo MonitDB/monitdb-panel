@@ -79,7 +79,7 @@ const AiSkillsPage = () => {
       width: 60,
       render: (text, record) => (
         <Popconfirm
-          title="Excluir esta skill?"
+          title="Delete this skill?"
           okText="Delete"
           cancelText="Cancel"
           onConfirm={(event) => {

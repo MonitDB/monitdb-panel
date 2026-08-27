@@ -1,6 +1,6 @@
 export function minutesToHours(minutes) {
   if (typeof minutes !== 'number' || minutes < 0) {
-    throw new Error('O argumento deve ser um número positivo.')
+    throw new Error('The argument must be a positive number.')
   }
 
   const hours = Math.floor(minutes / 60)
@@ -31,7 +31,7 @@ export function calculateMinutesFromDate(value) {
   const date = new Date(value)
 
   if (Number.isNaN(date.getTime())) {
-    throw new TypeError('O valor fornecido não é uma data válida.')
+    throw new TypeError('The value provided is not a valid date.')
   }
 
   return date.getHours() * 60 + date.getMinutes()

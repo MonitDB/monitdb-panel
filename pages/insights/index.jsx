@@ -55,7 +55,7 @@ const Insights = () => {
     }
     if (insights.length === 0) {
       return (
-        <Empty description="Nenhum insight ainda. Clique em 'Rodar agora' para gerar." />
+        <Empty description="No insights yet — use Run now to generate the first ones." />
       )
     }
     return (
@@ -96,14 +96,14 @@ const Insights = () => {
         <PageWrapper className="p-8">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h1 className="text-2xl font-bold">Insights da IA</h1>
+              <h1 className="text-2xl font-bold">AI Insights</h1>
               <p className="text-gray">
-                Análise proativa por servidor — diagnóstico, causa provável e ações
-                recomendadas, geradas a partir da telemetria real.
+                Proactive analysis per server — diagnosis, likely cause and
+                recommended actions, drawn from the real telemetry.
               </p>
             </div>
             <Button type="primary" loading={running} onClick={handleRun}>
-              ▶ Rodar agora
+              ▶ Run now
             </Button>
           </div>
           {renderBody()}

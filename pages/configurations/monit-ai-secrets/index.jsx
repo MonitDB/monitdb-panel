@@ -51,7 +51,7 @@ const AiSecretsPage = () => {
       setOpen(false)
       form.resetFields()
     } catch {
-      message.error('Falha ao salvar o segredo')
+      message.error('Could not save the secret.')
     }
   }
 
@@ -70,7 +70,7 @@ const AiSecretsPage = () => {
       width: 60,
       render: (text, record) => (
         <Popconfirm
-          title="Excluir este segredo?"
+          title="Delete this secret?"
           okText="Delete"
           cancelText="Cancel"
           onConfirm={(event) => {
@@ -112,20 +112,20 @@ const AiSecretsPage = () => {
             type="info"
             showIcon
             style={{ marginBottom: 16 }}
-            message="Chave para o RAG / embeddings"
+            message="Key for the RAG / embeddings"
             description={
               <span>
-                Crie um segredo chamado <Typography.Text code>EMBEDDING_OPENAI_KEY</Typography.Text>{' '}
-                com uma chave OpenAI válida para o RAG gerar embeddings (text-embedding-3-large),
-                independente do provider de chat. Opcionais:{' '}
-                <Typography.Text code>EMBEDDING_PROVIDER</Typography.Text> (openai|copilot|azure) e{' '}
-                <Typography.Text code>EMBEDDING_URL</Typography.Text> (endpoint OpenAI-compatível).
+                Create a secret named <Typography.Text code>EMBEDDING_OPENAI_KEY</Typography.Text>{' '}
+                holding a valid OpenAI key, so the RAG can generate embeddings
+                (text-embedding-3-large) independently of the chat provider. Optional:{' '}
+                <Typography.Text code>EMBEDDING_PROVIDER</Typography.Text> (openai|copilot|azure) and{' '}
+                <Typography.Text code>EMBEDDING_URL</Typography.Text> (OpenAI-compatible endpoint).
                 <Button
                   size="small"
                   type="link"
                   onClick={() => openNew({ name: 'EMBEDDING_OPENAI_KEY' })}
                 >
-                  Criar EMBEDDING_OPENAI_KEY
+                  Create EMBEDDING_OPENAI_KEY
                 </Button>
               </span>
             }
@@ -160,7 +160,7 @@ const AiSecretsPage = () => {
               <Form.Item
                 name="value"
                 label="Valor (chave)"
-                extra="Ao editar, deixe em branco para manter o valor atual."
+                extra="Leave it blank while editing to keep the current value."
               >
                 <Input.Password placeholder="sk-..." autoComplete="new-password" />
               </Form.Item>

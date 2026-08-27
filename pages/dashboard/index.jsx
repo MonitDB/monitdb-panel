@@ -359,7 +359,7 @@ const DashboardPage = () => {
                 </div>
               )}
               {serversStatus === 'loaded' && (
-                <span>Nenhum servidor cadastrado.</span>
+                <span>No servers registered yet.</span>
               )}
               {serversStatus !== 'error' && serversStatus !== 'loaded' && (
                 <Loading />

@@ -19,11 +19,11 @@ const DataMasking = () => {
     if (ok) {
       message.success(
         checked
-          ? 'Mascaramento de PII ativado para o servidor.'
-          : 'Mascaramento de PII desativado para o servidor.'
+          ? 'PII masking turned on for this server.'
+          : 'PII masking turned off for this server.'
       )
     } else {
-      message.error('Falha ao salvar. Tente novamente.')
+      message.error('Could not save. Try again.')
     }
   }
 
@@ -38,7 +38,7 @@ const DataMasking = () => {
       ellipsis: true,
     },
     {
-      title: 'Mascarar PII para a IA',
+      title: 'Mask PII for the AI',
       key: 'mask',
       width: 200,
       render: (text, r) => (
@@ -81,7 +81,7 @@ const DataMasking = () => {
       <Layout>
         <PageContent removeSidebarMargin={true}>
           <PageHeader
-            title="Mascaramento de dados pessoais para a IA"
+            title="Personal data masking for the AI"
             breadcrumbs={[
               { title: 'Configurations', href: '/configurations/' },
               { title: 'Mascaramento de PII', href: '/configurations/data-masking/' },

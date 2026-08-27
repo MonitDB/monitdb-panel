@@ -109,7 +109,7 @@ const ServerCard = ({
       if (result?.ok) antdMessage.success(result.message)
       else antdMessage.warning(result?.message || 'Could not start the collector.')
     } catch {
-      antdMessage.error('Falha ao iniciar a coleta.')
+      antdMessage.error('Could not start the collector.')
     } finally {
       setStartingCollector(false)
     }

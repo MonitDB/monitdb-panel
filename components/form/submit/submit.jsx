@@ -8,7 +8,7 @@ const Submit = ({
   disabled,
   className = '',
   loading = false,
-  loadingText = 'Carregando...',
+  loadingText = 'Loading…',
   ...properties
 }) => {
   return (

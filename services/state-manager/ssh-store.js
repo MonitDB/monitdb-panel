@@ -65,7 +65,7 @@ export const useSshStore = create((set) => ({
     } catch (error) {
       return {
         ok: false,
-        message: error?.response?.data?.message || 'Falha no teste.',
+        message: error?.response?.data?.message || 'Test failed.',
       }
     }
   },

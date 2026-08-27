@@ -7,10 +7,10 @@ import Layout from '~/layouts/default'
 import { useSshStore } from '~/services/state-manager/ssh-store'
 
 const EVENT = {
-  open: { color: 'blue', label: 'Abertura' },
-  command: { color: 'geekblue', label: 'Comando' },
-  close: { color: 'default', label: 'Fecho' },
-  error: { color: 'red', label: 'Erro' },
+  open: { color: 'blue', label: 'Open' },
+  command: { color: 'geekblue', label: 'Command' },
+  close: { color: 'default', label: 'Close' },
+  error: { color: 'red', label: 'Error' },
 }
 
 const SshAudit = () => {

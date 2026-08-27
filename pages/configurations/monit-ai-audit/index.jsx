@@ -85,8 +85,8 @@ const AiAudit = () => {
         ok ? (
           <Tag color="green">OK</Tag>
         ) : (
-          <Tooltip title={r.error || 'Falha'}>
-            <Tag color="red">Erro</Tag>
+          <Tooltip title={r.error || 'Failed'}>
+            <Tag color="red">Error</Tag>
           </Tooltip>
         ),
     },
@@ -94,14 +94,14 @@ const AiAudit = () => {
 
   return (
     <>
-      <NextSeo title="Auditoria da IA - MonitDB" />
+      <NextSeo title="AI Audit - MonitDB" />
       <Layout>
         <PageContent removeSidebarMargin={true}>
           <PageHeader
-            title="Auditoria das queries da IA"
+            title="AI query audit"
             breadcrumbs={[
               { title: 'Configurations', href: '/configurations/' },
-              { title: 'Auditoria da IA', href: '/configurations/monit-ai-audit/' },
+              { title: 'AI Audit', href: '/configurations/monit-ai-audit/' },
             ]}
             extra={
               <Space>
