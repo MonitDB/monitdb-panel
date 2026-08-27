@@ -50,7 +50,7 @@ const AiSkillsPage = () => {
       render: (text) => <Tag color="blue">{text}</Tag>,
     },
     {
-      title: 'Descrição',
+      title: 'Description',
       dataIndex: 'description',
       key: 'description',
       ellipsis: true,
@@ -68,8 +68,8 @@ const AiSkillsPage = () => {
             event.stopPropagation()
             toggleEnabled(record.id)
           }}
-          checkedChildren="Sim"
-          unCheckedChildren="Não"
+          checkedChildren="Yes"
+          unCheckedChildren="No"
         />
       ),
     },
@@ -80,8 +80,8 @@ const AiSkillsPage = () => {
       render: (text, record) => (
         <Popconfirm
           title="Excluir esta skill?"
-          okText="Excluir"
-          cancelText="Cancelar"
+          okText="Delete"
+          cancelText="Cancel"
           onConfirm={(event) => {
             event?.stopPropagation?.()
             deleteSkill(record.id)

@@ -14,7 +14,7 @@ const Highlighter = ({
   try {
     formattedCode = JSON.stringify(JSON.parse(code), undefined, 2)
   } catch (error) {
-    console.error('Erro ao formatar o código JSON:', error.message)
+    console.error('Could not format the JSON:', error.message)
     formattedCode = code
   }
 

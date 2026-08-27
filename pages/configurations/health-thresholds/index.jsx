@@ -65,65 +65,65 @@ const HealthThresholds = () => {
       return
     }
     if (values.cpuCrit < values.cpuWarn || values.diskCrit < values.diskWarn) {
-      message.error('O limiar crítico deve ser maior ou igual ao de atenção.')
+      message.error('The critical threshold must be greater than or equal to the warning one.')
       return
     }
     try {
       await saveThreshold(values)
-      message.success('Limiares salvos.')
+      message.success('Thresholds saved.')
       setModal({ open: false, editing: null })
       fetchThresholds()
     } catch {
-      message.error('Falha ao salvar os limiares.')
+      message.error('Could not save the thresholds.')
     }
   }
 
   const onDelete = async (serverId) => {
     try {
       await deleteThreshold(serverId)
-      message.success('Override removido (volta a usar o default global).')
+      message.success('Override removed — this server goes back to the global default.')
       fetchThresholds()
     } catch {
-      message.error('Falha ao remover o override.')
+      message.error('Could not remove the override.')
     }
   }
 
   const modalTitle = (() => {
-    if (!modal.editing) return 'Novo override por servidor'
-    if (modal.editing.serverId === 0) return 'Default global'
+    if (!modal.editing) return 'New per-server override'
+    if (modal.editing.serverId === 0) return 'Global default'
     const label = modal.editing.serverName || `#${modal.editing.serverId}`
-    return `Servidor ${label}`
+    return `Server ${label}`
   })()
 
   const columns = [
     {
-      title: 'Alvo',
+      title: 'Target',
       dataIndex: 'serverName',
       key: 'serverName',
       render: (n, r) =>
-        r.serverId === 0 ? <b>Default global</b> : n || `#${r.serverId}`,
+        r.serverId === 0 ? <b>Global default</b> : n || `#${r.serverId}`,
     },
-    { title: 'CPU atenção %', dataIndex: 'cpuWarn', key: 'cpuWarn', width: 120, align: 'right' },
-    { title: 'CPU crítico %', dataIndex: 'cpuCrit', key: 'cpuCrit', width: 120, align: 'right' },
-    { title: 'Disco atenção %', dataIndex: 'diskWarn', key: 'diskWarn', width: 130, align: 'right' },
-    { title: 'Disco crítico %', dataIndex: 'diskCrit', key: 'diskCrit', width: 130, align: 'right' },
-    { title: 'Mem. mín. (MB)', dataIndex: 'memMinMb', key: 'memMinMb', width: 130, align: 'right' },
+    { title: 'CPU warning %', dataIndex: 'cpuWarn', key: 'cpuWarn', width: 120, align: 'right' },
+    { title: 'CPU critical %', dataIndex: 'cpuCrit', key: 'cpuCrit', width: 120, align: 'right' },
+    { title: 'Disk warning %', dataIndex: 'diskWarn', key: 'diskWarn', width: 130, align: 'right' },
+    { title: 'Disk critical %', dataIndex: 'diskCrit', key: 'diskCrit', width: 130, align: 'right' },
+    { title: 'Min. free memory (MB)', dataIndex: 'memMinMb', key: 'memMinMb', width: 130, align: 'right' },
     {
-      title: 'Ações',
+      title: 'Actions',
       key: 'actions',
       width: 170,
       render: (_, r) => (
         <Space size="small">
           <Button size="small" onClick={() => openEdit(r)}>
-            Editar
+            Edit
           </Button>
           {r.serverId === 0 ? null : (
             <Popconfirm
-              title="Remover este override?"
+              title="Remove this override?"
               onConfirm={() => onDelete(r.serverId)}
             >
               <Button size="small" danger>
-                Remover
+                Remove
               </Button>
             </Popconfirm>
           )}
@@ -134,26 +134,26 @@ const HealthThresholds = () => {
 
   return (
     <>
-      <NextSeo title="Limiares de saúde - MonitDB" />
+      <NextSeo title="Health Thresholds - MonitDB" />
       <Layout>
         <PageContent removeSidebarMargin={true}>
           <PageHeader
-            title="Limiares de saúde"
+            title="Health Thresholds"
             breadcrumbs={[
               { title: 'Configurations', href: '/configurations/' },
-              { title: 'Limiares de saúde', href: '/configurations/health-thresholds/' },
+              { title: 'Health Thresholds', href: '/configurations/health-thresholds/' },
             ]}
             extra={
               <Space>
                 <Button onClick={fetchThresholds} loading={loading}>
-                  Atualizar
+                  Refresh
                 </Button>
                 <Button
                   type="primary"
                   onClick={openAdd}
                   disabled={serverOptions.length === 0}
                 >
-                  + Override por servidor
+                  + Per-server override
                 </Button>
               </Space>
             }
@@ -163,8 +163,8 @@ const HealthThresholds = () => {
             type="info"
             showIcon
             style={{ marginBottom: 12 }}
-            message="Limiares que definem a saúde (bolinha) dos servidores"
-            description="A cor de status usa estes limiares: atenção (amarelo) e crítico (vermelho) para CPU/disco (%) e memória mínima livre (MB). O 'Default global' vale para todos; um override por servidor tem prioridade."
+            message="The thresholds behind each server's health dot"
+            description="The status colour comes from these thresholds: warning (yellow) and critical (red) for CPU and disk (%), plus minimum free memory (MB). The global default applies to every server; a per-server override wins over it."
           />
 
           <Table
@@ -180,7 +180,7 @@ const HealthThresholds = () => {
             open={modal.open}
             onCancel={() => setModal({ open: false, editing: null })}
             onOk={onSave}
-            okText="Salvar"
+            okText="Save"
             destroyOnClose
             title={modalTitle}
           >
@@ -188,21 +188,21 @@ const HealthThresholds = () => {
               type="info"
               showIcon
               style={{ marginBottom: 16 }}
-              message="Como estes limiares viram a cor do card no dashboard"
+              message="How these thresholds become the card colour on the dashboard"
               description={
                 <div style={{ fontSize: 13, lineHeight: 1.7 }}>
-                  🟢 <b>Saudável</b>: abaixo dos limiares.
+                  🟢 <b>Healthy</b>: below every threshold.
                   <br />
-                  🟡 <b>Atenção</b>: CPU% ou Disco% acima do valor de{' '}
-                  <i>atenção</i>.
+                  🟡 <b>Warning</b>: CPU% or Disk% above the{' '}
+                  <i>warning</i> value.
                   <br />
-                  🟠 <b>Crítico</b>: CPU% ou Disco% acima do <i>crítico</i>, ou
-                  memória livre abaixo do mínimo (MB).
+                  🟠 <b>Critical</b>: CPU% or Disk% above <i>critical</i>, or free
+                  memory below the minimum (MB).
                   <br />
-                  🔵 <b>Info</b>: há alerta ativo. · 🔴 <b>Offline</b>: sem
-                  conexão.
-                  <br />O <i>crítico</i> deve ser ≥ <i>atenção</i>. Um override
-                  por servidor tem prioridade sobre o default global.
+                  🔵 <b>Info</b>: an alert is active. · 🔴 <b>Offline</b>: no
+                  connection.
+                  <br />The <i>critical</i> value must be ≥ <i>warning</i>. A
+                  per-server override wins over the global default.
                 </div>
               }
             />
@@ -214,29 +214,29 @@ const HealthThresholds = () => {
               ) : (
                 <Form.Item
                   name="serverId"
-                  label="Servidor"
-                  rules={[{ required: true, message: 'Selecione o servidor' }]}
+                  label="Server"
+                  rules={[{ required: true, message: 'Pick a server' }]}
                 >
-                  <Select options={serverOptions} placeholder="Selecione um servidor" />
+                  <Select options={serverOptions} placeholder="Pick a server" />
                 </Form.Item>
               )}
               <Space>
-                <Form.Item name="cpuWarn" label="CPU atenção %">
+                <Form.Item name="cpuWarn" label="CPU warning %">
                   <InputNumber min={0} max={100} />
                 </Form.Item>
-                <Form.Item name="cpuCrit" label="CPU crítico %">
+                <Form.Item name="cpuCrit" label="CPU critical %">
                   <InputNumber min={0} max={100} />
                 </Form.Item>
               </Space>
               <Space>
-                <Form.Item name="diskWarn" label="Disco atenção %">
+                <Form.Item name="diskWarn" label="Disk warning %">
                   <InputNumber min={0} max={100} />
                 </Form.Item>
-                <Form.Item name="diskCrit" label="Disco crítico %">
+                <Form.Item name="diskCrit" label="Disk critical %">
                   <InputNumber min={0} max={100} />
                 </Form.Item>
               </Space>
-              <Form.Item name="memMinMb" label="Memória mínima livre (MB)">
+              <Form.Item name="memMinMb" label="Minimum free memory (MB)">
                 <InputNumber min={0} style={{ width: 200 }} />
               </Form.Item>
             </Form>

@@ -83,7 +83,7 @@ const WebhooksPage = () => {
 
   const columns = [
     {
-      title: 'Nome',
+      title: 'Name',
       dataIndex: 'name',
       key: 'name',
       render: (text) => <Tag icon={<ApiOutlined />}>{text}</Tag>,
@@ -95,14 +95,14 @@ const WebhooksPage = () => {
       render: (t) => <Tag>{t}</Tag>,
     },
     {
-      title: 'Severidade mín.',
+      title: 'Min. severity',
       dataIndex: 'minSeverity',
       key: 'minSeverity',
       render: (s) => <Tag color={SEV_COLOR[s] || 'default'}>{s}</Tag>,
     },
     { title: 'URL', dataIndex: 'url', key: 'url', ellipsis: true },
     {
-      title: 'Ativo',
+      title: 'Enabled',
       dataIndex: 'enabled',
       key: 'enabled',
       width: 70,
@@ -131,8 +131,8 @@ const WebhooksPage = () => {
           </Button>
           <Popconfirm
             title="Excluir este webhook?"
-            okText="Excluir"
-            cancelText="Cancelar"
+            okText="Delete"
+            cancelText="Cancel"
             onConfirm={() => deleteWebhook(record.id)}
           >
             <Button
@@ -183,15 +183,15 @@ const WebhooksPage = () => {
             onCancel={() => setOpen(false)}
             onOk={handleOk}
             confirmLoading={saving}
-            okText="Salvar"
-            cancelText="Cancelar"
+            okText="Save"
+            cancelText="Cancel"
             destroyOnClose
           >
             <Form layout="vertical" form={form}>
               <Form.Item name="id" hidden>
                 <Input />
               </Form.Item>
-              <Form.Item name="name" label="Nome" rules={[{ required: true }]}>
+              <Form.Item name="name" label="Name" rules={[{ required: true }]}>
                 <Input placeholder="Alertas do time de DBA" />
               </Form.Item>
               <Form.Item name="url" label="URL" rules={[{ required: true }]}>
@@ -202,14 +202,14 @@ const WebhooksPage = () => {
                   options={[
                     { value: 'slack', label: 'Slack' },
                     { value: 'teams', label: 'Microsoft Teams' },
-                    { value: 'generic', label: 'Genérico (POST JSON)' },
+                    { value: 'generic', label: 'Generic (POST JSON)' },
                   ]}
                 />
               </Form.Item>
               <Form.Item
                 name="minSeverity"
-                label="Severidade mínima"
-                extra="Só dispara para eventos com severidade igual ou acima desta."
+                label="Minimum severity"
+                extra="Only fires for events at this severity or above."
               >
                 <Select
                   options={[
@@ -219,7 +219,7 @@ const WebhooksPage = () => {
                   ]}
                 />
               </Form.Item>
-              <Form.Item name="enabled" label="Ativo" valuePropName="checked">
+              <Form.Item name="enabled" label="Enabled" valuePropName="checked">
                 <Switch />
               </Form.Item>
             </Form>

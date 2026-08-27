@@ -265,7 +265,7 @@ const InstalledVersions = ({ tabName }) => {
                         ),
                         // Grupo para instâncias sem ambiente atribuído — antes sumiam
                         // da tabela detalhada (o filtro por ambiente nunca casava NULL).
-                        { id: null, key: 'no-env', label: 'Sem ambiente' },
+                        { id: null, key: 'no-env', label: 'No environment' },
                       ]
                         .map(({ id, key, label }, environmentIndex) => {
                             const filteredVersions = buildEnvironmentVersions({
@@ -303,7 +303,7 @@ const InstalledVersions = ({ tabName }) => {
                                         record._available ? (
                                           <Tag color="green">Coletado</Tag>
                                         ) : (
-                                          <Tag color="orange">Indisponível</Tag>
+                                          <Tag color="orange">Unavailable</Tag>
                                         ),
                                     },
                                     {

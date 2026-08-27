@@ -64,7 +64,7 @@ const Sftp = () => {
       setEntries(data.entries || [])
     } catch (error) {
       message.error(
-        error?.response?.data?.message || 'Falha ao listar o diretório.'
+        error?.response?.data?.message || 'Could not list the directory.'
       )
     } finally {
       setLoading(false)
@@ -112,7 +112,7 @@ const Sftp = () => {
 
   const columns = [
     {
-      title: 'Nome',
+      title: 'Name',
       dataIndex: 'name',
       key: 'name',
       render: (name, r) =>
@@ -135,9 +135,9 @@ const Sftp = () => {
       width: 110,
       render: (s, r) => (r.isDir ? '—' : humanSize(s)),
     },
-    { title: 'Permissões', dataIndex: 'perms', key: 'perms', width: 120 },
+    { title: 'Permissions', dataIndex: 'perms', key: 'perms', width: 120 },
     {
-      title: 'Ações',
+      title: 'Actions',
       key: 'actions',
       width: 200,
       render: (t, r) =>
@@ -149,8 +149,8 @@ const Sftp = () => {
             <Popconfirm
               title={`Remover ${r.name}?`}
               onConfirm={() => handleDelete(r.name)}
-              okText="Remover"
-              cancelText="Cancelar"
+              okText="Remove"
+              cancelText="Cancel"
             >
               <Button size="small" danger>
                 Remover
@@ -198,8 +198,8 @@ const Sftp = () => {
             type="warning"
             showIcon
             style={{ marginBottom: 12 }}
-            message="Transferência privilegiada e auditada"
-            description="Navegar, baixar, enviar e remover arquivos no host via SFTP. Requer OWNER de Terminal SSH; cada operação é registrada na auditoria. Mesma verificação de host key (TOFU) do terminal."
+            message="Privileged &amp; audited transfer"
+            description="Browse, download, upload and remove files on the host over SFTP. Requires SSH Terminal OWNER; every operation is written to the audit trail. Same host key check (TOFU) as the terminal."
           />
 
           {hostId && path !== '.' && (

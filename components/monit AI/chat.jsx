@@ -131,7 +131,7 @@ const ChatAI = () => {
     const md = messages
       .filter((m) => ['user', 'assistant'].includes(m.role))
       .map((m) => {
-        const who = m.role === 'user' ? '## 🧑 Usuário' : '## 🤖 MonitAI'
+        const who = m.role === 'user' ? '## 🧑 User' : '## 🤖 MonitAI'
         return `${who}\n\n${(m.message || '').trim()}\n`
       })
       .join('\n---\n\n')
@@ -143,7 +143,7 @@ const ChatAI = () => {
       })
       saveAs(blob, `monitai-chat-${chatId}.md`)
     } catch {
-      antdMessage.error('Não foi possível exportar a conversa.')
+      antdMessage.error('Could not export the conversation.')
     }
   }
 
@@ -361,7 +361,7 @@ const ChatAI = () => {
               color: '#888',
               borderBottom: '1px solid #f0f0f0',
             }}
-            title="Uso desta sessão. Custo histórico é estimado a partir do total de tokens."
+            title="Usage for this session. Historical cost is estimated from the total token count."
           >
             <span>💬 {sessionUsage.messageCount} msgs</span>
             <span>🔢 {Number(sessionUsage.totalTokens || 0).toLocaleString('pt-BR')} tokens</span>

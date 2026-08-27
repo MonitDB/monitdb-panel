@@ -23,14 +23,14 @@ const AiAudit = () => {
       render: (t) => (t ? new Date(t).toLocaleString() : '—'),
     },
     {
-      title: 'Usuário',
+      title: 'User',
       dataIndex: 'userName',
       key: 'userName',
       width: 130,
       render: (n, r) => n || `#${r.userId ?? '?'}`,
     },
     {
-      title: 'Servidor',
+      title: 'Server',
       dataIndex: 'serverName',
       key: 'serverName',
       width: 130,
@@ -69,7 +69,7 @@ const AiAudit = () => {
       render: (r) => (r == null ? '—' : r),
     },
     {
-      title: 'Duração',
+      title: 'Duration',
       dataIndex: 'durationMs',
       key: 'durationMs',
       width: 90,
@@ -116,8 +116,8 @@ const AiAudit = () => {
             type="info"
             showIcon
             style={{ marginBottom: 12 }}
-            message="Trilha imutável de execuções da IA"
-            description="Cada consulta SQL que a IA executa (run_query e AI Skills) é registrada: quem, em qual servidor, a query, linhas retornadas, duração e sucesso/erro. Somente leitura, para auditoria/compliance."
+            message="Immutable trail of every AI execution"
+            description="Every SQL statement the AI runs (run_query and AI Skills) is recorded: who ran it, on which server, the query itself, rows returned, duration and whether it succeeded. Read-only, for audit and compliance."
           />
 
           <Table

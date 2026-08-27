@@ -63,7 +63,7 @@ const RecordingPlayer = ({ name, open, onClose }) => {
         rec.onseek = (millis) => { if (!seekingReference.current) setPosition(millis) }
       } catch (error_) {
         if (!cancelled) {
-          setError(error_?.message || 'Falha ao carregar a gravação.')
+          setError(error_?.message || 'Could not load the recording.')
           setLoading(false)
         }
       }
@@ -97,7 +97,7 @@ const RecordingPlayer = ({ name, open, onClose }) => {
       width={920}
       footer={null}
       destroyOnClose
-      title={`Replay da sessão — ${name || ''}`}
+      title={`Session replay — ${name || ''}`}
     >
       {error ? (
         <Alert type="error" showIcon message={error} style={{ marginBottom: 12 }} />
@@ -110,14 +110,14 @@ const RecordingPlayer = ({ name, open, onClose }) => {
         {loading && !error ? (
           <Spin
             style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)' }}
-            tip="Carregando gravação…"
+            tip="Loading recording…"
           />
         ) : null}
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 12 }}>
         <Button type="primary" onClick={toggle} disabled={loading || !!error}>
-          {playing ? '⏸ Pausar' : '▶ Reproduzir'}
+          {playing ? '⏸ Pause' : '▶ Play'}
         </Button>
         <span style={{ fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap' }}>
           {fmt(position)} / {fmt(duration)}

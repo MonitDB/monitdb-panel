@@ -23,13 +23,13 @@ const RemoteAudit = () => {
   }, [fetchAudit])
 
   const handleDownload = async (name) => {
-    message.loading({ content: 'Baixando gravação…', key: 'rec' })
+    message.loading({ content: 'Downloading recording…', key: 'rec' })
     try {
       await downloadRecording(name)
-      message.success({ content: 'Gravação baixada.', key: 'rec', duration: 3 })
+      message.success({ content: 'Recording downloaded.', key: 'rec', duration: 3 })
     } catch {
       message.error({
-        content: 'Gravação ainda não disponível ou não encontrada.',
+        content: 'Recording not available yet, or not found.',
         key: 'rec',
         duration: 5,
       })
@@ -54,7 +54,7 @@ const RemoteAudit = () => {
         p ? <Tag color={p === 'vnc' ? 'purple' : 'blue'}>{p.toUpperCase()}</Tag> : '—',
     },
     {
-      title: 'Usuário',
+      title: 'User',
       dataIndex: 'userName',
       key: 'userName',
       width: 140,
@@ -72,7 +72,7 @@ const RemoteAudit = () => {
       ),
     },
     {
-      title: 'Gravação',
+      title: 'Recording',
       dataIndex: 'recording',
       key: 'recording',
       render: (rec) =>
@@ -121,8 +121,8 @@ const RemoteAudit = () => {
             type="info"
             showIcon
             style={{ marginBottom: 12 }}
-            message="Sessões e gravações"
-            description="Cada sessão RDP/VNC registra quem conectou, host e quando, e é gravada (replay). O arquivo .guac é reproduzível num player do Guacamole — útil para auditoria/compliance. A gravação fica disponível após o fim da sessão."
+            message="Sessions and recordings"
+            description="Every RDP/VNC session records who connected, to which host and when, and is captured for replay. The .guac file plays back in a Guacamole player — useful for audit and compliance. The recording becomes available once the session ends."
           />
 
           <Table

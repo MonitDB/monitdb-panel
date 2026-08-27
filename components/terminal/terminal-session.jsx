@@ -17,16 +17,16 @@ const wireSocket = ({ socket, term, session, emitStatus, activeReference }) => {
     emitStatus('connected')
     if (activeReference.current) term.focus()
     if (payload?.host)
-      term.writeln(`[32m● conectado a ${payload.host}[0m\r\n`)
+      term.writeln(`[32m● connected to ${payload.host}[0m\r\n`)
   })
   socket.on('ssh:hostkey', (payload) => {
     if (payload?.firstUse)
-      term.writeln(`\r\n🔑 host key registrada nesta primeira conexão (TOFU).`)
+      term.writeln(`\r\n🔑 host key recorded on this first connection (TOFU).`)
   })
   socket.on('ssh:data', (data) => term.write(data))
   socket.on('ssh:close', () => {
     emitStatus('closed')
-    term.writeln('\r\n[33m— sessão encerrada —[0m')
+    term.writeln('\r\n[33m— session closed —[0m')
   })
   socket.on('ssh:error', (text) => {
     emitStatus('error', text)

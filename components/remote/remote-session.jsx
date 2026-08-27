@@ -55,9 +55,9 @@ const wireClient = ({ client, tunnel, fit, emitStatus }) => {
     } else if (state === 5) emitStatus('closed')
   }
   client.onerror = (error) =>
-    emitStatus('error', error?.message || 'Erro na sessão remota.')
+    emitStatus('error', error?.message || 'Remote session error.')
   tunnel.onerror = (error) =>
-    emitStatus('error', error?.message || 'Erro no túnel WebSocket.')
+    emitStatus('error', error?.message || 'WebSocket tunnel error.')
 }
 
 // Mouse por sessão: coordenadas no espaço do canvas escalado → dividir pela
@@ -91,7 +91,7 @@ const startSession = async ({ session, openSession, isDisposed, references, emit
     const opened = await openSession(session.hostId)
     if (isDisposed()) return
     if (!opened?.ok) {
-      emitStatus('error', opened?.message || 'Falha ao abrir a sessão.')
+      emitStatus('error', opened?.message || 'Could not open the session.')
       return
     }
 

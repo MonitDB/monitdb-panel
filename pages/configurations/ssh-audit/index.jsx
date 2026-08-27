@@ -46,7 +46,7 @@ const SshAudit = () => {
       ellipsis: true,
     },
     {
-      title: 'Usuário',
+      title: 'User',
       dataIndex: 'userName',
       key: 'userName',
       width: 140,
@@ -95,7 +95,7 @@ const SshAudit = () => {
               <Space>
                 <Input.Search
                   allowClear
-                  placeholder="Filtrar host/usuário/comando…"
+                  placeholder="Filter by host, user or command…"
                   style={{ width: 280 }}
                   onChange={(inputEvent) => setFilter(inputEvent.target.value)}
                 />
@@ -111,7 +111,7 @@ const SshAudit = () => {
             showIcon
             style={{ marginBottom: 12 }}
             message="Trilha de auditoria"
-            description="Registra cada sessão do terminal SSH: abertura (quem, host, quando), comandos digitados (por linha), fecho e erros (incl. recusa por mudança de host key). Os eventos mais recentes aparecem primeiro."
+            description="Records every SSH terminal session: the opening (who, which host, when), the commands typed line by line, the close, and errors — including a refusal because the host key changed. Newest events first."
           />
 
           <Table

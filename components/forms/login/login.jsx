@@ -45,7 +45,7 @@ const SignUp = () => {
           router.push('/dashboard')
         }
       } catch {
-        setError('Inválid credentials')
+        setError('Invalid credentials')
 
         setTimeout(() => {
           setError('')

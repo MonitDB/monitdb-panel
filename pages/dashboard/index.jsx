@@ -352,7 +352,7 @@ const DashboardPage = () => {
             <PageContent className="w-full min-h-screen flex items-center justify-center">
               {serversStatus === 'error' && (
                 <div className="flex flex-col items-center gap-4">
-                  <span>Não foi possível carregar os servidores.</span>
+                  <span>Could not load the servers.</span>
                   <Button type="primary" onClick={refreshData}>
                     Tentar novamente
                   </Button>

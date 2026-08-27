@@ -107,7 +107,7 @@ const ServerCard = ({
     try {
       const result = await useServerContext.getState().startCollector(id)
       if (result?.ok) antdMessage.success(result.message)
-      else antdMessage.warning(result?.message || 'Não foi possível iniciar a coleta.')
+      else antdMessage.warning(result?.message || 'Could not start the collector.')
     } catch {
       antdMessage.error('Falha ao iniciar a coleta.')
     } finally {

@@ -30,9 +30,9 @@ const DataMasking = () => {
   const isOn = (id) => (id in config ? config[id] : defaultOn)
 
   const columns = [
-    { title: 'Servidor', dataIndex: 'serverName', key: 'serverName' },
+    { title: 'Server', dataIndex: 'serverName', key: 'serverName' },
     {
-      title: 'Ambiente',
+      title: 'Environment',
       dataIndex: 'serverDescription',
       key: 'serverDescription',
       ellipsis: true,
@@ -93,7 +93,7 @@ const DataMasking = () => {
             showIcon
             style={{ marginBottom: 16 }}
             message="Como funciona"
-            description="Quando ligado para um servidor, todo dado que as ferramentas da IA leem desse servidor passa por um filtro antes de ir ao provedor de IA: e-mail, CPF, CNPJ, NIF/NISS (PT), IBAN, cartão de crédito (Luhn), telefone e IP são substituídos por etiquetas ([CPF], [EMAIL]…). A IA entende que ali havia um dado, sem ver o valor — o que desbloqueia o uso de modelos em nuvem por clientes regulados (banco/saúde). Observação: como a saída das tools é principalmente métrica numérica, ative apenas nos servidores com dados sensíveis (um número de métrica com 9 dígitos pode ser redigido como [NIF]). O default global é controlado pela variável AI_MASK_PII_DEFAULT."
+            description="With this on for a server, everything the AI tools read from it passes through a filter before reaching the AI provider: e-mail, CPF, CNPJ, NIF/NISS (PT), IBAN, credit card (Luhn), phone and IP are replaced by labels ([CPF], [EMAIL]…). The AI still knows a value was there, without seeing it — which is what lets regulated customers (banking, healthcare) use cloud models at all. One caveat: tool output is mostly numeric metrics, so turn this on only for servers holding sensitive data — a nine-digit metric can be redacted as [NIF]. The global default comes from AI_MASK_PII_DEFAULT."
           />
 
           {renderBody()}

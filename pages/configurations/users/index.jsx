@@ -69,7 +69,7 @@ const ServersPage = () => {
       title: 'Active',
       dataIndex: 'loginEnable',
       key: 'loginEnable',
-      render: (text) => (text ? 'Ativo' : 'Inativo'),
+      render: (text) => (text ? 'Active' : 'Inactive'),
     },
     {
       title: 'Actions',

@@ -132,7 +132,7 @@ const AiSkillDrawer = () => {
 
               <Form.Item
                 name="description"
-                label="Descrição (a IA usa para decidir quando chamar)"
+                label="Description (the AI reads it to decide when to call the skill)"
                 rules={[{ required: true }]}
               >
                 <Input.TextArea rows={3} />
@@ -140,13 +140,13 @@ const AiSkillDrawer = () => {
 
               <Form.Item
                 name="sqlQuery"
-                label="SQL (somente leitura). Use {{param}} para parâmetros."
+                label="SQL (read-only). Use {{param}} for parameters."
                 rules={[{ required: true }]}
               >
                 <Input.TextArea rows={12} style={{ fontFamily: 'monospace' }} />
               </Form.Item>
 
-              <Typography.Title level={5}>Parâmetros (JSON)</Typography.Title>
+              <Typography.Title level={5}>Parameters (JSON)</Typography.Title>
               <Typography.Paragraph type="secondary" style={{ fontSize: 12 }}>
                 {
                   'Ex.: {"top":{"type":"integer","sqlType":"int","description":"qtde","default":20}}  — sqlType: ident | int | text'
@@ -172,9 +172,9 @@ const AiSkillDrawer = () => {
                 label="Aplicar conhecimento profundo (indexar no RAG)"
                 valuePropName="checked"
                 initialValue={false}
-                extra="Quando ativo, o texto abaixo é indexado no RAG e a IA o consulta quando relevante."
+                extra="When on, the text below is indexed in the RAG and the AI reads it whenever it is relevant."
               >
-                <Switch checkedChildren="Sim" unCheckedChildren="Não" />
+                <Switch checkedChildren="Yes" unCheckedChildren="No" />
               </Form.Item>
               <Form.Item
                 name="knowledge"
@@ -183,7 +183,7 @@ const AiSkillDrawer = () => {
               >
                 <Input.TextArea
                   rows={10}
-                  placeholder="Cole aqui o conhecimento de especialista relacionado a esta skill (ex.: como interpretar wait stats, thresholds, boas práticas)..."
+                  placeholder="Paste the expert knowledge behind this skill here — how to read wait stats, which thresholds matter, the practices you trust…"
                 />
               </Form.Item>
 
@@ -193,7 +193,7 @@ const AiSkillDrawer = () => {
                 valuePropName="checked"
                 initialValue={true}
               >
-                <Switch checkedChildren="Sim" unCheckedChildren="Não" />
+                <Switch checkedChildren="Yes" unCheckedChildren="No" />
               </Form.Item>
             </Form>
           </div>
@@ -208,7 +208,7 @@ const AiSkillDrawer = () => {
             <Space>
               <Button onClick={closeDrawer}>Cancelar</Button>
               <Button onClick={handleSubmit} type="primary" loading={loadingSkill}>
-                {isEdit ? 'Salvar' : 'Criar'}
+                {isEdit ? 'Save' : 'Create'}
               </Button>
             </Space>
           </div>

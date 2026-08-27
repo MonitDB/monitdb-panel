@@ -35,14 +35,14 @@ const Insights = () => {
 
   const handleRun = async () => {
     antdMessage.loading({
-      content: 'Gerando análise proativa (pode levar alguns minutos)...',
+      content: 'Running the proactive analysis — this can take a few minutes…',
       key: 'run-insights',
       duration: 0,
     })
     const ok = await runNow()
     antdMessage.destroy('run-insights')
-    if (ok) antdMessage.success('Análise concluída.')
-    else antdMessage.error('Falha ao gerar a análise.')
+    if (ok) antdMessage.success('Analysis complete.')
+    else antdMessage.error('Could not run the analysis.')
   }
 
   const renderBody = () => {

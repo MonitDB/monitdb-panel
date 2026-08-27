@@ -57,13 +57,13 @@ const AiSecretsPage = () => {
 
   const columns = [
     {
-      title: 'Nome',
+      title: 'Name',
       dataIndex: 'name',
       key: 'name',
       render: (text) => <Tag icon={<KeyOutlined />}>{text}</Tag>,
     },
     { title: 'Valor', dataIndex: 'hint', key: 'hint' },
-    { title: 'Descrição', dataIndex: 'description', key: 'description', ellipsis: true },
+    { title: 'Description', dataIndex: 'description', key: 'description', ellipsis: true },
     {
       title: '',
       key: 'actions',
@@ -71,8 +71,8 @@ const AiSecretsPage = () => {
       render: (text, record) => (
         <Popconfirm
           title="Excluir este segredo?"
-          okText="Excluir"
-          cancelText="Cancelar"
+          okText="Delete"
+          cancelText="Cancel"
           onConfirm={(event) => {
             event?.stopPropagation?.()
             deleteSecret(record.id)
@@ -149,12 +149,12 @@ const AiSecretsPage = () => {
             onCancel={() => setOpen(false)}
             onOk={handleOk}
             confirmLoading={saving}
-            okText="Salvar"
-            cancelText="Cancelar"
+            okText="Save"
+            cancelText="Cancel"
             destroyOnClose
           >
             <Form layout="vertical" form={form}>
-              <Form.Item name="name" label="Nome" rules={[{ required: true }]}>
+              <Form.Item name="name" label="Name" rules={[{ required: true }]}>
                 <Input placeholder="EMBEDDING_OPENAI_KEY" />
               </Form.Item>
               <Form.Item
@@ -164,7 +164,7 @@ const AiSecretsPage = () => {
               >
                 <Input.Password placeholder="sk-..." autoComplete="new-password" />
               </Form.Item>
-              <Form.Item name="description" label="Descrição">
+              <Form.Item name="description" label="Description">
                 <Input />
               </Form.Item>
             </Form>
