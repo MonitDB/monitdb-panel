@@ -79,24 +79,24 @@ const RemoteHosts = () => {
     values.technologies = values.technologies ?? []
     const ok = await saveHost(values, editing?.id)
     if (ok) {
-      message.success(editing ? 'Host atualizado.' : 'Host criado.')
+      message.success(editing ? 'Host updated.' : 'Host created.')
       setOpen(false)
       await fetchHosts()
-    } else message.error('Falha ao salvar.')
+    } else message.error('Could not save the host.')
   }
 
   const handleDelete = async (h) => {
     const ok = await deleteHost(h.id)
     if (ok) {
-      message.success('Host removido.')
+      message.success('Host removed.')
       await fetchHosts()
-    } else message.error('Falha ao remover.')
+    } else message.error('Could not remove the host.')
   }
 
   const columns = [
-    { title: 'Nome', dataIndex: 'name', key: 'name' },
+    { title: 'Name', dataIndex: 'name', key: 'name' },
     {
-      title: 'Ambiente',
+      title: 'Environment',
       key: 'env',
       width: 150,
       filters: serverEnvironments.map((environment) => ({
@@ -111,11 +111,11 @@ const RemoteHosts = () => {
             {h.typeServerEnvironment.typeServerEnvironmentName}
           </Tag>
         ) : (
-          <Tag>Sem ambiente</Tag>
+          <Tag>No environment</Tag>
         ),
     },
     {
-      title: 'Tecnologias',
+      title: 'Technologies',
       key: 'tech',
       width: 130,
       render: (t, h) => (
@@ -128,45 +128,45 @@ const RemoteHosts = () => {
       ),
     },
     {
-      title: 'Protocolo',
+      title: 'Protocol',
       dataIndex: 'protocol',
       key: 'protocol',
       width: 100,
       render: (p) => <Tag color={p === 'vnc' ? 'purple' : 'blue'}>{p.toUpperCase()}</Tag>,
     },
     {
-      title: 'Destino',
+      title: 'Target',
       key: 'dest',
       render: (t, h) => `${h.host}:${h.port}`,
     },
     {
-      title: 'Credencial',
+      title: 'Credential',
       key: 'cred',
       width: 110,
       render: (t, h) =>
         h.hasPassword ? (
-          <Tag color="green">definida</Tag>
+          <Tag color="green">set</Tag>
         ) : (
-          <Tag color="orange">faltando</Tag>
+          <Tag color="orange">missing</Tag>
         ),
     },
     {
-      title: 'Ações',
+      title: 'Actions',
       key: 'actions',
       width: 200,
       render: (t, h) => (
         <Space>
           <Button size="small" onClick={() => openEdit(h)}>
-            Editar
+            Edit
           </Button>
           <Popconfirm
-            title="Remover este host?"
+            title="Remove this host?"
             onConfirm={() => handleDelete(h)}
-            okText="Remover"
-            cancelText="Cancelar"
+            okText="Remove"
+            cancelText="Cancel"
           >
             <Button size="small" danger>
-              Remover
+              Remove
             </Button>
           </Popconfirm>
         </Space>
@@ -176,18 +176,18 @@ const RemoteHosts = () => {
 
   return (
     <>
-      <NextSeo title="Hosts remotos - MonitDB" />
+      <NextSeo title="Remote Hosts - MonitDB" />
       <Layout>
         <PageContent removeSidebarMargin={true}>
           <PageHeader
-            title="Hosts remotos (RDP/VNC)"
+            title="Remote Hosts (RDP/VNC)"
             breadcrumbs={[
               { title: 'Configurations', href: '/configurations/' },
-              { title: 'Hosts remotos', href: '/configurations/remote-hosts/' },
+              { title: 'Remote Hosts', href: '/configurations/remote-hosts/' },
             ]}
             extra={
               <Button type="primary" onClick={openNew}>
-                Novo host
+                New host
               </Button>
             }
           />
@@ -201,19 +201,19 @@ const RemoteHosts = () => {
           />
 
           <Modal
-            title={editing ? 'Editar host remoto' : 'Novo host remoto'}
+            title={editing ? 'Edit remote host' : 'New remote host'}
             open={open}
             onOk={submit}
             confirmLoading={saving}
             onCancel={() => setOpen(false)}
-            okText="Salvar"
-            cancelText="Cancelar"
+            okText="Save"
+            cancelText="Cancel"
           >
             <Form form={form} layout="vertical">
-              <Form.Item name="name" label="Nome" rules={[{ required: true }]}>
-                <Input placeholder="ex.: win-app-01" />
+              <Form.Item name="name" label="Name" rules={[{ required: true }]}>
+                <Input placeholder="e.g. win-app-01" />
               </Form.Item>
-              <Form.Item name="protocol" label="Protocolo">
+              <Form.Item name="protocol" label="Protocol">
                 <Select
                   onChange={onProtocol}
                   options={[
@@ -226,14 +226,14 @@ const RemoteHosts = () => {
                 <Form.Item name="host" label="Host / IP" rules={[{ required: true }]}>
                   <Input placeholder="10.0.0.20" />
                 </Form.Item>
-                <Form.Item name="port" label="Porta" rules={[{ required: true }]}>
+                <Form.Item name="port" label="Port" rules={[{ required: true }]}>
                   <InputNumber min={1} max={65_535} />
                 </Form.Item>
               </Space>
-              <Form.Item name="idTypeServerEnvironment" label="Ambiente">
+              <Form.Item name="idTypeServerEnvironment" label="Environment">
                 <Select
                   allowClear
-                  placeholder="Sem ambiente"
+                  placeholder="No environment"
                   options={serverEnvironments
                     .filter(
                       (environment) =>
@@ -247,13 +247,13 @@ const RemoteHosts = () => {
               </Form.Item>
               <Form.Item
                 name="technologies"
-                label="Tecnologias"
-                extra="O que corre nesta máquina. Aparece como logótipo na árvore de acesso."
+                label="Technologies"
+                extra="What runs on this machine. Shown as a logo in the access tree."
               >
                 <Select
                   mode="multiple"
                   allowClear
-                  placeholder="Nenhuma"
+                  placeholder="None"
                   optionFilterProp="label"
                   options={serverTypes
                     .filter((type) => type.typeServerEnable !== false)
@@ -264,37 +264,37 @@ const RemoteHosts = () => {
                 />
               </Form.Item>
               {protocol === 'rdp' && (
-                <Form.Item name="username" label="Usuário">
-                  <Input placeholder="ex.: Administrator" />
+                <Form.Item name="username" label="Username">
+                  <Input placeholder="e.g. Administrator" />
                 </Form.Item>
               )}
               <Form.Item
                 name="password"
-                label={editing ? 'Senha (vazio = manter)' : 'Senha'}
+                label={editing ? 'Password (empty = keep)' : 'Password'}
               >
                 <Input.Password placeholder="••••••••" autoComplete="new-password" />
               </Form.Item>
               {protocol === 'rdp' && (
                 <>
-                  <Form.Item name="domain" label="Domínio (opcional)">
-                    <Input placeholder="ex.: CORP" />
+                  <Form.Item name="domain" label="Domain (optional)">
+                    <Input placeholder="e.g. CORP" />
                   </Form.Item>
-                  <Form.Item name="security" label="Segurança">
+                  <Form.Item name="security" label="Security">
                     <Select
                       options={[
-                        { value: 'any', label: 'Automático' },
+                        { value: 'any', label: 'Automatic' },
                         { value: 'nla', label: 'NLA' },
                         { value: 'tls', label: 'TLS' },
-                        { value: 'rdp', label: 'RDP (legado)' },
+                        { value: 'rdp', label: 'RDP (legacy)' },
                       ]}
                     />
                   </Form.Item>
                   <Form.Item name="ignoreCert" valuePropName="checked">
-                    <Checkbox>Ignorar certificado do servidor</Checkbox>
+                    <Checkbox>Ignore server certificate</Checkbox>
                   </Form.Item>
                 </>
               )}
-              <Form.Item name="description" label="Descrição (opcional)">
+              <Form.Item name="description" label="Description (optional)">
                 <Input.TextArea rows={2} />
               </Form.Item>
             </Form>

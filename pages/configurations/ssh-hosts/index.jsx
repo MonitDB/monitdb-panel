@@ -76,33 +76,33 @@ const SshHosts = () => {
     v.technologies = v.technologies ?? []
     const ok = await saveHost(v, editing?.id)
     if (ok) {
-      message.success(editing ? 'Host atualizado.' : 'Host criado.')
+      message.success(editing ? 'Host updated.' : 'Host created.')
       setOpen(false)
       await fetchHosts()
     } else {
-      message.error('Falha ao salvar.')
+      message.error('Could not save the host.')
     }
   }
 
   const handleDelete = async (h) => {
     const ok = await deleteHost(h.id)
     if (ok) {
-      message.success('Host removido.')
+      message.success('Host removed.')
       await fetchHosts()
-    } else message.error('Falha ao remover.')
+    } else message.error('Could not remove the host.')
   }
 
   const handleTest = async (h) => {
-    message.loading({ content: `Testando ${h.name}…`, key: 't' })
+    message.loading({ content: `Testing ${h.name}…`, key: 't' })
     const r = await testHost(h.id)
     if (r?.ok) message.success({ content: r.message, key: 't', duration: 5 })
-    else message.error({ content: r?.message || 'Falha.', key: 't', duration: 6 })
+    else message.error({ content: r?.message || 'Test failed.', key: 't', duration: 6 })
   }
 
   const columns = [
-    { title: 'Nome', dataIndex: 'name', key: 'name' },
+    { title: 'Name', dataIndex: 'name', key: 'name' },
     {
-      title: 'Ambiente',
+      title: 'Environment',
       key: 'env',
       width: 150,
       filters: serverEnvironments.map((environment) => ({
@@ -117,11 +117,11 @@ const SshHosts = () => {
             {h.typeServerEnvironment.typeServerEnvironmentName}
           </Tag>
         ) : (
-          <Tag>Sem ambiente</Tag>
+          <Tag>No environment</Tag>
         ),
     },
     {
-      title: 'Tecnologias',
+      title: 'Technologies',
       key: 'tech',
       width: 130,
       render: (t, h) => (
@@ -134,7 +134,7 @@ const SshHosts = () => {
       ),
     },
     {
-      title: 'Destino',
+      title: 'Target',
       key: 'dest',
       render: (t, h) => `${h.username}@${h.host}:${h.port}`,
     },
@@ -143,17 +143,17 @@ const SshHosts = () => {
       dataIndex: 'authType',
       key: 'authType',
       width: 90,
-      render: (a) => <Tag>{a === 'key' ? 'chave' : 'senha'}</Tag>,
+      render: (a) => <Tag>{a === 'key' ? 'key' : 'password'}</Tag>,
     },
     {
-      title: 'Credencial',
+      title: 'Credential',
       key: 'cred',
       width: 110,
       render: (t, h) =>
         h.hasPassword || h.hasPrivateKey ? (
-          <Tag color="green">definida</Tag>
+          <Tag color="green">set</Tag>
         ) : (
-          <Tag color="orange">faltando</Tag>
+          <Tag color="orange">missing</Tag>
         ),
     },
     {
@@ -162,31 +162,31 @@ const SshHosts = () => {
       width: 120,
       render: (t, h) =>
         h.hostKeyKnown ? (
-          <Tag color="blue">registrada</Tag>
+          <Tag color="blue">known</Tag>
         ) : (
-          <Tag>na 1ª conexão</Tag>
+          <Tag>on first connection</Tag>
         ),
     },
     {
-      title: 'Ações',
+      title: 'Actions',
       key: 'actions',
       width: 240,
       render: (t, h) => (
         <Space>
           <Button size="small" onClick={() => handleTest(h)}>
-            Testar
+            Test
           </Button>
           <Button size="small" onClick={() => openEdit(h)}>
-            Editar
+            Edit
           </Button>
           <Popconfirm
-            title="Remover este host?"
+            title="Remove this host?"
             onConfirm={() => handleDelete(h)}
-            okText="Remover"
-            cancelText="Cancelar"
+            okText="Remove"
+            cancelText="Cancel"
           >
             <Button size="small" danger>
-              Remover
+              Remove
             </Button>
           </Popconfirm>
         </Space>
@@ -196,18 +196,18 @@ const SshHosts = () => {
 
   return (
     <>
-      <NextSeo title="Hosts SSH - MonitDB" />
+      <NextSeo title="SSH Hosts - MonitDB" />
       <Layout>
         <PageContent removeSidebarMargin={true}>
           <PageHeader
-            title="Hosts SSH"
+            title="SSH Hosts"
             breadcrumbs={[
               { title: 'Configurations', href: '/configurations/' },
-              { title: 'Hosts SSH', href: '/configurations/ssh-hosts/' },
+              { title: 'SSH Hosts', href: '/configurations/ssh-hosts/' },
             ]}
             extra={
               <Button type="primary" onClick={openNew}>
-                Novo host
+                New host
               </Button>
             }
           />
@@ -221,33 +221,33 @@ const SshHosts = () => {
           />
 
           <Modal
-            title={editing ? 'Editar host SSH' : 'Novo host SSH'}
+            title={editing ? 'Edit SSH host' : 'New SSH host'}
             open={open}
             onOk={submit}
             confirmLoading={saving}
             onCancel={() => setOpen(false)}
-            okText="Salvar"
-            cancelText="Cancelar"
+            okText="Save"
+            cancelText="Cancel"
           >
             <Form form={form} layout="vertical">
-              <Form.Item name="name" label="Nome" rules={[{ required: true }]}>
-                <Input placeholder="ex.: app-prod-01" />
+              <Form.Item name="name" label="Name" rules={[{ required: true }]}>
+                <Input placeholder="e.g. app-prod-01" />
               </Form.Item>
               <Space>
                 <Form.Item name="host" label="Host / IP" rules={[{ required: true }]}>
-                  <Input placeholder="10.0.0.10 ou host.interno" />
+                  <Input placeholder="10.0.0.10 or host.internal" />
                 </Form.Item>
-                <Form.Item name="port" label="Porta" rules={[{ required: true }]}>
+                <Form.Item name="port" label="Port" rules={[{ required: true }]}>
                   <InputNumber min={1} max={65_535} />
                 </Form.Item>
               </Space>
-              <Form.Item name="username" label="Usuário" rules={[{ required: true }]}>
-                <Input placeholder="ex.: ubuntu" />
+              <Form.Item name="username" label="Username" rules={[{ required: true }]}>
+                <Input placeholder="e.g. ubuntu" />
               </Form.Item>
-              <Form.Item name="idTypeServerEnvironment" label="Ambiente">
+              <Form.Item name="idTypeServerEnvironment" label="Environment">
                 <Select
                   allowClear
-                  placeholder="Sem ambiente"
+                  placeholder="No environment"
                   options={serverEnvironments
                     .filter(
                       (environment) =>
@@ -261,13 +261,13 @@ const SshHosts = () => {
               </Form.Item>
               <Form.Item
                 name="technologies"
-                label="Tecnologias"
-                extra="O que corre nesta máquina. Aparece como logótipo na árvore de acesso."
+                label="Technologies"
+                extra="What runs on this machine. Shown as a logo in the access tree."
               >
                 <Select
                   mode="multiple"
                   allowClear
-                  placeholder="Nenhuma"
+                  placeholder="None"
                   optionFilterProp="label"
                   options={serverTypes
                     .filter((type) => type.typeServerEnable !== false)
@@ -277,19 +277,19 @@ const SshHosts = () => {
                     }))}
                 />
               </Form.Item>
-              <Form.Item name="authType" label="Autenticação">
+              <Form.Item name="authType" label="Authentication">
                 <Select
                   onChange={setAuthType}
                   options={[
-                    { value: 'password', label: 'Senha' },
-                    { value: 'key', label: 'Chave privada' },
+                    { value: 'password', label: 'Password' },
+                    { value: 'key', label: 'Private key' },
                   ]}
                 />
               </Form.Item>
               {authType === 'password' ? (
                 <Form.Item
                   name="password"
-                  label={editing ? 'Senha (deixe vazio p/ manter)' : 'Senha'}
+                  label={editing ? 'Password (leave empty to keep)' : 'Password'}
                 >
                   <Input.Password placeholder="••••••••" autoComplete="new-password" />
                 </Form.Item>
@@ -297,25 +297,25 @@ const SshHosts = () => {
                 <>
                   <Form.Item
                     name="privateKey"
-                    label={editing ? 'Chave privada (vazio p/ manter)' : 'Chave privada (PEM)'}
+                    label={editing ? 'Private key (leave empty to keep)' : 'Private key (PEM)'}
                   >
                     <Input.TextArea rows={4} placeholder="-----BEGIN OPENSSH PRIVATE KEY-----" />
                   </Form.Item>
-                  <Form.Item name="passphrase" label="Passphrase (opcional)">
+                  <Form.Item name="passphrase" label="Passphrase (optional)">
                     <Input.Password placeholder="••••••••" autoComplete="new-password" />
                   </Form.Item>
                 </>
               )}
-              <Form.Item name="description" label="Descrição (opcional)">
+              <Form.Item name="description" label="Description (optional)">
                 <Input.TextArea rows={2} />
               </Form.Item>
               {editing?.hostKeyKnown && (
                 <Form.Item
                   name="resetHostKey"
                   valuePropName="checked"
-                  extra="Marque apenas se o host foi reinstalado/migrado legitimamente — a próxima conexão registra a nova host key (TOFU)."
+                  extra="Tick only if the host was legitimately reinstalled or migrated — the next connection records the new host key (TOFU)."
                 >
-                  <Checkbox>Redefinir host key</Checkbox>
+                  <Checkbox>Reset host key</Checkbox>
                 </Form.Item>
               )}
             </Form>
