@@ -5,6 +5,7 @@ import { json } from '@codemirror/lang-json'
 import { dracula } from '@uiw/codemirror-theme-dracula'
 import CodeMirror from '@uiw/react-codemirror'
 import {
+  Alert,
   Button,
   Drawer,
   Form,
@@ -32,6 +33,7 @@ const AiConfigDrawer = () => {
   const router = useRouter()
   const { query, pathname } = router
   const [isFullscreen, setIsFullscreen] = useState(false)
+  const [type, setType] = useState()
 
   const {
     fetchConfigById,
@@ -76,6 +78,8 @@ const AiConfigDrawer = () => {
     form.setFieldsValue({
       ...selectedConfig,
     })
+    // O aviso de ajuda do Copilot segue o tipo carregado, nao so o escolhido a mao.
+    setType(selectedConfig?.type)
   }, [form, selectedConfig])
 
   const handleSubmit = async () => {
@@ -165,13 +169,43 @@ const AiConfigDrawer = () => {
               </Form.Item>
 
               <Form.Item name="type" label="Type" rules={[{ required: true }]}>
-                <Select>
+                <Select onChange={setType}>
                   <Select.Option value="openai">OpenAI</Select.Option>
                   <Select.Option value="llmstudio">LLM Studio</Select.Option>
                   <Select.Option value="azure">Azure</Select.Option>
-                  <Select.Option value="copilot">Copilot / GitHub Models</Select.Option>
+                  <Select.Option value="copilot">GitHub Copilot</Select.Option>
                 </Select>
               </Form.Item>
+              {type === 'copilot' && (
+                <Alert
+                  type="info"
+                  showIcon
+                  style={{ marginBottom: 16 }}
+                  message="Como ligar o GitHub Copilot"
+                  description={
+                    <div style={{ fontSize: 12, lineHeight: 1.7 }}>
+                      O Monit AI fala com o Copilot atraves da ponte interna. Preencha
+                      exatamente assim:
+                      <ul style={{ margin: '8px 0', paddingLeft: 18 }}>
+                        <li>
+                          <b>URL:</b> <code>http://copilot-bridge:8080</code>
+                        </li>
+                        <li>
+                          <b>Model:</b> <code>copilot</code>
+                        </li>
+                        <li>
+                          <b>Api Key:</b> um <i>fine-grained</i> Personal Access Token do
+                          GitHub com a permissao <b>Copilot Requests</b>, de uma conta com
+                          subscricao Copilot ativa.
+                        </li>
+                      </ul>
+                      A chave e cifrada em repouso e vai por pedido: cada pergunta consome
+                      creditos do posto a que a chave pertence. Ligar este provedor desliga
+                      automaticamente os outros.
+                    </div>
+                  }
+                />
+              )}
               <Form.Item
                 name="aiApiKey"
                 label="Api Key"
