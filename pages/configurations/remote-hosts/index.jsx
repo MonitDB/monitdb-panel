@@ -94,6 +94,21 @@ const RemoteHosts = () => {
   }
 
   const columns = [
+    // O logotipo abre a linha: numa lista longa e a tecnologia que o olho
+    // procura antes do nome. Pedido do Danilo.
+    {
+      title: 'Technologies',
+      key: 'tech',
+      width: 120,
+      render: (t, h) => (
+        <HostTechnologies
+          value={h.technologies}
+          serverTypes={serverTypes}
+          size={20}
+          max={5}
+        />
+      ),
+    },
     { title: 'Name', dataIndex: 'name', key: 'name' },
     {
       title: 'Environment',
@@ -113,19 +128,6 @@ const RemoteHosts = () => {
         ) : (
           <Tag>No environment</Tag>
         ),
-    },
-    {
-      title: 'Technologies',
-      key: 'tech',
-      width: 130,
-      render: (t, h) => (
-        <HostTechnologies
-          value={h.technologies}
-          serverTypes={serverTypes}
-          size={20}
-          max={5}
-        />
-      ),
     },
     {
       title: 'Protocol',

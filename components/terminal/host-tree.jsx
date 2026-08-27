@@ -150,14 +150,16 @@ const HostTree = ({
   const renderLeaf = (host) => (
     <div className="group flex items-center justify-between gap-1 pr-1">
       <div className="min-w-0 leading-tight">
+        {/* O logotipo vem primeiro: numa lista de trinta maquinas, e a tecnologia
+            que o olho procura antes do nome. Pedido do Danilo. */}
         <div className="flex items-center gap-1">
-          <span className="truncate">{host.name}</span>
           <HostTechnologies
             value={host.technologies}
             serverTypes={serverTypes}
             size={14}
             max={3}
           />
+          <span className="truncate">{host.name}</span>
         </div>
         <Typography.Text
           type="secondary"
