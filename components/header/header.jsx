@@ -79,10 +79,6 @@ const Header = () => {
       href: '/insights/',
     },
     {
-      title: 'Anomalies',
-      href: '/anomalies/',
-    },
-    {
       title: 'Terminal',
       href: '/terminal/',
       requiredFeatureFunction: FeatureFunction.SSH_TERMINAL,
