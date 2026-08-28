@@ -507,7 +507,10 @@ const ChatAI = () => {
                           )}
 
                           <div id="toolbar">
-                            {message.totalTokens && (
+                            {/* > 0 e nao apenas o valor: com o Copilot totalTokens
+                                vem 0, e `0 && ...` faz o React desenhar o proprio 0
+                                solto no fundo da bolha. */}
+                            {message.totalTokens > 0 && (
                               <Typography.Text
                                 type="secondary"
                                 style={{

@@ -1,6 +1,6 @@
 /* eslint-disable unicorn/no-null */
+import { SafetyCertificateOutlined } from '@ant-design/icons'
 import {
-  Alert,
   Breadcrumb,
   Button,
   message,
@@ -9,6 +9,8 @@ import {
   Space,
   Spin,
   Table,
+  Tag,
+  Tooltip,
   Upload,
 } from 'antd'
 import { NextSeo } from 'next-seo'
@@ -167,7 +169,20 @@ const Sftp = () => {
       <Layout>
         <PageContent removeSidebarMargin={true}>
           <PageHeader
-            title="Arquivos (SFTP)"
+            title={
+              <span className="flex items-center gap-2">
+                Arquivos (SFTP)
+                <Tooltip title="Browse, download, upload and remove files on the host over SFTP. Requires SSH Terminal OWNER; every operation is written to the audit trail. Same host key check (TOFU) as the terminal.">
+                  <Tag
+                    color="warning"
+                    icon={<SafetyCertificateOutlined />}
+                    style={{ fontSize: 12, fontWeight: 400, marginInlineEnd: 0 }}
+                  >
+                    Privileged &amp; audited
+                  </Tag>
+                </Tooltip>
+              </span>
+            }
             breadcrumbs={[{ title: 'Arquivos', href: '/sftp/' }]}
             extra={
               <Space>
@@ -192,14 +207,6 @@ const Sftp = () => {
                 </Button>
               </Space>
             }
-          />
-
-          <Alert
-            type="warning"
-            showIcon
-            style={{ marginBottom: 12 }}
-            message="Privileged &amp; audited transfer"
-            description="Browse, download, upload and remove files on the host over SFTP. Requires SSH Terminal OWNER; every operation is written to the audit trail. Same host key check (TOFU) as the terminal."
           />
 
           {hostId && path !== '.' && (

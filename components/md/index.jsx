@@ -52,14 +52,19 @@ const StyledMarkdown = styled.div`
     }
   }
 
+  /* Codigo inline (o nome de um servidor, por exemplo): a bolha da resposta
+     e branca, por isso o texto tem de ser escuro. O branco so vale dentro
+     do <pre>, que tem fundo escuro. Sem crases neste comentario: isto esta
+     dentro de um template literal e a crase fechava a string. */
   code {
     font-family: 'Courier New', monospace;
-    width: '100%';
-    color: #f8f9fa;
-    padding: 2px 4px;
+    background-color: #eef0f3;
+    color: #24292f;
+    padding: 2px 6px;
     border-radius: 4px;
     text-shadow: none;
     font-weight: 500;
+    word-break: break-word;
   }
 
   pre {
@@ -67,6 +72,13 @@ const StyledMarkdown = styled.div`
     padding: 15px;
     margin-bottom: 15px;
     border-radius: 10px;
+    overflow-x: auto;
+  }
+
+  pre code {
+    background-color: transparent;
+    color: #f8f9fa;
+    padding: 0;
   }
 
   .md-code-block {
