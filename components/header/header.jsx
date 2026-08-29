@@ -28,7 +28,7 @@ import {
 // 2.9:1, nao se via. Agora o item aceso e branco com peso, o apagado e cinza
 // legivel (nao branco a 50% de opacidade) e acende no hover.
 const buttonClasses =
-  'block h-16 leading-[64px] px-5 border-b-4 transition-colors lg:hover:text-white'
+  'block h-16 leading-[64px] px-3 xl:px-4 border-b-4 whitespace-nowrap transition-colors lg:hover:text-white'
 const buttonClassesActive = 'border-blue-soft text-white font-medium'
 const buttonClassesIdle = 'border-gray-dark text-gray'
 
@@ -116,8 +116,8 @@ const Header = () => {
 
   return (
     <header className="relative w-full h-16 z-40">
-      <div className="fixed bg-gray-dark w-full flex items-center justify-start text-white">
-        <div className="w-full md:w-auto">
+      <div className="fixed bg-gray-dark w-full flex items-center justify-start overflow-hidden text-white">
+        <div className="shrink-0 w-full md:w-auto">
           <h1>
             <Link
               href="/dashboard/"
@@ -134,8 +134,8 @@ const Header = () => {
           </h1>
         </div>
 
-        <div className="w-full md:flex md:items-center">
-          <nav>
+        <div className="w-full min-w-0 md:flex md:items-center">
+          <nav className="min-w-0">
             <ul className="flex items-center">
               {navMenuList.map(
                 (item, index) =>
@@ -166,7 +166,7 @@ const Header = () => {
             </ul>
           </nav>
 
-          <div className="ml-auto pr-4 flex items-center justify-between space-x-2 lg:pr-6">
+          <div className="ml-auto shrink-0 pr-4 flex items-center justify-between space-x-2 lg:pr-6">
             {userState?.grants?.some(
               (grant) => grant.idFeature === Feature.CONFIGURATION
             ) && (
@@ -229,11 +229,11 @@ const Header = () => {
             </div>
             {/* Separador + pastilha branca: o logotipo do cliente encostava ao
                 avatar e o resultado dependia do tamanho do PNG que ele manda. */}
-            <span className="block w-px h-5 bg-white bg-opacity-20" />
-            <div className="flex items-center justify-center h-7 min-w-24 px-3 bg-white rounded-full">
+            <span className="shrink-0 block w-px h-5 bg-white bg-opacity-20" />
+            <div className="shrink-0 flex items-center h-7 px-2.5 bg-white rounded-full">
               <img
                 src={config.logo ?? '/images/logos/monitdb.png'}
-                className="h-4 w-auto max-w-32"
+                className="h-3.5 w-auto max-w-28"
                 alt={config?.customerName ?? 'MonitDB'}
               />
             </div>
