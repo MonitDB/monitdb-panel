@@ -51,6 +51,7 @@ const ProfilePage = () => {
 
             <div>
               <Table
+                pagination={{ hideOnSinglePage: true }}
                 loading={loading}
                 title={() => (
                   <>

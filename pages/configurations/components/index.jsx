@@ -128,6 +128,7 @@ const ComponentsPage = () => {
             />
 
             <Table
+              pagination={{ hideOnSinglePage: true }}
               loading={isLoading}
               columns={columns}
               dataSource={data}

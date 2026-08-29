@@ -1,11 +1,13 @@
 import { faAdd } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Button, Row, Space, Table } from 'antd'
+import { Button, Space, Table } from 'antd'
+import moment from 'moment'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
 import React, { useCallback, useEffect, useState } from 'react'
 
 import { PageContent, PageHeader, PageWrapper } from '~/components/page'
+import Status from '~/components/status'
 import { useUser } from '~/hooks/index'
 import Layout from '~/layouts/default'
 import * as UserServices from '~/services/user'
@@ -64,12 +66,27 @@ const ServersPage = () => {
       title: 'Created at',
       dataIndex: 'loginDateCreate',
       key: 'loginDateCreate',
+      // A coluna vem vazia da API. Um traco diz "nao ha dado"; a celula em
+      // branco parece um erro de render.
+      render: (value) =>
+        value ? (
+          <span className="mn-mono whitespace-nowrap">
+            {moment(value).format('DD/MM/YYYY HH:mm')}
+          </span>
+        ) : (
+          <span className="text-gray">—</span>
+        ),
     },
     {
-      title: 'Active',
+      title: 'Status',
       dataIndex: 'loginEnable',
       key: 'loginEnable',
-      render: (text) => (text ? 'Active' : 'Inactive'),
+      render: (value) =>
+        value ? (
+          <Status tone="ok">Active</Status>
+        ) : (
+          <Status tone="off">Inactive</Status>
+        ),
     },
     {
       title: 'Actions',
@@ -102,24 +119,25 @@ const ServersPage = () => {
                   href: '/configurations/users',
                 },
               ]}
-            />
-
-            <div>
-              <Row justify={'end'} style={{ marginBottom: '10px' }}>
+              extra={
                 <Button
+                  type="primary"
                   onClick={() => router.push('/configurations/users/new')}
                 >
                   <FontAwesomeIcon icon={faAdd} className="mr-2" />
-                  Add
+                  New user
                 </Button>
-              </Row>
+              }
+            />
+
+            <div>
 
               <Table
                 columns={columns}
                 loading={isLoading}
                 dataSource={users}
                 rowKey={(record) => `user-${record.id}`}
-                pagination={users.length > 10}
+                pagination={{ hideOnSinglePage: true }}
               />
             </div>
           </PageContent>

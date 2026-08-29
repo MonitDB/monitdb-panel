@@ -80,21 +80,22 @@ const ConfigurationsServersPage = () => {
                   href: '/configurations/servers',
                 },
               ]}
-            />
-
-            <div>
-              <header className="flex flex-col mb-5 md:flex-row md:justify-between md:items-center">
+              extra={
                 <Link
                   href="/configurations/servers/new"
                   className="btn btn--small"
                 >
                   <FontAwesomeIcon icon={faAdd} className="mr-2" />
-                  Add
+                  New server
                 </Link>
-              </header>
+              }
+            />
+
+            <div>
 
               <div className="-mx-4 py-4 px-8 bg-white md:-mx-6">
                 <Table
+                  pagination={{ hideOnSinglePage: true }}
                   dataSource={servers}
                   loading={servers.length === 0}
                   columns={[

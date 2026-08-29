@@ -1,6 +1,6 @@
 import { faUserGear } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Avatar, Card, Descriptions } from 'antd'
+import { Avatar, Card } from 'antd'
 import React from 'react'
 
 import MyAccountForm from '~/components/forms/my-account'
@@ -14,6 +14,17 @@ import {
 } from '~/components/page'
 import { useUser } from '~/hooks/index'
 import Layout from '~/layouts/default'
+
+// Duas letras chegam para um circulo de 48px; o nome inteiro nao.
+const initials = (name) =>
+  typeof name === 'string'
+    ? name
+        .trim()
+        .split(/\s+/)
+        .slice(0, 2)
+        .map((part) => part.charAt(0).toUpperCase())
+        .join('')
+    : ''
 
 const MyAccountPage = () => {
   const { userState } = useUser()
@@ -45,30 +56,23 @@ const MyAccountPage = () => {
         </PageSidebar>
 
         <PageContent>
+          {/* Estava trocado: o avatar levava o nome inteiro (a encolher para
+              caber num circulo de 40px) e o campo "User Name" mostrava so a
+              primeira letra. As duas coisas ao contrario do que deviam ser. */}
           <Card style={{ marginTop: 16 }}>
             <Card.Meta
               avatar={
                 <Avatar
-                  size={{ xs: 24, sm: 32, md: 40, lg: 64, xl: 80, xxl: 100 }}
+                  size={48}
                   shape="circle"
+                  style={{ backgroundColor: '#5046e5', fontWeight: 500 }}
                 >
-                  {userState?.loginName}
+                  {initials(userState?.loginName)}
                 </Avatar>
               }
+              title={userState?.loginName}
               description={
-                <>
-                  <Descriptions title="User Info">
-                    <Descriptions.Item label="User Name">
-                      {typeof userState?.loginName === 'string'
-                        ? userState?.loginName[0].toUpperCase()
-                        : ''}
-                    </Descriptions.Item>
-
-                    <Descriptions.Item label="Email">
-                      {userState?.loginEmail}
-                    </Descriptions.Item>
-                  </Descriptions>
-                </>
+                <span className="text-gray">{userState?.loginEmail}</span>
               }
             />
           </Card>

@@ -1,6 +1,6 @@
 /* eslint-disable unicorn/no-null */
 import { CodeOutlined, SafetyCertificateOutlined } from '@ant-design/icons'
-import { Alert, Empty, message, Tag, Tooltip } from 'antd'
+import { Alert, message, Tag, Tooltip } from 'antd'
 import { NextSeo } from 'next-seo'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 
@@ -105,8 +105,10 @@ const Terminal = () => {
             }
           >
             {sessions.length === 0 ? (
-              <div className="flex flex-1 items-center justify-center rounded-md border border-dashed border-gray-300 dark:border-gray-700">
-                <Empty description="Double-click a host (or use the Open button) to start a session" />
+              <div className="flex flex-1 items-center justify-center rounded-md border border-gray-light bg-gray-dark">
+                <p className="font-courier text-sm text-gray">
+                  Pick a host on the left and open a session.
+                </p>
               </div>
             ) : (
               <>

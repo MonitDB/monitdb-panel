@@ -131,7 +131,7 @@ const Sftp = () => {
         ),
     },
     {
-      title: 'Tamanho',
+      title: 'Size',
       dataIndex: 'size',
       key: 'size',
       width: 110,
@@ -165,13 +165,13 @@ const Sftp = () => {
 
   return (
     <>
-      <NextSeo title="Arquivos (SFTP) - MonitDB" />
+      <NextSeo title="Files (SFTP) - MonitDB" />
       <Layout>
         <PageContent removeSidebarMargin={true}>
           <PageHeader
             title={
               <span className="flex items-center gap-2">
-                Arquivos (SFTP)
+                Files (SFTP)
                 <Tooltip title="Browse, download, upload and remove files on the host over SFTP. Requires SSH Terminal OWNER; every operation is written to the audit trail. Same host key check (TOFU) as the terminal.">
                   <Tag
                     color="default"
@@ -183,7 +183,7 @@ const Sftp = () => {
                 </Tooltip>
               </span>
             }
-            breadcrumbs={[{ title: 'Arquivos', href: '/sftp/' }]}
+            breadcrumbs={[{ title: 'Files', href: '/sftp/' }]}
             extra={
               <Space>
                 <Select
@@ -243,8 +243,8 @@ const Sftp = () => {
               pagination={{ pageSize: 25, showSizeChanger: false, hideOnSinglePage: true }}
               locale={{
                 emptyText: hostId
-                  ? 'Pick a host and choose Open.'
-                  : 'Pick a host.',
+                  ? 'Pick a host on the left and choose Open.'
+                  : 'Pick a host to list its files.',
               }}
             />
           )}

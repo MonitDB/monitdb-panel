@@ -164,6 +164,7 @@ export const AlertHtmlSubTable = ({ serverId, idSeq, id }) => {
   return (
     <>
       <Table
+        pagination={{ hideOnSinglePage: true }}
         dataSource={html}
         loading={loading}
         columns={[

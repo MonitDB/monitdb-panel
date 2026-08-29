@@ -54,6 +54,7 @@ function SqlUserProcesses(properties) {
 
       <div style={{ overflowY: 'auto' }}>
         <Table
+          pagination={{ hideOnSinglePage: true }}
           locale={{ emptyText: 'No data to display' }}
           loading={loading}
           size="small"
