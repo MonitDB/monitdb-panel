@@ -135,8 +135,8 @@ const Header = () => {
         </div>
 
         <div className="flex-1 min-w-0 md:flex md:items-center">
-          <nav className="flex-1 min-w-0 overflow-hidden">
-            <ul className="flex items-center">
+          <nav className="flex-1 min-w-0 h-16 overflow-hidden">
+            <ul className="flex flex-wrap items-center h-16 content-start">
               {navMenuList.map(
                 (item, index) =>
                   userState && (
