@@ -108,7 +108,7 @@ const AlertsPage = () => {
                   <Input
                     type="text"
                     name="search"
-                    className="w-full pl-8 pr-20 h-20 shadow-md bg-white leading-10 rounded outline-none text-lg"
+                    className="w-full pl-4 pr-20 h-10 bg-white rounded outline-none"
                     placeholder="Search for a server..."
                     onChange={handleSearchChanges}
                     value={search}

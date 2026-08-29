@@ -134,6 +134,7 @@ const ProblemsGetTable = (info) => {
       dataSource={data.result}
       columns={columns}
       pagination={{
+        hideOnSinglePage: true,
         total: data.result.length,
         showSizeChanger: true,
         pageSizeOptions: ['10', '20', '50', '100'],

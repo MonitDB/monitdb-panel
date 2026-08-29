@@ -4,6 +4,7 @@ import { NextSeo } from 'next-seo'
 import React, { useEffect } from 'react'
 
 import { PageContent, PageHeader } from '~/components/page'
+import Status from '~/components/status'
 import Layout from '~/layouts/default'
 import { useAiAuditStore } from '~/services/state-manager/ai-audit-store'
 
@@ -83,10 +84,10 @@ const AiAudit = () => {
       width: 90,
       render: (ok, r) =>
         ok ? (
-          <Tag color="green">OK</Tag>
+          <Status tone="ok">OK</Status>
         ) : (
           <Tooltip title={r.error || 'Failed'}>
-            <Tag color="red">Error</Tag>
+            <Status tone="down">Error</Status>
           </Tooltip>
         ),
     },
@@ -126,7 +127,7 @@ const AiAudit = () => {
             rowKey="id"
             loading={auditLoading}
             size="small"
-            pagination={{ pageSize: 20, showSizeChanger: false }}
+            pagination={{ pageSize: 20, showSizeChanger: false, hideOnSinglePage: true }}
           />
         </PageContent>
       </Layout>

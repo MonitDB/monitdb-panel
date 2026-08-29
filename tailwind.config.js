@@ -20,6 +20,9 @@ module.exports = {
       blue: {
         DEFAULT: '#5046e5',
         light: '#6867ef',
+        // Indigo que passa contraste sobre o preto da barra de topo (#161b22):
+        // o #5046e5 fica em 2.9:1 sobre esse fundo e nao se ve.
+        soft: '#8b8cf6',
       },
       orange: {
         DEFAULT: '#fc9003',

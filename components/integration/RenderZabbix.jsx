@@ -20,6 +20,7 @@ const renderTable = (data) => {
         <GenericTable
           data={data.result}
           pagination={{
+            hideOnSinglePage: true,
             total: data.result.length,
           }}
         />

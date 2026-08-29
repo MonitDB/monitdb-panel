@@ -174,7 +174,7 @@ const WebhooksPage = () => {
               onClick: () => openEdit(record),
               style: { cursor: 'pointer' },
             })}
-            pagination={{ pageSize: 10, showSizeChanger: false }}
+            pagination={{ pageSize: 10, showSizeChanger: false, hideOnSinglePage: true }}
           />
 
           <Modal

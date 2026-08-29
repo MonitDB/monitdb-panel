@@ -114,6 +114,7 @@ export const InstallationLog = () => {
           },
         ]}
         pagination={{
+          hideOnSinglePage: true,
           pageSize: pageSize,
           total: totalResults,
           current: pageNumber,

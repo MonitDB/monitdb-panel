@@ -131,7 +131,7 @@ const RemoteAudit = () => {
             rowKey="id"
             loading={auditLoading}
             size="small"
-            pagination={{ pageSize: 20, showSizeChanger: false }}
+            pagination={{ pageSize: 20, showSizeChanger: false, hideOnSinglePage: true }}
           />
 
           <RecordingPlayer

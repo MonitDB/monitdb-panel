@@ -1,7 +1,7 @@
 /* eslint-disable unicorn/no-null */
 import { faDownload } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Collapse, Table, Tag } from 'antd'
+import { Collapse, Table } from 'antd'
 import {
   ArcElement,
   CategoryScale,
@@ -12,6 +12,7 @@ import {
   Tooltip,
 } from 'chart.js'
 import classNames from 'classnames'
+import { differenceInMonths, format, isValid, parseISO } from 'date-fns'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { Pie } from 'react-chartjs-2'
 
@@ -21,6 +22,63 @@ import { PageContent } from '~/components/page'
 import useGlobal from '~/hooks/use-global'
 import { getVersions } from '~/services/states'
 import { formatServer } from '~/utils/server'
+
+// ---------------------------------------------------------------------------
+// Apresentacao das colunas. Nada disto vai a API: e tudo juizo sobre o dado que
+// ja esta no ecra.
+// ---------------------------------------------------------------------------
+
+// Traco em vez de vazio (ou de "undefined"): a celula sem dado tem de se ler
+// como "nao sei", nao como "esta bem".
+const DASH = <span className="text-gray">—</span>
+
+const asText = (value) =>
+  value === null || value === undefined || `${value}`.trim() === ''
+    ? undefined
+    : `${value}`.trim()
+
+// A data vem "2025-01-07". O resto do produto mostra dd/mm/aaaa.
+const parseDay = (value) => {
+  const text = asText(value)
+  if (!text) return
+  const date = parseISO(text.slice(0, 10))
+  return isValid(date) ? date : undefined
+}
+
+// Fim de suporte com juizo. Uma data de suporte que ja passou e o unico dado
+// deste ecra que exige accao — ate agora estava a preto, igual a uma de 2030.
+const supportEndState = (date) => {
+  const months = differenceInMonths(date, new Date())
+  if (months < 0) {
+    const gone = Math.abs(months)
+    return {
+      tone: 'st-down',
+      note:
+        gone < 1
+          ? 'expired this month'
+          : `expired ${gone} month${gone === 1 ? '' : 's'} ago`,
+    }
+  }
+  if (months < 12) {
+    return {
+      tone: 'st-warn',
+      note: months < 1 ? 'expires this month' : `${months} months left`,
+    }
+  }
+  const years = Math.floor(months / 12)
+  const rest = months % 12
+  return {
+    tone: '',
+    note: rest
+      ? `${years}y ${rest}m left`
+      : `${years} year${years === 1 ? '' : 's'} left`,
+  }
+}
+
+const isOutOfSupport = (record) => {
+  const date = parseDay(record?.supportEndDate)
+  return Boolean(date) && differenceInMonths(date, new Date()) < 0
+}
 
 ChartJS.register(
   ArcElement,
@@ -49,6 +107,171 @@ const buildEnvironmentVersions = ({ envId, servers, serverTypes, versions }) =>
             _available: false,
           }
     })
+
+// Identificadores (collation, build, portas) leem-se caracter a caracter: mono.
+const renderMono = (value) =>
+  asText(value) ? <span className="mn-mono">{value}</span> : DASH
+
+// O primeiro numero que se le no grupo passa a ser o que exige accao, nao so
+// quantos servidores ha.
+const groupLabel = (label, rows) => {
+  const expired = rows.filter((item) => isOutOfSupport(item)).length
+  const missing = rows.filter((item) => !item._available).length
+  return (
+    <span className="flex items-baseline gap-3">
+      <span>{`${label} (${rows.length})`}</span>
+      {expired > 0 ? (
+        <small className="st-down font-semibold">
+          {expired} out of support
+        </small>
+      ) : undefined}
+      {missing > 0 ? (
+        <small className="text-gray">{missing} without collection</small>
+      ) : undefined}
+    </span>
+  )
+}
+
+const VERSION_COLUMNS = [
+  {
+    dataIndex: 'Server Name',
+    title: 'Name',
+    width: 150,
+    render: (value) => (
+      <span className="mn-mono font-medium text-gray-dark">
+        {value}
+      </span>
+    ),
+  },
+  {
+    key: 'state',
+    title: 'Status',
+    width: 130,
+    // Ponto + palavra: a cor sozinha nao e sinal.
+    render: (_, record) =>
+      record._available ? (
+        <span className="st st-ok">
+          <i />
+          Collected
+        </span>
+      ) : (
+        <span className="st st-down">
+          <i />
+          Not collected
+        </span>
+      ),
+  },
+  {
+    dataIndex: 'version',
+    title: 'Version',
+    width: 150,
+    render: (value) => asText(value) ?? DASH,
+  },
+  {
+    dataIndex: 'edition',
+    title: 'Edition',
+    width: 150,
+    // "Developer Edition (64-bit)" -> "Developer (64-bit)":
+    // a coluna ja se chama Edition.
+    render: (value) =>
+      asText(value)?.replace(
+        / Edition\b/,
+        ''
+      ) ?? DASH,
+  },
+  {
+    dataIndex: 'collation',
+    title: 'Collation',
+    width: 150,
+    render: renderMono,
+  },
+  {
+    dataIndex: 'productLevel',
+    title: 'Level',
+    width: 110,
+    // Sem guarda isto imprimia "undefined undefined"
+    // na linha de quem nao respondeu.
+    render: (_, record) => {
+      const parts = [
+        asText(record.productLevel),
+        asText(record.productUpdateLevel),
+      ].filter(Boolean)
+      return parts.length > 0
+        ? parts.join(' ')
+        : DASH
+    },
+  },
+  {
+    dataIndex: 'productVersion',
+    title: 'Build',
+    width: 130,
+    render: renderMono,
+  },
+  {
+    dataIndex: 'processors',
+    title: 'Proc.',
+    width: 80,
+    render: (value) => asText(value) ?? DASH,
+  },
+  {
+    dataIndex: 'logicalProcessors',
+    title: 'Cores',
+    width: 80,
+    render: (value) => asText(value) ?? DASH,
+  },
+  {
+    dataIndex: 'alwaysOn',
+    title: 'Always On',
+    width: 110,
+    // Always On desligado e configuracao normal
+    // (Developer Edition), nao e avaria: vermelho
+    // aqui gastava o alarme. E o verde apanhava o
+    // vazio, pintando de verde quem nem respondeu.
+    render: (value) => {
+      const text = asText(value)
+      if (!text) return DASH
+      if (text.toUpperCase() === 'DISABLED')
+        return (
+          <span className="st st-off">
+            <i />
+            Off
+          </span>
+        )
+      if (text.toUpperCase() === 'ENABLED')
+        return (
+          <span className="st st-ok">
+            <i />
+            On
+          </span>
+        )
+      return text
+    },
+  },
+  {
+    dataIndex: 'supportEndDate',
+    title: 'Support ends',
+    width: 170,
+    // Uma data de fim de suporte que ja passou e o
+    // unico dado deste ecra que pede accao. Estava
+    // a preto, igual a uma de 2030.
+    render: (value) => {
+      const date = parseDay(value)
+      if (!date) return DASH
+      const { tone, note } =
+        supportEndState(date)
+      return (
+        <span className={tone}>
+          <span className="mn-mono">
+            {format(date, 'dd/MM/yyyy')}
+          </span>
+          <small className="block font-normal">
+            {note}
+          </small>
+        </span>
+      )
+    },
+  },
+]
 
 const InstalledVersions = ({ tabName }) => {
   const [isLoading, setIsLoading] = useState(false)
@@ -248,7 +471,7 @@ const InstalledVersions = ({ tabName }) => {
                   />
                 </header>
 
-                <div className="-mx-4 py-4 px-8 bg-white md:-mx-6">
+                <div className="mn-versions -mx-4 py-4 px-8 bg-white md:-mx-6">
                   {
                     <Collapse
                       defaultActiveKey={[
@@ -279,7 +502,7 @@ const InstalledVersions = ({ tabName }) => {
 
                             return {
                               key,
-                              label: `${label} (${filteredVersions.length})`,
+                              label: groupLabel(label, filteredVersions),
 
                               className: 'mb-4',
                               children: (
@@ -289,82 +512,12 @@ const InstalledVersions = ({ tabName }) => {
                                   key={`server-${key}-${environmentIndex}`}
                                   rowKey={(record) => record.ServerId}
                                   dataSource={filteredVersions}
-                                  columns={[
-                                    {
-                                      dataIndex: 'Server Name',
-                                      title: 'Name',
-                                      width: 150,
-                                    },
-                                    {
-                                      key: 'state',
-                                      title: 'Estado',
-                                      width: 130,
-                                      render: (_, record) =>
-                                        record._available ? (
-                                          <Tag color="green">Coletado</Tag>
-                                        ) : (
-                                          <Tag color="orange">Unavailable</Tag>
-                                        ),
-                                    },
-                                    {
-                                      dataIndex: 'version',
-                                      title: 'Version',
-                                      width: 150,
-                                    },
-                                    {
-                                      dataIndex: 'edition',
-                                      title: 'Edition',
-                                      width: 150,
-                                    },
-                                    {
-                                      dataIndex: 'collation',
-                                      title: 'Collation',
-                                      width: 150,
-                                    },
-                                    {
-                                      dataIndex: 'productLevel',
-                                      title: 'Product Level',
-                                      width: 150,
-                                      render: (_, record) =>
-                                        `${record.productLevel} ${record.productUpdateLevel}`,
-                                    },
-                                    {
-                                      dataIndex: 'productVersion',
-                                      title: 'Product Version',
-                                      width: 150,
-                                    },
-                                    {
-                                      dataIndex: 'processors',
-                                      title: 'Processors',
-                                      width: 150,
-                                    },
-                                    {
-                                      dataIndex: 'logicalProcessors',
-                                      title: 'Cores',
-                                      width: 150,
-                                    },
-                                    {
-                                      dataIndex: 'alwaysOn',
-                                      title: 'Always-On',
-                                      width: 150,
-                                      render: (value) => (
-                                        <Tag
-                                          color={
-                                            value === 'DISABLED'
-                                              ? 'red'
-                                              : 'green'
-                                          }
-                                        >
-                                          {value}
-                                        </Tag>
-                                      ),
-                                    },
-                                    {
-                                      dataIndex: 'supportEndDate',
-                                      title: 'Support End Date',
-                                      width: 150,
-                                    },
-                                  ]}
+                                  columns={VERSION_COLUMNS}
+                                  rowClassName={(record) =>
+                                    record._available
+                                      ? ''
+                                      : 'mn-row-unavailable'
+                                  }
                                   onRow={() => ({
                                     style: { cursor: 'pointer' },
                                   })}

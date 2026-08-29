@@ -125,7 +125,7 @@ const AiSkillsPage = () => {
               onClick: () => openSkill(record.id),
               style: { cursor: 'pointer' },
             })}
-            pagination={{ pageSize: 10, showSizeChanger: false }}
+            pagination={{ pageSize: 10, showSizeChanger: false, hideOnSinglePage: true }}
           />
           <AiSkillDrawer />
         </PageContent>

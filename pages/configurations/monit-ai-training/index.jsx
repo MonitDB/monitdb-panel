@@ -128,6 +128,7 @@ const AiTrainingPage = () => {
             columns={columns}
             rowKey="idTrainingMaterial"
             pagination={{
+              hideOnSinglePage: true,
               pageSize: pageSize,
               total: usingRemoteLLMs ? trainings?.length : trainingsLocalLLM?.length,
               showSizeChanger: false,

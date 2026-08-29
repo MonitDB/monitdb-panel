@@ -174,7 +174,7 @@ const Sftp = () => {
                 Arquivos (SFTP)
                 <Tooltip title="Browse, download, upload and remove files on the host over SFTP. Requires SSH Terminal OWNER; every operation is written to the audit trail. Same host key check (TOFU) as the terminal.">
                   <Tag
-                    color="warning"
+                    color="default"
                     icon={<SafetyCertificateOutlined />}
                     style={{ fontSize: 12, fontWeight: 400, marginInlineEnd: 0 }}
                   >
@@ -240,7 +240,7 @@ const Sftp = () => {
               columns={columns}
               rowKey="name"
               size="small"
-              pagination={{ pageSize: 25, showSizeChanger: false }}
+              pagination={{ pageSize: 25, showSizeChanger: false, hideOnSinglePage: true }}
               locale={{
                 emptyText: hostId
                   ? 'Pick a host and choose Open.'

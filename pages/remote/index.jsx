@@ -83,7 +83,7 @@ const Remote = () => {
                 Remote Desktop (RDP/VNC)
                 <Tooltip title="Each tab opens a graphical session (RDP/VNC) on the host through Guacamole. Requires the OWNER permission for Remote Desktop; opening is audited and every session is recorded (replay) for compliance. The keyboard goes to the active tab. Hosts and credentials are managed in Configurations → Remote hosts.">
                   <Tag
-                    color="warning"
+                    color="default"
                     icon={<SafetyCertificateOutlined />}
                     style={{ fontSize: 12, fontWeight: 400, marginInlineEnd: 0 }}
                   >

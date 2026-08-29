@@ -72,7 +72,7 @@ const DashboardPage = () => {
   const statusOptions = useMemo(
     () => [
       // { value: '', label: 'All status' },
-      { value: 1, label: 'Healtly' },
+      { value: 1, label: 'Healthy' },
       { value: 2, label: 'Info' },
       { value: 3, label: 'Warning' },
       { value: 4, label: 'Critical' },

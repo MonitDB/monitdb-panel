@@ -24,9 +24,13 @@ import {
 } from '~/utils/hasPermission'
 // import DatabasesSvg from '~/icons/databases.svg'
 
+// O separador ativo era o unico sinal e vinha do indigo da marca sobre preto —
+// 2.9:1, nao se via. Agora o item aceso e branco com peso, o apagado e cinza
+// legivel (nao branco a 50% de opacidade) e acende no hover.
 const buttonClasses =
-  'block h-16 leading-[64px] px-5 border-b-4 text-white lg:hover:text-opacity-100'
-const buttonClassesActive = 'border-blue text-opacity-100'
+  'block h-16 leading-[64px] px-5 border-b-4 transition-colors lg:hover:text-white'
+const buttonClassesActive = 'border-blue-soft text-white font-medium'
+const buttonClassesIdle = 'border-gray-dark text-gray'
 
 const Header = () => {
   const router = useRouter()
@@ -67,12 +71,13 @@ const Header = () => {
     },
     {
       title: (
-        <div style={{ width: '84px' }}>
+        <span className="whitespace-nowrap">
           <FontAwesomeIcon icon={faWandMagicSparkles} className="mr-1" />
           Monit AI
-        </div>
+        </span>
       ),
       href: '/monit-ai/new',
+      accent: true,
     },
     {
       title: 'Insights',
@@ -142,9 +147,15 @@ const Header = () => {
                           [buttonClassesActive]:
                             item.href.split('/')[1] ===
                             router.pathname.split('/')[1],
-                          'border-gray-dark text-opacity-50':
+                          [buttonClassesIdle]:
                             item.href.split('/')[1] !==
                             router.pathname.split('/')[1],
+                          // O Monit AI e o unico item que e "outra coisa":
+                          // fica com a cor da marca enquanto nao esta aceso.
+                          'text-blue-soft':
+                            item.accent &&
+                            item.href.split('/')[1] !==
+                              router.pathname.split('/')[1],
                         })}
                       >
                         {item.title}
@@ -216,10 +227,13 @@ const Header = () => {
                 </li>
               </ul>
             </div>
-            <div>
+            {/* Separador + pastilha branca: o logotipo do cliente encostava ao
+                avatar e o resultado dependia do tamanho do PNG que ele manda. */}
+            <span className="block w-px h-5 bg-white bg-opacity-20" />
+            <div className="flex items-center h-7 px-2 bg-white rounded-full">
               <img
                 src={config.logo ?? '/images/logos/monitdb.png'}
-                className="h-full max-h-[40px] mr-2 ml-2"
+                className="max-h-5 w-auto"
                 alt={config?.customerName ?? 'MonitDB'}
               />
             </div>

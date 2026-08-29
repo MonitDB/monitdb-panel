@@ -17,6 +17,7 @@ import { NextSeo } from 'next-seo'
 import React, { useEffect, useState } from 'react'
 
 import { PageContent, PageHeader } from '~/components/page'
+import Status from '~/components/status'
 import HostTechnologies, {
   parseTechnologies,
 } from '~/components/terminal/host-technologies'
@@ -153,9 +154,9 @@ const SshHosts = () => {
       width: 110,
       render: (t, h) =>
         h.hasPassword || h.hasPrivateKey ? (
-          <Tag color="green">set</Tag>
+          <Status tone="ok">set</Status>
         ) : (
-          <Tag color="orange">missing</Tag>
+          <Status tone="warn">missing</Status>
         ),
     },
     {
@@ -164,7 +165,7 @@ const SshHosts = () => {
       width: 120,
       render: (t, h) =>
         h.hostKeyKnown ? (
-          <Tag color="blue">known</Tag>
+          <Status tone="off">known</Status>
         ) : (
           <Tag>on first connection</Tag>
         ),

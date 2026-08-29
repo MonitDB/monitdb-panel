@@ -4,22 +4,34 @@ import {
   Empty,
   message as antdMessage,
   Spin,
-  Tag,
   Tooltip,
 } from 'antd'
 import { NextSeo } from 'next-seo'
 import React, { useEffect } from 'react'
 
 import { Markdown } from '~/components/md'
-import { PageWrapper } from '~/components/page'
+import { PageContent, PageHeader, PageWrapper } from '~/components/page'
+import Status from '~/components/status'
 import Layout from '~/layouts/default'
 import { useInsightsStore } from '~/services/state-manager/insights-store'
 
-const SEVERITY_COLOR = {
-  Critical: 'red',
-  Warning: 'orange',
-  Info: 'blue',
-  Healthy: 'green',
+// Antes: cores de fabrica do AntD (red/orange/blue/green). Agora os tons de
+// estado do produto, que sao os mesmos do cartao do dashboard e do ecra 12.
+const SEVERITY_TONE = {
+  Critical: 'crit',
+  Warning: 'warn',
+  Info: 'off',
+  Healthy: 'ok',
+}
+
+// O produto mostra datas em dd/mm/aaaa hh:mm. Aqui vinha um toLocaleString
+// pt-BR, com segundos e noutra ordem.
+const pad = (n) => `${n}`.padStart(2, '0')
+
+const formatMoment = (value) => {
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return ''
+  return `${pad(date.getDate())}/${pad(date.getMonth() + 1)}/${date.getFullYear()} ${pad(date.getHours())}:${pad(date.getMinutes())}`
 }
 
 const stripFirstSeverityLine = (text = '') =>
@@ -65,24 +77,30 @@ const Insights = () => {
             key={insight.id}
             className="bg-white border border-gray-light rounded-lg p-4"
           >
-            <div className="flex items-center justify-between mb-2">
-              <span className="font-bold">{insight.serverName}</span>
-              <Tag color={SEVERITY_COLOR[insight.severity] || 'default'}>
+            {/* A hora sobe para o cabecalho: a primeira pergunta de quem le um
+                diagnostico e "isto e de hoje?". Os mesmos dados, noutro sitio. */}
+            <div className="flex items-baseline justify-between gap-3 mb-3">
+              <span className="flex items-baseline gap-2 min-w-0">
+                <span className="mn-mono font-bold">{insight.serverName}</span>
+                <Tooltip title="Quando foi gerado">
+                  <small className="text-gray whitespace-nowrap">
+                    {formatMoment(insight.createdAt)}
+                  </small>
+                </Tooltip>
+                {insight.model ? (
+                  <small className="text-gray truncate">{insight.model}</small>
+                ) : undefined}
+              </span>
+              <Status tone={SEVERITY_TONE[insight.severity] ?? 'off'}>
                 {insight.severity || 'Info'}
-              </Tag>
+              </Status>
             </div>
             <Markdown content={stripFirstSeverityLine(insight.content)} />
-            <div className="text-gray text-xs mt-2 flex gap-3">
-              <Tooltip title="Quando foi gerado">
-                <span>
-                  🕒 {new Date(insight.createdAt).toLocaleString('pt-BR')}
-                </span>
-              </Tooltip>
-              {insight.model && <span>🤖 {insight.model}</span>}
-              {insight.totalTokens ? (
-                <span>🔢 {insight.totalTokens} tokens</span>
-              ) : undefined}
-            </div>
+            {insight.totalTokens ? (
+              <div className="text-gray text-xs mt-3">
+                {insight.totalTokens} tokens
+              </div>
+            ) : undefined}
           </div>
         ))}
       </div>
@@ -93,20 +111,25 @@ const Insights = () => {
     <>
       <NextSeo title="Insights - MonitDB" />
       <Layout>
-        <PageWrapper className="p-8">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h1 className="text-2xl font-bold">AI Insights</h1>
-              <p className="text-gray">
-                Proactive analysis per server — diagnosis, likely cause and
-                recommended actions, drawn from the real telemetry.
-              </p>
-            </div>
-            <Button type="primary" loading={running} onClick={handleRun}>
-              ▶ Run now
-            </Button>
-          </div>
-          {renderBody()}
+        {/* O PageWrapper nao aceita className: o "p-8" que aqui estava nunca
+            chegou ao DOM e por isso esta pagina era a unica colada a borda.
+            A margem vem do PageContent, como em todas as outras. */}
+        <PageWrapper>
+          <PageContent removeSidebarMargin>
+            <PageHeader
+              title="AI Insights"
+              extra={
+                <Button type="primary" loading={running} onClick={handleRun}>
+                  Run now
+                </Button>
+              }
+            />
+            <p className="text-gray -mt-8 mb-8">
+              Proactive analysis per server — diagnosis, likely cause and
+              recommended actions, drawn from the real telemetry.
+            </p>
+            {renderBody()}
+          </PageContent>
         </PageWrapper>
       </Layout>
     </>

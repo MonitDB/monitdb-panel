@@ -80,7 +80,7 @@ const Terminal = () => {
                 Terminal SSH
                 <Tooltip title="Each tab opens a real shell session on the selected host. Requires the OWNER permission for SSH Terminal; the whole session (open, close and typed commands) is written to the audit trail. Hosts and credentials are managed in Configurations → SSH hosts.">
                   <Tag
-                    color="warning"
+                    color="default"
                     icon={<SafetyCertificateOutlined />}
                     style={{ fontSize: 12, fontWeight: 400, marginInlineEnd: 0 }}
                   >

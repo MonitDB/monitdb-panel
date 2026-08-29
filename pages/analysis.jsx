@@ -455,7 +455,7 @@ const AnalysisPage = () => {
                         })
                       }}
                     >
-                      Lasts 7 days
+                      Last 7 days
                     </Link>
                   </li>
                   <li>
@@ -469,7 +469,7 @@ const AnalysisPage = () => {
                         })
                       }}
                     >
-                      Lasts 14 days
+                      Last 14 days
                     </Link>
                   </li>
                   <li>

@@ -151,6 +151,7 @@ const MetricsPage = () => {
                   size="small"
                   loading={isLoading}
                   pagination={{
+                    hideOnSinglePage: true,
                     showSizeChanger: true,
                     pageSizeOptions: ['10', '20', '50', '100'],
                   }}

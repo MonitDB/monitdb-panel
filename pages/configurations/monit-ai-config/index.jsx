@@ -138,7 +138,7 @@ const AiConfigPage = () => {
                   }}
                 />              */}
                 <Button type="primary" onClick={addNewConfig} disabled={!usingRemoteLLMs}>
-                  New Ai Config
+                  New AI config
                 </Button>                
               </>
             }
@@ -156,6 +156,7 @@ const AiConfigPage = () => {
               style: !usingRemoteLLMs ? { cursor: "not-allowed", opacity: 0.6 } : {},
             })}
             pagination={{
+              hideOnSinglePage: true,
               pageSize: pageSize,
               total: configs?.length,
               showSizeChanger: false,

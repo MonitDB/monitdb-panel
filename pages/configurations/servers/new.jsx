@@ -80,7 +80,7 @@ const ConfigurationsServersSinglePage = () => {
         <PageWrapper className="p-8">
           <PageContent removeSidebarMargin={true}>
             <PageHeader
-              title="Configurations"
+              title="New server"
               breadcrumbs={[
                 {
                   title: 'Configurations',

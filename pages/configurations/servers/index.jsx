@@ -1,6 +1,6 @@
 import { faAdd } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Button, message, Popconfirm, Row, Space, Table, Tag } from 'antd'
+import { Button, message, Popconfirm, Row, Space, Table } from 'antd'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
 import { useEffect, useState } from 'react'
@@ -8,6 +8,7 @@ import React from 'react'
 
 import Link from '~/components/link'
 import { PageContent, PageHeader, PageWrapper } from '~/components/page'
+import Status from '~/components/status'
 import { useUser } from '~/hooks/index'
 import useGlobal from '~/hooks/use-global'
 import Layout from '~/layouts/default'
@@ -68,7 +69,7 @@ const ConfigurationsServersPage = () => {
         <PageWrapper className="p-8">
           <PageContent removeSidebarMargin={true}>
             <PageHeader
-              title="Configurations"
+              title="Servers"
               breadcrumbs={[
                 {
                   title: 'Configurations',
@@ -103,9 +104,9 @@ const ConfigurationsServersPage = () => {
                       title: 'Status',
                       render: (value) =>
                         value ? (
-                          <Tag color="green">Active</Tag>
+                          <Status tone="ok">Active</Status>
                         ) : (
-                          <Tag color="red">Inactive</Tag>
+                          <Status tone="off">Inactive</Status>
                         ),
                     },
                     { dataIndex: 'serverUser', title: 'Server User' },
@@ -136,7 +137,7 @@ const ConfigurationsServersPage = () => {
                               }}
                             >
                               <Button
-                                type="dashed"
+                                type="default"
                                 danger
                                 loading={loading.includes(record.id)}
                               >

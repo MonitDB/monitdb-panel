@@ -16,7 +16,21 @@ import { useConfigStore } from '~/services/state-manager/config-store'
 
 setLocale(pt)
 
-// token: { colorPrimary: '#5046e5' },
+// Tema do MonitDB. Antes disto o AntD entrava com o azul de fabrica (#1890ff) em
+// paginacao, links, passos do wizard e toggles, ao lado do indigo da marca no resto
+// do produto. Uma cor por papel, definida num sitio so.
+const monitTheme = {
+  token: {
+    colorPrimary: '#5046e5',
+    colorInfo: '#5046e5',
+    colorLink: '#4338ca',
+    colorLinkHover: '#5046e5',
+    colorSuccess: '#409d66',
+    colorWarning: '#fc9003',
+    colorError: '#ff4e4e',
+    fontFamily: '"IBM Plex Sans", system-ui, -apple-system, sans-serif',
+  },
+}
 
 export default function MyApp({ Component, pageProps }) {
   const { loaded, fetchConfig } = useConfigStore()
@@ -42,7 +56,7 @@ export default function MyApp({ Component, pageProps }) {
       <Head>
         <link rel="icon" href={'/ico.png'} />
       </Head>
-      <ConfigProvider>
+      <ConfigProvider theme={monitTheme}>
         <DefaultSeo
           defaultTitle="MonitDB"
           openGraph={{

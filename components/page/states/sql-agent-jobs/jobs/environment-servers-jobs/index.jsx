@@ -181,6 +181,7 @@ function Servers({ environmentServers, serversJobs, expand }) {
                     },
                   })}
                   pagination={{
+                    hideOnSinglePage: true,
                     current: currentMainTablePage,
                     pageSize: 10,
                     total: serverJobs.length,
@@ -278,6 +279,7 @@ function Servers({ environmentServers, serversJobs, expand }) {
               expandedRowKeys: [activeTableRowIndex],
             }}
             pagination={{
+              hideOnSinglePage: true,
               current: currentPage,
               onChange: setCurrentPage,
               pageSize: 10,

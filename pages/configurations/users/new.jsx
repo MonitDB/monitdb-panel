@@ -53,7 +53,7 @@ const UsersCreatePage = () => {
 
       <PageContent removeSidebarMargin={true}>
         <PageHeader
-          title="Configurations"
+          title="New user"
           breadcrumbs={[
             {
               title: 'Configurations',

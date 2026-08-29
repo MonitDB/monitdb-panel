@@ -57,7 +57,7 @@ const reportTypesData = [
     featureFunction: FeatureFunction.DATABASE_GROWTH_TOP_10,
   },
   {
-    name: 'Table Growth TOP 10"',
+    name: 'Table Growth TOP 10',
     slug: 'rltbgrow',
     featureFunction: FeatureFunction.TABLE_GROWTH_TOP_10,
   },

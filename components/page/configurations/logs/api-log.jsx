@@ -106,6 +106,7 @@ export const ApiLogs = () => {
           },
         ]}
         pagination={{
+          hideOnSinglePage: true,
           total: pagination.totalResults,
           current: pagination.current,
           showSizeChanger: false,

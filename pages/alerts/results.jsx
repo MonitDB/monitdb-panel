@@ -2,7 +2,7 @@
 /* eslint-disable no-console */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 
-import { Button, Select, Table, Tag } from 'antd'
+import { Button, Select, Table } from 'antd'
 import moment from 'moment'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
@@ -13,6 +13,7 @@ import Selector from '~/components/form/selector'
 import { PageContent, PageWrapper } from '~/components/page'
 import { ServerInfo } from '~/components/page/server-info'
 import MonitoredServersSidebar from '~/components/sidebar/monitored-servers'
+import Status from '~/components/status'
 import { AlertHtmlSubTable } from '~/components/table/subTable'
 import { useUser } from '~/hooks/index'
 // import DatabaseIcons from '~/helpers/database-icons'
@@ -268,24 +269,39 @@ const AlertsDetailsPage = () => {
                 {
                   dataIndex: 'serverName',
                   title: 'Server Name',
-                  render: (value) => {
-                    return value
-                  },
+                  render: (value) => (
+                    <span className="mn-mono">{value}</span>
+                  ),
                 },
-                { dataIndex: 'dsMessage', title: 'Message' },
+                {
+                  dataIndex: 'dsMessage',
+                  title: 'Message',
+                  // A mensagem vem da base com o prefixo "ALERTA:" em todas as
+                  // linhas. Numa coluna que ja se chama Message, e numa pagina
+                  // que ja se chama Alerts, a primeira palavra de cada linha
+                  // nao devia ser a mesma dez vezes.
+                  render: (value) =>
+                    typeof value === 'string'
+                      ? value.replace(/^\s*alerta:\s*/i, '')
+                      : value,
+                },
                 {
                   dataIndex: 'isActive',
                   title: 'Status',
 
                   render: (value) =>
-                    value === 1 && <Tag color="orange">Active</Tag>,
+                    value === 1 && <Status tone="warn">Active</Status>,
                 },
                 {
                   dataIndex: 'dtAlert',
                   title: 'Last Updated',
 
                   render: (value) =>
-                    value && moment(value).format('DD/MM/yyyy HH:mm'),
+                    value && (
+                      <span className="mn-mono whitespace-nowrap">
+                        {moment(value).format('DD/MM/yyyy HH:mm')}
+                      </span>
+                    ),
                 },
                 {
                   title:
@@ -337,6 +353,7 @@ const AlertsDetailsPage = () => {
                 }
               }
               pagination={{
+                hideOnSinglePage: true,
                 total: alertsResult.count,
                 current: currentPage,
                 onChange: (page) => {

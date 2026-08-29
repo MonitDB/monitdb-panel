@@ -140,6 +140,7 @@ export const ComponentLogs = () => {
           },
         ]}
         pagination={{
+          hideOnSinglePage: true,
           total: pagination.totalResults,
           current: pagination.current,
           showSizeChanger: false,

@@ -128,7 +128,7 @@ const UserSinglePage = () => {
         <PageWrapper className="p-8">
           <PageContent removeSidebarMargin={true}>
             <PageHeader
-              title="Configurations"
+              title="Edit user"
               breadcrumbs={[
                 {
                   title: 'Configurations',

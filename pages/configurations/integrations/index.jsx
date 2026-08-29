@@ -145,6 +145,7 @@ const IntegrationsPage = () => {
               onClick: () => openIntegration(record.id),
             })}
             pagination={{
+              hideOnSinglePage: true,
               current: currentPage,
               pageSize: pageSize,
               total: total,

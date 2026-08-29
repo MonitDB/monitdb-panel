@@ -17,6 +17,7 @@ import { NextSeo } from 'next-seo'
 import React, { useEffect, useState } from 'react'
 
 import { PageContent, PageHeader } from '~/components/page'
+import Status from '~/components/status'
 import HostTechnologies, {
   parseTechnologies,
 } from '~/components/terminal/host-technologies'
@@ -147,9 +148,9 @@ const RemoteHosts = () => {
       width: 110,
       render: (t, h) =>
         h.hasPassword ? (
-          <Tag color="green">set</Tag>
+          <Status tone="ok">set</Status>
         ) : (
-          <Tag color="orange">missing</Tag>
+          <Status tone="warn">missing</Status>
         ),
     },
     {
