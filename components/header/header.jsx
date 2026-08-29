@@ -28,7 +28,7 @@ import {
 // 2.9:1, nao se via. Agora o item aceso e branco com peso, o apagado e cinza
 // legivel (nao branco a 50% de opacidade) e acende no hover.
 const buttonClasses =
-  'block h-16 leading-[64px] px-3 xl:px-4 border-b-4 whitespace-nowrap transition-colors lg:hover:text-white'
+  'block h-16 leading-[64px] px-2 text-sm border-b-4 whitespace-nowrap transition-colors xl:px-3 2xl:px-4 2xl:text-base lg:hover:text-white'
 const buttonClassesActive = 'border-blue-soft text-white font-medium'
 const buttonClassesIdle = 'border-gray-dark text-gray'
 
@@ -134,8 +134,8 @@ const Header = () => {
           </h1>
         </div>
 
-        <div className="w-full min-w-0 md:flex md:items-center">
-          <nav className="min-w-0">
+        <div className="flex-1 min-w-0 md:flex md:items-center">
+          <nav className="flex-1 min-w-0 overflow-hidden">
             <ul className="flex items-center">
               {navMenuList.map(
                 (item, index) =>
