@@ -203,7 +203,7 @@ const Sftp = () => {
                   }))}
                 />
                 <Button type="primary" disabled={!hostId} onClick={open}>
-                  Abrir
+                  Open
                 </Button>
               </Space>
             }

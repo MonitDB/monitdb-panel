@@ -318,7 +318,7 @@ const AlertsDetailsPage = () => {
                       TypeGrant.EXECUTE
                     ) ? (
                       <Button
-                        type="dashed"
+                        type="default"
                         loading={cleaningAlert === alert.id * alert.serverId}
                         onClick={(event) => {
                           event.stopPropagation()

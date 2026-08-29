@@ -89,7 +89,7 @@ const WebhooksPage = () => {
       render: (text) => <Tag icon={<ApiOutlined />}>{text}</Tag>,
     },
     {
-      title: 'Tipo',
+      title: 'Type',
       dataIndex: 'type',
       key: 'type',
       render: (t) => <Tag>{t}</Tag>,
@@ -105,7 +105,7 @@ const WebhooksPage = () => {
       title: 'Enabled',
       dataIndex: 'enabled',
       key: 'enabled',
-      width: 70,
+      width: 90,
       render: (enabled, record) => (
         <Switch
           checked={!!enabled}
@@ -153,14 +153,14 @@ const WebhooksPage = () => {
       <Layout>
         <PageContent removeSidebarMargin={true}>
           <PageHeader
-            title="Webhooks de Alerta"
+            title="Alert Webhooks"
             breadcrumbs={[
               { title: 'Configurations', href: '/configurations/' },
               { title: 'Webhooks', href: '/configurations/webhooks/' },
             ]}
             extra={
               <Button type="primary" onClick={openNew}>
-                Novo webhook
+                New webhook
               </Button>
             }
           />

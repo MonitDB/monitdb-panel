@@ -100,9 +100,13 @@ const ComponentsPage = () => {
       key: 'componentEnable',
       render: (text, record) =>
         record.componentEnable ? (
-          <FontAwesomeIcon icon={faCheck} className="text-success" />
+          <span className="st-ok" title="Enabled">
+            <FontAwesomeIcon icon={faCheck} />
+          </span>
         ) : (
-          <FontAwesomeIcon icon={faXmark} className="text-danger" />
+          <span className="st-off" title="Disabled">
+            <FontAwesomeIcon icon={faXmark} />
+          </span>
         ),
     },
   ]

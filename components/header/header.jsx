@@ -230,10 +230,10 @@ const Header = () => {
             {/* Separador + pastilha branca: o logotipo do cliente encostava ao
                 avatar e o resultado dependia do tamanho do PNG que ele manda. */}
             <span className="block w-px h-5 bg-white bg-opacity-20" />
-            <div className="flex items-center h-7 px-2 bg-white rounded-full">
+            <div className="flex items-center justify-center h-7 min-w-24 px-3 bg-white rounded-full">
               <img
                 src={config.logo ?? '/images/logos/monitdb.png'}
-                className="max-h-5 w-auto"
+                className="h-4 w-auto max-w-32"
                 alt={config?.customerName ?? 'MonitDB'}
               />
             </div>

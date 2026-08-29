@@ -96,7 +96,7 @@ const AlertsPage = () => {
         <PageWrapper>
           <PageContent className="lg:pt-20" removeSidebarMargin>
             <form
-              className="relative w-full mx-auto mb-10 lg:w-2/3 lg:mb-20"
+              className="relative w-full max-w-md mb-6"
               onSubmit={handleSubmit}
             >
               {hasPermission(

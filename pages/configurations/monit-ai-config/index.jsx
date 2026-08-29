@@ -119,7 +119,7 @@ const AiConfigPage = () => {
                 href: '/configurations/',
               },
               {
-                title: 'Integrations',
+                title: 'Monit AI',
                 href: '/configurations/ai-config/',
               },
             ]}

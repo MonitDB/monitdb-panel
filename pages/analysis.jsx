@@ -534,6 +534,9 @@ const AnalysisPage = () => {
                         offsetY: 10,
                         offsetX: 5,
                       },
+                      // O ApexCharts entra com a paleta de fabrica (azul
+                      // #008FFB), que nao e cor do produto.
+                      colors: ['#5046e5', '#fc9003', '#409d66', '#cc0000'],
                       stroke: { width: 1, curve: 'straight' },
                       xaxis: {
                         type: 'datetime',
@@ -636,7 +639,13 @@ const AnalysisPage = () => {
                   },
                   style: { cursor: 'pointer' },
                 })}
-                pagination={queriesProfile.length > 10}
+                pagination={{ hideOnSinglePage: true }}
+                locale={{
+                  // "No data" nao diz o que se procurou. A consulta le a
+                  // QueriesProfile do servidor escolhido entre as duas datas,
+                  // sem limiar nenhum: vazio quer dizer janela sem recolha.
+                  emptyText: 'No queries collected in this window.',
+                }}
                 columns={[
                   {
                     title: 'Text data',
