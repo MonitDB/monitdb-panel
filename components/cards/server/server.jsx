@@ -212,9 +212,16 @@ const ServerCard = ({
                 serverEnable && server?.status === SERVER_STATUS.HEALTLY,
               'border-blue':
                 serverEnable && server?.status === SERVER_STATUS.INFO,
+              'border-gray': !serverEnable,
+            },
+          // O bloco acima so pinta com server.online. A API so marca DOWN quando
+          // online e false, por isso a moldura vermelha exigia estar online e em
+          // baixo ao mesmo tempo: nunca foi pintada uma unica vez. Agora o
+          // servidor caido acende, que e o unico caso que aqui falta.
+          showStatus &&
+            !server.online && {
               'border-danger':
                 serverEnable && server?.status === SERVER_STATUS.DOWN,
-              'border-gray': !serverEnable,
             }
         )}
       >

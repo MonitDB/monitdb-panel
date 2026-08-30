@@ -257,7 +257,7 @@ const ConfigurationsPage = () => {
   const router = useRouter()
   const { userState: user } = useUser()
   useEffect(() => {
-    if (!hasFeature(user, Feature.CONFIGURATION) && user) {
+    if (!hasFeature(user, Feature.CONFIGURATION) && user.grants) {
       router.push('/403')
     }
   }, [router, user])

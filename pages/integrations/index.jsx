@@ -41,7 +41,7 @@ const Integrations = () => {
         [FeatureFunction.READ_INTEGRATIONS],
         TypeGrant.READ
       ) &&
-      user
+      user.grants
     ) {
       router.push('/403')
       return
