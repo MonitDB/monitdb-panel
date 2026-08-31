@@ -97,6 +97,18 @@ const STATUS_ICON = {
  * "13.0 / 29.6 GB" em vez de "13296 MB - In Use / 30269 MB Total": cinco digitos em MB
  * nao se leem de relance, e o par usado/total e o que interessa.
  */
+/**
+ * O desenho tinha chips curtos ("Agent", "Browser"); os dados do cliente trazem
+ * "SQL Server Agent (MSSQLSERVER)". Num cartao de ~180px — que e a largura real com 31
+ * instancias, sete por linha — esse nome parte em duas linhas e engorda o cartao todo.
+ * A parte entre parenteses e a instancia e nao distingue nada aqui; fica no title.
+ */
+const shortAgentName = (name = '') => {
+  const withoutInstance = String(name).replace(/\s*\([^)]*\)\s*$/, '').trim()
+  const cleaned = withoutInstance || String(name)
+  return cleaned.length > 18 ? `${cleaned.slice(0, 17)}…` : cleaned
+}
+
 const asPercent = (value) =>
   Number.isFinite(Number(value)) ? Math.round(Number(value)) : value
 
@@ -331,12 +343,21 @@ const ServerCard = ({
         >
           {/* pr-20 abre espaco para o icone do motor, que esta absoluto no canto
               superior direito: sem isso a palavra do estado passava por baixo dele. */}
-          <h4 className="flex items-center text-sm space-x-2 mb-2 pr-14">
-            <FontAwesomeIcon icon={faDatabase} className="text-base" />
-            <span className="font-bold">{serverName}</span>
+          {/* Com 31 instancias a sete por linha o cartao mede ~180px: o nome, a
+              palavra do estado e o icone do motor no canto nao cabem numa linha. O
+              nome trunca e o estado passa para baixo quando nao couber, em vez de
+              esmagar ou transbordar. */}
+          <h4 className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-sm mb-2 pr-10">
+            <FontAwesomeIcon icon={faDatabase} className="shrink-0 text-base" />
+            <span
+              className="min-w-0 flex-1 font-bold truncate"
+              title={serverName}
+            >
+              {serverName}
+            </span>
             {showStatus && serverEnable && statusView && (
               <span
-                className="ml-auto flex items-center gap-1 text-[11px] font-bold uppercase tracking-wide"
+                className="shrink-0 flex items-center gap-1 text-[11px] font-bold uppercase tracking-wide"
                 style={
                   isDown
                     ? {
@@ -362,13 +383,13 @@ const ServerCard = ({
             </div>
           )}
           <div>
-            <dl className="text-xs w-full text-gray">
+            <dl className="text-[11px] w-full text-gray">
               {metrics.memory && showMemory && !isDown && (
                 <>
                   <dt className="sr-only">Memory</dt>
-                  <dd className="mt-2 flex items-baseline justify-between gap-2">
-                    <span className="text-gray-dark">Memory</span>
-                    <span className="tabular-nums">
+                  <dd className="mt-2 flex items-baseline justify-between gap-1 overflow-hidden">
+                    <span className="shrink-0 text-gray-dark">Memory</span>
+                    <span className="tabular-nums whitespace-nowrap">
                       <b className="text-gray-dark">
                         {asPercent(metrics.memory.inUsePercent)}%
                       </b>{' '}
@@ -411,9 +432,9 @@ const ServerCard = ({
               {metrics.cpu && showCPU && !isDown && (
                 <>
                   <dt className="sr-only">CPU</dt>
-                  <dd className="mt-2 flex items-baseline justify-between gap-2">
-                    <span className="text-gray-dark">CPU</span>
-                    <span className="tabular-nums">
+                  <dd className="mt-2 flex items-baseline justify-between gap-1 overflow-hidden">
+                    <span className="shrink-0 text-gray-dark">CPU</span>
+                    <span className="tabular-nums whitespace-nowrap">
                       <b
                         className={classNames({
                           'text-gray-dark': !cpuOverWarn,
@@ -512,7 +533,7 @@ const ServerCard = ({
                         running ? 'bg-success' : 'bg-danger'
                       )}
                     />
-                    {agent?.servicename}
+                    {shortAgentName(agent?.servicename)}
                     {!running && ' ✕'}
                   </span>
                 )
