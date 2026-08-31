@@ -354,9 +354,12 @@ const ChatAI = () => {
           <div
             style={{
               display: 'flex',
-              justifyContent: 'center',
+              // Auditoria, nao leitura: encostado a direita em vez de centrado
+              // a competir com o texto da conversa.
+              justifyContent: 'flex-end',
+              flexWrap: 'wrap',
               gap: 16,
-              padding: '6px 0',
+              padding: '6px 24px',
               fontSize: 12,
               color: '#888',
               borderBottom: '1px solid #f0f0f0',
@@ -439,10 +442,15 @@ const ChatAI = () => {
                   dataSource={messages}
                   style={{
                     height: '100%',
-                    paddingTop: 16,
                     overflow: 'auto',
-                    padding: '0 15%',
+                    // Coluna de leitura: 860px centrados em vez de 15% de cada
+                    // lado (que a 1600 dava 1250px de linha e o buraco no meio).
+                    // O padding de baixo e o que impede a ultima linha da
+                    // resposta de ficar por baixo da caixa de escrever.
                     width: '100%',
+                    maxWidth: 860,
+                    margin: '0 auto',
+                    padding: '16px 8px 120px 8px',
                   }}
                   renderItem={(message) => (
                     <List.Item
@@ -450,8 +458,8 @@ const ChatAI = () => {
                       style={{
                         justifyContent:
                           message.role === 'user' ? 'flex-end' : 'flex-start',
-                        maxWidth: '1000px',
-                        margin: '0 auto',
+                        maxWidth: '100%',
+                        margin: 0,
                       }}
                     >
                       <Space align="start">
@@ -545,7 +553,14 @@ const ChatAI = () => {
             )}
           </div>
         )}
-        <div style={{ width: '100%', padding: '1.2rem 20% 0 20%' }}>
+        <div
+          style={{
+            width: '100%',
+            maxWidth: 820,
+            margin: '0 auto',
+            padding: '1.2rem 8px 0 8px',
+          }}
+        >
           <Card hoverable variant="borderless">
             <div style={{ display: 'flex', alignItems: 'flex-end', gap: 8 }}>
               <Input.TextArea

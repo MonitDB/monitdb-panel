@@ -56,9 +56,35 @@ const SidebarAI = () => {
       className="bg-gray-dark"
       style={{ padding: 16, height: 'calc(100vh - 64px)', overflow: 'auto' }}
     >
+      {/* Onda visual: o unico botao solido em indigo do ecra passa a ser o de
+          enviar. Aqui fica contorno, com o indigo claro (#8b8cf6) que e o que
+          passa contraste sobre o #161b22 da barra lateral — o #5046e5 fica em
+          2,9:1 sobre esse fundo e nao se ve. O caixote do lixo sai da lista e
+          so aparece em hover/foco. */}
+      <style>{`
+        .ai-new-chat.ant-btn {
+          background: transparent;
+          border-color: #8b8cf6;
+          color: #8b8cf6;
+        }
+        .ai-new-chat.ant-btn:hover,
+        .ai-new-chat.ant-btn:focus-visible {
+          background: rgba(139, 140, 246, 0.12);
+          border-color: #8b8cf6;
+          color: #fff;
+        }
+        .ai-chat-item .ai-chat-delete {
+          opacity: 0;
+          transition: opacity 120ms ease-in-out;
+        }
+        .ai-chat-item:hover .ai-chat-delete,
+        .ai-chat-item:focus-within .ai-chat-delete {
+          opacity: 1;
+        }
+      `}</style>
       <div style={{ marginBottom: 24 }}>
         <Button
-          type="primary"
+          className="ai-new-chat"
           block
           icon={<FileTextOutlined />}
           onClick={() => router.push('/monit-ai/new')}
@@ -98,12 +124,15 @@ const SidebarAI = () => {
 
             return (
               <List.Item
+                className="ai-chat-item"
                 style={{
                   cursor: 'pointer',
                   padding: '8px 12px',
                   borderRadius: 6,
                   marginBottom: 4,
-
+                  borderLeft: `3px solid ${
+                    isSelected ? '#8b8cf6' : 'transparent'
+                  }`,
                   backgroundColor: isSelected ? '#2a2f45' : 'transparent',
                 }}
                 onClick={() => {
@@ -139,6 +168,7 @@ const SidebarAI = () => {
                   okText="Yes"
                 >
                   <Button
+                    className="ai-chat-delete"
                     icon={<DeleteOutlined />}
                     type="text"
                     size="small"

@@ -26,7 +26,8 @@ md.renderer.rules.fence = (tokens, index) => {
 const StyledMarkdown = styled.div`
   font-family: 'Arial', sans-serif;
   color: #333;
-  line-height: 1.6;
+  font-size: 14px;
+  line-height: 1.5;
   margin-bottom: 20px;
   max-width: 750px;
 
@@ -73,12 +74,35 @@ const StyledMarkdown = styled.div`
     margin-bottom: 15px;
     border-radius: 10px;
     overflow-x: auto;
+    /* A barra de scroll horizontal tem de SER VISIVEL. Com a barra flutuante
+       do sistema (macOS, e o Windows moderno) ela so aparece ao passar o rato:
+       quem le um CREATE INDEX comprido nao percebe que a linha continua e
+       fica convencido de que o SQL esta cortado. Barra desenhada por nos,
+       sempre no ecra. */
+    scrollbar-width: thin;
+    scrollbar-color: #6e7681 #2a2a2a;
+  }
+
+  pre::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  pre::-webkit-scrollbar-track {
+    background: #2a2a2a;
+    border-radius: 0 0 10px 10px;
+  }
+
+  pre::-webkit-scrollbar-thumb {
+    background: #6e7681;
+    border-radius: 4px;
   }
 
   pre code {
     background-color: transparent;
     color: #f8f9fa;
     padding: 0;
+    font-size: 12.5px;
+    line-height: 1.55;
   }
 
   .md-code-block {
