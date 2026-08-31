@@ -97,11 +97,16 @@ const STATUS_ICON = {
  * "13.0 / 29.6 GB" em vez de "13296 MB - In Use / 30269 MB Total": cinco digitos em MB
  * nao se leem de relance, e o par usado/total e o que interessa.
  */
+const asPercent = (value) =>
+  Number.isFinite(Number(value)) ? Math.round(Number(value)) : value
+
 const formatMemory = (memory, which) => {
   const value =
     which === 'used' ? memory.total - memory.available : memory.total
   if (memory.unitType !== 'MB') return `${value} ${memory.unitType}`
-  return `${megaBytesToGigaBytes(value)} GB`
+  // Uma casa decimal chega: "13.4 GB" le-se de relance, "13.35" nao acrescenta nada a
+  // quem esta a varrer trinta cartoes.
+  return `${(Number(value) / 1024).toFixed(1)} GB`
 }
 
 /** "ha 12 s" / "ha 3 min". Recalculado a cada sondagem, que e quando o cartao redesenha. */
@@ -265,6 +270,8 @@ const ServerCard = ({
 
   const cpuOverWarn =
     threshold?.cpuWarn !== undefined && cpu > threshold.cpuWarn
+  const cpuOverCrit =
+    threshold?.cpuCrit !== undefined && cpu > threshold.cpuCrit
   // O limiar de memoria e um MINIMO DE MB LIVRES, nao uma percentagem: o traco vai no
   // ponto de uso a partir do qual a memoria livre desce abaixo desse minimo.
   const memoryLimitPercent =
@@ -289,7 +296,6 @@ const ServerCard = ({
           `group bg-white border transition-all duration-300 ease-in-out relative`,
           className,
           showStatus && {
-            'lg:min-h-72': metrics?.length,
             'lg:min-h-32': !metrics?.length,
           }
         )}
@@ -319,13 +325,13 @@ const ServerCard = ({
           // O filete de cor passou para a borda esquerda do proprio Card. As classes
           // before:bg-* que aqui estavam nunca chegaram a pintar nada: a geometria do
           // ::before (content, width, height) esta comentada desde sempre.
-          className={classNames('block p-2 lg:p-4', {
+          className={classNames('block p-2 lg:p-3', {
             'opacity-25': !serverEnable,
           })}
         >
           {/* pr-20 abre espaco para o icone do motor, que esta absoluto no canto
               superior direito: sem isso a palavra do estado passava por baixo dele. */}
-          <h4 className="flex items-center text-sm space-x-2 mb-2 pr-20 lg:mb-4">
+          <h4 className="flex items-center text-sm space-x-2 mb-2 pr-14">
             <FontAwesomeIcon icon={faDatabase} className="text-base" />
             <span className="font-bold">{serverName}</span>
             {showStatus && serverEnable && statusView && (
@@ -348,14 +354,14 @@ const ServerCard = ({
             )}
           </h4>
           {type?.typeServerName && (
-            <div className="absolute top-0 right-0 rounded-full border-gray-light p-4">
+            <div className="absolute top-0 right-0 rounded-full border-gray-light p-2">
               <DatabaseIcons
                 name={type?.typeServerName}
-                className="w-10 h-10"
+                className="w-6 h-6"
               />
             </div>
           )}
-          <div style={{ minHeight: '100px' }}>
+          <div>
             <dl className="text-xs w-full text-gray">
               {metrics.memory && showMemory && !isDown && (
                 <>
@@ -364,7 +370,7 @@ const ServerCard = ({
                     <span className="text-gray-dark">Memory</span>
                     <span className="tabular-nums">
                       <b className="text-gray-dark">
-                        {metrics.memory.inUsePercent}%
+                        {asPercent(metrics.memory.inUsePercent)}%
                       </b>{' '}
                       · {formatMemory(metrics.memory, 'used')} /{' '}
                       {formatMemory(metrics.memory, 'total')}
@@ -395,14 +401,10 @@ const ServerCard = ({
                           width: 1,
                           height: 10,
                         }}
+                        title={`Mínimo de memória livre: ${threshold.memMinMb} MB`}
                       />
                     )}
                   </dd>
-                  {threshold?.memMinMb !== undefined && (
-                    <dd className="text-gray">
-                      mínimo livre {threshold.memMinMb} MB
-                    </dd>
-                  )}
                 </>
               )}
 
@@ -415,13 +417,18 @@ const ServerCard = ({
                       <b
                         className={classNames({
                           'text-gray-dark': !cpuOverWarn,
-                          'text-orange': cpuOverWarn,
+                          'text-orange': cpuOverWarn && !cpuOverCrit,
+                          'text-red': cpuOverCrit,
                         })}
                       >
-                        {cpu}%
+                        {asPercent(cpu)}%
                       </b>
                       {cpuOverWarn && (
-                        <span className="text-orange"> · Elevado</span>
+                        <span
+                          className={cpuOverCrit ? 'text-red' : 'text-orange'}
+                        >
+                          {cpuOverCrit ? ' · Crítico' : ' · Elevado'}
+                        </span>
                       )}
                       {threshold?.cpuWarn !== undefined && (
                         <span className="text-gray">
@@ -435,7 +442,8 @@ const ServerCard = ({
                     <span
                       className={classNames('absolute top-0 h-full', {
                         'bg-blue': !cpuOverWarn,
-                        'bg-orange': cpuOverWarn,
+                        'bg-orange': cpuOverWarn && !cpuOverCrit,
+                        'bg-red': cpuOverCrit,
                       })}
                       style={{
                         width: `${cpu}%`,
