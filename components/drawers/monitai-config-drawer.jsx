@@ -153,7 +153,7 @@ const AiConfigDrawer = () => {
         <>
           <div style={{ padding: '16px', flex: 1, overflowY: 'auto' }}>
             <Form layout="vertical" form={form}>
-              <Typography.Title level={5}>Informations</Typography.Title>
+              <Typography.Title level={5}>Information</Typography.Title>
               <Form.Item name="name" label="Name" rules={[{ required: true }]}>
                 <Input />
               </Form.Item>

@@ -70,7 +70,7 @@ const HostsGetTable = (info) => {
       },
     },
     {
-      title: 'Maintence Status',
+      title: 'Maintenance Status',
       dataIndex: 'maintenance_status',
       render: (status) => {
         const { label, color } = maintenceStatusMapping[Number(status)] || {

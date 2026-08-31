@@ -234,7 +234,7 @@ const AiTrainingDrawer = () => {
                 }
               }}
             >
-              <Typography.Title level={5}>Informations</Typography.Title>
+              <Typography.Title level={5}>Information</Typography.Title>
 
               <Form.Item
                 name="type"

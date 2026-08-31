@@ -22,7 +22,7 @@ const MetricsModal = ({ onClose, serverId, parameterId }) => {
 
   const frequencyOptions = useMemo(
     () => [
-      { value: '', label: 'Unactive' },
+      { value: '', label: 'Inactive' },
       { value: 1, label: '1 minute' },
       { value: 5, label: '5 minutes' },
       { value: 20, label: '20 minutes' },

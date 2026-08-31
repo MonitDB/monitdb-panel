@@ -91,9 +91,9 @@ const datasets = {
   Log_Memory_Usage: {
     code: 'Log_Memory_Usage',
     options: [
-      { label: 'Available Os Memory', value: 'availableOsMemoryMb' },
+      { label: 'Available OS Memory', value: 'availableOsMemoryMb' },
       { label: 'Total OS Memory', value: 'totalOsMemoryMb' },
-      { label: 'Percent Usaged', value: 'percentUsage' },
+      { label: 'Memory Usage (%)', value: 'percentUsage' },
     ],
     parent: 'HISTORIC',
     accumulative: false,
@@ -280,7 +280,7 @@ const AnalysisPage = () => {
                     rules={[
                       {
                         required: true,
-                        message: 'Choice an interval of sample',
+                        message: 'Choose a sample interval.',
                       },
                     ]}
                     initialValue={15}

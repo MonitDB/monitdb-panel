@@ -43,7 +43,7 @@ export const ApiLogs = () => {
     } catch {
       notification.error({
         message: 'Error to load the logs',
-        description: 'Please verify manually the erros at db.',
+        description: 'Could not load logs. Check the database for details.',
       })
     }
     setLoading(false)
