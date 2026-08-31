@@ -228,12 +228,17 @@ const Header = () => {
               </ul>
             </div>
             {/* Separador + pastilha branca: o logotipo do cliente encostava ao
-                avatar e o resultado dependia do tamanho do PNG que ele manda. */}
+                avatar e o resultado dependia do tamanho do PNG que ele manda.
+                A altura de 20px e o maximo que serve os dois logotipos sem os
+                deformar: o monitdb.png e 800x149 (5,37:1) e a 20px ja mede 107px
+                de largura, quase no tecto de 112 do max-w-28. O advance-care.png
+                (758x259, 2,93:1) fica em 59px. Se um dia for preciso maior, sobe
+                o tecto de largura ao mesmo tempo, senao a imagem esmaga. */}
             <span className="shrink-0 block w-px h-5 bg-white bg-opacity-20" />
-            <div className="shrink-0 flex items-center h-7 px-2.5 bg-white rounded-full">
+            <div className="shrink-0 flex items-center h-8 px-2.5 bg-white rounded-full">
               <img
                 src={config.logo ?? '/images/logos/monitdb.png'}
-                className="h-3.5 w-auto max-w-28"
+                className="h-5 w-auto max-w-28"
                 alt={config?.customerName ?? 'MonitDB'}
               />
             </div>
