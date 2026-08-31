@@ -24,20 +24,41 @@ md.renderer.rules.fence = (tokens, index) => {
 }
 
 const StyledMarkdown = styled.div`
-  font-family: 'Arial', sans-serif;
+  /* A resposta da IA vinha em Arial enquanto o resto do painel corre em IBM Plex
+     Sans: era a unica coisa no ecra com outra letra, e lia-se como um corpo
+     estranho colado la dentro. Herda a do painel. */
+  font-family: inherit;
   color: #333;
   font-size: 14px;
   line-height: 1.5;
   margin-bottom: 20px;
-  max-width: 750px;
+  /* A coluna de leitura ja esta limitada a 860px no chat; um segundo limite de
+     750px aqui dentro so encolhia o texto sem alinhar com nada. */
+  max-width: 100%;
 
+  /* A resposta vem em seccoes ("1 - Diagnostico", "2 - Causa provavel"). Como
+     titulos normais de markdown competem com o texto pelo tamanho; passam a
+     rotulos: pequenos, maiusculas, cinza. O que se le e a resposta, nao os
+     cabecalhos. */
   h1,
   h2,
   h3,
   h4,
   h5,
   h6 {
-    margin-bottom: 10px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #6b7280;
+    margin-top: 20px;
+    margin-bottom: 8px;
+  }
+
+  h1:first-child,
+  h2:first-child,
+  h3:first-child {
+    margin-top: 0;
   }
 
   p {

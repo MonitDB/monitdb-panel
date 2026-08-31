@@ -172,7 +172,7 @@ const DashboardPage = () => {
                   </div>
                 ),
                 children: (
-                  <div className="flex flex-wrap py-2 gap-y-4 md:py-4">
+                  <div className="flex flex-wrap py-1 gap-y-4 md:py-2">
                     {formattedEnvironment.servers
                       .filter(({ isActive }) => isActive)
                       .map((server, index) => (
@@ -249,7 +249,7 @@ const DashboardPage = () => {
             <>
               <PageContent
                 hideBreadcrumbs={true}
-                className="flex items-start justify-between border-b border-gray-light"
+                className="flex items-start justify-between py-3 border-b border-gray-light"
               >
                 <p className="mr-10 text-center">
                   <strong className="block text-2xl">{totalServers}</strong>{' '}
@@ -345,7 +345,7 @@ const DashboardPage = () => {
                 FeatureFunction.INSTANCES,
                 TypeGrant.READ
               ) && (
-                <PageContent hideBreadcrumbs={true}>
+                <PageContent hideBreadcrumbs={true} className="pt-3">
                   <div className="w-full space-y-5">
                     <Collapse
                       size="small"

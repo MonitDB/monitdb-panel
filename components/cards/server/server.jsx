@@ -16,12 +16,13 @@ import { Pie } from 'react-chartjs-2'
 import styled from 'styled-components'
 
 import Link from '~/components/link'
-import DatabaseIcons from '~/helpers/database-icons'
+import DatabaseIcons, { Icons } from '~/helpers/database-icons'
 import { useGlobal } from '~/hooks/index'
 import useWindowSize from '~/hooks/use-window-size'
 import { useHealthThresholdStore } from '~/services/state-manager/health-threshold-store'
 import useServerContext from '~/services/state-manager/servers'
 import { megaBytesToGigaBytes } from '~/utils/formats'
+import { slugify } from '~/utils/global'
 import { SERVER_STATUS } from '~/utils/server'
 
 ChartJS.register(ArcElement, Tooltip, Legend)
@@ -135,6 +136,14 @@ const relativeSince = (date) => {
  * decidir a cor — nao um numero bonito. Vem de /server/health-thresholds: a linha do
  * proprio servidor ganha a global (serverId 0), como diz a pagina de configuracao.
  */
+/**
+ * O DatabaseIcons devolve string vazia quando o tipo nao tem svg mapeado. Como o
+ * icone passou a ser o unico do titulo, e preciso saber ANTES se existe — senao um
+ * motor nao mapeado ficava com o titulo sem icone nenhum.
+ */
+const hasEngineIcon = (typeServerName) =>
+  Boolean(typeServerName && Icons[slugify(typeServerName)])
+
 const resolveThreshold = (thresholds, serverId) =>
   thresholds.find((t) => t.serverId === serverId) ||
   thresholds.find((t) => t.serverId === 0) ||
@@ -337,18 +346,26 @@ const ServerCard = ({
           // O filete de cor passou para a borda esquerda do proprio Card. As classes
           // before:bg-* que aqui estavam nunca chegaram a pintar nada: a geometria do
           // ::before (content, width, height) esta comentada desde sempre.
-          className={classNames('block p-2 lg:p-3', {
+          className={classNames('block p-2 pb-1.5 lg:p-3 lg:pb-2', {
             'opacity-25': !serverEnable,
           })}
         >
-          {/* pr-20 abre espaco para o icone do motor, que esta absoluto no canto
-              superior direito: sem isso a palavra do estado passava por baixo dele. */}
-          {/* Com 31 instancias a sete por linha o cartao mede ~180px: o nome, a
-              palavra do estado e o icone do motor no canto nao cabem numa linha. O
-              nome trunca e o estado passa para baixo quando nao couber, em vez de
-              esmagar ou transbordar. */}
-          <h4 className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-sm mb-2 pr-10">
-            <FontAwesomeIcon icon={faDatabase} className="shrink-0 text-base" />
+          {/* O logotipo do motor estava absoluto no canto superior direito, a comecar
+              no topo do cartao: ocupava uma faixa acima da linha do nome e obrigava a
+              reservar pr-10 nesta linha. Passa a ser o icone DESTA linha — a faixa
+              desaparece e o nome ganha a largura que era do espacamento. */}
+          {/* Com 31 instancias a sete por linha o cartao mede ~180px: o nome e a
+              palavra do estado nao cabem sempre numa linha. O nome trunca e o estado
+              passa para baixo quando nao couber, em vez de esmagar ou transbordar. */}
+          <h4 className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-sm mb-2">
+            {hasEngineIcon(type?.typeServerName) ? (
+              <DatabaseIcons
+                name={type.typeServerName}
+                className="shrink-0 w-4 h-4"
+              />
+            ) : (
+              <FontAwesomeIcon icon={faDatabase} className="shrink-0 text-base" />
+            )}
             <span
               className="min-w-0 flex-1 font-bold truncate"
               title={serverName}
@@ -374,14 +391,6 @@ const ServerCard = ({
               </span>
             )}
           </h4>
-          {type?.typeServerName && (
-            <div className="absolute top-0 right-0 rounded-full border-gray-light p-2">
-              <DatabaseIcons
-                name={type?.typeServerName}
-                className="w-6 h-6"
-              />
-            </div>
-          )}
           <div>
             <dl className="text-[11px] w-full text-gray">
               {metrics.memory && showMemory && !isDown && (

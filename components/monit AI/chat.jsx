@@ -101,7 +101,32 @@ const ChatAI = () => {
   const chatId = router.query['chat-id'] || 'new'
   const isNew = chatId === 'new'
 
-  const suggestions = []
+  // O ecra vazio dizia "What can I help with?" e mais nada: a lista de sugestoes
+  // estava literalmente vazia. Sao as perguntas que um DBA faz primeiro; clicar
+  // escreve a pergunta na caixa e o utilizador envia (ou corrige) — nao dispara
+  // nada sozinho.
+  // Falta a quarta do desenho da Sara ("Analisar um ficheiro"): o anexo ainda nao
+  // existe nesta forma e um cartao a prometer upload seria uma promessa falsa.
+  const suggestions = [
+    {
+      title: 'Slow queries now',
+      hint: 'Top consumers by CPU and reads',
+      prompt:
+        'Which queries are the slowest right now? Show the query text and the wait type.',
+    },
+    {
+      title: 'Who is blocking?',
+      hint: 'Blocking chain and root session',
+      prompt:
+        'Is there any blocking right now? Show the blocking chain and the root session.',
+    },
+    {
+      title: 'Disk and memory',
+      hint: 'Free space and memory pressure',
+      prompt:
+        'How is disk space and memory looking? Point out anything near its threshold.',
+    },
+  ]
 
   const {
     renameChat,
@@ -310,25 +335,6 @@ const ChatAI = () => {
     }
   }
 
-  const handleSuggestionClick = (suggestionText) => {
-    const userMessage = {
-      id: Date.now(),
-      role: 'user',
-      message: suggestionText,
-    }
-    setMessages([...messages, userMessage])
-
-    setTimeout(() => {
-      const assistantMessage = {
-        id: `assistant-${Date.now()}`,
-        role: 'assistant',
-        message: `Answer generated for: "${suggestionText}"`,
-      }
-      setMessages([...messages, assistantMessage])
-      scrollToBottom()
-    }, 1500)
-  }
-
   useEffect(() => {
     ;(async () => {
       await loadPreviousMessages()
@@ -358,20 +364,30 @@ const ChatAI = () => {
               // a competir com o texto da conversa.
               justifyContent: 'flex-end',
               flexWrap: 'wrap',
-              gap: 16,
-              padding: '6px 24px',
+              alignItems: 'center',
+              gap: 8,
+              padding: '8px 24px',
               fontSize: 12,
               color: '#888',
               borderBottom: '1px solid #f0f0f0',
             }}
             title="Usage for this session. Historical cost is estimated from the total token count."
           >
-            <span>💬 {sessionUsage.messageCount} msgs</span>
-            <span>🔢 {Number(sessionUsage.totalTokens || 0).toLocaleString('pt-BR')} tokens</span>
+            <span>{sessionUsage.messageCount} msgs</span>
+            <span>·</span>
             <span>
-              💲 ~US$ {Number(sessionUsage.estimatedCost || 0).toFixed(4)}
+              {Number(sessionUsage.totalTokens || 0).toLocaleString('pt-BR')}{' '}
+              tokens
             </span>
-            {sessionUsage.model && <span>🤖 {sessionUsage.model}</span>}
+            <span>·</span>
+            <span>~US$ {Number(sessionUsage.estimatedCost || 0).toFixed(4)}</span>
+            {sessionUsage.model && (
+              <>
+                <span>·</span>
+                <span>{sessionUsage.model}</span>
+              </>
+            )}
+            <span>·</span>
             <span
               role="button"
               tabIndex={0}
@@ -380,7 +396,7 @@ const ChatAI = () => {
               style={{ cursor: 'pointer', color: '#5046e5' }}
               title="Export the chat as Markdown"
             >
-              ⬇️ Exportar
+              Export
             </span>
           </div>
         )}
@@ -415,24 +431,73 @@ const ChatAI = () => {
             }}
           >
             {isNew && (
-              <div style={{ margin: 'auto', textAlign: 'center' }}>
-                <Space direction="vertical">
-                  <Typography.Title level={3}>
-                    What can I help with?
-                  </Typography.Title>
-                  <Space wrap style={{ justifyContent: 'center' }}>
-                    {suggestions.map((suggestion, index) => (
-                      <Button
-                        key={index}
-                        onClick={() => handleSuggestionClick(suggestion)}
-                        role="default"
-                        style={{ borderRadius: 20 }}
-                      >
-                        {suggestion}
-                      </Button>
-                    ))}
-                  </Space>
-                </Space>
+              <div
+                style={{
+                  margin: 'auto',
+                  width: '100%',
+                  maxWidth: 820,
+                  padding: '0 8px',
+                }}
+              >
+                <Typography.Title level={3} style={{ marginBottom: 4 }}>
+                  What can I help with?
+                </Typography.Title>
+                <p style={{ margin: '0 0 24px 0', color: '#6b7280' }}>
+                  Ask about performance, blocking, disk or memory. Answers are
+                  built from the data the collector has for your servers.
+                </p>
+                <div
+                  style={{
+                    display: 'grid',
+                    gap: 12,
+                    gridTemplateColumns:
+                      'repeat(auto-fit, minmax(220px, 1fr))',
+                  }}
+                >
+                  {suggestions.map((suggestion) => (
+                    <button
+                      key={suggestion.title}
+                      type="button"
+                      className="ai-suggestion"
+                      onClick={() => setInput(suggestion.prompt)}
+                    >
+                      <span className="ai-suggestion-title">
+                        {suggestion.title}
+                      </span>
+                      <span className="ai-suggestion-hint">
+                        {suggestion.hint}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+                <style>{`
+                  .ai-suggestion {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 4px;
+                    text-align: left;
+                    padding: 12px 14px;
+                    background: #fff;
+                    border: 1px solid #e5e7eb;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    transition: border-color .15s, box-shadow .15s;
+                  }
+                  .ai-suggestion:hover,
+                  .ai-suggestion:focus-visible {
+                    border-color: #5046e5;
+                    box-shadow: 0 1px 6px rgba(80, 70, 229, .12);
+                  }
+                  .ai-suggestion-title {
+                    font-size: 13.5px;
+                    font-weight: 600;
+                    color: #24292f;
+                  }
+                  .ai-suggestion-hint {
+                    font-size: 12px;
+                    color: #6b7280;
+                  }
+                `}</style>
               </div>
             )}
 
@@ -472,14 +537,20 @@ const ChatAI = () => {
                           <Avatar icon={<ApiOutlined />} />
                         )}
 
+                        {/* A bolha so faz sentido na pergunta, que e curta e vai
+                            encostada a direita. A resposta e um documento com
+                            seccoes, SQL e origem do dado: dentro de uma caixa
+                            branca sobre fundo branco a moldura nao se via e o
+                            padding so lhe roubava largura. */}
                         <div
                           className="message-bubble"
                           style={{
                             position: 'relative',
                             background:
-                              message.role === 'user' ? '#5046e5' : '#fff',
-                            borderRadius: 8,
-                            padding: '8px 12px',
+                              message.role === 'user' ? '#5046e5' : 'transparent',
+                            borderRadius: message.role === 'user' ? 8 : 0,
+                            padding:
+                              message.role === 'user' ? '8px 12px' : '2px 0',
                             maxWidth: '100%',
                             margin: '0 0 10px 0',
                             color: message.role === 'user' ? '#fff' : '#000',
@@ -578,9 +649,12 @@ const ChatAI = () => {
                   }
                 }}
               />
+              {/* Era role="primary" — role e um atributo de acessibilidade, nao
+                  uma prop do antd: o botao de enviar nunca chegou a ser primario
+                  e saia cinzento. type="primary" e que lhe da o indigo. */}
               <Button
                 style={{ marginLeft: 'auto' }}
-                role="primary"
+                type="primary"
                 icon={
                   isLoadingCurrentChatMessages ? (
                     <PauseOutlined />
@@ -592,6 +666,15 @@ const ChatAI = () => {
                   isLoadingCurrentChatMessages ? handleStop() : handleSend()
                 }
               />
+            </div>
+            <div
+              style={{
+                marginTop: 6,
+                fontSize: 11,
+                color: '#9ca3af',
+              }}
+            >
+              Enter sends · Shift+Enter for a new line
             </div>
           </Card>
         </div>
