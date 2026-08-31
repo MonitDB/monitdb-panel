@@ -48,7 +48,7 @@ export default function KBarSearchComponent() {
               color: '#111827',
               outline: 'none',
             }}
-            placeholder="Digite um comando..."
+            placeholder="Type a command…"
           />
           <RenderResults />
         </KBarAnimator>

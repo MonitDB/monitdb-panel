@@ -17,8 +17,8 @@ md.renderer.rules.fence = (tokens, index) => {
   return (
     `<div class="md-code-block">` +
     `<div class="md-code-actions">` +
-    `<button type="button" data-md-action="copy">Copiar</button>` +
-    `<button type="button" data-md-action="open-query">Abrir no Query Window</button>` +
+    `<button type="button" data-md-action="copy">Copy</button>` +
+    `<button type="button" data-md-action="open-query">Open in Query Window</button>` +
     `</div>${codeHtml}</div>`
   )
 }

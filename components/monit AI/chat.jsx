@@ -322,7 +322,7 @@ const ChatAI = () => {
       const assistantMessage = {
         id: `assistant-${Date.now()}`,
         role: 'assistant',
-        message: `Resposta gerada para: "${suggestionText}"`,
+        message: `Answer generated for: "${suggestionText}"`,
       }
       setMessages([...messages, assistantMessage])
       scrollToBottom()
@@ -375,7 +375,7 @@ const ChatAI = () => {
               onClick={handleExportChat}
               onKeyDown={(e) => e.key === 'Enter' && handleExportChat()}
               style={{ cursor: 'pointer', color: '#5046e5' }}
-              title="Exportar a conversa em Markdown"
+              title="Export the chat as Markdown"
             >
               ⬇️ Exportar
             </span>

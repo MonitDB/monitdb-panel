@@ -33,7 +33,7 @@ const SshAudit = () => {
 
   const columns = [
     {
-      title: 'Quando',
+      title: 'When',
       dataIndex: 'createdAt',
       key: 'createdAt',
       width: 180,
@@ -53,7 +53,7 @@ const SshAudit = () => {
       render: (n, r) => n || `#${r.userId ?? '?'}`,
     },
     {
-      title: 'Evento',
+      title: 'Event',
       dataIndex: 'event',
       key: 'event',
       width: 110,
@@ -64,7 +64,7 @@ const SshAudit = () => {
       ),
     },
     {
-      title: 'Detalhe',
+      title: 'Detail',
       dataIndex: 'detail',
       key: 'detail',
       render: (d, r) =>
@@ -82,14 +82,14 @@ const SshAudit = () => {
 
   return (
     <>
-      <NextSeo title="Auditoria SSH - MonitDB" />
+      <NextSeo title="SSH audit - MonitDB" />
       <Layout>
         <PageContent removeSidebarMargin={true}>
           <PageHeader
-            title="Auditoria do Terminal SSH"
+            title="SSH terminal audit"
             breadcrumbs={[
               { title: 'Configurations', href: '/configurations/' },
-              { title: 'Auditoria SSH', href: '/configurations/ssh-audit/' },
+              { title: 'SSH audit', href: '/configurations/ssh-audit/' },
             ]}
             extra={
               <Space>
@@ -100,7 +100,7 @@ const SshAudit = () => {
                   onChange={(inputEvent) => setFilter(inputEvent.target.value)}
                 />
                 <Button onClick={fetchAudit} loading={auditLoading}>
-                  Atualizar
+                  Refresh
                 </Button>
               </Space>
             }
@@ -110,7 +110,7 @@ const SshAudit = () => {
             type="info"
             showIcon
             style={{ marginBottom: 12 }}
-            message="Trilha de auditoria"
+            message="Audit trail"
             description="Records every SSH terminal session: the opening (who, which host, when), the commands typed line by line, the close, and errors — including a refusal because the host key changed. Newest events first."
           />
 

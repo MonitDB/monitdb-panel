@@ -60,7 +60,7 @@ const WebhooksPage = () => {
     try {
       const values = await form.validateFields()
       await upsertWebhook(values)
-      message.success('Webhook salvo')
+      message.success('Webhook saved')
       setOpen(false)
     } catch {
       message.error('Could not save the webhook.')
@@ -69,7 +69,7 @@ const WebhooksPage = () => {
 
   const handleTest = async (event, id) => {
     event.stopPropagation()
-    message.loading({ content: 'Enviando teste...', key: 'wh-test' })
+    message.loading({ content: 'Sending test…', key: 'wh-test' })
     try {
       const r = await testWebhook(id)
       message.destroy('wh-test')
@@ -127,7 +127,7 @@ const WebhooksPage = () => {
             size="small"
             onClick={(event) => handleTest(event, record.id)}
           >
-            Testar
+            Test
           </Button>
           <Popconfirm
             title="Delete this webhook?"
@@ -192,12 +192,12 @@ const WebhooksPage = () => {
                 <Input />
               </Form.Item>
               <Form.Item name="name" label="Name" rules={[{ required: true }]}>
-                <Input placeholder="Alertas do time de DBA" />
+                <Input placeholder="DBA team alerts" />
               </Form.Item>
               <Form.Item name="url" label="URL" rules={[{ required: true }]}>
                 <Input placeholder="https://hooks.slack.com/services/..." />
               </Form.Item>
-              <Form.Item name="type" label="Tipo" rules={[{ required: true }]}>
+              <Form.Item name="type" label="Type" rules={[{ required: true }]}>
                 <Select
                   options={[
                     { value: 'slack', label: 'Slack' },

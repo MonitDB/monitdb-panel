@@ -21,7 +21,7 @@ const SshButon = () => {
 
   return (
     <StyledButton style={{ transform: 'translateY(5px)' }}>
-      <Image src={sshImage} alt="Imagem" height={24} width={24} />
+      <Image src={sshImage} alt="SSH terminal" height={24} width={24} />
     </StyledButton>
   )
 }

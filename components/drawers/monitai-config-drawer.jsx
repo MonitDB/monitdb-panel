@@ -181,11 +181,11 @@ const AiConfigDrawer = () => {
                   type="info"
                   showIcon
                   style={{ marginBottom: 16 }}
-                  message="Como ligar o GitHub Copilot"
+                  message="How to connect GitHub Copilot"
                   description={
                     <div style={{ fontSize: 12, lineHeight: 1.7 }}>
-                      O Monit AI fala com o Copilot atraves da ponte interna. Preencha
-                      exatamente assim:
+                      Monit AI talks to Copilot through the internal bridge. Fill it in
+                      exactly like this:
                       <ul style={{ margin: '8px 0', paddingLeft: 18 }}>
                         <li>
                           <b>URL:</b> <code>http://copilot-bridge:8080</code>
@@ -194,14 +194,14 @@ const AiConfigDrawer = () => {
                           <b>Model:</b> <code>copilot</code>
                         </li>
                         <li>
-                          <b>Api Key:</b> um <i>fine-grained</i> Personal Access Token do
-                          GitHub com a permissao <b>Copilot Requests</b>, de uma conta com
-                          subscricao Copilot ativa.
+                          <b>Api Key:</b> a <i>fine-grained</i> GitHub Personal Access
+                          Token with the <b>Copilot Requests</b> permission, from an
+                          account with an active Copilot subscription.
                         </li>
                       </ul>
-                      A chave e cifrada em repouso e vai por pedido: cada pergunta consome
-                      creditos do posto a que a chave pertence. Ligar este provedor desliga
-                      automaticamente os outros.
+                      The key is encrypted at rest and sent per request: every question
+                      consumes credits from the seat the key belongs to. Enabling this
+                      provider automatically disables the others.
                     </div>
                   }
                 />

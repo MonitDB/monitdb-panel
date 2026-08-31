@@ -65,10 +65,10 @@ const AiSkillDrawer = () => {
 
       if (isEdit) {
         await updateSkill(query['aiskill-id'], data)
-        message.success('Skill atualizada')
+        message.success('Skill updated')
       } else {
         await createSkill(data)
-        message.success('Skill criada')
+        message.success('Skill created')
       }
       form.resetFields()
       closeDrawer()
@@ -165,11 +165,11 @@ const AiSkillDrawer = () => {
               </Form.Item>
 
               <Typography.Title level={5}>
-                Conhecimento profundo (RAG)
+                Deep knowledge (RAG)
               </Typography.Title>
               <Form.Item
                 name="useRag"
-                label="Aplicar conhecimento profundo (indexar no RAG)"
+                label="Apply deep knowledge (index into RAG)"
                 valuePropName="checked"
                 initialValue={false}
                 extra="When on, the text below is indexed in the RAG and the AI reads it whenever it is relevant."
@@ -178,7 +178,7 @@ const AiSkillDrawer = () => {
               </Form.Item>
               <Form.Item
                 name="knowledge"
-                label="Conhecimento (markdown)"
+                label="Knowledge (markdown)"
                 rules={[{ required: false }]}
               >
                 <Input.TextArea
@@ -189,7 +189,7 @@ const AiSkillDrawer = () => {
 
               <Form.Item
                 name="enabled"
-                label="Habilitada"
+                label="Enabled"
                 valuePropName="checked"
                 initialValue={true}
               >

@@ -17,7 +17,7 @@ const AiAudit = () => {
 
   const columns = [
     {
-      title: 'Quando',
+      title: 'When',
       dataIndex: 'createdAt',
       key: 'createdAt',
       width: 170,
@@ -62,7 +62,7 @@ const AiAudit = () => {
         ),
     },
     {
-      title: 'Linhas',
+      title: 'Rows',
       dataIndex: 'rowsReturned',
       key: 'rowsReturned',
       width: 80,
@@ -107,7 +107,7 @@ const AiAudit = () => {
             extra={
               <Space>
                 <Button onClick={fetchAudit} loading={auditLoading}>
-                  Atualizar
+                  Refresh
                 </Button>
               </Space>
             }

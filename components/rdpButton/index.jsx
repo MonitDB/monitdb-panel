@@ -86,7 +86,7 @@ enablerdsaadauth:i:0`
       onClick={handleExport}
       style={{ transform: 'translateY(5px)' }}
     >
-      <Image src={rdpImage} alt="Imagem" height={24} width={24} />
+      <Image src={rdpImage} alt="Remote desktop" height={24} width={24} />
     </StyledButton>
   )
 }

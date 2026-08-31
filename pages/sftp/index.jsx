@@ -91,7 +91,7 @@ const Sftp = () => {
   const handleDelete = async (name) => {
     try {
       await sftpDelete(hostId, `${path.replace(/\/+$/, '')}/${name}`)
-      message.success('Removido.')
+      message.success('Removed.')
       await load(hostId, path)
     } catch {
       message.error('Could not remove the file.')
@@ -146,16 +146,16 @@ const Sftp = () => {
         r.isDir ? null : (
           <Space>
             <Button size="small" onClick={() => handleDownload(r.name)}>
-              Baixar
+              Download
             </Button>
             <Popconfirm
-              title={`Remover ${r.name}?`}
+              title={`Remove ${r.name}?`}
               onConfirm={() => handleDelete(r.name)}
               okText="Remove"
               cancelText="Cancel"
             >
               <Button size="small" danger>
-                Remover
+                Remove
               </Button>
             </Popconfirm>
           </Space>
@@ -220,11 +220,11 @@ const Sftp = () => {
                 ⬆ Subir
               </Button>
               <Button size="small" onClick={() => load(hostId, path)}>
-                Atualizar
+                Refresh
               </Button>
               <Upload beforeUpload={handleUpload} showUploadList={false}>
                 <Button size="small" type="primary" loading={busy}>
-                  ⬆ Enviar arquivo
+                  ⬆ Upload file
                 </Button>
               </Upload>
             </Space>

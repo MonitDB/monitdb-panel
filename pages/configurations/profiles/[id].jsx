@@ -336,7 +336,7 @@ const EditProfilePage = () => {
                         onClick={form.submit}
                         loading={loading}
                       >
-                        Salvar
+                        Save
                       </Button>
                     </Space>
                   </Row>

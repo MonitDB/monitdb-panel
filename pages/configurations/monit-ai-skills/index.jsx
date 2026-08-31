@@ -56,7 +56,7 @@ const AiSkillsPage = () => {
       ellipsis: true,
     },
     {
-      title: 'Habilitada',
+      title: 'Enabled',
       dataIndex: 'enabled',
       key: 'enabled',
       width: 130,
@@ -112,7 +112,7 @@ const AiSkillsPage = () => {
             ]}
             extra={
               <Button type="primary" onClick={addNew}>
-                Nova Skill
+                New skill
               </Button>
             }
           />

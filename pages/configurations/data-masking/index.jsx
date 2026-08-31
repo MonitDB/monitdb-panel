@@ -77,14 +77,14 @@ const DataMasking = () => {
 
   return (
     <>
-      <NextSeo title="Mascaramento de PII - MonitDB" />
+      <NextSeo title="PII masking - MonitDB" />
       <Layout>
         <PageContent removeSidebarMargin={true}>
           <PageHeader
             title="Personal data masking for the AI"
             breadcrumbs={[
               { title: 'Configurations', href: '/configurations/' },
-              { title: 'Mascaramento de PII', href: '/configurations/data-masking/' },
+              { title: 'PII masking', href: '/configurations/data-masking/' },
             ]}
           />
 
@@ -92,7 +92,7 @@ const DataMasking = () => {
             type="info"
             showIcon
             style={{ marginBottom: 16 }}
-            message="Como funciona"
+            message="How it works"
             description="With this on for a server, everything the AI tools read from it passes through a filter before reaching the AI provider: e-mail, CPF, CNPJ, NIF/NISS (PT), IBAN, credit card (Luhn), phone and IP are replaced by labels ([CPF], [EMAIL]…). The AI still knows a value was there, without seeing it — which is what lets regulated customers (banking, healthcare) use cloud models at all. One caveat: tool output is mostly numeric metrics, so turn this on only for servers holding sensitive data — a nine-digit metric can be redacted as [NIF]. The global default comes from AI_MASK_PII_DEFAULT."
           />
 

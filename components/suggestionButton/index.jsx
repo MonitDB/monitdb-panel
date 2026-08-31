@@ -25,7 +25,7 @@ const SuggestionButton = ({ onClick }) => {
 
   return (
     <StyledButton>
-      <Image src={suggestions} alt="Imagem" onClick={onClick} />
+      <Image src={suggestions} alt="Suggestions" onClick={onClick} />
     </StyledButton>
   )
 }

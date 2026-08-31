@@ -47,7 +47,7 @@ const AiSecretsPage = () => {
     try {
       const values = await form.validateFields()
       await upsertSecret(values)
-      message.success('Segredo salvo')
+      message.success('Secret saved')
       setOpen(false)
       form.resetFields()
     } catch {
@@ -62,7 +62,7 @@ const AiSecretsPage = () => {
       key: 'name',
       render: (text) => <Tag icon={<KeyOutlined />}>{text}</Tag>,
     },
-    { title: 'Valor', dataIndex: 'hint', key: 'hint' },
+    { title: 'Value', dataIndex: 'hint', key: 'hint' },
     { title: 'Description', dataIndex: 'description', key: 'description', ellipsis: true },
     {
       title: '',
@@ -103,7 +103,7 @@ const AiSecretsPage = () => {
             ]}
             extra={
               <Button type="primary" onClick={() => openNew()}>
-                Novo segredo
+                New secret
               </Button>
             }
           />
@@ -145,7 +145,7 @@ const AiSecretsPage = () => {
 
           <Modal
             open={open}
-            title="Segredo"
+            title="Secret"
             onCancel={() => setOpen(false)}
             onOk={handleOk}
             confirmLoading={saving}
@@ -159,7 +159,7 @@ const AiSecretsPage = () => {
               </Form.Item>
               <Form.Item
                 name="value"
-                label="Valor (chave)"
+                label="Value (key)"
                 extra="Leave it blank while editing to keep the current value."
               >
                 <Input.Password placeholder="sk-..." autoComplete="new-password" />

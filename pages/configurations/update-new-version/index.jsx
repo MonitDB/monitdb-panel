@@ -264,7 +264,7 @@ export default function UpdateNewVersion() {
                     onClick: () => {
                       setTerminalOutput([])
                     },
-                    tooltip: 'Limpar terminal',
+                    tooltip: 'Clear terminal',
                   },
                 ]}
               >

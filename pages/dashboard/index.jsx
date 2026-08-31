@@ -354,7 +354,7 @@ const DashboardPage = () => {
                 <div className="flex flex-col items-center gap-4">
                   <span>Could not load the servers.</span>
                   <Button type="primary" onClick={refreshData}>
-                    Tentar novamente
+                    Try again
                   </Button>
                 </div>
               )}

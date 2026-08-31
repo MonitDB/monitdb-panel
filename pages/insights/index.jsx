@@ -82,7 +82,7 @@ const Insights = () => {
             <div className="flex items-baseline justify-between gap-3 mb-3">
               <span className="flex items-baseline gap-2 min-w-0">
                 <span className="mn-mono font-bold">{insight.serverName}</span>
-                <Tooltip title="Quando foi gerado">
+                <Tooltip title="When it was generated">
                   <small className="text-gray whitespace-nowrap">
                     {formatMoment(insight.createdAt)}
                   </small>

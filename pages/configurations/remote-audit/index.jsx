@@ -38,7 +38,7 @@ const RemoteAudit = () => {
 
   const columns = [
     {
-      title: 'Quando',
+      title: 'When',
       dataIndex: 'createdAt',
       key: 'createdAt',
       width: 180,
@@ -46,7 +46,7 @@ const RemoteAudit = () => {
     },
     { title: 'Host', dataIndex: 'hostLabel', key: 'hostLabel', ellipsis: true },
     {
-      title: 'Protocolo',
+      title: 'Protocol',
       dataIndex: 'protocol',
       key: 'protocol',
       width: 90,
@@ -61,7 +61,7 @@ const RemoteAudit = () => {
       render: (n, r) => n || `#${r.userId ?? '?'}`,
     },
     {
-      title: 'Evento',
+      title: 'Event',
       dataIndex: 'event',
       key: 'event',
       width: 110,
@@ -85,7 +85,7 @@ const RemoteAudit = () => {
             >
               ▶ Reproduzir
             </Button>
-            <Tooltip title={`Baixar ${rec}`}>
+            <Tooltip title={`Download ${rec}`}>
               <Button size="small" onClick={() => handleDownload(rec)}>
                 ⬇
               </Button>
@@ -99,19 +99,19 @@ const RemoteAudit = () => {
 
   return (
     <>
-      <NextSeo title="Auditoria remota - MonitDB" />
+      <NextSeo title="Remote desktop audit - MonitDB" />
       <Layout>
         <PageContent removeSidebarMargin={true}>
           <PageHeader
-            title="Auditoria do Desktop remoto"
+            title="Remote desktop audit"
             breadcrumbs={[
               { title: 'Configurations', href: '/configurations/' },
-              { title: 'Auditoria remota', href: '/configurations/remote-audit/' },
+              { title: 'Remote audit', href: '/configurations/remote-audit/' },
             ]}
             extra={
               <Space>
                 <Button onClick={fetchAudit} loading={auditLoading}>
-                  Atualizar
+                  Refresh
                 </Button>
               </Space>
             }

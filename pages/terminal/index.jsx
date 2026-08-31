@@ -71,13 +71,13 @@ const Terminal = () => {
 
   return (
     <>
-      <NextSeo title="Terminal SSH - MonitDB" />
+      <NextSeo title="SSH Terminal - MonitDB" />
       <Layout>
         <PageContent removeSidebarMargin={true}>
           <PageHeader
             title={
               <span className="flex items-center gap-2">
-                Terminal SSH
+                SSH Terminal
                 <Tooltip title="Each tab opens a real shell session on the selected host. Requires the OWNER permission for SSH Terminal; the whole session (open, close and typed commands) is written to the audit trail. Hosts and credentials are managed in Configurations → SSH hosts.">
                   <Tag
                     color="default"
