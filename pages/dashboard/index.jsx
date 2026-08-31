@@ -16,6 +16,7 @@ import LatestAlertsSidebar from '~/components/sidebar/latest-alerts'
 import { useUser } from '~/hooks/index'
 import useGlobal from '~/hooks/use-global'
 import Layout from '~/layouts/default'
+import { useHealthThresholdStore } from '~/services/state-manager/health-threshold-store'
 import {
   Feature,
   FeatureFunction,
@@ -32,6 +33,15 @@ const DashboardPage = () => {
   } = useGlobal()
 
   const { userState: user } = useUser()
+
+  // Os limiares sao buscados UMA vez aqui e nao em cada cartao: a store do zustand e
+  // partilhada, por isso todos os cartoes leem o mesmo resultado sem repetir o pedido.
+  // Sao eles que o cartao mostra ao lado da CPU e da memoria — o limiar que aparece no
+  // ecra tem de ser o mesmo que o motor usa para decidir a cor.
+  const { fetchThresholds } = useHealthThresholdStore()
+  useEffect(() => {
+    fetchThresholds()
+  }, [fetchThresholds])
 
   const [activeKey, setActiveKey] = useState([])
 

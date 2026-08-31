@@ -1,15 +1,14 @@
 /* eslint-disable sonarjs/cognitive-complexity */
 /* eslint-disable react-hooks/exhaustive-deps */
-import { faDatabase } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
-  Badge,
-  Button,
-  Card,
-  message as antdMessage,
-  Space,
-  Tooltip as AntdTooltip,
-} from 'antd'
+  faCircleCheck,
+  faCircleInfo,
+  faCircleXmark,
+  faDatabase,
+  faTriangleExclamation,
+} from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { Button, Card, message as antdMessage } from 'antd'
 import { ArcElement, Chart as ChartJS, Legend, Tooltip } from 'chart.js'
 import classNames from 'classnames'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
@@ -20,6 +19,7 @@ import Link from '~/components/link'
 import DatabaseIcons from '~/helpers/database-icons'
 import { useGlobal } from '~/hooks/index'
 import useWindowSize from '~/hooks/use-window-size'
+import { useHealthThresholdStore } from '~/services/state-manager/health-threshold-store'
 import useServerContext from '~/services/state-manager/servers'
 import { megaBytesToGigaBytes } from '~/utils/formats'
 import { SERVER_STATUS } from '~/utils/server'
@@ -64,6 +64,64 @@ export const getPieChartData = (data) => {
 
 const getDiskTotal = ({ unitType, total }) =>
   unitType === 'MB' ? `${megaBytesToGigaBytes(total)} GB` : `${total} GB`
+
+// Onda visual: a cor deixa de ser o unico sinal. Os cinco estados ja existiam e ja
+// vinham na API (server.status); o que faltava era estarem ESCRITOS. A regra de
+// negocio esta na pagina de health thresholds e e esta:
+//   Healthy  — abaixo de todos os limiares
+//   Info     — ha um alerta activo
+//   Warning  — CPU% ou disco% acima do valor de aviso
+//   Critical — CPU% ou disco% acima do critico, ou memoria livre abaixo do minimo
+//   Down     — sem ligacao
+// Nota: o WARNING pintava 'border-yellow', e nao existe amarelo nenhum na paleta do
+// tailwind deste projecto — ou seja, ate hoje um servidor em aviso nao tinha cor
+// nenhuma. Passa a laranja, que e a cor de aviso que a paleta tem. E o CRITICAL, que
+// pintava laranja, passa a vermelho, que e o que a regra de negocio diz.
+const STATUS_VIEW = {
+  [SERVER_STATUS.HEALTLY]: { label: 'Healthy', line: '#409d66', text: '#2f7a4e' },
+  [SERVER_STATUS.INFO]: { label: 'Info', line: '#5046e5', text: '#3f38b8' },
+  [SERVER_STATUS.WARNING]: { label: 'Warning', line: '#fc9003', text: '#b25f00' },
+  [SERVER_STATUS.CRITICAL]: { label: 'Critical', line: '#cc0000', text: '#cc0000' },
+  [SERVER_STATUS.DOWN]: { label: 'Down', line: '#cc0000', text: '#cc0000' },
+}
+
+const STATUS_ICON = {
+  [SERVER_STATUS.HEALTLY]: faCircleCheck,
+  [SERVER_STATUS.INFO]: faCircleInfo,
+  [SERVER_STATUS.WARNING]: faTriangleExclamation,
+  [SERVER_STATUS.CRITICAL]: faTriangleExclamation,
+  [SERVER_STATUS.DOWN]: faCircleXmark,
+}
+
+/**
+ * "13.0 / 29.6 GB" em vez de "13296 MB - In Use / 30269 MB Total": cinco digitos em MB
+ * nao se leem de relance, e o par usado/total e o que interessa.
+ */
+const formatMemory = (memory, which) => {
+  const value =
+    which === 'used' ? memory.total - memory.available : memory.total
+  if (memory.unitType !== 'MB') return `${value} ${memory.unitType}`
+  return `${megaBytesToGigaBytes(value)} GB`
+}
+
+/** "ha 12 s" / "ha 3 min". Recalculado a cada sondagem, que e quando o cartao redesenha. */
+const relativeSince = (date) => {
+  const seconds = Math.max(0, Math.round((Date.now() - date.getTime()) / 1000))
+  if (seconds < 60) return `há ${seconds} s`
+  const minutes = Math.round(seconds / 60)
+  if (minutes < 60) return `há ${minutes} min`
+  return `há ${Math.round(minutes / 60)} h`
+}
+
+/**
+ * O limiar que o cartao mostra tem de ser o limiar REAL, o que o motor usa para
+ * decidir a cor — nao um numero bonito. Vem de /server/health-thresholds: a linha do
+ * proprio servidor ganha a global (serverId 0), como diz a pagina de configuracao.
+ */
+const resolveThreshold = (thresholds, serverId) =>
+  thresholds.find((t) => t.serverId === serverId) ||
+  thresholds.find((t) => t.serverId === 0) ||
+  undefined
 
 const ServerCard = ({
   id,
@@ -114,6 +172,9 @@ const ServerCard = ({
       setStartingCollector(false)
     }
   }
+
+  const { thresholds } = useHealthThresholdStore()
+  const threshold = resolveThreshold(thresholds, id)
 
   const { getServerMetrics } = useServerContext()
 
@@ -191,67 +252,100 @@ const ServerCard = ({
 
   const cpu = 100 - metrics.cpu?.SystemIdle
 
+  // A API so marca DOWN quando online e false; sao a mesma coisa vista de dois
+  // lados, e o cartao trata-as como uma so.
+  const isDown =
+    serverEnable && (!server?.online || server?.status === SERVER_STATUS.DOWN)
+  const statusView = isDown
+    ? STATUS_VIEW[SERVER_STATUS.DOWN]
+    : STATUS_VIEW[server?.status]
+  const statusIcon = isDown
+    ? STATUS_ICON[SERVER_STATUS.DOWN]
+    : STATUS_ICON[server?.status]
+
+  const cpuOverWarn =
+    threshold?.cpuWarn !== undefined && cpu > threshold.cpuWarn
+  // O limiar de memoria e um MINIMO DE MB LIVRES, nao uma percentagem: o traco vai no
+  // ponto de uso a partir do qual a memoria livre desce abaixo desse minimo.
+  const memoryLimitPercent =
+    threshold?.memMinMb !== undefined && metrics.memory?.total
+      ? Math.min(
+          100,
+          Math.max(
+            0,
+            ((metrics.memory.total - threshold.memMinMb) /
+              metrics.memory.total) *
+              100
+          )
+        )
+      : undefined
+
   return (
     <Style>
       <Card
         ref={elementReference}
         // style={{ height: '300px' }}
         className={classNames(
-          `group border bg-white border-4 transition-all duration-300
-          ease-in-out relative border-opacity-75 lg:hover:border-opacity-100`,
+          `group bg-white border transition-all duration-300 ease-in-out relative`,
           className,
-          showStatus &&
-            server.online && {
-              'lg:min-h-72': metrics?.length,
-              'lg:min-h-32': !metrics?.length,
-              'border-orange':
-                serverEnable && server?.status === SERVER_STATUS.CRITICAL,
-              'border-yellow':
-                serverEnable && server?.status === SERVER_STATUS.WARNING,
-              'border-success':
-                serverEnable && server?.status === SERVER_STATUS.HEALTLY,
-              'border-blue':
-                serverEnable && server?.status === SERVER_STATUS.INFO,
-              'border-gray': !serverEnable,
-            },
-          // O bloco acima so pinta com server.online. A API so marca DOWN quando
-          // online e false, por isso a moldura vermelha exigia estar online e em
-          // baixo ao mesmo tempo: nunca foi pintada uma unica vez. Agora o
-          // servidor caido acende, que e o unico caso que aqui falta.
-          showStatus &&
-            !server.online && {
-              'border-danger':
-                serverEnable && server?.status === SERVER_STATUS.DOWN,
-            }
+          showStatus && {
+            'lg:min-h-72': metrics?.length,
+            'lg:min-h-32': !metrics?.length,
+          }
         )}
+        // A moldura de 4px de cor sai e entra um filete a esquerda: a cor deixa de
+        // ser o unico sinal (a palavra do estado esta no titulo) e o cartao deixa de
+        // parecer um alerta permanente. O servidor caido e a excepcao — esse leva
+        // moldura vermelha inteira e fundo levemente rosado, porque as 3 da manha e
+        // o unico cartao que interessa encontrar no ecra.
+        style={
+          showStatus && serverEnable && statusView
+            ? {
+                borderLeft: `4px solid ${statusView.line}`,
+                ...(isDown
+                  ? {
+                      borderColor: statusView.line,
+                      backgroundColor: '#fff7f7',
+                    }
+                  : {}),
+              }
+            : undefined
+        }
       >
         <Link
           href={
             serverEnable && server.online ? `/dashboard/${id}` : '/dashboard'
           }
-          className={classNames(
-            // `card-link block p-2 h-full relative before:content-[""] before:absolute before:w-1
-            // before:top-0 before:left-0 before:h-full lg:p-4 lg:hover:before:w-2
-            // before:transition-all before:duration-300 before:ease-in-out before:border-radius`,
-            showStatus && {
-              'before:bg-orange':
-                serverEnable && server?.status === SERVER_STATUS.CRITICAL,
-              'before:bg-yellow':
-                serverEnable && server?.status === SERVER_STATUS.WARNING,
-              'before:bg-success':
-                serverEnable && server?.status === SERVER_STATUS.HEALTLY,
-              'before:bg-blue':
-                serverEnable && server?.status === SERVER_STATUS.INFO,
-              'before:bg-danger':
-                serverEnable && server?.status === SERVER_STATUS.DOWN,
-              'opacity-25': !serverEnable,
-              'before:bg-gray': !serverEnable,
-            }
-          )}
+          // O filete de cor passou para a borda esquerda do proprio Card. As classes
+          // before:bg-* que aqui estavam nunca chegaram a pintar nada: a geometria do
+          // ::before (content, width, height) esta comentada desde sempre.
+          className={classNames('block p-2 lg:p-4', {
+            'opacity-25': !serverEnable,
+          })}
         >
-          <h4 className="flex items-center text-sm space-x-2 mb-2 lg:mb-4">
+          {/* pr-20 abre espaco para o icone do motor, que esta absoluto no canto
+              superior direito: sem isso a palavra do estado passava por baixo dele. */}
+          <h4 className="flex items-center text-sm space-x-2 mb-2 pr-20 lg:mb-4">
             <FontAwesomeIcon icon={faDatabase} className="text-base" />
-            <span>{serverName}</span>
+            <span className="font-bold">{serverName}</span>
+            {showStatus && serverEnable && statusView && (
+              <span
+                className="ml-auto flex items-center gap-1 text-[11px] font-bold uppercase tracking-wide"
+                style={
+                  isDown
+                    ? {
+                        color: '#fff',
+                        backgroundColor: statusView.line,
+                        padding: '2px 7px',
+                        borderRadius: 3,
+                      }
+                    : { color: statusView.text }
+                }
+              >
+                <FontAwesomeIcon icon={statusIcon} />
+                {statusView.label}
+              </span>
+            )}
           </h4>
           {type?.typeServerName && (
             <div className="absolute top-0 right-0 rounded-full border-gray-light p-4">
@@ -263,32 +357,20 @@ const ServerCard = ({
           )}
           <div style={{ minHeight: '100px' }}>
             <dl className="text-xs w-full text-gray">
-              {metrics.memory && showMemory && (
+              {metrics.memory && showMemory && !isDown && (
                 <>
-                  {
-                    <>
-                      <dt className="block text-gray-dark mt-2">Memory</dt>
-                      <dd>
-                        <span
-                          className={classNames({
-                            'text-blue': metrics.memory.inUsePercent <= 85,
-                            'text-orange':
-                              metrics.memory.inUsePercent > 85 &&
-                              metrics.memory.inUsePercent < 95,
-                            'text-danger': metrics.memory.inUsePercent >= 95,
-                          })}
-                        >
-                          {metrics.memory.total - metrics.memory.available}{' '}
-                          {metrics.memory.unitType} - In Use
-                        </span>{' '}
-                        /{' '}
-                        <span>
-                          {metrics.memory.total} {metrics.memory.unitType} Total
-                        </span>
-                      </dd>
-                    </>
-                  }
-                  <dd className="mt-1 w-full h-1 block relative bg-gray-light">
+                  <dt className="sr-only">Memory</dt>
+                  <dd className="mt-2 flex items-baseline justify-between gap-2">
+                    <span className="text-gray-dark">Memory</span>
+                    <span className="tabular-nums">
+                      <b className="text-gray-dark">
+                        {metrics.memory.inUsePercent}%
+                      </b>{' '}
+                      · {formatMemory(metrics.memory, 'used')} /{' '}
+                      {formatMemory(metrics.memory, 'total')}
+                    </span>
+                  </dd>
+                  <dd className="mt-1 w-full h-1.5 block relative bg-gray-light">
                     <span
                       className={classNames('absolute top-0 left-0 h-full', {
                         'bg-blue': metrics.memory.inUsePercent <= 85,
@@ -301,32 +383,96 @@ const ServerCard = ({
                         width: `${metrics.memory.inUsePercent}%`,
                       }}
                     />
+                    {memoryLimitPercent !== undefined && (
+                      // O traco marca o ponto em que a memoria livre desce abaixo do
+                      // minimo configurado. O olho ve a barra passar o traco mesmo
+                      // sem distinguir a cor.
+                      <span
+                        className="absolute bg-gray-dark opacity-50"
+                        style={{
+                          left: `${memoryLimitPercent}%`,
+                          top: -2,
+                          width: 1,
+                          height: 10,
+                        }}
+                      />
+                    )}
                   </dd>
+                  {threshold?.memMinMb !== undefined && (
+                    <dd className="text-gray">
+                      mínimo livre {threshold.memMinMb} MB
+                    </dd>
+                  )}
                 </>
               )}
 
-              {metrics.cpu && showCPU && (
+              {metrics.cpu && showCPU && !isDown && (
                 <>
-                  <dt className="block text-gray-dark mt-2">CPU</dt>
-                  <dd>
-                    <span
-                      className={classNames({
-                        'text-blue': cpu <= 85,
-                        'text-orange': cpu > 85 && cpu < 95,
-                        'text-danger': cpu >= 95,
-                      })}
-                    >
-                      {cpu}%
+                  <dt className="sr-only">CPU</dt>
+                  <dd className="mt-2 flex items-baseline justify-between gap-2">
+                    <span className="text-gray-dark">CPU</span>
+                    <span className="tabular-nums">
+                      <b
+                        className={classNames({
+                          'text-gray-dark': !cpuOverWarn,
+                          'text-orange': cpuOverWarn,
+                        })}
+                      >
+                        {cpu}%
+                      </b>
+                      {cpuOverWarn && (
+                        <span className="text-orange"> · Elevado</span>
+                      )}
+                      {threshold?.cpuWarn !== undefined && (
+                        <span className="text-gray">
+                          {' '}
+                          · limiar {threshold.cpuWarn}%
+                        </span>
+                      )}
                     </span>
-                    <span> - In use</span>
                   </dd>
-                  <dd className="mt-1 w-full h-1 block relative bg-gray-light">
+                  <dd className="mt-1 w-full h-1.5 block relative bg-gray-light">
                     <span
-                      className="absolute top-0 h-full bg-orange"
+                      className={classNames('absolute top-0 h-full', {
+                        'bg-blue': !cpuOverWarn,
+                        'bg-orange': cpuOverWarn,
+                      })}
                       style={{
                         width: `${cpu}%`,
                       }}
                     />
+                    {threshold?.cpuWarn !== undefined && (
+                      <span
+                        className="absolute bg-gray-dark opacity-50"
+                        style={{
+                          left: `${threshold.cpuWarn}%`,
+                          top: -2,
+                          width: 1,
+                          height: 10,
+                        }}
+                      />
+                    )}
+                  </dd>
+                </>
+              )}
+
+              {isDown && (
+                // O que a API sabe hoje de um servidor caido e so isto: que esta em
+                // baixo. "Em baixo ha X min" e "ultima resposta do servidor" exigem
+                // gravar a transicao de estado — trabalho de motor, fora desta onda.
+                <>
+                  <dd
+                    className="mt-2 font-medium"
+                    style={{ color: statusView?.text }}
+                  >
+                    Sem ligação ao servidor
+                  </dd>
+                  {type?.typeServerName && (
+                    <dd className="mt-1 text-gray">{type.typeServerName}</dd>
+                  )}
+                  <dd className="mt-1 flex items-baseline justify-between gap-2">
+                    <span className="text-gray-dark">Métricas</span>
+                    <b className="text-gray-dark">indisponíveis</b>
                   </dd>
                 </>
               )}
@@ -334,27 +480,48 @@ const ServerCard = ({
               <></>
             </dl>
           </div>
-          <dt className="block text-gray mt-2">Last Updated</dt>
-          <dd className="mt-1  text-gray">{lastUpdated.toLocaleString()}</dd>
-          {!metrics.agents === 0 && (
-            <Badge style={{ margin: 0, height: '5px' }} status="default" />
+          {/* Os agentes eram bolinhas de cor com o nome escondido num tooltip:
+              ilegiveis num print, na parede e por teclado. Passam a chips com o nome
+              escrito e, quando parados, com o sinal alem da cor. */}
+          {metrics.agents?.length > 0 && !isDown && (
+            <div className="mt-2 flex flex-wrap gap-1.5">
+              {metrics.agents.map((agent, index) => {
+                const running = agent.status_desc === 'Running'
+                return (
+                  <span
+                    key={`server-${id}-agent-${index}`}
+                    className={classNames(
+                      'inline-flex items-center gap-1 border rounded px-1.5 text-[10px]',
+                      running
+                        ? 'border-gray-light text-gray-dark'
+                        : 'border-danger text-danger'
+                    )}
+                    title={`${agent?.servicename} - ${agent.status_desc}`}
+                  >
+                    <span
+                      className={classNames(
+                        'inline-block w-1.5 h-1.5 rounded-full',
+                        running ? 'bg-success' : 'bg-danger'
+                      )}
+                    />
+                    {agent?.servicename}
+                    {!running && ' ✕'}
+                  </span>
+                )
+              })}
+            </div>
           )}
-          <Space style={{ margin: 0, transform: 'translateY(12px)' }}>
-            {metrics.agents?.map((agent, index) => {
-              return (
-                <AntdTooltip
-                  key={index}
-                  title={`${agent?.servicename} - ${agent.status_desc}`}
-                >
-                  <Badge
-                    style={{ margin: 0, height: '5px' }}
-                    status="processing"
-                    color={agent.status_desc === 'Running' ? 'green' : 'red'}
-                  />
-                </AntdTooltip>
-              )
-            })}
-          </Space>
+          {/* Esta hora e a do relogio do browser no momento em que o painel TENTOU,
+              nao a resposta do servidor: continua a andar mesmo quando a chamada
+              falha. Por isso o rotulo diz "Verificado", e no servidor caido diz
+              "Ultima tentativa" — e o que a frase pode prometer sem mentir. */}
+          <dd className="mt-2 text-gray text-[11px]">
+            {isDown
+              ? `Última tentativa ${lastUpdated.toLocaleTimeString()} · sem resposta`
+              : `Verificado ${lastUpdated.toLocaleTimeString()} · ${relativeSince(
+                  lastUpdated
+                )}`}
+          </dd>
           {serverEnable && server?.online && collectorStopped && (
             <Button
               size="small"
