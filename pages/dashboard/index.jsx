@@ -171,12 +171,25 @@ const DashboardPage = () => {
                     </span>
                   </div>
                 ),
+                // Cartao de largura FIXA (pedido do Danilo, 02/09): a largura vinha
+                // do conteudo, por isso EXEGOL\METACASE dava um cartao largo e MOAB
+                // um estreito, e as filas ficavam desalinhadas.
+                // Os 300px sao MEDIDOS no ecra dele (~2180px de largura) com os
+                // nomes reais do cliente, nao arredondados a olho:
+                //   268px -> 6 cartoes por fila, 4 dos 5 nomes longos cortados
+                //   300px -> 5 cartoes por fila, 2 dos 5 cortados   <- escolhido
+                //   335px -> 4 cartoes por fila, nenhum cortado
+                // 300 e o meio-termo: perde-se um cartao por fila e ficam so os dois
+                // nomes mais compridos com reticencias, que ja tem tooltip com o nome
+                // inteiro (title={serverName} no server.jsx).
+                // O gap-4 (16px) substitui o marginRight de 15px inline, que sobrava
+                // no ultimo cartao de cada fila.
                 children: (
-                  <div className="flex flex-wrap py-1 gap-y-4 md:py-2">
+                  <div className="flex flex-wrap py-1 gap-4 md:py-2">
                     {formattedEnvironment.servers
                       .filter(({ isActive }) => isActive)
                       .map((server, index) => (
-                        <div key={index} style={{ marginRight: '15px' }}>
+                        <div key={index} className="w-[300px]">
                           <ServerCard
                             showCPU={hasPermission(
                               user,

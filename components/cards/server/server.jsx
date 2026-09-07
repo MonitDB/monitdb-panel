@@ -309,12 +309,16 @@ const ServerCard = ({
       : undefined
 
   return (
-    <Style>
+    // h-full nos dois: o cartao de um servidor indisponivel tem menos conteudo e
+    // ficava visivelmente mais baixo que os vizinhos. A fila ja estica o involucro
+    // (align-items: stretch); faltava o cartao ocupar essa altura. Assim os cartoes
+    // de uma fila tem todos o mesmo tamanho, que era o pedido do Danilo (02/09).
+    <Style className="h-full">
       <Card
         ref={elementReference}
         // style={{ height: '300px' }}
         className={classNames(
-          `group bg-white border transition-all duration-300 ease-in-out relative`,
+          `group bg-white border transition-all duration-300 ease-in-out relative h-full`,
           className,
           showStatus && {
             'lg:min-h-32': !metrics?.length,
