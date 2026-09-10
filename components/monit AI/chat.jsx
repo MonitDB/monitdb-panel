@@ -35,6 +35,16 @@ import { Markdown } from '../md'
 
 const { Content } = Layout
 
+/* Largura da conversa. Medido no ecra do Danilo (viewport 1920): o Sider dos
+   chats leva 300px, sobram 1620px de area util — e a coluna estava chumbada em
+   860px, ou seja 760px de ecra vazio de cada lado enquanto a tabela do
+   relatorio era cortada e arrastava uma barra horizontal por baixo de toda a
+   conversa. 1280px usam o ecra sem colar o texto as bordas (170px de folga de
+   cada lado a 1920) e a 1366 (1066px uteis) a coluna passa a ser simplesmente
+   100%. Mexer AQUI muda mensagens, caixa de escrita e ecra inicial ao mesmo
+   tempo: se ficarem com valores diferentes, a caixa desalinha da conversa. */
+const READING_WIDTH = 1280
+
 // Lê o stream SSE (data: {...}\n\n) e despacha por tipo de evento.
 async function consumeSSEStream(response, { onDelta, onStatus, onDone }) {
   const reader = response.body.getReader()
@@ -435,7 +445,7 @@ const ChatAI = () => {
                 style={{
                   margin: 'auto',
                   width: '100%',
-                  maxWidth: 820,
+                  maxWidth: READING_WIDTH,
                   padding: '0 8px',
                 }}
               >
@@ -504,16 +514,16 @@ const ChatAI = () => {
             {!isNew && (
               <>
                 <List
+                  className="ai-message-list"
                   dataSource={messages}
                   style={{
                     height: '100%',
                     overflow: 'auto',
-                    // Coluna de leitura: 860px centrados em vez de 15% de cada
-                    // lado (que a 1600 dava 1250px de linha e o buraco no meio).
+                    // Coluna de leitura centrada (ver READING_WIDTH no topo).
                     // O padding de baixo e o que impede a ultima linha da
                     // resposta de ficar por baixo da caixa de escrever.
                     width: '100%',
-                    maxWidth: 860,
+                    maxWidth: READING_WIDTH,
                     margin: '0 auto',
                     padding: '16px 8px 120px 8px',
                   }}
@@ -546,6 +556,7 @@ const ChatAI = () => {
                           className="message-bubble"
                           style={{
                             position: 'relative',
+                            minWidth: 0,
                             background:
                               message.role === 'user' ? '#5046e5' : 'transparent',
                             borderRadius: message.role === 'user' ? 8 : 0,
@@ -620,6 +631,22 @@ const ChatAI = () => {
                     </List.Item>
                   )}
                 />
+                <style>{`
+                  /* Um flex item nao encolhe abaixo do proprio min-content
+                     (min-width: auto). Sem isto, a tabela larga estica a linha
+                     toda e transborda a coluna de leitura outra vez, em vez de
+                     rolar dentro da caixa dela. */
+                  .ai-message-list .ant-space,
+                  .ai-message-list .ant-space-item,
+                  .ai-message-list .message-bubble,
+                  .ai-message-list .ant-list-item {
+                    min-width: 0;
+                  }
+
+                  .ai-message-list .md-table-wrap {
+                    max-width: 100%;
+                  }
+                `}</style>
               </>
             )}
           </div>
@@ -627,7 +654,7 @@ const ChatAI = () => {
         <div
           style={{
             width: '100%',
-            maxWidth: 820,
+            maxWidth: READING_WIDTH,
             margin: '0 auto',
             padding: '1.2rem 8px 0 8px',
           }}

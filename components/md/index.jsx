@@ -23,6 +23,14 @@ md.renderer.rules.fence = (tokens, index) => {
   )
 }
 
+// A tabela do relatorio (backups, ficheiros, waits) e quase sempre mais larga
+// do que a coluna de leitura, e nomes como MonitorizacaoAtiva_CLIENT nao tem
+// onde partir. Sem caixa propria, a tabela empurrava uma barra horizontal para
+// debaixo de TODA a conversa e as ultimas colunas ficavam cortadas sem aviso —
+// quem le nao percebe que falta coluna. Cada tabela passa a rolar dentro de si.
+md.renderer.rules.table_open = () => '<div class="md-table-wrap"><table>'
+md.renderer.rules.table_close = () => '</table></div>'
+
 const StyledMarkdown = styled.div`
   /* A resposta da IA vinha em Arial enquanto o resto do painel corre em IBM Plex
      Sans: era a unica coisa no ecra com outra letra, e lia-se como um corpo
@@ -159,10 +167,34 @@ const StyledMarkdown = styled.div`
     color: #fff;
   }
 
+  /* Barra sempre desenhada por nos, pela mesma razao do <pre>: com a barra
+     flutuante do sistema so aparece ao passar o rato, e a tabela cortada
+     passa por tabela completa. */
+  .md-table-wrap {
+    overflow-x: auto;
+    margin-bottom: 15px;
+    scrollbar-width: thin;
+    scrollbar-color: #b9bec7 #eef0f3;
+  }
+
+  .md-table-wrap::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  .md-table-wrap::-webkit-scrollbar-track {
+    background: #eef0f3;
+    border-radius: 4px;
+  }
+
+  .md-table-wrap::-webkit-scrollbar-thumb {
+    background: #b9bec7;
+    border-radius: 4px;
+  }
+
   table {
     width: 100%;
     border-collapse: collapse;
-    margin-bottom: 15px;
+    margin-bottom: 0;
   }
 
   th,
