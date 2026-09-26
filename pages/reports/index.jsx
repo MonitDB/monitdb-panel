@@ -13,9 +13,7 @@ import { useUser } from '~/hooks/index'
 import useGlobal from '~/hooks/use-global'
 import Layout from '~/layouts/default'
 import {
-  Feature,
   FeatureFunction,
-  hasFeature,
   hasPermission,
   TypeGrant,
 } from '~/utils/hasPermission'
@@ -63,7 +61,7 @@ const AlertsPage = () => {
   }, [])
 
   useEffect(() => {
-    if (!hasFeature(user, Feature.REPORTS) && user.grants) {
+    if (!hasPermission(user, FeatureFunction.REPORTS, TypeGrant.READ) && user.grants) {
       router.push('/403')
     }
     if (servers.length === 0 || serverTypes.length === 0) {

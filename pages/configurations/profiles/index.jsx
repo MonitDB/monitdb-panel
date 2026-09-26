@@ -4,14 +4,33 @@ import { NextSeo } from 'next-seo'
 import React, { useCallback, useEffect, useState } from 'react'
 
 import { PageContent, PageHeader, PageWrapper } from '~/components/page'
+import { useUser } from '~/hooks/index'
 import Layout from '~/layouts/default'
 import { listProfiles } from '~/services/permissions'
+import {
+  FeatureFunction,
+  hasPermission,
+  TypeGrant,
+} from '~/utils/hasPermission'
 
 const ProfilePage = () => {
+  const { userState: user } = useUser()
   const [profiles, setProfiles] = useState([])
   const [loading, setLoading] = useState(false)
 
   const router = useRouter()
+
+  // 22/09: esta pagina nao tinha guarda nenhuma — quem soubesse o endereco
+  // entrava, e so a API e que travava. O nivel aqui espelha o que a API pede.
+  useEffect(() => {
+    if (
+      !hasPermission(user, FeatureFunction.MANAGE_PROFILES, TypeGrant.READ) &&
+      user.grants
+    ) {
+      router.push('/403')
+    }
+  }, [router, user])
+
 
   const getProfiles = useCallback(async () => {
     setLoading(true)

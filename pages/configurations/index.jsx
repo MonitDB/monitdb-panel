@@ -9,9 +9,7 @@ import { useUser } from '~/hooks/index'
 import Layout from '~/layouts/default'
 import {
   existsSomePermissions,
-  Feature,
   FeatureFunction,
-  hasFeature,
   hasPermission,
   TypeGrant,
 } from '~/utils/hasPermission'
@@ -33,7 +31,7 @@ const LEFT_SECTIONS = [
         description:
           'Add servers to monitor; edit connection credentials; remove or suspend monitored servers.',
         href: '/configurations/servers/',
-        visible: grant(FeatureFunction.MONITORED_SERVERS, TypeGrant.OWNER),
+        visible: grant(FeatureFunction.MANAGE_MONITORED_SERVERS, TypeGrant.OWNER),
       },
       {
         title: 'Install the agent (new server)',
@@ -52,7 +50,7 @@ const LEFT_SECTIONS = [
         description:
           'CPU, disk and memory thresholds that color the server cards — global default plus per-server override.',
         href: '/configurations/health-thresholds/',
-        visible: grant(FeatureFunction.MONITORED_SERVERS, TypeGrant.OWNER),
+        visible: grant(FeatureFunction.MANAGE_MONITORED_SERVERS, TypeGrant.OWNER),
       },
     ],
   },
@@ -188,6 +186,7 @@ const RIGHT_SECTIONS = [
         description:
           'Profiles (roles) and the permission level of each feature per profile.',
         href: '/configurations/profiles',
+        visible: grant(FeatureFunction.MANAGE_PROFILES, TypeGrant.READ),
       },
       {
         title: 'My account',
@@ -257,7 +256,7 @@ const ConfigurationsPage = () => {
   const router = useRouter()
   const { userState: user } = useUser()
   useEffect(() => {
-    if (!hasFeature(user, Feature.CONFIGURATION) && user.grants) {
+    if (!hasPermission(user, FeatureFunction.CONFIGURATION, TypeGrant.READ) && user.grants) {
       router.push('/403')
     }
   }, [router, user])

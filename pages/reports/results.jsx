@@ -23,9 +23,7 @@ import { getReportsByType } from '~/services/reports'
 import useComponentContext from '~/services/state-manager/components'
 import { scrollToSection } from '~/utils/global'
 import {
-  Feature,
   FeatureFunction,
-  hasFeature,
   hasPermission,
   TypeGrant,
 } from '~/utils/hasPermission'
@@ -233,7 +231,7 @@ const ResultReportsPage = () => {
   }, [getData])
 
   useEffect(() => {
-    if (!hasFeature(user, Feature.REPORTS) && user.grants) {
+    if (!hasPermission(user, FeatureFunction.REPORTS, TypeGrant.READ) && user.grants) {
       router.push('/403')
     }
     const filteredType = reportTypes.find(

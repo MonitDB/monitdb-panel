@@ -21,9 +21,7 @@ import useGlobal from '~/hooks/use-global'
 import Layout from '~/layouts/default'
 import useAlertContext from '~/services/state-manager/alerts'
 import {
-  Feature,
   FeatureFunction,
-  hasFeature,
   hasPermission,
   hasSomePermissions,
   TypeGrant,
@@ -154,7 +152,7 @@ const AlertsDetailsPage = () => {
   ])
 
   useEffect(() => {
-    if (!hasFeature(user, Feature.ALERTS) && user.grants) router.push('/403')
+    if (!hasPermission(user, FeatureFunction.ALERTS, TypeGrant.READ) && user.grants) router.push('/403')
   }, [router, user])
   useEffect(getAlertsData, [getAlertsData])
 

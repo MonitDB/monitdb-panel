@@ -9,6 +9,11 @@ import { PageContent, PageHeader } from '~/components/page'
 import { useUser } from '~/hooks/index'
 import Layout from '~/layouts/default'
 import { useAiSkillStore } from '~/services/state-manager/ai-skills-store'
+import {
+  FeatureFunction,
+  hasPermission,
+  TypeGrant,
+} from '~/utils/hasPermission'
 
 /**
  * Gestão de Skills da IA: cada skill é uma "tool" definida pelo admin
@@ -18,6 +23,18 @@ const AiSkillsPage = () => {
   const router = useRouter()
   const { query, pathname } = router
   const { userState: user } = useUser()
+
+  // 22/09: esta pagina nao tinha guarda nenhuma — quem soubesse o endereco
+  // entrava, e so a API e que travava. O nivel aqui espelha o que a API pede.
+  useEffect(() => {
+    if (
+      !hasPermission(user, FeatureFunction.MONIT_AI_SKILLS, TypeGrant.READ) &&
+      user.grants
+    ) {
+      router.push('/403')
+    }
+  }, [router, user])
+
 
   const { skills, loading, toggleEnableId, fetchSkills, toggleEnabled, deleteSkill } =
     useAiSkillStore()

@@ -60,6 +60,7 @@ export const FeatureFunction = {
   THRESHOLD_PARAMETERIZATION: 2105,
 
   ANALYSIS: 3000,
+  REPORTS: 4000,
   DATE_AND_INDICATORS_FILTERS: 3001,
   EXPORT: 3002,
 
@@ -111,6 +112,7 @@ export const FeatureFunction = {
   USER_MANAGEMENT: 6201,
   BASIC_MONITOR_CONNECTIONS: 6202,
   DISPLAY_SETTINGS: 6203,
+  MANAGE_PROFILES: 6204,
   AUTHENTICATION_TOKENS: 6300,
   DOWNLOAD_POWERSHELL_MODULE: 6301,
   SEE_POWERSHELL_SCRIPT_EXAMPLES: 6302,
@@ -123,6 +125,18 @@ export const FeatureFunction = {
   ABOUT: 6700,
   SETUP_INTEGRATIONS: 6800,
   MANAGE_INTEGRATIONS: 6801,
+  MONIT_AI: 8000,
+  MONIT_AI_ASK: 8001,
+  MONIT_AI_CHAT_HISTORY: 8002,
+  MONIT_AI_USAGE: 8004,
+  INSIGHTS: 8100,
+  INSIGHTS_RUN: 8101,
+  MONIT_AI_PROVIDER: 8200,
+  MONIT_AI_SKILLS: 8201,
+  MONIT_AI_SECRETS: 8202,
+  MONIT_AI_TRAINING: 8203,
+  MONIT_AI_PII_MASKING: 8204,
+  MONIT_AI_AUDIT: 8205,
   SSH_TERMINAL: 6901,
   REMOTE_DESKTOP: 6902,
   INTEGRATION: 7000,
@@ -138,24 +152,17 @@ export const TypeGrant = {
   OWNER: 5,
 }
 
-export const Feature = {
-  DASHBOARD: 1,
-  ALERTS: 2,
-  ANALYSIS: 3,
-  REPORTS: 4,
-  STATES: 5,
-  CONFIGURATION: 6,
-  INTEGRATION: 7,
-}
-
-export function hasFeature(user, feature) {
-  const grants = user?.grants
-  if (!grants) return false
-
-  const validGrants = grants?.filter((grant) => Number(grant.typeGrant) > 0)
-
-  return validGrants?.some((grant) => grant.idFeature === feature) || false
-}
+// 22/09: o `Feature` e o `hasFeature` foram removidos. Eram o segundo mecanismo
+// de permissao do produto e o que estragava a granularidade: `hasFeature` abria
+// a PAGINA inteira a quem tivesse UM grant qualquer acima de DENY dentro
+// daquela feature, ignorando o nivel. Um utilizador com READ num grafico do
+// Dashboard entrava no Dashboard todo. A entrada das paginas passou a usar o
+// id de entrada de cada feature (1000, 2000, 3000, 4000, 5000, 6000, 7000,
+// 8000) com `hasPermission(..., TypeGrant.READ)`, que e o mesmo mecanismo dos
+// botoes, separadores e cartoes. Um so mecanismo, e e o granular.
+//
+// A troca foi medida perfil a perfil antes de ser feita: das 72 combinacoes de
+// perfil x feature no QA, so UMA mudava de resultado.
 
 export function hasPermission(user, featureFunction, typeGrant) {
   const grants = user?.grants

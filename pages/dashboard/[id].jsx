@@ -25,9 +25,7 @@ import useGlobal from '~/hooks/use-global'
 import Layout from '~/layouts/default'
 import { scrollToSection } from '~/utils/global'
 import {
-  Feature,
   FeatureFunction,
-  hasFeature,
   hasPermission,
   hasSomePermissions,
   TypeGrant,
@@ -132,7 +130,7 @@ const SingleDashboard = () => {
   dashboardSections.sort((a, b) => a.index - b.index)
 
   useEffect(() => {
-    if (!hasFeature(user, Feature.DASHBOARD) && user.grants) router.push('/403')
+    if (!hasPermission(user, FeatureFunction.DASHBOARD, TypeGrant.READ) && user.grants) router.push('/403')
   }, [router, user])
 
   const currentServer = useMemo(() => {

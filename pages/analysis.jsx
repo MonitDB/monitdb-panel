@@ -31,7 +31,11 @@ import { PageContent, PageWrapper } from '~/components/page'
 import QueryPlanRenderer from '~/components/qp-render'
 import Layout from '~/layouts/default'
 import { getAnalysis, getQueriesProfile, getWhoIs } from '~/services/analysis'
-import { Feature, hasFeature } from '~/utils/hasPermission'
+import {
+  FeatureFunction,
+  hasPermission,
+  TypeGrant,
+} from '~/utils/hasPermission'
 import { truncateString } from '~/utils/truncateString'
 
 import { useGlobal, useUser } from '../hooks'
@@ -203,7 +207,7 @@ const AnalysisPage = () => {
   }, [form, query])
 
   useEffect(() => {
-    if (!hasFeature(user, Feature.ANALYSIS) && user.grants) {
+    if (!hasPermission(user, FeatureFunction.ANALYSIS, TypeGrant.READ) && user.grants) {
       router.push('/403')
     }
   }, [router, user])

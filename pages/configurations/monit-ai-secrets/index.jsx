@@ -11,6 +11,7 @@ import {
   Tag,
   Typography,
 } from 'antd'
+import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
 import { useEffect, useState } from 'react'
 
@@ -18,9 +19,27 @@ import { PageContent, PageHeader } from '~/components/page'
 import { useUser } from '~/hooks/index'
 import Layout from '~/layouts/default'
 import { useAiSecretStore } from '~/services/state-manager/ai-secrets-store'
+import {
+  FeatureFunction,
+  hasPermission,
+  TypeGrant,
+} from '~/utils/hasPermission'
 
 const AiSecretsPage = () => {
+  const router = useRouter()
   const { userState: user } = useUser()
+
+  // 22/09: esta pagina nao tinha guarda nenhuma — quem soubesse o endereco
+  // entrava, e so a API e que travava. O nivel aqui espelha o que a API pede.
+  useEffect(() => {
+    if (
+      !hasPermission(user, FeatureFunction.MONIT_AI_SECRETS, TypeGrant.OWNER) &&
+      user.grants
+    ) {
+      router.push('/403')
+    }
+  }, [router, user])
+
   const { secrets, loading, saving, fetchSecrets, upsertSecret, deleteSecret } =
     useAiSecretStore()
 

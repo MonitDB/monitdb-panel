@@ -35,7 +35,7 @@ const ConfigurationsServersSinglePage = () => {
     if (
       !hasPermission(
         user,
-        FeatureFunction.MONITORED_SERVERS,
+        FeatureFunction.MANAGE_MONITORED_SERVERS,
         TypeGrant.OWNER
       ) &&
       user.grants

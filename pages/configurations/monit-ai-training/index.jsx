@@ -9,6 +9,11 @@ import { useUser } from '~/hooks/index'
 import Layout from '~/layouts/default'
 import { useAiTrainingStore } from '~/services/state-manager/ai-training-store';
 import { useAiTrainingStoreLocalLLM } from '~/services/state-manager/ai-training-store-local-llm'
+import {
+  FeatureFunction,
+  hasPermission,
+  TypeGrant,
+} from '~/utils/hasPermission'
 
 /*************  ✨ Windsurf Command ⭐  *************/
 /**
@@ -22,6 +27,18 @@ const AiTrainingPage = () => {
   const router = useRouter()
   const { query, pathname } = router
   const { userState: user } = useUser()
+
+  // 22/09: esta pagina nao tinha guarda nenhuma — quem soubesse o endereco
+  // entrava, e so a API e que travava. O nivel aqui espelha o que a API pede.
+  useEffect(() => {
+    if (
+      !hasPermission(user, FeatureFunction.MONIT_AI_TRAINING, TypeGrant.READ) &&
+      user.grants
+    ) {
+      router.push('/403')
+    }
+  }, [router, user])
+
 
   // const usingRemoteLLMs = JSON.parse(localStorage.getItem('app:usingRemoteLLMs')) ?? false;
   const usingRemoteLLMs = true;

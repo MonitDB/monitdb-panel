@@ -6,14 +6,21 @@ import {
   Spin,
   Tooltip,
 } from 'antd'
+import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
 import React, { useEffect } from 'react'
 
 import { Markdown } from '~/components/md'
 import { PageContent, PageHeader, PageWrapper } from '~/components/page'
 import Status from '~/components/status'
+import { useUser } from '~/hooks/index'
 import Layout from '~/layouts/default'
 import { useInsightsStore } from '~/services/state-manager/insights-store'
+import {
+  FeatureFunction,
+  hasPermission,
+  TypeGrant,
+} from '~/utils/hasPermission'
 
 // Antes: cores de fabrica do AntD (red/orange/blue/green). Agora os tons de
 // estado do produto, que sao os mesmos do cartao do dashboard e do ecra 12.
@@ -38,6 +45,20 @@ const stripFirstSeverityLine = (text = '') =>
   text.replace(/^\s*severidade:\s*\w+\s*\n?/i, '')
 
 const Insights = () => {
+  const { userState: user } = useUser()
+  const router = useRouter()
+
+  // 22/09: esta pagina nao tinha guarda nenhuma — quem soubesse o endereco
+  // entrava, e so a API e que travava. O nivel aqui espelha o que a API pede.
+  useEffect(() => {
+    if (
+      !hasPermission(user, FeatureFunction.INSIGHTS, TypeGrant.READ) &&
+      user.grants
+    ) {
+      router.push('/403')
+    }
+  }, [router, user])
+
   const { insights, loading, running, fetchInsights, runNow } =
     useInsightsStore()
 

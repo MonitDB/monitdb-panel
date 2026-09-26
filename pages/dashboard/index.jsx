@@ -18,9 +18,7 @@ import useGlobal from '~/hooks/use-global'
 import Layout from '~/layouts/default'
 import { useHealthThresholdStore } from '~/services/state-manager/health-threshold-store'
 import {
-  Feature,
   FeatureFunction,
-  hasFeature,
   hasPermission,
   TypeGrant,
 } from '~/utils/hasPermission'
@@ -49,7 +47,7 @@ const DashboardPage = () => {
   const router = useRouter()
 
   useEffect(() => {
-    if (!hasFeature(user, Feature.DASHBOARD) && user.grants) router.push('/403')
+    if (!hasPermission(user, FeatureFunction.DASHBOARD, TypeGrant.READ) && user.grants) router.push('/403')
     const INITIAL_REFRESH_INTERVAL = Number(
       localStorage.getItem(REFRESH_INTERVAL_LOCAL_STORAGE_KEY) || 30 * SECOND
     )

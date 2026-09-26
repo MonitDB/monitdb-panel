@@ -10,9 +10,7 @@ import { PageWrapper } from '~/components/page'
 // import GlobalContext from '~/contexts/global'
 import Layout from '~/layouts/default'
 import {
-  Feature,
   FeatureFunction,
-  hasFeature,
   hasPermission,
   TypeGrant,
 } from '~/utils/hasPermission'
@@ -73,7 +71,7 @@ const StatePage = () => {
   )
 
   useEffect(() => {
-    if (user.grants && !hasFeature(user, Feature.STATES)) {
+    if (user.grants && !hasPermission(user, FeatureFunction.STATES, TypeGrant.READ)) {
       router.push('/403')
     }
     const filteredTab = tabs.find((tab) => tab.slug === router?.query?.tab)

@@ -17,7 +17,6 @@ import Link from '~/components/link'
 import { useUser } from '~/hooks/index'
 import { useConfigStore } from '~/services/state-manager/config-store'
 import {
-  Feature,
   FeatureFunction,
   hasPermission,
   TypeGrant,
@@ -47,27 +46,32 @@ const Header = () => {
     {
       title: 'Alerts',
       href: '/alerts/',
-      requiredPermissions: Feature.ALERTS,
+      requiredFeatureFunction: FeatureFunction.ALERTS,
+      requiredLevel: TypeGrant.READ,
     },
     {
       title: 'Analysis',
       href: '/analysis/',
-      requiredPermissions: Feature.ANALYSIS,
+      requiredFeatureFunction: FeatureFunction.ANALYSIS,
+      requiredLevel: TypeGrant.READ,
     },
     {
       title: 'Reports',
       href: '/reports/',
-      requiredPermissions: Feature.REPORTS,
+      requiredFeatureFunction: FeatureFunction.REPORTS,
+      requiredLevel: TypeGrant.READ,
     },
     {
       title: 'States',
       href: '/states/',
-      requiredPermissions: Feature.STATES,
+      requiredFeatureFunction: FeatureFunction.STATES,
+      requiredLevel: TypeGrant.READ,
     },
     {
       title: 'Integrations',
       href: '/integrations/',
-      requiredPermissions: Feature.INTEGRATION,
+      requiredFeatureFunction: FeatureFunction.INTEGRATION,
+      requiredLevel: TypeGrant.READ,
     },
     {
       title: (
@@ -78,10 +82,14 @@ const Header = () => {
       ),
       href: '/monit-ai/new',
       accent: true,
+      requiredFeatureFunction: FeatureFunction.MONIT_AI,
+      requiredLevel: TypeGrant.READ,
     },
     {
       title: 'Insights',
       href: '/insights/',
+      requiredFeatureFunction: FeatureFunction.INSIGHTS,
+      requiredLevel: TypeGrant.READ,
     },
     {
       title: 'Terminal',
@@ -102,14 +110,13 @@ const Header = () => {
 
   const navMenuList = navMenuListData.filter((item) => {
     if (item.requiredFeatureFunction) {
-      return hasPermission(userState, item.requiredFeatureFunction, TypeGrant.OWNER)
-    }
-    if (item.requiredPermissions) {
-      return userState?.grants?.some((grant) => {
-        return (
-          grant.idFeature === item.requiredPermissions && grant.typeGrant != '0'
-        )
-      })
+      // `requiredLevel` por omissão é OWNER, que era o que este filtro pedia a
+      // todas as entradas. Só as entradas novas o baixam, e dizem-no à vista.
+      return hasPermission(
+        userState,
+        item.requiredFeatureFunction,
+        item.requiredLevel ?? TypeGrant.OWNER
+      )
     }
     return true
   })
@@ -167,8 +174,10 @@ const Header = () => {
           </nav>
 
           <div className="ml-auto shrink-0 pr-4 flex items-center justify-between space-x-2 lg:pr-6">
-            {userState?.grants?.some(
-              (grant) => grant.idFeature === Feature.CONFIGURATION
+            {hasPermission(
+              userState,
+              FeatureFunction.CONFIGURATION,
+              TypeGrant.READ
             ) && (
               <Link
                 href="/configurations/"
