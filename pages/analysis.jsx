@@ -138,6 +138,25 @@ const datasets = {
     parent: 'HISTORIC',
     accumulative: true,
   },
+  // Recolhidos ha muito e nunca oferecidos neste ecra.
+  // O PLE e uma medida instantanea (segundos), por isso accumulative false.
+  Log_Page_Life_Expectancy: {
+    code: 'Log_Page_Life_Expectancy',
+    options: [{ label: 'Page Life Expectancy (s)', value: 'count' }],
+    parent: 'HISTORIC',
+    accumulative: false,
+  },
+  // MEDIDO no QA a 28/09: os valores crescem sempre (11.467.725 → 11.468.941 → ...),
+  // logo o contador e acumulado e nao uma media. Com accumulative true o que se ve e
+  // o tempo de espera em latches acumulado DENTRO da janela, em ms — que e uma coisa
+  // verdadeira. A media a serio pede a divisao pelo delta do Log_Latch_Waits_Count;
+  // isso e calculo novo e fica para quando o ecra o souber fazer.
+  Log_Average_Latch_Wait_Time: {
+    code: 'Log_Average_Latch_Wait_Time',
+    options: [{ label: 'Latch Wait Time (ms na janela)', value: 'count' }],
+    parent: 'HISTORIC',
+    accumulative: true,
+  },
 }
 
 const AnalysisPage = () => {
