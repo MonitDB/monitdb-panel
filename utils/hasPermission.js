@@ -35,6 +35,26 @@ export const FeatureFunction = {
   SQL_USER_PROCESSES_TOP_10_BY_CPU: 1124,
   ERROR_LOG: 1125,
   DATABASES: 1126,
+
+  // 12/10/2026 — os quinze paineis novos do dashboard (desenho da Sara, copia do
+  // Grafana da AdvanceCare). Ficam no bloco 11xx, que e o ecra de detalhe do
+  // servidor, a seguir ao 1126. Cada um tem a sua linha na SOLUTION.COMPONENT e
+  // os nove grants do padrao do 1126.
+  RECOMPILATIONS_SEC: 1127,
+  BUFFER_CACHE_HIT_RATIO: 1128,
+  MEMORY_GRANTS: 1129,
+  BUFFER_POOL: 1130,
+  SECURITY_LOGINS_LOGOUTS_ERRORS: 1131,
+  SECURITY_DEADLOCKS: 1132,
+  WAITS_SIGNAL_VS_RESOURCE: 1133,
+  SCHEDULER_HEALTH: 1134,
+  IO_STALL_PER_DB_FILE: 1135,
+  PLAN_CACHE: 1136,
+  NETWORK_IO_BY_CLIENT: 1137,
+  INDEX_USAGE: 1138,
+  TOP_MEMORY_CLERKS: 1139,
+  TOP_TABLES: 1140,
+  DATA_OVERVIEW: 1141,
   QUERY_WINDOWS_FOR_QUERY_EXECUTION: 1200,
   WHO_IS_ACTIVE: 1300,
   WHO_IS_ACTIVE_ON_SELECT: 1301,

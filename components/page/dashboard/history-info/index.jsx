@@ -15,6 +15,7 @@ import BlockingProcesses from './components/blocking-processes'
 import CpuUsage from './components/cpu-usage'
 import Databases from './components/databases'
 import ErrorLog from './components/error-log'
+import InstanceMetrics from './components/instance-metrics'
 import MemoryUsage from './components/memory-usage'
 import { Permissions } from './components/server-host-metrics'
 import ServerMetrics from './components/server-host-metrics/server-metrics'
@@ -48,11 +49,16 @@ const HistoryInfo = ({ currentServer }) => {
   })
 
   return (
+    // 13/10/2026 — o Danilo apontou o vazio entre as abas e o primeiro
+    // separador e pediu para o diminuir. Medido antes de mexer: 152 px entre o
+    // fundo das abas e o topo da barra de seccoes, dos quais so 32 eram o
+    // seletor e o Refresh. Os outros 120 eram margem a somar com margem
+    // (mt-6 + p-4 + gap-y-6 + mt-6 do bloco novo). Ficou em 68.
     <div
-      className="w-full flex flex-col gap-y-6 mt-6"
+      className="w-full flex flex-col gap-y-3"
       style={{ overflow: 'hidden' }}
     >
-      <div className="w-full flex gap-x-8 p-4 text-sm">
+      <div className="w-full flex gap-x-8 px-4 py-1 text-sm">
         <div className="flex gap-2 ml-auto">
           <Select
             className="w-40"
@@ -73,6 +79,11 @@ const HistoryInfo = ({ currentServer }) => {
       </div>
 
       <div id="allinstancemetrics">
+        {/* 12/10/2026 — os quinze quadros novos vem PRIMEIRO, por pedido do
+            Danilo nesse dia: "o que e antigo fica depois do que e novo". Os
+            paineis antigos ficam exactamente como estavam; nada deles mudou. */}
+        <InstanceMetrics currentServer={currentServer} />
+
         <Row gutter={16}>
           {hasPermission(user, FeatureFunction.MEMORY, TypeGrant.READ) && (
             <Col

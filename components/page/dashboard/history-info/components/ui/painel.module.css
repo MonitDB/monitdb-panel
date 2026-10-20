@@ -1,0 +1,492 @@
+/* Peças do desenho da Sara (history-como-fica.html, 21/09/2026), passadas para o
+   produto. Os valores — paleta, raios, tamanhos, regras da grelha — são os do
+   ficheiro dela; não inventei nenhum. O que mudei e porquê:
+
+   - a família monoespaçada é a que o global.css já usa (Consolas/Monaco), e não
+     a IBM Plex Mono do desenho: o font-src da CSP do haproxy é 'self' data:, e
+     um @font-face para fora não carrega. Melhor a fonte da casa do que uma
+     fonte que não chega e cai em serifada sem ninguém reparar.
+   - módulo CSS em vez de global, para estas classes não colidirem com o antd
+     nem com o Tailwind do resto do painel. */
+
+.raiz {
+  --card: #ffffff;
+  --line: #e5e7eb;
+  --line2: #d1d5db;
+  --ink: #111827;
+  --ink2: #4b5563;
+  --mute: #6b7280;
+  --indigo: #5046e5;
+  --indigo2: #6867ef;
+  --ok: #1b7a4e;
+  --ok-bg: #e3f3ea;
+  --info: #2a62c4;
+  --info-bg: #e5eefb;
+  --warn: #a85d00;
+  --warn-bg: #fcefd9;
+  --crit: #b91c1c;
+  --crit-bg: #fbe4e4;
+  --none: #6b7280;
+  --none-bg: #f3f4f6;
+  --mono: Consolas, Monaco, 'Courier New', monospace;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--ink);
+}
+
+/* ── secção ───────────────────────────────────────────────────────────── */
+.seccao {
+  margin-bottom: 22px;
+}
+.cabecalho {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 0 8px;
+  border-bottom: 1px solid var(--line2);
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+.cabecalho h2 {
+  font-family: Oxygen, sans-serif;
+  font-size: 15px;
+  margin: 0;
+  font-weight: 700;
+  color: var(--ink);
+}
+.resumo {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.espaco {
+  flex: 1;
+}
+.quando {
+  color: var(--mute);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+/* ── chips e etiquetas ────────────────────────────────────────────────── */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border-radius: 999px;
+  padding: 2px 8px;
+  font-size: 11.5px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+.chip i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentcolor;
+  display: inline-block;
+}
+.ok {
+  background: var(--ok-bg);
+  color: var(--ok);
+}
+.info {
+  background: var(--info-bg);
+  color: var(--info);
+}
+.warn {
+  background: var(--warn-bg);
+  color: var(--warn);
+}
+.crit {
+  background: var(--crit-bg);
+  color: var(--crit);
+}
+.nenhum {
+  background: var(--none-bg);
+  color: var(--none);
+}
+
+.etiqueta {
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border: 1px solid var(--line2);
+  border-radius: 3px;
+  padding: 1px 5px;
+  color: var(--ink2);
+  background: #fff;
+  white-space: nowrap;
+}
+.etiquetaInfo {
+  border-color: var(--info);
+  color: var(--info);
+}
+.etiquetaAviso {
+  border-color: var(--warn);
+  color: var(--warn);
+}
+
+/* ── grelha e cartão ──────────────────────────────────────────────────── */
+/* QUATRO colunas, e não as seis da maqueta. Medido no painel real a 12/10: com
+   a barra lateral do produto, uma janela de 1600 dá 1168 px de secção e uma de
+   1920 dá 1488 — nenhuma das duas chega perto do que seis colunas precisam. O
+   ramo de seis existia e nunca era usado.
+   ORDEM IMPORTA: as regras base primeiro, as media queries no fim do ficheiro.
+   Ao contrário dava o defeito que medi: `.larg3{span 3}` escrita depois da
+   media query ganhava sempre, e o cartão da plan cache (283+283+873 numa secção
+   de 1168) saltava para a linha seguinte deixando meia linha vazia. */
+.grelha {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  align-items: start;
+}
+
+.cartao {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 10px 12px;
+  min-height: 96px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.larg2 {
+  grid-column: span 2;
+}
+.larg3 {
+  grid-column: span 3;
+}
+.larg4,
+.larg6 {
+  grid-column: 1 / -1;
+}
+.cartaoCabecalho {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.cartaoCabecalho h3 {
+  font-size: 12.5px;
+  font-weight: 600;
+  margin: 0;
+  color: var(--ink);
+}
+
+.numero {
+  font-family: var(--mono);
+  font-size: 26px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+.numero small {
+  font-family: inherit;
+  font-size: 12px;
+  color: var(--mute);
+  font-weight: 400;
+  margin-left: 6px;
+}
+.legenda {
+  color: var(--mute);
+  font-size: 11.5px;
+  margin-top: 4px;
+}
+.rodape {
+  margin-top: auto;
+  padding-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--mute);
+}
+
+/* ── os três estados ──────────────────────────────────────────────────── */
+.bom {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  background: var(--ok-bg);
+  border-radius: 6px;
+  color: var(--ok);
+  font-weight: 500;
+}
+.bom .razao {
+  color: var(--ink2);
+  font-weight: 400;
+  font-size: 12px;
+}
+.semDados {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  background: var(--none-bg);
+  border: 1px dashed var(--line2);
+  border-radius: 6px;
+  color: var(--ink2);
+}
+.semDados b {
+  color: var(--none);
+}
+.aCarregar {
+  background: linear-gradient(90deg, #eef0f3, #f7f8fa, #eef0f3);
+  background-size: 200% 100%;
+  animation: brilho 1.4s infinite;
+  border-radius: 4px;
+  height: 12px;
+  margin: 6px 0;
+}
+@keyframes brilho {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+/* ── tabela compacta dentro do cartão ─────────────────────────────────── */
+.tabelaCaixa {
+  overflow-x: auto;
+}
+.tabela {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+.tabela th {
+  text-align: left;
+  font-weight: 600;
+  color: var(--ink2);
+  padding: 4px 6px;
+  border-bottom: 1px solid var(--line2);
+  white-space: nowrap;
+}
+.tabela td {
+  padding: 4px 6px;
+  border-bottom: 1px solid var(--line);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.direita {
+  text-align: right;
+}
+.barra {
+  display: grid;
+  grid-template-columns: 1fr 60px;
+  gap: 8px;
+  align-items: center;
+  font-size: 11.5px;
+}
+.barraCalha {
+  height: 8px;
+  background: var(--none-bg);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.barraCheia {
+  display: block;
+  height: 100%;
+  background: var(--indigo2);
+}
+
+/* texto longo dentro da tabela (nome de programa, de tabela): corta com
+   reticências em vez de empurrar a tabela para o lado */
+.corta {
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* vários números pequenos dentro do mesmo cartão (scheduler health, buffer
+   pool): pares nome/valor em duas colunas, para o cartão ficar denso */
+.pares {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px 14px;
+}
+.par {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--line);
+  padding: 2px 0;
+}
+.parNome {
+  color: var(--mute);
+  font-size: 11.5px;
+}
+.parValor {
+  font-family: var(--mono);
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* cartão de faixas empilhadas — a forma do Key Counters / Security Counters do
+   Grafana do cliente, que é a maneira mais densa de mostrar números que se leem
+   em conjunto. A diferença é que aqui o tom da faixa vem do VALOR (zero
+   deadlocks é verde, qualquer um é crítico) e não é decoração fixa. */
+.faixas {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.faixa {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 7px 10px;
+  border-radius: 4px;
+}
+.faixaNome {
+  font-size: 11.5px;
+  font-weight: 500;
+}
+.faixaValor {
+  font-family: var(--mono);
+  font-size: 17px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+/* A cor é RACIONADA (correcção da Sara, 12/10): só aviso e crítico pintam a
+   faixa; o estado bom fica a tinta com a palavra. O que torna um ecrã destes
+   barulhento não é o aviso pintado — é o OK pintado, que gasta a atenção em
+   quem não precisa dela. Com três avisos ao mesmo tempo vêem-se três faixas
+   pintadas, e é isso que se deve ver. */
+.faixaLimpa {
+  background: transparent;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+}
+.faixaDireita {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.palavra {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+.palavraOk {
+  color: var(--ok);
+}
+.palavraNenhum {
+  color: var(--mute);
+}
+
+/* 13/10/2026 — valor com estado DENTRO do cartão. Correcção da Sara, autorizada
+   pelo Danilo: o chip da secção anunciava âmbar e o cartão por baixo não
+   pintava nada, e um medidor pintava sem dizer de quê. Mesma ração de cor das
+   faixas (só aviso e crítico pintam) e a cor nunca vai sozinha — quem pinta
+   leva a palavra ao lado. */
+.valorCaixa {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.tintaWarn {
+  color: var(--warn);
+  font-weight: 600;
+}
+.tintaCrit {
+  color: var(--crit);
+  font-weight: 600;
+}
+.parDireita {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+/* cabeçalho de BLOCO (não é secção): separa a era nova da antiga, e a costura
+   fica visível de propósito — assim a diferença de aspecto lê-se como
+   transição e não como defeito */
+.bloco {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+  border-top: 2px solid var(--ink);
+  padding: 10px 0 6px;
+  margin: 4px 0 14px;
+}
+.blocoEtiqueta {
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--mute);
+}
+.bloco h2 {
+  font-family: Oxygen, sans-serif;
+  font-size: 16px;
+  margin: 0;
+  font-weight: 700;
+}
+.blocoNota {
+  color: var(--mute);
+  font-size: 11.5px;
+}
+/* barra de secções pegajosa: substitui o índice lateral enquanto a secção mede
+   menos de 1600 px. Custa 34 px de altura e zero de largura, e o separador tem
+   6137 px de altura — é o que torna o scroll suportável. */
+.barra2 {
+  position: sticky;
+  top: 0;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  padding: 7px 0;
+  margin-bottom: 8px;
+  background: #fff;
+  border-bottom: 1px solid var(--line2);
+}
+.atalho {
+  border: 1px solid var(--line2);
+  border-radius: 999px;
+  padding: 2px 10px;
+  font-size: 11.5px;
+  color: var(--ink2);
+  background: #fff;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.atalho:hover {
+  border-color: var(--indigo);
+  color: var(--indigo);
+}
+.atalhoBloco {
+  background: var(--dark, #161b22);
+  border-color: var(--dark, #161b22);
+  color: #fff;
+}
+
+
+/* ── responsivo ───────────────────────────────────────────────────────── */
+/* secção >= 1400  (janela >= 1832): 4 colunas */
+@media (min-width: 1832px) {
+  .grelha {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* secção < 1000  (janela < 1432): 2 colunas, e tudo o que é largo passa a
+   linha inteira — um span maior do que o número de colunas criava colunas
+   implicitas de 0 px (medido a 12/10 na janela de 1366) */
+@media (max-width: 1431px) {
+  .grelha {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .larg2,
+  .larg3,
+  .larg4 {
+    grid-column: 1 / -1;
+  }
+}
