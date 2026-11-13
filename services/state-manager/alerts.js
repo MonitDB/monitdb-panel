@@ -51,13 +51,11 @@ const useAlertContext = create((set) => ({
     }
   },
 
+  // sem try/catch de proposito: o erro tem de chegar ao handleClearAlert,
+  // senao o painel mostra "Alert cleared successfully" com o clear falhado
   clearAlert: async (id, serverId) => {
-    try {
-      const { data } = await apiV2().put(`/alert/clear/${serverId}/${id}/`)
-      return data
-    } catch {
-      return []
-    }
+    const { data } = await apiV2().put(`/alert/clear/${serverId}/${id}/`)
+    return data
   },
 
   getSuggestion: async (serverId, id, htmlRow) => {
