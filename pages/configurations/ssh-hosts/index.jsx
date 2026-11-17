@@ -37,7 +37,7 @@ const SshHosts = () => {
   const [form] = Form.useForm()
 
   useEffect(() => {
-    fetchHosts()
+    fetchHosts(true)
   }, [fetchHosts])
 
   const openNew = () => {
@@ -79,7 +79,7 @@ const SshHosts = () => {
     if (ok) {
       message.success(editing ? 'Host updated.' : 'Host created.')
       setOpen(false)
-      await fetchHosts()
+      await fetchHosts(true)
     } else {
       message.error('Could not save the host.')
     }
@@ -89,7 +89,7 @@ const SshHosts = () => {
     const ok = await deleteHost(h.id)
     if (ok) {
       message.success('Host removed.')
-      await fetchHosts()
+      await fetchHosts(true)
     } else message.error('Could not remove the host.')
   }
 
@@ -117,6 +117,21 @@ const SshHosts = () => {
       ),
     },
     { title: 'Name', dataIndex: 'name', key: 'name' },
+    // Coluna "Owner" só na vista de admin (a API manda ownerName só nesse caso).
+    ...(hosts.some((x) => x.ownerName !== undefined)
+      ? [
+          {
+            title: 'Owner',
+            key: 'owner',
+            render: (t, h) => (
+              <Space size={4}>
+                <span>{h.ownerName || '-'}</span>
+                {h.isOwner && <Tag color="blue">you</Tag>}
+              </Space>
+            ),
+          },
+        ]
+      : []),
     {
       title: 'Environment',
       key: 'env',
@@ -176,12 +191,17 @@ const SshHosts = () => {
       width: 240,
       render: (t, h) => (
         <Space>
-          <Button size="small" onClick={() => handleTest(h)}>
-            Test
-          </Button>
-          <Button size="small" onClick={() => openEdit(h)}>
-            Edit
-          </Button>
+          {/* Host de outro login (vista de admin): só remover — a credencial é dele. */}
+          {h.isOwner !== false && (
+            <>
+              <Button size="small" onClick={() => handleTest(h)}>
+                Test
+              </Button>
+              <Button size="small" onClick={() => openEdit(h)}>
+                Edit
+              </Button>
+            </>
+          )}
           <Popconfirm
             title="Remove this host?"
             onConfirm={() => handleDelete(h)}

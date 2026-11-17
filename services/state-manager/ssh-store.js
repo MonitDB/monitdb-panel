@@ -23,10 +23,14 @@ export const useSshStore = create((set) => ({
     }
   },
 
-  fetchHosts: async () => {
+  // all=true: vista de gestão (Configurações). A API só a honra para a role
+  // ADMIN; para os outros devolve apenas os hosts do próprio login.
+  fetchHosts: async (all = false) => {
     set({ loading: true })
     try {
-      const { data } = await apiV2().get('/ssh-hosts')
+      const { data } = await apiV2().get('/ssh-hosts', {
+        params: all ? { all: 1 } : {},
+      })
       set({ hosts: Array.isArray(data) ? data : [] })
     } catch {
       set({ hosts: [] })
