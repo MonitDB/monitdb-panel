@@ -13,7 +13,8 @@ import { useGlobal } from '~/hooks/index'
 import Layout from '~/layouts/default'
 import { useSshStore } from '~/services/state-manager/ssh-store'
 
-const MAX_SESSIONS = 8
+// 10 sessões SSH em simultâneo (pedido do Danilo, 25/11/2026; antes 8).
+const MAX_SESSIONS = 10
 
 const Terminal = () => {
   const { hosts, fetchHosts } = useSshStore()

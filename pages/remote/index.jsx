@@ -13,8 +13,9 @@ import { useGlobal } from '~/hooks/index'
 import Layout from '~/layouts/default'
 import { useRemoteStore } from '~/services/state-manager/remote-store'
 
-// RDP/VNC pesa mais que SSH (canvas + gravação por sessão) — cap menor.
-const MAX_SESSIONS = 4
+// 10 sessões em simultâneo (pedido do Danilo, 25/11/2026; antes 4). Cada aba mantém o seu
+// canvas Guacamole e a gravação no guacd — é o browser e o guacd que pagam, não a API.
+const MAX_SESSIONS = 10
 
 const Remote = () => {
   const { hosts, fetchHosts } = useRemoteStore()
