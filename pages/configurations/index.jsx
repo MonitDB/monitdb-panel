@@ -7,6 +7,7 @@ import Link from '~/components/link'
 import { PageContent, PageHeader, PageWrapper } from '~/components/page'
 import { useUser } from '~/hooks/index'
 import Layout from '~/layouts/default'
+import { useBugReportStore } from '~/services/state-manager/bug-report-store'
 import {
   existsSomePermissions,
   FeatureFunction,
@@ -182,11 +183,32 @@ const RIGHT_SECTIONS = [
         visible: grant(FeatureFunction.USER_MANAGEMENT, TypeGrant.OWNER),
       },
       {
+        title: 'Login audit',
+        description:
+          'Who logged in and when, failed attempts, last access per user; search and export to CSV.',
+        href: '/configurations/login-audit',
+        visible: grant(FeatureFunction.USER_MANAGEMENT, TypeGrant.OWNER),
+      },
+      {
         title: 'Profiles & permissions',
         description:
           'Profiles (roles) and the permission level of each feature per profile.',
         href: '/configurations/profiles',
         visible: grant(FeatureFunction.MANAGE_PROFILES, TypeGrant.READ),
+      },
+      {
+        title: 'Bug reports',
+        description:
+          'Bugs reported by the users (with screenshots): read them and mark them as seen or fixed.',
+        href: '/configurations/bug-reports',
+        visible: grant(FeatureFunction.USER_MANAGEMENT, TypeGrant.OWNER),
+      },
+      {
+        title: 'Report a bug',
+        description:
+          'Found something wrong? Describe it, paste a screenshot and the MonitDB team gets it by email.',
+        href: '#report-bug',
+        action: 'report-bug',
       },
       {
         title: 'My account',
@@ -234,18 +256,36 @@ const visibleSections = (sections, user) =>
     }))
     .filter((section) => section.items.length > 0)
 
-const ConfigurationSection = ({ section }) => (
+const ConfigurationSection = ({ section, onAction }) => (
   <div className="w-full">
     <h3 className="mb-5 heading-md">{section.title}</h3>
     <ul className="space-y-4 text-sm">
       {section.items.map((item) => (
         <li key={item.href + item.title}>
-          <Link href={item.href} className="group block">
-            <strong className="block group-hover:text-blue">
-              {item.title}
-            </strong>
-            <span className="group-hover:opacity-75">{item.description}</span>
-          </Link>
+          {item.action ? (
+            // Ação no próprio ecrã (ex.: abrir o modal Report a bug), não navegação.
+            <button
+              type="button"
+              className="group block text-left"
+              onClick={() => onAction(item.action)}
+            >
+              <strong className="block group-hover:text-blue">
+                {item.title}
+              </strong>
+              <span className="group-hover:opacity-75">
+                {item.description}
+              </span>
+            </button>
+          ) : (
+            <Link href={item.href} className="group block">
+              <strong className="block group-hover:text-blue">
+                {item.title}
+              </strong>
+              <span className="group-hover:opacity-75">
+                {item.description}
+              </span>
+            </Link>
+          )}
         </li>
       ))}
     </ul>
@@ -255,6 +295,17 @@ const ConfigurationSection = ({ section }) => (
 const ConfigurationsPage = () => {
   const router = useRouter()
   const { userState: user } = useUser()
+  const { openReport } = useBugReportStore()
+  const onAction = (action) => {
+    if (action === 'report-bug') openReport()
+  }
+  const renderSection = (section) => (
+    <ConfigurationSection
+      key={section.title}
+      section={section}
+      onAction={onAction}
+    />
+  )
   useEffect(() => {
     if (!hasPermission(user, FeatureFunction.CONFIGURATION, TypeGrant.READ) && user.grants) {
       router.push('/403')
@@ -271,14 +322,10 @@ const ConfigurationsPage = () => {
 
             <Grid>
               <div className="col-span-2 space-y-10 md:col-span-6">
-                {visibleSections(LEFT_SECTIONS, user).map((section) => (
-                  <ConfigurationSection key={section.title} section={section} />
-                ))}
+                {visibleSections(LEFT_SECTIONS, user).map((section) => renderSection(section))}
               </div>
               <div className="col-span-2 space-y-10 md:col-span-6">
-                {visibleSections(RIGHT_SECTIONS, user).map((section) => (
-                  <ConfigurationSection key={section.title} section={section} />
-                ))}
+                {visibleSections(RIGHT_SECTIONS, user).map((section) => renderSection(section))}
               </div>
             </Grid>
           </PageContent>

@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import {
   faArrowRightFromBracket,
+  faBug,
   faGear,
   faUser,
   faUserPen,
@@ -12,9 +13,11 @@ import classNames from 'classnames'
 import { useRouter } from 'next/router'
 import React from 'react'
 
+import ReportBugModal from '~/components/bug-report/report-bug-modal'
 import Image from '~/components/image'
 import Link from '~/components/link'
 import { useUser } from '~/hooks/index'
+import { useBugReportStore } from '~/services/state-manager/bug-report-store'
 import { useConfigStore } from '~/services/state-manager/config-store'
 import {
   FeatureFunction,
@@ -37,6 +40,7 @@ const Header = () => {
   const { config } = useConfigStore()
 
   const { userState } = useUser()
+  const { openReport } = useBugReportStore()
 
   const navMenuListData = [
     {
@@ -190,6 +194,21 @@ const Header = () => {
               </Link>
             )}
 
+            {/* Report a bug (25/11/2026): aberto a todos. Fica na barra e não no menu do
+                avatar porque esse menu é cortado pelo overflow-hidden da barra fixa. */}
+            <button
+              type="button"
+              title="Report a bug"
+              aria-label="Report a bug"
+              onClick={openReport}
+              className="w-8 h-8 flex items-center justify-center transition-all duration-300 ease-in-out
+                lg:hover:opacity-75"
+            >
+              <i className="block w-5 h-5">
+                <FontAwesomeIcon icon={faBug} />
+              </i>
+            </button>
+
             <div className="group relative">
               <Link
                 href="/my-account/"
@@ -260,6 +279,7 @@ const Header = () => {
           </Button>
         </div>
       </div>
+      <ReportBugModal />
     </header>
   )
 }
